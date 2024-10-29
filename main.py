@@ -11,7 +11,12 @@ from time import time
 #			--> Un dico ?
 #			--> Place les bases du stockage de données
 #	--> Doit modifier afin d'accèlerer le déplacement avec le maintient de la touche
-#	--> Doit modifier afin de pouvoir drag le terrain
+#	--> Doit modifier afin de pouvoir drag le terrain √
+# - Ajouter un moyen de save la carte gen
+# - Pas assez d'eau gen, doit trouver un moyen d'améliorer cela √
+#	--> Inverser la sens de gen et est réduit la condition pour les extreme
+#		Avant: NB <=-0.5 == Blue; -0.5 < NB <= 0 == Yellow; 0<NB <= 0.5 == Green; 0.5< NB == Grey
+#		Maintenant: NB <=-0.25 == Grey; -0.25< NB <= 0 == Green; 0< NB <= 0.25 == Yellow; 0.25< NB == Blue
 # - Ajouter un moyen de Zoomer/Dézoomer
 
 
@@ -80,13 +85,14 @@ def createmap(heightWindow, widthWindow, pic, frame, mapx, mapy, sizetuile):
 
 
 
-	#On Créer les Différentes Cases avec le tags tuile pour indiquer et les trouvé plus facilement
-	#On ajoute aussi le tags click pour indiquer qu'ils sont clickables
-	#On ajoute aussi les tags x et y qui correspond à la casse ou ils est situés
-	#2ieme version: ajouter un tag supplémentaire liées aux types
+	# On Créer les Différentes Cases avec le tags tuile pour indiquer et les trouvé plus facilement
+	# On ajoute aussi le tags click pour indiquer qu'ils sont clickables
+	# On ajoute aussi les tags x et y qui correspond à la casse ou ils est situés
+	# ONn ajoute aussi le tag pic[x][y] qui correspond à la valeur de la case gen
+	# 2ieme version: ajouter un tag supplémentaire liées aux types
 	for x in range(mapx):
 		for y in range(mapy):
-			mapcanv.create_rectangle((x*sizetuile), (y*sizetuile), (x*sizetuile)+sizetuile, (y*sizetuile)+sizetuile, fill = tuile(pic[x][y]), tags = ["click","tuile",x,y],outline='black')
+			mapcanv.create_rectangle((x*sizetuile), (y*sizetuile), (x*sizetuile)+sizetuile, (y*sizetuile)+sizetuile, fill = tuile(pic[x][y]), tags = ["click","tuile",x,y,pic[x][y]],outline='black')
 			#print(tuile(pic[x][y]))
 
 	#On lie Command+molette aux zoom/dézoom
@@ -120,14 +126,14 @@ def tuile(nb):
 	#2eme Version doit lier la valeur d'une case à une texture
 	#3ieme version doit lier la valeur d'une tuile à une case d'un type de texture qui en compte un ensemble ex: plaine possède plaine1.txt, plaine2.txt, plaine3.txt
 	# -> return random.rand(len(objectfolder)) 
-	if(nb <= -0.5):
-		return "blue"
-	elif(nb>-0.5 and nb <=0):
-		return "yellow"
-	elif(nb>0 and nb <= 0.5):
-		return "green"
-	else:
+	if(nb <= -0.25):
 		return "grey"
+	elif(nb>-0.25 and nb <=0):
+		return "green"
+	elif(nb>0 and nb <= 0.25):
+		return "yellow"
+	else:
+		return "blue"
 
 def moveviewz(event):
 	####################
@@ -150,33 +156,33 @@ def moveviewz(event):
 	y0 = event.widget.canvasy(event.y)
 
 	#Pour éviter les différence entre windows et Mac ont normalise delta
+	#Doit prendre en compte linux -_-
 	if event.delta <= 0:
 		delta = -2
 	else:
 		delta = 2
-
-
-
 	#On prend pour valeur min de la taille d'une tuile 5
 	#On vérifier que la taile d'une tuile soit supérieur à 5
 	#Pour calculer on utiliser seulement les coord x du premier carré du canvas qui doit être forcement à l'index 1
-	print(event.widget.coords(1))
+	#print(event.widget.coords(1))
 	x = (event.widget.coords(1)[2] - event.widget.coords(1)[0])
-	#On multiplie par le delta recup
-	print(x, event.delta, delta)
+	#print(x, event.delta, delta)
 
 	# Doit trouver les valeurs parfaite max et min
 	# Zoom = max = x = 320
 	# DeZoom = min = x = 5
-	#
+	# À l'avenir changer la valeur minimum par une valeur calculer a partir de la taille de la carte
+	# !!! Attention pour une grande carte cela ram !!!
+	# C'est l'affichage de plein de case qui cause la ram, voir si c'est le cache ou l'affichage
 
 	####################
 	#Zoom
-	if (x<640) and (delta == 2):
+	if (x<320) and (delta == 2):
 		event.widget.scale("tuile", x0, y0, delta, delta)
 	#Dezoom
 	elif(x>5) and (delta == -2):
-		event.widget.scale("tuile", x0, y0, 1/delta, 1/delta)
+		#On rend positive le delta sinon il inverse le sens de la carte
+		event.widget.scale("tuile", x0, y0, 1/(-delta), 1/(-delta))
 	####################
 
 def moveviewxy(event, deltax, deltay):
@@ -229,8 +235,8 @@ if __name__ == '__main__':
 	#Init de la fenêtre
 	root = tkinter.Tk()
 	#définition de la taille de la carte
-	mapx = 100
-	mapy = 100
+	mapx = 250
+	mapy = 250
 	pic = genproc.genNoiseMap(10, (random.random()*time()), mapx, mapy)
 	mainscreen(1200,1200,root,pic, mapx, mapy)
 

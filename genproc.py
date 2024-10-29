@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 from perlin_noise.perlin_noise import PerlinNoise
 import random
 from time import time
+import sys
 
 #########################
 #
@@ -46,9 +47,13 @@ def genNoiseMap(octaves, seed, mapx, mapy):
 
 
 
-#pic = genNoiseMap(10, (random.random()*time()), 100, 100)
-#plt.imshow(pic, cmap='gray')
-#plt.show()
+if __name__ == '__main__':
+    if sys.argv[1] == "gen":
+        pic = genNoiseMap(10, (random.random()*time()), 250, 250)
+        plt.imshow(pic, cmap='gray')
+        plt.show()
+
+
 
 
 
