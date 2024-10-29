@@ -46,7 +46,7 @@ def genNoiseMap(octaves, seed, mapx, mapy):
 
 
 
-pic = genNoiseMap(10, (random.random()*time()), 100, 100)
+#pic = genNoiseMap(10, (random.random()*time()), 100, 100)
 #plt.imshow(pic, cmap='gray')
 #plt.show()
 

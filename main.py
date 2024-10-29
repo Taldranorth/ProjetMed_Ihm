@@ -4,9 +4,18 @@ import random
 from time import time
 
 #Doit terminé de faire un Prototype:
-# - Ajouter Un moyen de déplacer la vue
+# - Ajouter Un moyen de déplacer la vue √
+#	--> Doit modifier afin de prendre en compte le non focus sur le widget du canvas
+#		--> Doit appliquer le bind des touches à la root
+#		--> Doit trouver un moyen de stocker les objets dans une données facilement accesible
+#			--> Un dico ?
+#			--> Place les bases du stockage de données
+#	--> Doit modifier afin d'accèlerer le déplacement avec le maintient de la touche
+#	--> Doit modifier afin de pouvoir drag le terrain
 # - Ajouter un moyen de Zoomer/Dézoomer
-#
+
+
+
 #########################
 #
 #
@@ -71,29 +80,36 @@ def createmap(heightWindow, widthWindow, pic, frame, mapx, mapy, sizetuile):
 
 
 
-	#On Créer les Différentes Cases avec le tags Click pour indiquer et les trouvé plus facilement
+	#On Créer les Différentes Cases avec le tags tuile pour indiquer et les trouvé plus facilement
+	#On ajoute aussi le tags click pour indiquer qu'ils sont clickables
+	#On ajoute aussi les tags x et y qui correspond à la casse ou ils est situés
 	#2ieme version: ajouter un tag supplémentaire liées aux types
 	for x in range(mapx):
 		for y in range(mapy):
-			mapcanv.create_rectangle((x*sizetuile), (y*sizetuile), (x*sizetuile)+sizetuile, (y*sizetuile)+sizetuile, fill = tuile(pic[x][y]), tags = "click")
+			mapcanv.create_rectangle((x*sizetuile), (y*sizetuile), (x*sizetuile)+sizetuile, (y*sizetuile)+sizetuile, fill = tuile(pic[x][y]), tags = ["click","tuile",x,y],outline='black')
 			#print(tuile(pic[x][y]))
+
+	#On lie Command+molette aux zoom/dézoom
+	mapcanv.bind("<MouseWheel>", moveviewz)
+
+	#On focus sur le widget sinon il ne prendra pas en compte les entrées des touches fléchés
+	mapcanv.focus_set()
+
+	#On lie les touches fléchés aux déplacement de la vue
+	mapcanv.bind('<KeyPress-Left>', lambda event, x=1,y=0: moveviewxy(event,x,y))
+	mapcanv.bind("<KeyPress-Right>", lambda event, x=-1,y=0: moveviewxy(event,x,y))
+	mapcanv.bind("<KeyPress-Up>", lambda event, x=0,y=1: moveviewxy(event,x,y))
+	mapcanv.bind("<KeyPress-Down>", lambda event, x=0,y=-1: moveviewxy(event,x,y))
+
+	#On lie le déplacement de la vue au maintient du bouton droit de la souris + motion
+	mapcanv.bind('<Shift-ButtonPress-1>', startmoveviewmouse)
+	mapcanv.bind('<Shift-B1-Motion>', moveviewmouse)
+
 
 	#ON lie les différentes Cases à l'action click
 	mapcanv.tag_bind("click", "<Button-1>", coord)
-	#On lie Command+molette aux zoom/dézoom
 
-
-	#On lie Command+Button1 aux déplacement de la vue
-	#Voir pour Utiliser Motion
-	mapcanv.bind("<Shift-Button-1>", moveviewxy)
-
-
-
-	mapcanv.pack(expand ="True",)
-
-
-
-
+	mapcanv.pack(expand ="True")
 
 ####################################################################################################
 
@@ -113,25 +129,96 @@ def tuile(nb):
 	else:
 		return "grey"
 
-
-
 def moveviewz(event):
-	#Fonction pour zoomer/dézoomer
-	pass
+	####################
+	# Fonction pour zoomer/dézoomer
+	# En utilisant la molette de la souris
+	#
+	# Doit utiliser .scale(tagOrId, xOffset, yOffset, xScale, yScale)
+	# xScale, yScale = 1 == No Scaling
+	#
+	# On zoome quand on multiplie par delta
+	# On dezoome quand on divise par delta
+	#
+	#	--- * 2 = ------ 	== Zoom car on agrandit
+	#
+	# 	--- / 3 = - 		== DeZoom car on réduit
+	####################
+
+	#Comprendre le fonctionnement de cela
+	x0 = event.widget.canvasx(event.x)
+	y0 = event.widget.canvasy(event.y)
+
+	#Pour éviter les différence entre windows et Mac ont normalise delta
+	if event.delta <= 0:
+		delta = -2
+	else:
+		delta = 2
 
 
-def moveviewxy(event):
-	print("moveviewxy")
+
+	#On prend pour valeur min de la taille d'une tuile 5
+	#On vérifier que la taile d'une tuile soit supérieur à 5
+	#Pour calculer on utiliser seulement les coord x du premier carré du canvas qui doit être forcement à l'index 1
+	print(event.widget.coords(1))
+	x = (event.widget.coords(1)[2] - event.widget.coords(1)[0])
+	#On multiplie par le delta recup
+	print(x, event.delta, delta)
+
+	# Doit trouver les valeurs parfaite max et min
+	# Zoom = max = x = 320
+	# DeZoom = min = x = 5
+	#
+
+	####################
+	#Zoom
+	if (x<640) and (delta == 2):
+		event.widget.scale("tuile", x0, y0, delta, delta)
+	#Dezoom
+	elif(x>5) and (delta == -2):
+		event.widget.scale("tuile", x0, y0, 1/delta, 1/delta)
+	####################
+
+def moveviewxy(event, deltax, deltay):
+	####################
 	# Fonction pour déplacer la vue en:
 	# Maintenant le click gauche de la souris
 	# En placant le souris sur une extrémité de la caméra
 	# En appyant sur les touches fléchés 
-	event.widget.canvasx(event.x)
-	event.widget.canvasy(event.y)
+	####################
+	mult = 50
+
+	print("move map arrow")
+
+	################ Déplacement de la vue ################
+
+	event.widget.move("tuile", mult*deltax, mult*deltay)
+
+	#######################################################
+
+def startmoveviewmouse(event):
+	####################
+	# Fonction pour déplacer la vue en:
+	# Maintenant le click droit de la souris
+	# Partie 1
+	# Utiliser .scan_mark(x, y)
+	#
+	####################
+	event.widget.scan_mark(event.x, event.y)
+
+def moveviewmouse(event):
+	####################
+	# Fonction pour déplacer la vue en:
+	# Maintenant le click droit de la souris
+	# Partie 2
+	# Utiliser .scan_dragto(x, y)
+	# !!!! A cause de l'utilisation de Move est très couteux !!!!
+	####################
+	event.widget.scan_dragto(event.x, event.y, gain = 1)
 
 
 def coord(event):
-	print(event.x,event.y)
+	print(event.widget.gettags("current"))
 
 
 ###########################################################################
@@ -142,8 +229,8 @@ if __name__ == '__main__':
 	#Init de la fenêtre
 	root = tkinter.Tk()
 	#définition de la taille de la carte
-	mapx = 50
-	mapy = 50
+	mapx = 100
+	mapy = 100
 	pic = genproc.genNoiseMap(10, (random.random()*time()), mapx, mapy)
 	mainscreen(1200,1200,root,pic, mapx, mapy)
 

@@ -59,11 +59,10 @@ Conditions de Défaites:
 
 - Perte de tout c’est villages
 
-#Quand la condition ? à la fin d’un tour ou après la perte d’un village
+#Quand la condition ? à la fin d’un tour ou après la perte d’un village ?
 
 
-Actions Possibiles du Joueurs:
-
+Actions Possibles du Joueurs:
 
 - Militaire:
 		- Recruter des Soldats
@@ -71,12 +70,11 @@ Actions Possibiles du Joueurs:
 		- Tenter de Rallier un Noble
 - Civil:
 		- Créer Village
-		- Constuire Église
+		- Construire Église
 		- Immigrer Villageois
 		- Impôts
 
 Effets/retour au Joueur:
-
 
 	- Les boutons doivent s’enfoncer quand on clique dessus
 	- Un retour sonore doit être envoyés
@@ -95,8 +93,8 @@ Si non Présent doit être créer
 Menu:
 
 Menu Principale:
-	-→ Nouvelles Partie
-	-→ Charger
+	—>Nouvelles Partie
+	—>Charger
 
 	—> Options
 
@@ -111,5 +109,6 @@ Nouvelle Partie:
 	- Nb de village de départ
 		- doit bloquer si la carte n’est pas suffisante
 	- Seed
+		- Landform
 		- Visuel de la carte
 		- Quand une nouvelle Seed est gen le visuel est changer
