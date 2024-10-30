@@ -48,10 +48,9 @@ def genNoiseMap(octaves, seed, mapx, mapy):
 
 
 if __name__ == '__main__':
-    if sys.argv[1] == "gen":
-        pic = genNoiseMap(10, (random.random()*time()), 250, 250)
-        plt.imshow(pic, cmap='gray')
-        plt.show()
+    pic = genNoiseMap(10, (random.random()*time()), 250, 250)
+    plt.imshow(pic, cmap='gray')
+    plt.show()
 
 
 
