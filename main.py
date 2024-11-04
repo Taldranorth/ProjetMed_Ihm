@@ -50,10 +50,49 @@ from time import time
 #	--> Doit garder les anciennes fonctions afin de pouvoir les réutiliser pour charger une texture particulière √
 #	--> Ne connais pas le fonctionnement exacte du label
 #		--> Quand je créer une nouveau label du nom de label sachant qu'un label existe déjà, l'ancien label est t'il supprimer ou garder en mémoire ?
+#			--> c'est créer par dessus, tout est garder en mémoire
+#
+#	!!! Doit créer un Atlas des label !!!
+#	Quand une texture est adapter dans le bon format on stocker le nom de la texture avec le label associer dans l'atlas
+#
+#	--> Cela permettrait de garder en mémoire que 4 texture et 4 label plutôt que 100*100 texture et labels 
+#	--> Cela permettrait aussi de ne pas avoir à recréer de label et de juste modifier la texture associer
 
-# J'ai terminé de refactoriser
+# Atlas Mis en Place !!!!
+# Je viens de réduire l'utilisation de la mémoire à seulement 115 Mo
+# Maintenant je dois comprendre d'ou vient le lag quand on observe beaucoup de case à la fois
 
+# J'ai terminé de refactoriser l'utilisation du dico
 
+# Objectif:
+#	Correctif:
+#	- Faire la doc de ce qui a était fait
+#	- Réduire le lag lors de l'observation d'un grand groupe de cases
+#		--> Utilisation du processeurs importante
+#	- Corriger le décalage avec l'écran arrière
+#	- Refactoriser le Code
+#		--> Le Nettoyer
+#		--> Retirer les Commentaires Inutiles		
+#		--> Prévoir l'ajout de future Tuiles
+#	- !!!! Commencer a s'entrainer avec les CLasses !!!!
+#		--> Transformer Atlas en classe
+#
+#
+#
+#	Additif:
+#	- Déplacement en mettant la souris sur la bordure extérieur de la carte
+#	- Menu Principale
+#	- Interface en Jeu
+#		--> Entête
+#
+#	- Affichage En tête
+#	- Landforme
+#	- Préparer Système de la Boucle Principale
+#	- Recup Texture.png des Batiment, Unités, Event, Blason
+#		--> Recup Image Event depuis CK 2 ou 3
+#	- Sauvegarde des données
+#	- Ajouter du Son
+#		--> https://stackoverflow.com/questions/28795859/how-can-i-play-a-sound-when-a-tkinter-button-is-pushed
 
 
 #########################
@@ -72,33 +111,70 @@ from time import time
 
 
 
-#########################
+
+
+######################### Menu Principale #########################
+
+def mainmenu(heightWindow, widthWindow, root):
+	# Création de la fenêtre
+	mainmenuwin = tkinter.Toplevel(root, height = heightWindow, width = widthWindow)
+
+	# Création de la frame
+	fmainm = tkinter.Frame(mainmenuwin)
+	fmainm.pack(expand="True", fill="both")
+
+	# Mise en Place des Menus
+
+	# Button Play
+	Button_mainm_Play = tkinter.Button( fmainm, text = "Jouer")
+
+	# Button Quickplay
+	Button_mainm_QuickPlay = tkinter.Button( fmainm, command = lambda: mainscreen(heightWindow, widthWindow,root,pic, option.mapx, option.mapy), text = "Partie Rapide")
+	#mainmenuwin.destroy()
+
+	# Button Load
+	Button_mainm_load = tkinter.Button(fmainm, text = "Load")
+
+	#Button Options
+	Button_mainm_option = tkinter.Button(fmainm, text = "Options")
+
+	#Button Exit
+	Button_mainm_exit = tkinter.Button(fmainm, command = exit, text = "Quitter")
+
+	#Pack des Button
+	Button_mainm_Play.pack()
+	Button_mainm_QuickPlay.pack()
+	Button_mainm_load.pack()
+	Button_mainm_option.pack()
+	Button_mainm_exit.pack()
+
+
+
+###########################################################################
+
+######################### Écran de Jeu #########################
 def mainscreen(heightWindow, widthWindow, root, pic, mapx, mapy):
 
-	#Création de la fenêtre
+	# Création de la fenêtre
 	win1 = tkinter.Toplevel(root, height = heightWindow, width= widthWindow)
 
-	#Frame Affichage
+	interface(win1,heightWindow, widthWindow)
+
+	# Frame Map
 	fcanvas = tkinter.Frame(win1)
 	fcanvas.pack(expand="True", fill="both")
-	createmap(heightWindow, widthWindow, pic, fcanvas, mapx, mapy, 20,dico_file)
 
-	#Frame Boutton
-	fbutton = tkinter.Frame(win1)
-	fbutton.pack(expand="True", fill="both")
-	#Bouton pour quitter
-	Button_exit = tkinter.Button(fbutton,command = exit, text = "Quitter")
-	Button_exit.pack(side="bottom")
-#########################
+	createmap(heightWindow, widthWindow, pic, fcanvas, mapx, mapy, 20,dico_file)
+####################################################################################################
 
 
 
 ######################### Gestion de la Carte #######################################################
 def createmap(heightWindow, widthWindow, pic, frame, mapx, mapy, sizetuile, dico_file):
-
+	global atlas
 	#Si heigthWindow/1.5 le boutton quitter disparait
-	mapcanv = tkinter.Canvas(frame,height = ((heightWindow)/1.55), width = ((widthWindow)/1.5))
-
+	mapcanv = tkinter.Canvas(frame,height = ((heightWindow)/1.6), width = widthWindow)
+	lframe = tkinter.Frame(frame)
 	# On Créer les Différentes Cases avec le tags tuile pour indiquer et les trouvé plus facilement
 	# On ajoute aussi le tags click pour indiquer qu'ils sont clickables
 	# On ajoute aussi les tags x et y qui correspond à la casse ou ils est situés
@@ -107,13 +183,10 @@ def createmap(heightWindow, widthWindow, pic, frame, mapx, mapy, sizetuile, dico
 	for x in range(mapx):
 		for y in range(mapy):
 
-
 			# On utilise la valeur de la case pour définir la tuile que l'on va créer
 			tl = tuile(pic[x][y])
 			mapcanv.create_rectangle((x*sizetuile), (y*sizetuile), (x*sizetuile)+sizetuile, (y*sizetuile)+sizetuile, fill = tl[0], tags = ["click","tuile",x,y,pic[x][y], tl[1]], outline='black')
 			
-
-
 			##### Version Non-Aléatoire  #####
 			#tk_img = typetoimg(tl[1], sizetuile)
 			"""
@@ -128,37 +201,66 @@ def createmap(heightWindow, widthWindow, pic, frame, mapx, mapy, sizetuile, dico
 			"""
 			################################
 
-			##### Version Non-Aléatoire Dico #####
+			##### Version Non-Aléatoire Dico Sans Atlas #####
+			#tk_img = typetoimgdico(dico_file, tl[1], sizetuile)
+			#################################################
+
+
+			##### Version Non-Aléatoire Dico Avec Atlas #####
+			
 			if tl[1] == "mountains":
-				tk_img = data.loadtexturefromdico(dico_file, "mountains_inner.png", tl[1], sizetuile)[1]
+				if data.checkAtlas(atlas, "mountains_inner.png") == False:
+					tk_img = data.loadtexturefromdico(dico_file, "mountains_inner.png", tl[1], sizetuile)
+					label = tkinter.Label(lframe,image = tk_img[1])
+					label.image = tk_img[1]
+					atlas = data.addAtlas(atlas, label, tk_img[0])
+				else:
+					label = atlas["mountains_inner.png"]
+
 			elif tl[1] == "forest":
-				tk_img = data.loadtexturefromdico(dico_file, "conifer_forest_inner.png", tl[1], sizetuile)[1]
+				if data.checkAtlas(atlas, "conifer_forest_inner.png") == False:
+					tk_img = data.loadtexturefromdico(dico_file, "conifer_forest_inner.png", tl[1], sizetuile)
+					label = tkinter.Label(lframe,image = tk_img[1])
+					label.image = tk_img[1]
+					atlas = data.addAtlas(atlas, label, tk_img[0])
+				else:
+					label = atlas["conifer_forest_inner.png"]
+
 			elif tl[1] == "plains":
-				tk_img = data.loadtexturefromdico(dico_file, "plains.png", tl[1], sizetuile)[1]
+				if data.checkAtlas(atlas, "plains.png") == False:
+					tk_img = data.loadtexturefromdico(dico_file, "plains.png", tl[1], sizetuile)
+					label = tkinter.Label(lframe,image = tk_img[1])
+					label.image = tk_img[1]
+					atlas = data.addAtlas(atlas, label, tk_img[0])
+				else:
+					label = atlas["plains.png"]
+
 			elif tl[1] == "ocean":
-				tk_img = data.loadtexturefromdico(dico_file, "ocean_inner.png", tl[1], sizetuile)[1]
-
-
+				if data.checkAtlas(atlas, "ocean_inner.png") == False:
+					tk_img = data.loadtexturefromdico(dico_file, "ocean_inner.png", tl[1], sizetuile)
+					label = tkinter.Label(lframe,image = tk_img[1])
+					label.image = tk_img[1]
+					atlas = data.addAtlas(atlas, label, tk_img[0])
+				else:
+					label = atlas["ocean_inner.png"]
+			
 			################################
-
 
 			##### Version Aléatoire Dico #####
 			#tk_img = data.randomloadtexturefromdico(dico_file, tl[1], sizetuile)[1]
 
 			################################
 
-			################################
+			#########Garde en mémoire l'image ######
 			#The solution is to make sure to keep a reference to the Tkinter object, for example by attaching it to a widget attribute:
-			label = tkinter.Label(image = tk_img)
-			label.image = tk_img
-			################################
-			#label.pack()
-			print((x*sizetuile), (y*sizetuile), tk_img)
-			#mapcanv.create_image((x*sizetuile), (y*sizetuile), image = tk_img)
-			mapcanv.create_image((x*sizetuile), (y*sizetuile), image = tk_img, tags = ["img",tl[1]])
+			#label = tkinter.Label(lframe,image = tk_img)
+			#label.image = tk_img
+			#########################################
+			mapcanv.create_image((x*sizetuile), (y*sizetuile), image = label.image, tags = ["img",tl[1],"tuile","click", x, y, pic[x][y]])
 
+	#print("taille atlas: ",len(atlas))
 	#On lie Command+molette aux zoom/dézoom
-	mapcanv.bind("<MouseWheel>", moveviewz)
+	mapcanv.bind("<MouseWheel>", lambda event, lf=lframe :moveviewz(event, lf))
 
 	#On focus sur le widget sinon il ne prendra pas en compte les entrées des touches fléchés
 	mapcanv.focus_set()
@@ -177,9 +279,72 @@ def createmap(heightWindow, widthWindow, pic, frame, mapx, mapy, sizetuile, dico
 	#ON lie les différentes Cases à l'action click
 	mapcanv.tag_bind("click", "<Button-1>", coord)
 
-	mapcanv.pack(expand ="True")
+	mapcanv.pack(expand ="True", fill = "y")
 
 ####################################################################################################
+
+######################### Fonction Interface ############################
+
+def interface(win,heightWindow, widthWindow):
+
+	####################
+	# Fonction qui met en place l'interface en Jeu, voir l'entête
+	# HeightWindow et widthWindow sont la taille de la fenêtre de jeu
+	# 
+	# Actuellement l'interface est défini à l'extérieur
+	#
+	#
+	# ------------------
+	#	en tête haut
+	# ------------------
+	# |				   |
+	# |		Canvas	   |
+	# |				   |
+	# ------------------
+	#	en tête bas
+	# ------------------
+	# A voir pour a terme Ne pas placer à l'extérieur l'interface, avoir un effet de profondeur
+	#
+	# l'interface doit prendre une taille suffisante mais pas trop grosse
+	#	On prend une valeur 
+	#
+	# A voir pour à terme avoir les bouttons afficher sur un calque transparent
+	####################
+
+
+	# En tête Haut
+	topframe = tkinter.Frame(win, height = heightWindow/28, width= widthWindow, background = "grey")
+	# En tête Bas
+	bottomFrame = tkinter.Frame(win, height = heightWindow/18, width= widthWindow, background = "grey")
+
+	topframe.pack(expand = "True", side = "top")
+	bottomFrame.pack(expand = "True", side = "bottom")
+
+
+	# Liste de Bouton
+
+	# Button Gauche
+	Button_military = tkinter.Button(bottomFrame, text= "Militaire")
+	Button_gestion = tkinter.Button(bottomFrame, text= "Gestion")
+
+
+	# Button Droit
+
+	# Buton pour quitter(A remplacer par un listbutton)
+	# Exit, Option, Load, Sauvegarder
+	Button_exit = tkinter.Button(bottomFrame, command = exit, text = "Quitter")
+	# Button pour acceder à la vue générale
+	Button_globalview = tkinter.Button(bottomFrame, text = "Vue Générale")
+
+
+	# On pack les Button
+	Button_gestion.pack(side="left")
+	Button_military.pack(side="left")
+	Button_exit.pack(side="right")
+	Button_globalview.pack(side="right")
+
+#########################################################################
+
 
 
 ######################### Fonction Secondaire ############################
@@ -191,34 +356,25 @@ def tuile(nb):
 	#	yellow, plain
 	#	green, forest
 	#	grey, mountain
-	#
-	# 3eme Version doit lier la valeur d'une case à une texture
-	# 4ieme version doit lier la valeur d'une tuile à une case d'un type de texture qui en compte un ensemble ex: plaine possède plaine1.txt, plaine2.txt, plaine3.txt
-	#	-> return random.rand(len(objectfolder)) 
 	####################
 	if(nb <= -0.25):
-		#data.loadtexture("/asset/terrain/mountains_inner.png",20)
 		return ("grey", "mountains")
 	elif(nb>-0.25 and nb <=0):
-		#data.loadtexture("/asset/terrain/conifer_forest_inner.png",20)
 		return ("green", "forest")
 	elif(nb>0 and nb <= 0.25):
-		#data.loadtexture("/asset/terrain/plains.png",20)
 		return ("yellow", "plains")
 	else:
-		#data.loadtexture("/asset/terrain/ocean/ocean_inner.png",20)
 		return ("blue", "ocean")
 
 
 
 def typetoimg(type, sizetuile):
 	####################
-	# Fonction qui va renvoyer une image selon le type envoyer en entréer
+	# Fonction qui va renvoyer une image selon le type envoyer en entré
 	# l'image est resize à la taille d'une tuile
 	####################
 
 	img = ""
-	print(type)
 
 	if type == "mountains":
 		#print("mountain")
@@ -234,7 +390,32 @@ def typetoimg(type, sizetuile):
 		img = data.loadtexture("/asset/terrain/ocean/ocean_inner.png", sizetuile)
 	return img
 
-def moveviewz(event):
+
+def typetoimgdico(dico_file, type, sizetuile):
+	####################
+	# Fonction qui va renvoyer une image selon le type envoyer en entré et le dico
+	# l'image est resize à la taille d'une tuile
+	####################
+
+	img = ""
+
+	if type == "mountains":
+		#print("mountain")
+		img = data.loadtexturefromdico(dico_file, "mountains_inner.png", type, sizetuile)[1]
+	elif type == "forest":
+		#print("forest")
+		img = data.loadtexturefromdico(dico_file, "conifer_forest_inner.png", type, sizetuile)[1]
+	elif type == "plains":
+		#print("plains")
+		img = data.loadtexturefromdico(dico_file, "plains.png", type, sizetuile)[1]
+	elif type == "ocean":
+		#print("ocean")
+		img = data.loadtexturefromdico(dico_file, "ocean_inner.png", type, sizetuile)[1]
+	return img
+
+
+def moveviewz(event, lframe):
+	global atlas
 	####################
 	# Fonction pour zoomer/dézoomer
 	# En utilisant la molette de la souris
@@ -273,42 +454,63 @@ def moveviewz(event):
 	# À l'avenir changer la valeur minimum par une valeur calculer a partir de la taille de la carte
 
 	####################
+	f = 0
+	m = 0
+	o = 0
+	p = 0
 	#Zoom
 	if (x<320) and (delta == 2):
 		event.widget.scale("tuile", x0, y0, delta, delta)
-		event.widget.scale("img", x0, y0, delta, delta)
-		tp = event.widget.coords(1)
-		newsize = tp[2] - tp[0]
-		print(x0,y0, delta, newsize)
-		#Tuile graphique:
-		for ele in event.widget.find_withtag("img"):
-			print(ele, event.widget.gettags(ele))
-			#On créer une nouvelle version de l'image qui va remplacer l'ancienne
-			img = typetoimg(event.widget.gettags(ele)[1], int(newsize))
-			#Garde en mémoire l'image
-			label = tkinter.Label(image = img)
-			label.image = img
-			event.widget.itemconfigure(ele,image = img)
-
-
 	#Dezoom
 	elif(x>5) and (delta == -2):
 		#On rend positive le delta sinon il inverse le sens de la carte
 		event.widget.scale("tuile", x0, y0, 1/(-delta), 1/(-delta))
-		event.widget.scale("img", x0, y0, 1/(-delta), 1/(-delta))
-		tp = event.widget.coords(1)
-		newsize = tp[2] - tp[0]
-		print(x0,y0, 1/(-delta), newsize)
-		# Tuile graphique
-		for ele in event.widget.find_withtag("img"):
-			print(ele, event.widget.gettags(ele))
-			#On créer une nouvelle version de l'image qui va remplacer l'ancienne
-			img = typetoimg(event.widget.gettags(ele)[1], int(newsize))
-			#Garde en mémoire l'image
-			label = tkinter.Label(image = img)
-			label.image = img
-			event.widget.itemconfigure(ele,image = img)
+
+
+	#Recalcul des images
+	tp = event.widget.coords(1)
+	newsize = tp[2] - tp[0]
+	#Tuile graphique:
+	for ele in event.widget.find_withtag("img"):
+
+		type = event.widget.gettags(ele)[1]
+		if type == "forest":
+			#Si dans la fonction on n'a pas déjà recalculer la nouvelle image pour le type selectionner
+			if f == 0:
+				#On recréer l'image
+				tk_img = data.loadtexturefromdico(dico_file, "conifer_forest_inner.png", type, int(newsize))
+				# On change modifier le label associer à la texture dans l'atlas
+				atlas = data.changelabelAtlas(atlas, tk_img[0], tk_img[1])				
+				f = 1
+			# On recup le label associer à la texture
+			label = atlas["conifer_forest_inner.png"]
+		elif type == "mountains":
+			if m == 0:
+				tk_img = data.loadtexturefromdico(dico_file, "mountains_inner.png", type, int(newsize))
+				atlas = data.changelabelAtlas(atlas, tk_img[0], tk_img[1])	
+				m = 1
+			label = atlas["mountains_inner.png"]
+		elif type == "ocean":
+			if o == 0:
+				tk_img = data.loadtexturefromdico(dico_file, "ocean_inner.png", type, int(newsize))
+				atlas = data.changelabelAtlas(atlas, tk_img[0], tk_img[1])						
+				o = 1
+			label = atlas["ocean_inner.png"]
+		elif type == "plains":
+			if p == 0:
+				tk_img = data.loadtexturefromdico(dico_file, "plains.png", type, int(newsize))
+				atlas = data.changelabelAtlas(atlas, tk_img[0], tk_img[1])						
+				p = 1
+			label = atlas["plains.png"]
+
+		event.widget.itemconfigure(ele,image = label.image)
+
+
 	####################
+
+
+
+
 
 
 
@@ -321,9 +523,9 @@ def moveviewz(event):
 
 #################### 
 # Ensemble de Fonction pour déplacer la vue en:
-# Maintenant le click gauche de la souris
+# Maintenant le click gauche de la souris √
 # En placant le souris sur une extrémité de la caméra
-# En appyant sur les touches fléchés 
+# En appyant sur les touches fléchés √
 ####################
 
 def moveviewxy(event, deltax, deltay):
@@ -364,25 +566,92 @@ def moveviewmouse(event):
 	event.widget.scan_dragto(event.x, event.y, gain = 1)
 
 
+######################### Autre Fonction #########################
+
+def highlightCase(event):
+	####################
+	# Fonction qui ilumine la case sur laquelle est présente la souris
+	####################
+
+	#event.widgetitemconfigure()
+	pass
+
+
 def coord(event):
+	print(event.x, event.y)
 	print(event.widget.gettags("current"))
 
 
 ###########################################################################
 
 
+
+
+
+
+######################### Def de Classes #########################
+
+
+
+
+
+
+
+
+
+class ClassOptions:
+	####################
+	# Classe qui va contenir toute les options de paramètre:
+	#	- Definition de la fenêtre
+	#	- Definition de la carte
+	#
+	#
+	# Au lancement du programme il va chercher si le fichier option.ini est bien présent 
+	# Si c'est le cas il va charger les options contenu dedans
+	# Sinon il va charger les options par défauts
+	####################
+
+
+	def __init__(self):
+
+		#Défintion de la fenêtre
+		self.heightWindow = 1200
+		self.widthWindow = 1200
+		# Définition de la carte
+		self.mapx = 100
+		self.mapy = 100
+
+
+	def loadoption():
+		# f = open(option.ini)
+		#
+		#
+		#
+		pass
+
+
+
+
+###########################################################################
+
 ######################### Main #########################
 if __name__ == '__main__':
 	#Init de la fenêtre
 	root = tkinter.Tk()
-	#définition de la taille de la carte
-	mapx = 100
-	mapy = 100
-	pic = genproc.genNoiseMap(10, (random.random()*time()), mapx, mapy)
+	#On créer l'atlas
+	atlas = data.createAtlas()
+
+	#Chargement des Options:
+	option = ClassOptions()
+
+	pic = genproc.genNoiseMap(10, (random.random()*time()), option.mapx, option.mapy)
 	#Chargement en mémoires des images du dico:
 	dico_file = data.assetLoad()
 	
-	mainscreen(1200,1200,root,pic, mapx, mapy)
+
+	# Menu principale
+	mainmenu(option.heightWindow, option.widthWindow, root)
+	#mainscreen(option.heightWindow, option.widthWindow, root, pic, option.mapx, option.mapy)
 
 
 	root.mainloop()

@@ -3,6 +3,13 @@
 
 
 ####################
+# 1 classe Empire:
+#			- Total Ressource
+#			- Total Or
+#			- Total Population
+#			- Noble Assujeti
+#
+#
 # 1 classe générale:
 #			- Nom
 #			- Age
@@ -32,9 +39,24 @@
 #
 ####################
 
+class kingdom(object):
+
+	def __init__(self, arg):
+		nb_ressource = 0
+		nb_or = 0
+		nb_population = 0
+
+
 #Classe générale:
 class Humain(object):
 	"""docstring for ClassName"""
 	def __init__(self, arg):
 		super(ClassName, self).__init__()
 		self.arg = arg
+
+
+
+
+
+
+

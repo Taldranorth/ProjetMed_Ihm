@@ -101,29 +101,29 @@ def assetLoad():
 			if t_folder[-4:] != ".png":
 				#On se balade dans le sous dossier
 				for sub_folder in os.listdir(pf+t_folder):
-					print(sub_folder)
+					#print(sub_folder)
 					if sub_folder != ".DS_Store":
 						#On vérifier que le nom du fichier correspond à l'un des 4 types définies
 						if sub_folder[:9] == "mountains":
-							print(sub_folder[:9])
+							#print(sub_folder[:9])
 							dico_file["mountains"] += [[sub_folder,loadtexturedico(pf+t_folder+"/"+sub_folder)]]
 						elif sub_folder[:5] == "ocean":
-							print(sub_folder[:5])
+							#print(sub_folder[:5])
 							dico_file["ocean"] += [[sub_folder,loadtexturedico(pf+t_folder+"/"+sub_folder)]]
 						elif sub_folder[:6] == "plains":
-							print(sub_folder[:6])
+							#print(sub_folder[:6])
 							dico_file["plains"] += [[sub_folder,loadtexturedico(pf+t_folder+"/"+sub_folder)]]
 						elif sub_folder[8:14] == "forest":
-							print(sub_folder[8:14])
+							#print(sub_folder[8:14])
 							dico_file["forest"] += [[sub_folder,loadtexturedico(pf+t_folder+"/"+sub_folder)]]
 						#Si il n'est rentrée dans aucun des 4 types il rentre dans other
 						else:
-							print(sub_folder)
+							#print(sub_folder)
 							dico_file["other"] += [[sub_folder,loadtexturedico(pf+t_folder+"/"+sub_folder)]]
 
 			#Sinon c'est un fichier que l'on doit charger
 			else:
-				print(t_folder)
+				#print(t_folder)
 				dico_file["other"] += [[t_folder,loadtexturedico(pf+t_folder)]]
 
 	#print("Mountains: ",dico_file["mountains"])
@@ -182,6 +182,11 @@ def loadtexturefromdico(dico_file, filename, type, sizetuile):
 	# Fonction qui va charger une image depuis le dico
 	# l'image est resize à la taille d'une tuile
 	####################
+	# dico_file 	--> Le dico ou on va chercher le fichier
+	# filename 		--> le nom du fichier
+	# type 			--> le type du fichier
+	# sizetuile 	-->
+	####################
 
 	# On cherche l'image dans le dico
 	index = -1
@@ -193,22 +198,66 @@ def loadtexturefromdico(dico_file, filename, type, sizetuile):
 	if index != -1:
 		img = dico_file[type][index][1]
 		img = img.resize((sizetuile,sizetuile), Image.BOX)
-		return [dico_file[type][index][0], ImageTk.PhotoImage(img)]
+		return [filename, ImageTk.PhotoImage(img)]
 
 	# Sinon on renvoit une erreur
 	else:
 		print("erreur fichier non trouvé")
 
 
+######################### Fonction Atlas ############################
+
+def createAtlas():
+	####################
+	# Fonction qui va créer un Atlas
+	# L'atlas est un dico qui sert à stocker:
+	#	le label qui vient contenir la texture
+	#	le nom de la texture contenu dans le label
+	####################
+	atlas = {}
+	return atlas
+
+
+
+def addAtlas(atlas, label, filename):
+	####################
+	# Fonction pour ajouter une nouvelle entréer à l'Atlas
+	####################
+	atlas[filename] = label
+	return atlas
+
+
+
+def checkAtlas(atlas, filename):
+	####################
+	# Fonction pour voir si une texture est présente dans l'atlas
+	####################
+	if filename in atlas.keys():
+		return True
+	else:
+		return False
+
+
+def changelabelAtlas(atlas, filename, img):
+	####################
+	# Fonction pour changer la texture associer à un label
+	####################
+	atlas[filename].configure(image = img)
+	atlas[filename].image = img
+	return atlas
+
+###############################################################################
+
 
 if __name__ == '__main__':
 
 
+	atlas = createAtlas()
 	#### Test Dico ####
 	dico_file = assetLoad()
-	for key in dico_file.keys():
-		print(key,dico_file[key])
-		print("\n")
+	#for key in dico_file.keys():
+	#	print(key,dico_file[key])
+	#	print("\n")
 	####################
 
 
@@ -221,10 +270,14 @@ if __name__ == '__main__':
 	frame.pack()
 	canvas = tkinter.Canvas(frame)
 
-	tk_image = randomloadtexturefromdico(dico_file, "ocean", 100)[1]
+	tk_image = randomloadtexturefromdico(dico_file, "ocean", 100)
+	label = tkinter.Label(image = tk_image[1])
+	label.image = tk_image[1]
+	atlas = addAtlas(atlas,label,tk_image[0])
+
 
 	canvas.pack()
-	canvas.create_image(0, 0, image = tk_image)
+	canvas.create_image(0, 0, image = atlas[tk_image[0]].image)
 	tk_image2 = loadtexturefromdico(dico_file, "plains.png", "plains", 500)[1]
 	canvas.create_image(500, 0, image = tk_image2)
 
