@@ -27,8 +27,8 @@ c_d = os.getcwd()
 #############################################################################
 
 ######################### Objet qui doivent être Enregistrer ################
-#
-#
+# - Les données du Joueur
+# - Les données des Non-Joueurs
 #
 #
 #
@@ -78,16 +78,26 @@ def assetLoad():
 	# Doit voir comment utiliser tkinter pour charger les fichier images
 	#
 	# Amélioration possible:
-	#	transformer Foret en un Sous-dico afin de prendre en compte plusieurs biomes possible de forêts
+	#	- transformer Foret en un Sous-dico afin de prendre en compte plusieurs biomes possible de forêts
 	#
-	#
+	# V2:
+	#	- Catégorie Supplémentaire:
+	#		- Unit
+	#		- Build
+	#		- Event_Image
+	#		- Sound
 	#
 	####################
 	# !!!! Voir Pour le cout en mémoire de la fonction !!!!
 	####################
+	# Si on concidère que le cout en mémoire est trop important on peu remplacer le fichier ouvert par le chemin du fichier
+	# Ex: Oceans: ["Ocean.png", "/Asset/terrain/Ocean/Ocean.png"]
+	#
+	#
+	####################
 
 	#On se place dans le dossier Asset puis dans Terrain
-	pf = c_d+"/Asset/terrain/"
+	pf = c_d+"/Asset/texture/terrain/"
 	#print(pf)
 	#print(len(os.listdir()))
 	# On créer le Dico que l'on va renvoyer:
@@ -185,7 +195,7 @@ def loadtexturefromdico(dico_file, filename, type, sizetuile):
 	# dico_file 	--> Le dico ou on va chercher le fichier
 	# filename 		--> le nom du fichier
 	# type 			--> le type du fichier
-	# sizetuile 	-->
+	# sizetuile 	--> la taille voulu
 	####################
 
 	# On cherche l'image dans le dico
@@ -267,19 +277,29 @@ if __name__ == '__main__':
 	root = tkinter.Tk()
 	tp = tkinter.Toplevel(root)
 	frame = tkinter.Frame(tp)
-	frame.pack()
+	frame.pack(expand = "True", fill = "both")
 	canvas = tkinter.Canvas(frame)
 
-	tk_image = randomloadtexturefromdico(dico_file, "ocean", 100)
+	tk_image = randomloadtexturefromdico(dico_file, "forest", 200)
 	label = tkinter.Label(image = tk_image[1])
 	label.image = tk_image[1]
 	atlas = addAtlas(atlas,label,tk_image[0])
 
 
-	canvas.pack()
+	canvas.pack(expand = "True", fill = "both")
+	tk_image2 = loadtexturefromdico(dico_file, "plains.png", "plains", 200)[1]
+	canvas.create_image(0, 0, image = tk_image2)
 	canvas.create_image(0, 0, image = atlas[tk_image[0]].image)
-	tk_image2 = loadtexturefromdico(dico_file, "plains.png", "plains", 500)[1]
-	canvas.create_image(500, 0, image = tk_image2)
+
+	canvas.create_image(200, 0, image = tk_image2)
+	canvas.create_image(200, 0, image = atlas[tk_image[0]].image)
+
+	canvas.create_image(400, 0, image = tk_image2)
+	canvas.create_image(400, 0, image = atlas[tk_image[0]].image)
+
+
+	canvas.create_image(600, 0, image = tk_image2)
+	canvas.create_image(800, 0, image = atlas[tk_image[0]].image)
 
 	root.mainloop()
 

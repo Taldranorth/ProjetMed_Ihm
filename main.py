@@ -70,6 +70,11 @@ from time import time
 #	- Réduire le lag lors de l'observation d'un grand groupe de cases
 #		--> Utilisation du processeurs importante
 #	- Corriger le décalage avec l'écran arrière
+#		!!!
+#		--> Le problème vient du calcul de la variable newtp dans moveviewz , doit améliorer le calcul
+#			--> Après implémenter une version qui n'utilise pas la map carre
+#		!!!
+#
 #	- Refactoriser le Code
 #		--> Le Nettoyer
 #		--> Retirer les Commentaires Inutiles		
@@ -77,7 +82,8 @@ from time import time
 #	- !!!! Commencer a s'entrainer avec les CLasses !!!!
 #		--> Transformer Atlas en classe
 #
-#
+#	- !!! Voir pour ajouter la taille de la texture resize à l'atlas !!!
+#	- Prendre en compte linux dans la fonction moveviewz
 #
 #	Additif:
 #	- Déplacement en mettant la souris sur la bordure extérieur de la carte
@@ -93,7 +99,27 @@ from time import time
 #	- Sauvegarde des données
 #	- Ajouter du Son
 #		--> https://stackoverflow.com/questions/28795859/how-can-i-play-a-sound-when-a-tkinter-button-is-pushed
-
+#
+#	- Ajouter de l'animation
+#		--> https://stackoverflow.com/questions/53418926/button-motion-animation-in-tkinter
+#			--> Semble très gourmand
+#				--> Trouver une solution plus performante
+#
+#	- Doit changer la carte pour remplacer l'utilisation des tags par des classes pour la tuile
+#		--> Doit changer tout ce qui utiliser les tags
+#		--> Vérifier le cout en perf et garder l'ancien système dans un coin au cas ou
+#
+#
+#	- Centrer la fenêtre du Menu principale
+#		--> Ajouter un Fond d'écran un peu joli
+#			--> Ajouter un Peu d'anim
+#
+#
+#	- Ajouter un systeme de randomisation des texture
+#		--> SI la texture tirer n'est pas une texture de base mais une "Incomplète" charger en dessous une texture
+#
+#
+#
 
 #########################
 #
@@ -185,7 +211,9 @@ def createmap(heightWindow, widthWindow, pic, frame, mapx, mapy, sizetuile, dico
 
 			# On utilise la valeur de la case pour définir la tuile que l'on va créer
 			tl = tuile(pic[x][y])
-			mapcanv.create_rectangle((x*sizetuile), (y*sizetuile), (x*sizetuile)+sizetuile, (y*sizetuile)+sizetuile, fill = tl[0], tags = ["click","tuile",x,y,pic[x][y], tl[1]], outline='black')
+
+			# Création de la carte avec Rectangle
+			#mapcanv.create_rectangle((x*sizetuile), (y*sizetuile), (x*sizetuile)+sizetuile, (y*sizetuile)+sizetuile, fill = tl[0], tags = ["click","tuile",x,y,pic[x][y], tl[1]], outline='black')
 			
 			##### Version Non-Aléatoire  #####
 			#tk_img = typetoimg(tl[1], sizetuile)
@@ -378,16 +406,16 @@ def typetoimg(type, sizetuile):
 
 	if type == "mountains":
 		#print("mountain")
-		img = data.loadtexture("/asset/terrain/mountains/mountains_inner.png", sizetuile)
+		img = data.loadtexture("/asset/texture/terrain/mountains/mountains_inner.png", sizetuile)
 	elif type == "forest":
 		#print("forest")
-		img = data.loadtexture("/asset/terrain/conifer_forest/conifer_forest_inner.png", sizetuile)
+		img = data.loadtexture("/asset/texture/terrain/conifer_forest/conifer_forest_inner.png", sizetuile)
 	elif type == "plains":
 		#print("plains")
-		img = data.loadtexture("/asset/terrain/plains/plains.png", sizetuile)
+		img = data.loadtexture("/asset/texture/terrain/plains/plains.png", sizetuile)
 	elif type == "ocean":
 		#print("ocean")
-		img = data.loadtexture("/asset/terrain/ocean/ocean_inner.png", sizetuile)
+		img = data.loadtexture("/asset/texture/terrain/ocean/ocean_inner.png", sizetuile)
 	return img
 
 
@@ -443,10 +471,21 @@ def moveviewz(event, lframe):
 		delta = 2
 	#On prend pour valeur min de la taille d'une tuile 5
 	#On vérifier que la taile d'une tuile soit supérieur à 5
+
+
+	####################################### Doit Changer ###############################################
 	#Pour calculer on utiliser seulement les coord x du premier carré du canvas qui doit être forcement à l'index 1
-	#print(event.widget.coords(1))
-	x = (event.widget.coords(1)[2] - event.widget.coords(1)[0])
-	#print(x, event.delta, delta)
+	print("event.widget.coords(1): ", event.widget.coords(1))
+	# Carte avec Rectangle
+	# On utilise x1 et x0 pour obtenir la taille actuelle d'1 tuile de la carte
+	#x = (event.widget.coords(1)[2] - event.widget.coords(1)[0])
+	# Carte avec texture
+	#
+	x = (event.widget.coords(1)[1] - event.widget.coords(1)[0])
+	print("x, event.delta, delta: ",x, event.delta, delta)
+	####################################################################################################
+
+
 
 	# Doit trouver les valeurs parfaite max et min
 	# Zoom = max = x = 320
@@ -460,20 +499,34 @@ def moveviewz(event, lframe):
 	p = 0
 	#Zoom
 	if (x<320) and (delta == 2):
+		print("Zoom")
 		event.widget.scale("tuile", x0, y0, delta, delta)
 	#Dezoom
 	elif(x>5) and (delta == -2):
+		print("DeZoom")
 		#On rend positive le delta sinon il inverse le sens de la carte
 		event.widget.scale("tuile", x0, y0, 1/(-delta), 1/(-delta))
 
 
 	#Recalcul des images
+
+
+
+	############################# Doit Changer ###############################
 	tp = event.widget.coords(1)
-	newsize = tp[2] - tp[0]
+	# Carte avec Rectangle
+	#newsize = tp[2] - tp[0]
+	# Carte Sans Rectangle
+	newsize = tp[1] - tp[0]
+	print("newsize : ", newsize)
+	##########################################################################
+
 	#Tuile graphique:
 	for ele in event.widget.find_withtag("img"):
 
 		type = event.widget.gettags(ele)[1]
+		# Version Non-random ou on utilise les texture de bases:
+		# Quand la classe des tuile sera implémenter utiliser le nom de la texture 
 		if type == "forest":
 			#Si dans la fonction on n'a pas déjà recalculer la nouvelle image pour le type selectionner
 			if f == 0:
@@ -504,6 +557,7 @@ def moveviewz(event, lframe):
 			label = atlas["plains.png"]
 
 		event.widget.itemconfigure(ele,image = label.image)
+	print("Atlas: ", atlas)
 
 
 	####################
@@ -592,7 +646,32 @@ def coord(event):
 ######################### Def de Classes #########################
 
 
+class Classtuiles:
+	####################
+	# Classe qui va contenir toute les données liée à une tuile:
+	#
+	#	- N° de la tuile
+	#	- Propriétaire de la tuile:
+	#		--> Un seigneur ou personne(nature)
+	#		--> Quand la tuile est créer personne ne possède la tuile
+	#	- Ressource présente
+	#	- Ressource particulière
+	#		--> Optionnelle, pour après que le projet soit terminer
+	#	- Bonus/Malus
+	#	- texture file associé
+	#			--> On sépare le texture file du texture
+	#				--> texture_name = le nom du fichier
+	#				--> texture = le fichier charger est resize
+	####################
 
+	def __init__(self, texture_name, x, y):
+		# N° de la tuile
+		self.x = x
+		self.y = y
+		# nom du fichier texture associé
+		self.texture_name = texture_name
+		# nom du propriétaire de la tuile
+		self.possesor = "wild"
 
 
 
@@ -623,7 +702,7 @@ class ClassOptions:
 
 
 	def loadoption():
-		# f = open(option.ini)
+		# f = open(Config.ini)
 		#
 		#
 		#
@@ -651,6 +730,7 @@ if __name__ == '__main__':
 
 	# Menu principale
 	mainmenu(option.heightWindow, option.widthWindow, root)
+	# Si on veut tester rapidement la boucle de jeu sans passer par le menu principale
 	#mainscreen(option.heightWindow, option.widthWindow, root, pic, option.mapx, option.mapy)
 
 
