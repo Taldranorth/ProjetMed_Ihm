@@ -47,6 +47,42 @@ def genNoiseMap(octaves, seed, mapx, mapy):
 
 
 
+######################### Fonction Gen Détail #########################
+#
+# Comment Gérer cela ? À qu'elle étape ?
+#       - En utilisant la Noise map ?
+#       - Après avoir utiliser la map du Canvas ?
+#
+#
+#
+
+
+def genVillage():
+
+    ####################
+    # Fonction pour Gen les villages
+    # Condition pour Gen un Village:
+    #
+    #       - Pas de village dans un rayon de 4 cases
+    #       - 1 village par Dirigeant
+    #       - 3-4 village "neutre"
+    #       - Seulement sur des Plaines
+    ####################
+
+
+    pass
+
+
+
+
+#######################################################################
+
+
+
+
+
+
+
 if __name__ == '__main__':
     pic = genNoiseMap(10, (random.random()*time()), 250, 250)
     plt.imshow(pic, cmap='gray')

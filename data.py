@@ -3,6 +3,8 @@ import tkinter
 from PIL import ImageTk, Image, ImageShow
 import random
 
+import gameClass
+
 
 ######################### On recup le dossier locale dans une variable	#########################
 import os
@@ -27,6 +29,7 @@ c_d = os.getcwd()
 #############################################################################
 
 ######################### Objet qui doivent être Enregistrer ################
+# - Le Nb de tour
 # - Les données du Joueur
 # - Les données des Non-Joueurs
 #
@@ -51,6 +54,93 @@ c_d = os.getcwd()
 
 
 
+###########################################################################
+
+######################### Def de Classes #########################
+
+
+####################
+#
+#
+#
+#
+#
+####################
+class ClassGameData:
+
+	####################
+	# Classe qui va contenir toute les données de la partie:
+	# 	- Nb tour
+	#	- Nb lord
+	#	- Taille d'une tuile
+	#	- liste de lord
+	#		--> type de l'objet: class
+	# 
+	#	- liste des tuiles
+	#
+	#
+	#	À l'initialisation de la game on créer une instance de la classe qui va contenir les données suivante:
+	#		Nb_tour = 0
+	#		Nb_lord = 3
+	#		
+	#
+	# 
+	####################
+
+	def __init__(self):
+		#self.Nb_tour = tkinter.IntVar()
+		#self.Nb_tour.set(0)
+		self.Nb_tour = 0
+		self.Nb_lord = 3
+		self.tuilesize = 20
+
+		player = gameClass.lord("test")
+		self.list_lord = [player]
+
+		self.list_tuile = []
+
+	#tuile: Classtuiles
+	def addtuile(self, tuile):
+		self.list_tuile += [tuile]
+
+	# Fonction pour changer la taille de la tuile
+	def newsizetuile(self, size: int):
+		self.tuilesize = size
+
+
+
+
+class ClassOptions:
+	####################
+	# Classe qui va contenir toute les options de paramètre:
+	#	- Definition de la fenêtre
+	#	- Definition de la carte
+	#
+	#
+	# Au lancement du programme il va chercher si le fichier option.ini est bien présent 
+	# Si c'est le cas il va charger les options contenu dedans
+	# Sinon il va charger les options par défauts
+	####################
+
+
+	def __init__(self):
+
+		#Défintion de la fenêtre
+		self.heightWindow = 1200
+		self.widthWindow = 1200
+		# Définition de la carte
+		self.mapx = 100
+		self.mapy = 100
+
+
+	def loadoption():
+		# f = open(Config.ini)
+		#
+		#
+		#
+		pass
+
+###########################################################################
 
 
 

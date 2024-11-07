@@ -2,6 +2,7 @@ import tkinter
 import genproc
 import random
 import data
+import interface
 from time import time
 
 #Doit terminé de faire un Prototype:
@@ -64,6 +65,10 @@ from time import time
 
 # J'ai terminé de refactoriser l'utilisation du dico
 
+
+
+
+
 # Objectif:
 #	Correctif:
 #	- Faire la doc de ce qui a était fait
@@ -71,13 +76,14 @@ from time import time
 #		--> Utilisation du processeurs importante
 #	- Corriger le décalage avec l'écran arrière
 #		!!!
+#		--> Le problème vient du fait que les texture soit du int tandis que les carrés sont des float
 #		--> Le problème vient du calcul de la variable newtp dans moveviewz , doit améliorer le calcul
 #			--> Après implémenter une version qui n'utilise pas la map carre
 #		!!!
 #
 #	- Refactoriser le Code
 #		--> Le Nettoyer
-#		--> Retirer les Commentaires Inutiles		
+#		--> Retirer les Commentaires Inutiles
 #		--> Prévoir l'ajout de future Tuiles
 #	- !!!! Commencer a s'entrainer avec les CLasses !!!!
 #		--> Transformer Atlas en classe
@@ -109,15 +115,26 @@ from time import time
 #		--> Doit changer tout ce qui utiliser les tags
 #		--> Vérifier le cout en perf et garder l'ancien système dans un coin au cas ou
 #
+#	- Changer tout les EXIT pour ajouter une fenêtre de confirmation
+#		--> Rappel de la derniière sauvegarde si >1 minute
+#
+#	Partie Graphique:
 #
 #	- Centrer la fenêtre du Menu principale
 #		--> Ajouter un Fond d'écran un peu joli
 #			--> Ajouter un Peu d'anim
 #
-#
 #	- Ajouter un systeme de randomisation des texture
 #		--> SI la texture tirer n'est pas une texture de base mais une "Incomplète" charger en dessous une texture
 #
+#	- Changer la police d'écriture
+#		--> font = "Police"
+#
+#	- Changer la souris
+#		--> root.config(cursor="") 
+#		--> https://stackoverflow.com/questions/66203294/how-to-add-custom-image-to-cursor-when-hovered-over-python-tkinter-window
+#
+#	- Voir qu'elle style graphique de Jeu viser
 #
 #
 
@@ -132,10 +149,6 @@ from time import time
 #
 #
 #########################
-
-
-
-
 
 
 
@@ -152,10 +165,10 @@ def mainmenu(heightWindow, widthWindow, root):
 	# Mise en Place des Menus
 
 	# Button Play
-	Button_mainm_Play = tkinter.Button( fmainm, text = "Jouer")
+	Button_mainm_Play = tkinter.Button(fmainm, text = "Jouer")
 
 	# Button Quickplay
-	Button_mainm_QuickPlay = tkinter.Button( fmainm, command = lambda: mainscreen(heightWindow, widthWindow,root,pic, option.mapx, option.mapy), text = "Partie Rapide")
+	Button_mainm_QuickPlay = tkinter.Button(fmainm, command = lambda: initgame(mainmenuwin, heightWindow, widthWindow, root), text = "Partie Rapide")
 	#mainmenuwin.destroy()
 
 	# Button Load
@@ -175,28 +188,112 @@ def mainmenu(heightWindow, widthWindow, root):
 	Button_mainm_exit.pack()
 
 
+###########################################################################
+
+
+
+######################### Menu Option #########################
+
+###############
+# Fonction appeler pour afficher le menu des Options 
+# On l'affiche par dessus le menu Principale
+#
+# Ce menu va servir à configurer les paramètre globaux de l'application ainsi que les touches, voir à afficher les Combinaisons de touches
+###############
+
+
+
+
+def optionmenu():
+
+	pass
+
 
 ###########################################################################
 
+
+######################### Menu Jouer #########################
+
+def playmenu():
+
+	pass
+
+###########################################################################
+
+
+
+
+######################### Menu Vue Globale #########################
+
+
+
+
+
+def globalviewmenu():
+
+	pass
+
+###########################################################################
+
+
+
+
+
+
+######################### Initiation de la partie #########################
+
+##########
+#
+# Appeler par Quickplay ou Play depuis le Menu Principale
+#
+# On initialise le Gamedata:
+#	Tour 1:
+#		- Chaque Seigneur Possède 10 de Ressource et 10 d'argent
+#
+#
+#
+# Doit détruire le MenuPrincipale
+#
+##########
+
+
+
+
+
+
+def initgame(mainmenuwin, heightWindow, widthWindow, root):
+
+
+	# On lance la création de la game
+	mainscreen(heightWindow, widthWindow, root,pic, option.mapx, option.mapy, gamedata)
+
+	# Une fois l'initialisation lancé on détruit le menu principale
+	mainmenuwin.destroy()
+
+###########################################################################
+
+
+
+
 ######################### Écran de Jeu #########################
-def mainscreen(heightWindow, widthWindow, root, pic, mapx, mapy):
+def mainscreen(heightWindow, widthWindow, root, pic, mapx, mapy, gamedata):
 
 	# Création de la fenêtre
 	win1 = tkinter.Toplevel(root, height = heightWindow, width= widthWindow)
 
-	interface(win1,heightWindow, widthWindow)
+	interface.gameinterface(win1,heightWindow, widthWindow, gamedata)
 
 	# Frame Map
 	fcanvas = tkinter.Frame(win1)
 	fcanvas.pack(expand="True", fill="both")
 
-	createmap(heightWindow, widthWindow, pic, fcanvas, mapx, mapy, 20,dico_file)
+	createmap(heightWindow, widthWindow, pic, fcanvas, mapx, mapy, 20, dico_file, gamedata)
 ####################################################################################################
 
 
 
 ######################### Gestion de la Carte #######################################################
-def createmap(heightWindow, widthWindow, pic, frame, mapx, mapy, sizetuile, dico_file):
+def createmap(heightWindow, widthWindow, pic, frame, mapx, mapy, sizetuile, dico_file, gamedata):
 	global atlas
 	#Si heigthWindow/1.5 le boutton quitter disparait
 	mapcanv = tkinter.Canvas(frame,height = ((heightWindow)/1.6), width = widthWindow)
@@ -244,7 +341,7 @@ def createmap(heightWindow, widthWindow, pic, frame, mapx, mapy, sizetuile, dico
 					atlas = data.addAtlas(atlas, label, tk_img[0])
 				else:
 					label = atlas["mountains_inner.png"]
-
+				texture_name = "mountains_inner.png"
 			elif tl[1] == "forest":
 				if data.checkAtlas(atlas, "conifer_forest_inner.png") == False:
 					tk_img = data.loadtexturefromdico(dico_file, "conifer_forest_inner.png", tl[1], sizetuile)
@@ -253,7 +350,7 @@ def createmap(heightWindow, widthWindow, pic, frame, mapx, mapy, sizetuile, dico
 					atlas = data.addAtlas(atlas, label, tk_img[0])
 				else:
 					label = atlas["conifer_forest_inner.png"]
-
+				texture_name = "conifer_forest_inner.png"
 			elif tl[1] == "plains":
 				if data.checkAtlas(atlas, "plains.png") == False:
 					tk_img = data.loadtexturefromdico(dico_file, "plains.png", tl[1], sizetuile)
@@ -262,7 +359,7 @@ def createmap(heightWindow, widthWindow, pic, frame, mapx, mapy, sizetuile, dico
 					atlas = data.addAtlas(atlas, label, tk_img[0])
 				else:
 					label = atlas["plains.png"]
-
+				texture_name = "plains.png"
 			elif tl[1] == "ocean":
 				if data.checkAtlas(atlas, "ocean_inner.png") == False:
 					tk_img = data.loadtexturefromdico(dico_file, "ocean_inner.png", tl[1], sizetuile)
@@ -271,6 +368,7 @@ def createmap(heightWindow, widthWindow, pic, frame, mapx, mapy, sizetuile, dico
 					atlas = data.addAtlas(atlas, label, tk_img[0])
 				else:
 					label = atlas["ocean_inner.png"]
+				texture_name = "ocean_inner.png"
 			
 			################################
 
@@ -284,11 +382,16 @@ def createmap(heightWindow, widthWindow, pic, frame, mapx, mapy, sizetuile, dico
 			#label = tkinter.Label(lframe,image = tk_img)
 			#label.image = tk_img
 			#########################################
-			mapcanv.create_image((x*sizetuile), (y*sizetuile), image = label.image, tags = ["img",tl[1],"tuile","click", x, y, pic[x][y]])
+			mcanvt = mapcanv.create_image((x*sizetuile), (y*sizetuile), image = label.image, tags = ["img",tl[1],"tuile","click", x, y, pic[x][y]])
+
+			# On créer une nouvelle instance de la classe tuiles
+			instancetuile = Classtuiles(atlas, tl[1], x, y, mcanvt)
+			# On le stocker dans la liste de tuile
+			gamedata.list_tuile += [instancetuile]
 
 	#print("taille atlas: ",len(atlas))
 	#On lie Command+molette aux zoom/dézoom
-	mapcanv.bind("<MouseWheel>", lambda event, lf=lframe :moveviewz(event, lf))
+	mapcanv.bind("<MouseWheel>", lambda event, lf=lframe , gd = gamedata:moveviewz(event, lf, gd))
 
 	#On focus sur le widget sinon il ne prendra pas en compte les entrées des touches fléchés
 	mapcanv.focus_set()
@@ -307,72 +410,10 @@ def createmap(heightWindow, widthWindow, pic, frame, mapx, mapy, sizetuile, dico
 	#ON lie les différentes Cases à l'action click
 	mapcanv.tag_bind("click", "<Button-1>", coord)
 
+	#print(gamedata.list_tuile)
 	mapcanv.pack(expand ="True", fill = "y")
 
 ####################################################################################################
-
-######################### Fonction Interface ############################
-
-def interface(win,heightWindow, widthWindow):
-
-	####################
-	# Fonction qui met en place l'interface en Jeu, voir l'entête
-	# HeightWindow et widthWindow sont la taille de la fenêtre de jeu
-	# 
-	# Actuellement l'interface est défini à l'extérieur
-	#
-	#
-	# ------------------
-	#	en tête haut
-	# ------------------
-	# |				   |
-	# |		Canvas	   |
-	# |				   |
-	# ------------------
-	#	en tête bas
-	# ------------------
-	# A voir pour a terme Ne pas placer à l'extérieur l'interface, avoir un effet de profondeur
-	#
-	# l'interface doit prendre une taille suffisante mais pas trop grosse
-	#	On prend une valeur 
-	#
-	# A voir pour à terme avoir les bouttons afficher sur un calque transparent
-	####################
-
-
-	# En tête Haut
-	topframe = tkinter.Frame(win, height = heightWindow/28, width= widthWindow, background = "grey")
-	# En tête Bas
-	bottomFrame = tkinter.Frame(win, height = heightWindow/18, width= widthWindow, background = "grey")
-
-	topframe.pack(expand = "True", side = "top")
-	bottomFrame.pack(expand = "True", side = "bottom")
-
-
-	# Liste de Bouton
-
-	# Button Gauche
-	Button_military = tkinter.Button(bottomFrame, text= "Militaire")
-	Button_gestion = tkinter.Button(bottomFrame, text= "Gestion")
-
-
-	# Button Droit
-
-	# Buton pour quitter(A remplacer par un listbutton)
-	# Exit, Option, Load, Sauvegarder
-	Button_exit = tkinter.Button(bottomFrame, command = exit, text = "Quitter")
-	# Button pour acceder à la vue générale
-	Button_globalview = tkinter.Button(bottomFrame, text = "Vue Générale")
-
-
-	# On pack les Button
-	Button_gestion.pack(side="left")
-	Button_military.pack(side="left")
-	Button_exit.pack(side="right")
-	Button_globalview.pack(side="right")
-
-#########################################################################
-
 
 
 ######################### Fonction Secondaire ############################
@@ -442,7 +483,36 @@ def typetoimgdico(dico_file, type, sizetuile):
 	return img
 
 
-def moveviewz(event, lframe):
+
+def previewmap(frame, pic, mapx, mapy):
+	####################
+	# Fonction pour afficher une mini version de la map
+	# Utilser la version carrer de la map
+	####################
+	mcanv = tkinter.Canvas(frame)
+
+	for x in range(mapx):
+		for y in range(mapy):
+			tl = tuile(pic[x][y])[0]
+			mapcanv.create_rectangle((x*0.1), y*0.1, (x*0.1)+0.1, (y*0.1)+0.1, fill=tl, outline='black')
+
+	mcanv.pack(expand = "True",fill="both")
+
+
+	return mcanv
+
+
+
+
+
+
+
+
+
+
+
+
+def moveviewz(event, lframe, gamedata):
 	global atlas
 	####################
 	# Fonction pour zoomer/dézoomer
@@ -458,6 +528,12 @@ def moveviewz(event, lframe):
 	#
 	# 	--- / 3 = - 		== DeZoom car on réduit
 	####################
+	# 1°) On recup le point d'origine du canvas
+	# 2°) On normalise le delta pour prendre en compte les différentes plateformes
+	# 3°) On recup la taille d'une tuile
+	# 4°) On scale 
+	# 5°) On change les texture des tuiles pour la nouvelles tuiles
+	#####################
 
 	#Comprendre le fonctionnement de cela
 	x0 = event.widget.canvasx(event.x)
@@ -472,20 +548,9 @@ def moveviewz(event, lframe):
 	#On prend pour valeur min de la taille d'une tuile 5
 	#On vérifier que la taile d'une tuile soit supérieur à 5
 
-
-	####################################### Doit Changer ###############################################
-	#Pour calculer on utiliser seulement les coord x du premier carré du canvas qui doit être forcement à l'index 1
-	print("event.widget.coords(1): ", event.widget.coords(1))
-	# Carte avec Rectangle
-	# On utilise x1 et x0 pour obtenir la taille actuelle d'1 tuile de la carte
-	#x = (event.widget.coords(1)[2] - event.widget.coords(1)[0])
-	# Carte avec texture
-	#
-	x = (event.widget.coords(1)[1] - event.widget.coords(1)[0])
+	# On recup la taille d'une tuile
+	x = gamedata.tuilesize
 	print("x, event.delta, delta: ",x, event.delta, delta)
-	####################################################################################################
-
-
 
 	# Doit trouver les valeurs parfaite max et min
 	# Zoom = max = x = 320
@@ -501,23 +566,24 @@ def moveviewz(event, lframe):
 	if (x<320) and (delta == 2):
 		print("Zoom")
 		event.widget.scale("tuile", x0, y0, delta, delta)
+		print("x: ", x*delta)
+		x = x*delta
 	#Dezoom
 	elif(x>5) and (delta == -2):
 		print("DeZoom")
 		#On rend positive le delta sinon il inverse le sens de la carte
-		event.widget.scale("tuile", x0, y0, 1/(-delta), 1/(-delta))
-
+		event.widget.scale("tuile", x0, y0, -1/(delta), -1/(delta))
+		print("x: ",x*(-1/(delta)))
+		x = x*(-1/(delta))
+	gamedata.newsizetuile(x)
 
 	#Recalcul des images
-
-
-
 	############################# Doit Changer ###############################
-	tp = event.widget.coords(1)
+	#tp = event.widget.coords(1)
 	# Carte avec Rectangle
 	#newsize = tp[2] - tp[0]
 	# Carte Sans Rectangle
-	newsize = tp[1] - tp[0]
+	newsize = x
 	print("newsize : ", newsize)
 	##########################################################################
 
@@ -557,7 +623,7 @@ def moveviewz(event, lframe):
 			label = atlas["plains.png"]
 
 		event.widget.itemconfigure(ele,image = label.image)
-	print("Atlas: ", atlas)
+	print("taille Atlas: ", len(atlas))
 
 
 	####################
@@ -639,12 +705,27 @@ def coord(event):
 ###########################################################################
 
 
+######################### Tour de Jeu #########################
+
+#################### 
+# Ensemble de Fonction qui vont régir un tour de jeu
+#	Phase d'un Tour de jeu:
+#		- Début du tour du Joueur
+#		- Event
+#		- action - Réaction
+#		-
+#		-
+#		- Fin du tour quand le Joueur clique sur la case fin de tour
+#################### 
 
 
 
+
+
+
+###########################################################################
 
 ######################### Def de Classes #########################
-
 
 class Classtuiles:
 	####################
@@ -662,51 +743,29 @@ class Classtuiles:
 	#			--> On sépare le texture file du texture
 	#				--> texture_name = le nom du fichier
 	#				--> texture = le fichier charger est resize
+	#			--> Selon le type on associe un background
 	####################
 
-	def __init__(self, texture_name, x, y):
+	def __init__(self, texture_name, type, x, y, canvasobject):
 		# N° de la tuile
 		self.x = x
 		self.y = y
+		self.type = type
 		# nom du fichier texture associé
 		self.texture_name = texture_name
+		self.background = "plains.png"
+
+		self.build = ""
+
 		# nom du propriétaire de la tuile
 		self.possesor = "wild"
 
+		# Objet du canvas associer
+		self.canvastuiles = canvasobject
 
 
 
 
-
-class ClassOptions:
-	####################
-	# Classe qui va contenir toute les options de paramètre:
-	#	- Definition de la fenêtre
-	#	- Definition de la carte
-	#
-	#
-	# Au lancement du programme il va chercher si le fichier option.ini est bien présent 
-	# Si c'est le cas il va charger les options contenu dedans
-	# Sinon il va charger les options par défauts
-	####################
-
-
-	def __init__(self):
-
-		#Défintion de la fenêtre
-		self.heightWindow = 1200
-		self.widthWindow = 1200
-		# Définition de la carte
-		self.mapx = 100
-		self.mapy = 100
-
-
-	def loadoption():
-		# f = open(Config.ini)
-		#
-		#
-		#
-		pass
 
 
 
@@ -720,8 +779,11 @@ if __name__ == '__main__':
 	#On créer l'atlas
 	atlas = data.createAtlas()
 
-	#Chargement des Options:
-	option = ClassOptions()
+	# Chargement des Options:
+	option = data.ClassOptions()
+	# Initialisation de GameData
+	gamedata = data.ClassGameData()
+
 
 	pic = genproc.genNoiseMap(10, (random.random()*time()), option.mapx, option.mapy)
 	#Chargement en mémoires des images du dico:
