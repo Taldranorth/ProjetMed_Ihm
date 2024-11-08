@@ -32,7 +32,7 @@ c_d = os.getcwd()
 # - Le Nb de tour
 # - Les données du Joueur
 # - Les données des Non-Joueurs
-#
+# - La Seed
 #
 #
 #
@@ -41,7 +41,7 @@ c_d = os.getcwd()
 
 ################## Objet qui ne doivent pas être Enregistrer ################
 # - les Images
-#
+# - Pic, la noise map obtenue à partir de genNoisemap
 #
 #
 #
@@ -78,6 +78,11 @@ class ClassGameData:
 	# 
 	#	- liste des tuiles
 	#
+	#	- Le seed de la carte
+	#
+	#	2 état:
+	#		- Avant initialisation de la game
+	#		- Après initialisation de la game
 	#
 	#	À l'initialisation de la game on créer une instance de la classe qui va contenir les données suivante:
 	#		Nb_tour = 0
@@ -94,8 +99,13 @@ class ClassGameData:
 		self.Nb_lord = 3
 		self.tuilesize = 20
 
-		player = gameClass.lord("test")
+
+		player = gameClass.Classlord("test", True)
 		self.list_lord = [player]
+
+		#Seed générer au lancement de l'appli
+		#self.Seed = graine
+
 
 		self.list_tuile = []
 
@@ -132,9 +142,12 @@ class ClassOptions:
 		self.mapx = 100
 		self.mapy = 100
 
+		# Octaves utilisés pour la gen de la carte
+		self.octaves = 10
+
 
 	def loadoption():
-		# f = open(Config.ini)
+		# f = open("user/Config.ini")
 		#
 		#
 		#
@@ -191,7 +204,7 @@ def assetLoad():
 	#print(pf)
 	#print(len(os.listdir()))
 	# On créer le Dico que l'on va renvoyer:
-	dico_file = {"mountains": [],"ocean": [],"plains": [],"forest": [],"other": []}
+	dico_file = {"mountains": [],"ocean": [],"plains": [],"forest": [],"build":[],"event":[],"other": []}
 
 	#On se balade dans le dossier
 	for t_folder in os.listdir(pf):
@@ -216,6 +229,8 @@ def assetLoad():
 						elif sub_folder[8:14] == "forest":
 							#print(sub_folder[8:14])
 							dico_file["forest"] += [[sub_folder,loadtexturedico(pf+t_folder+"/"+sub_folder)]]
+						elif t_folder == "build":
+							dico_file["build"] += [[sub_folder, loadtexturedico(pf+t_folder+"/"+sub_folder)]]
 						#Si il n'est rentrée dans aucun des 4 types il rentre dans other
 						else:
 							#print(sub_folder)
@@ -359,6 +374,7 @@ if __name__ == '__main__':
 	#	print(key,dico_file[key])
 	#	print("\n")
 	####################
+	print(dico_file["build"])
 
 
 

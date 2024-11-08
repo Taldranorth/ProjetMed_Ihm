@@ -47,6 +47,9 @@ import tkinter
 #
 ####################
 
+
+
+
 class kingdom(object):
 	def __init__(self):
 		pass
@@ -54,39 +57,53 @@ class kingdom(object):
 
 class village(object):
 
-	def __init__(self):
-		pass
+	def __init__(self,x,y):
+		self.x = x
+		self.y = y
 
-	pass
+		self.population = []
+		self.priest
+		self.lord
+
+	#pop: Classhuman	
+	def addpopulation(self, pop):
+		self.population += [pop]
+
+	#lord: Classlord
+	def definelord(self, lord):
+		self.lord = lord
+
+	#priest: Classpriest
+	def definepriest(self, priest):
+		self.priest = priest
 
 
 
 
-class lord(object):
+class Classlord(object):
 
-	def __init__(self, lordname: str):
+	def __init__(self, lordname: str, player: bool):
 
 		self.nb_ressource = 10
-		#self.nb_ressource = tkinter.IntVar()
-		#self.nb_ressource.set(10)
-
+		
 		self.nb_money = 10
-		#self.nb_money = tkinter.IntVar()
-		#self.nb_money.set(10)
 
 		self.nb_population = 0
-		#self.nb_population = tkinter.IntVar()
-		#self.nb_population.set(10)
 
 		self.global_joy = 0
-		#self.global_joy = tkinter.IntVar()
-		#self.global_joy.set(10)
 
 		self.name = lordname
+		self.player = player
+
+		self.vassal = []
+
+
+	def addvassal(self, vassal):
+		self.vassal += [vassal]
 
 
 #Classe générale:
-class Humain(object):
+class ClassHuman(object):
 	"""docstring for ClassName"""
 	def __init__(self, arg):
 		super(ClassName, self).__init__()

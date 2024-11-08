@@ -135,8 +135,21 @@ from time import time
 #		--> https://stackoverflow.com/questions/66203294/how-to-add-custom-image-to-cursor-when-hovered-over-python-tkinter-window
 #
 #	- Voir qu'elle style graphique de Jeu viser
+
+
+#
+# Système d'état qui serait utiliser pour trigger des fonctions liéer à l'affichage, exemple affichage des territoires ennemies --> 
 #
 #
+
+# !!!!!!
+# Différence position entre map texture et map carré causer par le fait que la map texture utilise les coordonnées donnés comme point centrale et non point en haut à gauche
+# !!!!!!
+
+# !!!!!!
+# Faire des fonctions de recherche optimiser
+#		--> Cela devrait permettre de réduire l'utilisation de la mémoire
+# !!!!!!
 
 #########################
 #
@@ -159,17 +172,18 @@ def mainmenu(heightWindow, widthWindow, root):
 	mainmenuwin = tkinter.Toplevel(root, height = heightWindow, width = widthWindow)
 
 	# Création de la frame
-	fmainm = tkinter.Frame(mainmenuwin)
+	fmainm = tkinter.Frame(mainmenuwin, height = heightWindow, width = widthWindow)
 	fmainm.pack(expand="True", fill="both")
 
 	# Mise en Place des Menus
 
 	# Button Play
-	Button_mainm_Play = tkinter.Button(fmainm, text = "Jouer")
+	# !!! A CORRIGER !!!
+	Button_mainm_Play = tkinter.Button(fmainm, command = lambda : playmenu(mainmenuwin, heightWindow, widthWindow, root), text = "Jouer")
 
 	# Button Quickplay
+	# !!! A CORRIGER !!!
 	Button_mainm_QuickPlay = tkinter.Button(fmainm, command = lambda: initgame(mainmenuwin, heightWindow, widthWindow, root), text = "Partie Rapide")
-	#mainmenuwin.destroy()
 
 	# Button Load
 	Button_mainm_load = tkinter.Button(fmainm, text = "Load")
@@ -214,9 +228,37 @@ def optionmenu():
 
 ######################### Menu Jouer #########################
 
-def playmenu():
+def playmenu(mainmenuwin, heightWindow, widthWindow, root):
+
+
+	# On suprime le frame du menu principale
+	mainmenuwin.winfo_children()[0].destroy()
+	# On Créer un nouveau frame
+	fplaymenu = tkinter.Frame(mainmenuwin, height = heightWindow, width = widthWindow)
+	fplaymenu.pack(expand="True", fill="both")
+
+	# Canvas dans lequel on va afficher la version réduite de la carte
+	canvasframeminimap = tkinter.Frame(fplaymenu, height = heightWindow/4, width = widthWindow/4)
+	canvasframeminimap.pack(side="top")
+
+	# Fonction qui gen la mini carte
+	mapcanv = previewmap(canvasframeminimap, pic, option.mapx, option.mapy)
+
+
+	# Button pour générer un nouveau seed ce qui vient update automatiquement la carte
+
+	# Label qui affiche la seed
+
+	# Dropbox pour créer des seigneur
+
+	# Button pour lancer une nouvelle partie
 
 	pass
+
+#def regenseed(mapcanv):
+
+
+
 
 ###########################################################################
 
@@ -237,6 +279,23 @@ def globalviewmenu():
 
 
 
+######################### Interface in Game #########################
+
+# Fonction lier au bouton de fin de tour
+def turnend():
+	pass
+
+
+def citiesinteface():
+	pass
+
+def unitinterface():
+	pass
+
+
+
+
+###########################################################################
 
 
 
@@ -303,6 +362,9 @@ def createmap(heightWindow, widthWindow, pic, frame, mapx, mapy, sizetuile, dico
 	# On ajoute aussi les tags x et y qui correspond à la casse ou ils est situés
 	# ONn ajoute aussi le tag pic[x][y] qui correspond à la valeur de la case gen
 	# 2ieme version: ajouter un tag supplémentaire liées aux types
+
+	idtuile = 0
+
 	for x in range(mapx):
 		for y in range(mapy):
 
@@ -382,12 +444,16 @@ def createmap(heightWindow, widthWindow, pic, frame, mapx, mapy, sizetuile, dico
 			#label = tkinter.Label(lframe,image = tk_img)
 			#label.image = tk_img
 			#########################################
-			mcanvt = mapcanv.create_image((x*sizetuile), (y*sizetuile), image = label.image, tags = ["img",tl[1],"tuile","click", x, y, pic[x][y]])
+			mcanvt = mapcanv.create_image((x*sizetuile)+(sizetuile/2), (y*sizetuile)+(sizetuile/2), image = label.image, tags = ["img",tl[1],"tuile","click", x, y, pic[x][y], idtuile])
 
 			# On créer une nouvelle instance de la classe tuiles
 			instancetuile = Classtuiles(atlas, tl[1], x, y, mcanvt)
 			# On le stocker dans la liste de tuile
 			gamedata.list_tuile += [instancetuile]
+			idtuile += 1
+
+	#Carrer test
+	#mapcanv.create_rectangle(0,0,20,20,tags = "tuile")
 
 	#print("taille atlas: ",len(atlas))
 	#On lie Command+molette aux zoom/dézoom
@@ -409,6 +475,7 @@ def createmap(heightWindow, widthWindow, pic, frame, mapx, mapy, sizetuile, dico
 
 	#ON lie les différentes Cases à l'action click
 	mapcanv.tag_bind("click", "<Button-1>", coord)
+	mapcanv.tag_bind("click", "<Button-1>", highlightCase)
 
 	#print(gamedata.list_tuile)
 	mapcanv.pack(expand ="True", fill = "y")
@@ -489,24 +556,18 @@ def previewmap(frame, pic, mapx, mapy):
 	# Fonction pour afficher une mini version de la map
 	# Utilser la version carrer de la map
 	####################
-	mcanv = tkinter.Canvas(frame)
+	mapcanv = tkinter.Canvas(frame)
 
 	for x in range(mapx):
 		for y in range(mapy):
 			tl = tuile(pic[x][y])[0]
-			mapcanv.create_rectangle((x*0.1), y*0.1, (x*0.1)+0.1, (y*0.1)+0.1, fill=tl, outline='black')
+			print(tl, x ,y)
+			mapcanv.create_rectangle((x*2), y*2, (x*2)+2, (y*2)+2, fill=tl, outline='black')
 
-	mcanv.pack(expand = "True",fill="both")
-
-
-	return mcanv
+	mapcanv.pack(expand = "True",fill="both")
 
 
-
-
-
-
-
+	return mapcanv
 
 
 
@@ -518,8 +579,7 @@ def moveviewz(event, lframe, gamedata):
 	# Fonction pour zoomer/dézoomer
 	# En utilisant la molette de la souris
 	#
-	# Doit utiliser .scale(tagOrId, xOffset, yOffset, xScale, yScale)
-	# xScale, yScale = 1 == No Scaling
+	# On prend pour valeur min de la taille d'une tuile 5
 	#
 	# On zoome quand on multiplie par delta
 	# On dezoome quand on divise par delta
@@ -535,58 +595,61 @@ def moveviewz(event, lframe, gamedata):
 	# 5°) On change les texture des tuiles pour la nouvelles tuiles
 	#####################
 
-	#Comprendre le fonctionnement de cela
+
+	####################\ 1°) \####################
 	x0 = event.widget.canvasx(event.x)
 	y0 = event.widget.canvasy(event.y)
+	############################################################
 
+	####################\ 2°) \####################
 	#Pour éviter les différence entre windows et Mac ont normalise delta
 	#Doit prendre en compte linux -_-
+	print(event.delta)
 	if event.delta <= 0:
 		delta = -2
 	else:
 		delta = 2
-	#On prend pour valeur min de la taille d'une tuile 5
-	#On vérifier que la taile d'une tuile soit supérieur à 5
+	############################################################
 
+
+	####################\ 3°) \####################
 	# On recup la taille d'une tuile
 	x = gamedata.tuilesize
-	print("x, event.delta, delta: ",x, event.delta, delta)
+	#print("x, event.delta, delta: ",x, event.delta, delta)
+	############################################################
 
 	# Doit trouver les valeurs parfaite max et min
 	# Zoom = max = x = 320
 	# DeZoom = min = x = 5
 	# À l'avenir changer la valeur minimum par une valeur calculer a partir de la taille de la carte
 
-	####################
-	f = 0
-	m = 0
-	o = 0
-	p = 0
+	####################\ 4°) \####################
 	#Zoom
 	if (x<320) and (delta == 2):
 		print("Zoom")
 		event.widget.scale("tuile", x0, y0, delta, delta)
-		print("x: ", x*delta)
+		#print("x: ", x*delta)
 		x = x*delta
 	#Dezoom
 	elif(x>5) and (delta == -2):
 		print("DeZoom")
 		#On rend positive le delta sinon il inverse le sens de la carte
 		event.widget.scale("tuile", x0, y0, -1/(delta), -1/(delta))
-		print("x: ",x*(-1/(delta)))
+		#print("x: ",x*(-1/(delta)))
 		x = x*(-1/(delta))
+	# On change la taille des tuiles stocker dans les données globaux
 	gamedata.newsizetuile(x)
+	############################################################
 
+	####################\ 5°) \####################
 	#Recalcul des images
-	############################# Doit Changer ###############################
-	#tp = event.widget.coords(1)
-	# Carte avec Rectangle
-	#newsize = tp[2] - tp[0]
-	# Carte Sans Rectangle
 	newsize = x
 	print("newsize : ", newsize)
-	##########################################################################
 
+	f = 0
+	m = 0
+	o = 0
+	p = 0
 	#Tuile graphique:
 	for ele in event.widget.find_withtag("img"):
 
@@ -626,7 +689,7 @@ def moveviewz(event, lframe, gamedata):
 	print("taille Atlas: ", len(atlas))
 
 
-	####################
+	############################################################
 
 
 
@@ -690,11 +753,31 @@ def moveviewmouse(event):
 
 def highlightCase(event):
 	####################
-	# Fonction qui ilumine la case sur laquelle est présente la souris
+	# Fonction qui ilumine la tuile sur laquelle est présente la souris
+	# 	--> On ne peut pas "illuminer" une tuile
+	#		--> À moins de créer une animations -_-
+	#	--> A la place on va créer une bordure ?
+	#		--> Pas de fonction de bordure pour une image
+	#			--> Tout simplement créer un canvas rectangle afin d'encercler la tuile
+	#
 	####################
 
-	#event.widgetitemconfigure()
-	pass
+	####################\!!! A CORRIGER !!!\####################
+	# On recup les coord de la tuile selectionner
+	idclosest = event.widget.find_closest(event.x, event.y)
+	print(idclosest)
+	coords = event.widget.coords(idclosest)
+
+	print(coords)
+	############################################################
+
+
+	# On recup la taille d'une tuile
+	st = gamedata.tuilesize
+	# On supprime l'ancien rectangle highlight si présent
+	event.widget.delete("highlight")
+	# On créer le nouveau
+	event.widget.create_rectangle(coords[0], coords[1], coords[0] + st, coords[1] + st, tags="highlight")
 
 
 def coord(event):
@@ -718,14 +801,62 @@ def coord(event):
 #		- Fin du tour quand le Joueur clique sur la case fin de tour
 #################### 
 
+# Fonction qui gère la partie
+def game():
+
+	ingame = True
+	nbtoplay = 0
+	# Boucle principale du jeu
+	while(ingame == True):
+		if nbtoplay == nbplayer:
+			nbtoplay = 0
+
+
+		nbtoplay += 1
+
+
+	pass
+
+
+# Fonction qui gère la fin de partie
+def endofgame():
+	pass
+
+
+# Fonction qui gère l'ia des ennemies
+def notplayerturn():
+	pass
 
 
 
-
+# Fonction qui gère le tour du joueur
+def playerturn():
+	pass
 
 ###########################################################################
 
 ######################### Def de Classes #########################
+
+class Classmap:
+	####################
+	# Classe qui va contenir toute les sous-classes tuiles dans une liste associer à un identificateur
+	#		--> Une liste ou un dictionnaire ?
+	#		--> l'avantage du dictionnaire et de pouvoir balancer l'identificateur pour en recup la tuile
+	####################
+	def __init__(self):
+		self.listmap = {}
+		self.nbtuile = 0
+
+	def addtuileinlist(self, tuile):
+		self.listmap[nbtuile] = [tuile]
+		tuile.defineidtuile(nbtuile)
+		self.nbtuile += 1
+
+
+
+
+
+
 
 class Classtuiles:
 	####################
@@ -747,7 +878,9 @@ class Classtuiles:
 	####################
 
 	def __init__(self, texture_name, type, x, y, canvasobject):
-		# N° de la tuile
+		# N° de la tuile, défini par classmap
+		self.id = 0
+		#Position de la tuile
 		self.x = x
 		self.y = y
 		self.type = type
@@ -763,6 +896,39 @@ class Classtuiles:
 		# Objet du canvas associer
 		self.canvastuiles = canvasobject
 
+		# Selon le type de la classe on définit:
+		#	- le rendement en ressource et argent
+		#	- le cout en déplacement pour traverser la tuile
+
+		if type == "plains":
+
+			self.ressourceyield = 0
+			self.moneyield = 0
+			self.movementcost = 1
+
+		elif type == "forest":
+
+			self.ressourceyield = 0
+			self.moneyield = 0
+			self.movementcost = 2
+
+		elif type == "mountains":
+
+			self.ressourceyield = 0
+			self.moneyield = 0
+			self.movementcost = 3
+
+		elif type == "ocean":
+
+			self.ressourceyield = 0
+			self.moneyield = 0
+			self.movementcost = 4
+
+	def defineidtuile(self, id):
+		self.id = id
+
+	def definepossesor(self, possesor):
+		self.possesor = possesor
 
 
 
@@ -784,8 +950,8 @@ if __name__ == '__main__':
 	# Initialisation de GameData
 	gamedata = data.ClassGameData()
 
-
-	pic = genproc.genNoiseMap(10, (random.random()*time()), option.mapx, option.mapy)
+	seed = random.random()*time()
+	pic = genproc.genNoiseMap(10, seed, option.mapx, option.mapy)
 	#Chargement en mémoires des images du dico:
 	dico_file = data.assetLoad()
 	

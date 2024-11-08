@@ -57,20 +57,45 @@ def genNoiseMap(octaves, seed, mapx, mapy):
 #
 
 
-def genVillage():
+def genVillage(map):
 
     ####################
     # Fonction pour Gen les villages
     # Condition pour Gen un Village:
     #
     #       - Pas de village dans un rayon de 4 cases
+    #           --> Indiquer dans le sujet 2 cases de chaque cotés 
     #       - 1 village par Dirigeant
-    #       - 3-4 village "neutre"
+    #       - 3-4 village Indépendant
     #       - Seulement sur des Plaines
     ####################
 
 
+
+
+
     pass
+
+
+
+
+def listidplaines(Classmap):
+    ####################
+    # Fonction pour recuperer l'id des plaines
+    #   --> Voir pour remplacer cette fonction par une liste dans Classmap qui est incrémenté automatiquement
+    #       --> Est t'il judicieux de garder le compte des différents types outre pour la génération des villages ?
+    #
+    ####################
+
+
+    lplaines = []
+    tmap = len(Classmap.listmap)
+
+    for i in range(tmap):
+        if Classmap.listmap[i].type == "plaines":
+            lplaines += [i]
+
+    return lplaines
 
 
 
