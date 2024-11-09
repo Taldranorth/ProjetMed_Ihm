@@ -2,6 +2,7 @@ import sys
 import tkinter
 from PIL import ImageTk, Image, ImageShow
 import random
+from time import time
 
 import gameClass
 
@@ -93,21 +94,28 @@ class ClassGameData:
 	####################
 
 	def __init__(self):
-		#self.Nb_tour = tkinter.IntVar()
-		#self.Nb_tour.set(0)
+
 		self.Nb_tour = 0
 		self.Nb_lord = 3
 		self.tuilesize = 20
+		#Seed générer au lancement de l'appli
+		self.seed = random.random()*time()
 
 
+		self.playerid = 0
 		player = gameClass.Classlord("test", True)
 		self.list_lord = [player]
 
-		#Seed générer au lancement de l'appli
-		#self.Seed = graine
+		# Dico des Assets
+		self.dico_file = assetLoad()
+
+		# Atlas
+		self.atlas = {}
+
+		# Label Frame Atlas
+		self.lframe = 0
 
 
-		self.list_tuile = []
 
 	#tuile: Classtuiles
 	def addtuile(self, tuile):
@@ -117,6 +125,36 @@ class ClassGameData:
 	def newsizetuile(self, size: int):
 		self.tuilesize = size
 
+	# Fonction pour charger les données d'une save
+	def loaddata():
+		pass
+
+	# Fonction pour define le labelframe
+	def setlframe(self, lframe):
+		self.lframe = lframe
+
+	# Fontion Atlas
+	def addAtlas(self, label, filename):
+		####################
+		# Fonction pour ajouter une nouvelle entréer à l'Atlas
+		####################		
+		self.atlas[filename] = label
+
+	def checkAtlas(self, filename):
+		####################
+		# Fonction pour voir si une texture est présente dans l'atlas
+		####################
+		if filename in self.atlas.keys():
+			return True
+		else:
+			return False
+
+	def changelabelAtlas(self, filename, img):
+		####################
+		# Fonction pour changer la texture associer à un label
+		####################
+		self.atlas[filename].configure(image = img)
+		self.atlas[filename].image = img
 
 
 
@@ -209,7 +247,7 @@ def assetLoad():
 	#print(pf)
 	#print(len(os.listdir()))
 	# On créer le Dico que l'on va renvoyer:
-	dico_file = {"mountains": [],"ocean": [],"plains": [],"forest": [],"build":[],"event":[],"other": []}
+	dico_file = {"mountains": [],"ocean": [],"plains": [],"forest": [],"build":[],"event":[],"unit":[] ,"other": []}
 
 
 	dico_file = exploresubfolder(dico_file, pf)
@@ -233,7 +271,7 @@ def exploresubfolder(dico_file, filepath):
 		# Sinon c'est un fichier que l'on teste
 		else:
 			if file != ".DS_Store":
-				print(filepath, filepath[-5:], file)
+				#print(filepath, filepath[-5:], file)
 				#On vérifier que le nom du fichier correspond à l'un des 4 types définies
 				if file[:9] == "mountains":
 					#print(sub_folder[:9])
@@ -249,11 +287,13 @@ def exploresubfolder(dico_file, filepath):
 					dico_file["forest"] += [[file,loadtexturedico(filepath+"/"+file)]]
 				# Si présent dans le dossier build
 				elif filepath[-5:] == "build":
-
 					dico_file["build"] += [[file, loadtexturedico(filepath+"/"+file)]]
 				# Si présent dans le dossier event
 				elif filepath[-5:] == "event":
 					dico_file["event"] += [[file, loadtexturedico(filepath+"/"+file)]]
+				# Si présent dans le dossier unit
+				elif filepath[-4:] == "unit":
+					dico_file["unit"] += [[file, loadtexturedico(filepath+"/"+file)]]
 				#Si il n'est rentrée dans aucun des 4 types il rentre dans other
 				else:
 					#print(sub_folder)
@@ -304,6 +344,18 @@ def randomloadtexturefromdico(dico_file, type, sizetuile):
 		print("erreur type non présent dans les clé du dico")
 		print(dico_file.keys())
 
+def randomtexturefromdico(gamedata, type):
+	####################
+	# Fonction qui va renvoyer le nom d'une texture Aléatoire depuis le dico du type désirer
+	####################
+	if type in dico_file.keys():
+		r = random.randrange(len(dico_file[type]))
+		texture_name = dico_file[type][r][0]
+		return texture_name
+	else:
+		print("erreur type non présent dans les clé du dico")
+		print(dico_file.keys())
+
 
 def loadtexturefromdico(dico_file, filename, type, sizetuile):
 	####################
@@ -331,9 +383,6 @@ def loadtexturefromdico(dico_file, filename, type, sizetuile):
 	# Sinon on renvoit une erreur
 	else:
 		print("erreur fichier non trouvé")
-
-
-######################### Fonction Atlas ############################
 
 def createAtlas():
 	####################
@@ -387,7 +436,7 @@ if __name__ == '__main__':
 	#	print(key,dico_file[key])
 	#	print("\n")
 	####################
-	print(dico_file["build"])
+	#print(dico_file["build"])
 	#print(dico_file["ocean"])
 
 

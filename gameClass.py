@@ -97,9 +97,14 @@ class Classlord(object):
 
 		self.vassal = []
 
+		self.fief = []
+
 
 	def addvassal(self, vassal):
 		self.vassal += [vassal]
+
+	def addfief(self, village):
+		self.fief += [village]
 
 
 #Classe générale:

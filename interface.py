@@ -41,6 +41,9 @@ def gameinterface(win, heightWindow, widthWindow, gamedata):
 	topframe.pack(expand = "True", side = "top")
 	bottomFrame.pack(expand = "True", side = "bottom")
 
+
+
+
 	# on Créer les tkinter variables que l'on va utiliser 
 	#Nb_rssource
 	tkvar_nb_ressource = tkinter.IntVar()
@@ -58,13 +61,13 @@ def gameinterface(win, heightWindow, widthWindow, gamedata):
 	#self.global_joy.set(10)
 
 	#Nb_tour
-	tkvar_nb_tour = tkinter.IntVar()
+	tkvar_nb_turn = tkinter.IntVar()
 
 	# On les set
 	tkvar_nb_ressource.set(gamedata.list_lord[0].nb_ressource) 
 	tkvar_nb_money.set(gamedata.list_lord[0].nb_money) 
 	tkvar_global_joy.set(gamedata.list_lord[0].global_joy)
-	tkvar_nb_tour.set(gamedata.Nb_tour) 
+	tkvar_nb_turn.set(gamedata.Nb_tour) 
 
 	# Info Entête
 	# Nb Total Ressource
@@ -86,12 +89,14 @@ def gameinterface(win, heightWindow, widthWindow, gamedata):
 	global_joy_label.pack(side = 'left')
 
 	# N°Tour
-	nb_tour_labelt = tkinter.Label(topframe, text = "Tour N°: ")
-	nb_tour_label = tkinter.Label(topframe, text = "Tour N°: ", textvariable = tkvar_nb_tour)
-	nb_tour_labelt.pack(side = "left")
-	nb_tour_label.pack(side = 'left')
+	nb_turn_labelt = tkinter.Label(topframe, text = "Tour N°: ")
+	nb_turn_label = tkinter.Label(topframe, text = "Tour N°: ", textvariable = tkvar_nb_turn)
+	nb_turn_labelt.pack(side = "left")
+	nb_turn_label.pack(side = 'left')
 
-	# Liste de Bouton
+
+	# Liste de Bouton Bas
+
 
 	# Button Gauche
 	Button_military = tkinter.Button(bottomFrame, text= "Militaire")
@@ -106,12 +111,29 @@ def gameinterface(win, heightWindow, widthWindow, gamedata):
 	# Button pour acceder à la vue générale
 	Button_globalview = tkinter.Button(bottomFrame, text = "Vue Générale")
 
+	# Boutton Central
+	# Bouton Fin de Tour
+	Button_endofturn = tkinter.Button(bottomFrame, command = turnend, text = "Fin de Tour")
+
 
 	# On pack les Button
 	Button_gestion.pack(side="left")
 	Button_military.pack(side="left")
 	Button_exit.pack(side="right")
 	Button_globalview.pack(side="right")
+	Button_endofturn.pack()
 
 #########################################################################
+
+# Fonction lier au bouton de fin de tour
+def turnend():
+	print("fin de tour ")
+
+def citiesinteface():
+	pass
+
+def unitinterface():
+	pass
+
+
 

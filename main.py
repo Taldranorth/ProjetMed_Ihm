@@ -74,17 +74,10 @@ from time import time
 #	- Faire la doc de ce qui a était fait
 #	- Réduire le lag lors de l'observation d'un grand groupe de cases
 #		--> Utilisation du processeurs importante
-#	- Corriger le décalage avec l'écran arrière
-#		!!!
-#		--> Le problème vient du fait que les texture soit du int tandis que les carrés sont des float
-#		--> Le problème vient du calcul de la variable newtp dans moveviewz , doit améliorer le calcul
-#			--> Après implémenter une version qui n'utilise pas la map carre
-#		!!!
 #
 #	- Refactoriser le Code
 #		--> Le Nettoyer
 #		--> Retirer les Commentaires Inutiles
-#		--> Prévoir l'ajout de future Tuiles
 #	- !!!! Commencer a s'entrainer avec les CLasses !!!!
 #		--> Transformer Atlas en classe
 #
@@ -133,18 +126,11 @@ from time import time
 #	- Changer la souris
 #		--> root.config(cursor="") 
 #		--> https://stackoverflow.com/questions/66203294/how-to-add-custom-image-to-cursor-when-hovered-over-python-tkinter-window
-#
-#	- Voir qu'elle style graphique de Jeu viser
 
 
 #
 # Système d'état qui serait utiliser pour trigger des fonctions liéer à l'affichage, exemple affichage des territoires ennemies --> 
 #
-#
-
-# !!!!!!
-# Différence position entre map texture et map carré causer par le fait que la map texture utilise les coordonnées donnés comme point centrale et non point en haut à gauche
-# !!!!!!
 
 # !!!!!!
 # Faire des fonctions de recherche optimiser
@@ -152,13 +138,17 @@ from time import time
 # !!!!!!
 
 #########################
+# Objectif 9 novembre:
+#	--> Adapter l'atlas en Class √
+#	--> Faire un Dessin des Class
+#	--> Faire la doc des normes
+#	--> corriger les noms des variables
 #
 #
-#
-#
-#
-#
-#
+# Objectif 10 novembre:
+#	--> Refactoriser les fonctions
+#	--> Avancer le Tour de Jeu
+#	-->
 #
 #
 #########################
@@ -220,13 +210,29 @@ def mainmenu(heightWindow, widthWindow, root):
 
 def optionmenu():
 
+
+
+
+
 	pass
 
 
 ###########################################################################
 
 
+
+
 ######################### Menu Jouer #########################
+
+####
+# Menu pour créer une nouvelle game 
+#
+#
+#### Terminer ####
+# Terminer entryseed en intégrant un Validate qui vérifie que la seed soit un int est change la variable gamedata.seed
+#
+#
+##################
 
 def playmenu(mainmenuwin, heightWindow, widthWindow, root):
 
@@ -237,27 +243,70 @@ def playmenu(mainmenuwin, heightWindow, widthWindow, root):
 	fplaymenu = tkinter.Frame(mainmenuwin, height = heightWindow, width = widthWindow)
 	fplaymenu.pack(expand="True", fill="both")
 
-	# Canvas dans lequel on va afficher la version réduite de la carte
+	# Frame dans lequel on va afficher la version réduite de la carte
 	canvasframeminimap = tkinter.Frame(fplaymenu, height = heightWindow/4, width = widthWindow/4)
 	canvasframeminimap.pack(side="top")
 
+	# Canvas de la minimap
+	mapcanv = tkinter.Canvas(canvasframeminimap)
+
 	# Fonction qui gen la mini carte
-	mapcanv = previewmap(canvasframeminimap, pic, option.mapx, option.mapy)
+	previewmap(mapcanv, pic, option.mapx, option.mapy)
+
+
+	#txt variable seed
+	tkvar_seed = tkinter.IntVar()
+	tkvar_seed.set(gamedata.seed)
 
 
 	# Button pour générer un nouveau seed ce qui vient update automatiquement la carte
+	Button_playmenu_newseed = tkinter.Button(fplaymenu,command = lambda: regenseed(gamedata, tkvar_seed, mapcanv), text = "Genérer nouvelle Seed")
+	Button_playmenu_newseed.pack()
 
-	# Label qui affiche la seed
+
+	# Entry widget qui affiche la seed, permet de la modif et de la copier
+	entryseed = tkinter.Entry(fplaymenu, textvariable = tkvar_seed)
+	entryseed.pack()
 
 	# Dropbox pour créer des seigneur
 
 	# Button pour lancer une nouvelle partie
+	Button_playmenu_play = tkinter.Button(fplaymenu, command = lambda: initgame(mainmenuwin, heightWindow, widthWindow, root),text = "Jouer")
+	Button_playmenu_play.pack()
 
+	# Boutton pour revenir en arrière
+	Button_playmenu_return = tkinter.Button(fplaymenu, command = lambda: playmenutomainmenu(mainmenuwin, root),text = "Retour")
+	Button_playmenu_return.pack()
 	pass
 
-#def regenseed(mapcanv):
+
+def regenseed(gamedata, tkvar_seed, mapcanv):
+	gamedata.seed = random.random()*time()
+	tkvar_seed.set(gamedata.seed)
+	pic = genproc.genNoiseMap(10, gamedata.seed, option.mapx, option.mapy)
+	previewmap(mapcanv, pic, option.mapx, option.mapy)
 
 
+def previewmap(mapcanv, pic, mapx, mapy):
+	####################
+	# Fonction pour afficher une mini version de la map
+	# Utilser la version carrer de la map
+	####################
+
+	# Si on à déjà afficher une minimap pour un seed différent on efface
+	mapcanv.delete("minimap")
+
+	for x in range(mapx):
+		for y in range(mapy):
+			tl = tuile(pic[x][y])[0]
+			#print(tl, x ,y)
+			mapcanv.create_rectangle((x*2), y*2, (x*2)+2, (y*2)+2, fill=tl, tags = "minimap", outline='black')
+
+	mapcanv.pack(expand = "True",fill="both")
+
+def playmenutomainmenu(menu, root):
+	mainmenu(option.heightWindow, option.widthWindow, root)
+	menu.destroy()
 
 
 ###########################################################################
@@ -268,10 +317,21 @@ def playmenu(mainmenuwin, heightWindow, widthWindow, root):
 ######################### Menu Vue Globale #########################
 
 
+###############
+# Une Fenêtre qui va afficher une liste de l'ensemble des villages avec la population, le seigneur, l'argent produit, les ressources produites
+# 
+# Comment gérer l'affichage de fenêtre par dessus ?
+# 
+# 
+###############
+def globalviewmenu(gamedata):
+
+	#gamedata.listlord[0]
 
 
 
-def globalviewmenu():
+
+
 
 	pass
 
@@ -280,18 +340,6 @@ def globalviewmenu():
 
 
 ######################### Interface in Game #########################
-
-# Fonction lier au bouton de fin de tour
-def turnend():
-	pass
-
-
-def citiesinteface():
-	pass
-
-def unitinterface():
-	pass
-
 
 
 
@@ -326,7 +374,7 @@ def initgame(mainmenuwin, heightWindow, widthWindow, root):
 	# On lance la création de la game
 	mainscreen(heightWindow, widthWindow, root,pic, option.mapx, option.mapy, gamedata)
 
-	# Une fois l'initialisation lancé on détruit le menu principale
+	# Une fois l'initialisation lancé on détruit la fenêtre du menu principale
 	mainmenuwin.destroy()
 
 ###########################################################################
@@ -347,16 +395,20 @@ def mainscreen(heightWindow, widthWindow, root, pic, mapx, mapy, gamedata):
 	fcanvas.pack(expand="True", fill="both")
 
 	createmap(heightWindow, widthWindow, pic, fcanvas, mapx, mapy, 20, dico_file, gamedata)
+
+	genproc.genVillage(Map, option)
+	printvillage(gamedata, Map, fcanvas)
 ####################################################################################################
 
 
 
 ######################### Gestion de la Carte #######################################################
 def createmap(heightWindow, widthWindow, pic, frame, mapx, mapy, sizetuile, dico_file, gamedata):
-	global atlas
+
 	#Si heigthWindow/1.5 le boutton quitter disparait
 	mapcanv = tkinter.Canvas(frame,height = ((heightWindow)/1.6), width = widthWindow)
-	lframe = tkinter.Frame(frame)
+	gamedata.setlframe(tkinter.Frame(frame))
+	Map.setmapcanv(mapcanv)
 	# On Créer les Différentes Cases avec le tags tuile pour indiquer et les trouvé plus facilement
 	# On ajoute aussi le tags click pour indiquer qu'ils sont clickables
 	# On ajoute aussi les tags x et y qui correspond à la casse ou ils est situés
@@ -365,6 +417,9 @@ def createmap(heightWindow, widthWindow, pic, frame, mapx, mapy, sizetuile, dico
 
 	idtuile = 0
 
+	# !!!!!!
+	# Différence position entre map texture et map carré causer par le fait que la map texture utilise les coordonnées donnés comme point centrale et non point en haut à gauche
+	# !!!!!!
 	for x in range(mapx):
 		for y in range(mapy):
 
@@ -374,82 +429,65 @@ def createmap(heightWindow, widthWindow, pic, frame, mapx, mapy, sizetuile, dico
 			# Création de la carte avec Rectangle
 			#mapcanv.create_rectangle((x*sizetuile), (y*sizetuile), (x*sizetuile)+sizetuile, (y*sizetuile)+sizetuile, fill = tl[0], tags = ["click","tuile",x,y,pic[x][y], tl[1]], outline='black')
 			
-			##### Version Non-Aléatoire  #####
-			#tk_img = typetoimg(tl[1], sizetuile)
-			"""
-			if tl[1] == "mountains":
-				tk_img = data.loadtexture("/asset/terrain/mountains/mountains_inner.png", sizetuile)
-			elif tl[1] == "forest":
-				tk_img = data.loadtexture("/asset/terrain/conifer_forest/conifer_forest_inner.png", sizetuile)
-			elif tl[1] == "plains":
-				tk_img = data.loadtexture("/asset/terrain/plains/plains.png", sizetuile)
-			elif tl[1] == "ocean":
-				tk_img = data.loadtexture("/asset/terrain/ocean/ocean_inner.png", sizetuile)
-			"""
-			################################
-
-			##### Version Non-Aléatoire Dico Sans Atlas #####
-			#tk_img = typetoimgdico(dico_file, tl[1], sizetuile)
-			#################################################
-
-
 			##### Version Non-Aléatoire Dico Avec Atlas #####
 			
 			if tl[1] == "mountains":
-				if data.checkAtlas(atlas, "mountains_inner.png") == False:
+				if gamedata.checkAtlas("mountains_inner.png") == False:
 					tk_img = data.loadtexturefromdico(dico_file, "mountains_inner.png", tl[1], sizetuile)
-					label = tkinter.Label(lframe,image = tk_img[1])
+					label = tkinter.Label(gamedata.lframe,image = tk_img[1])
 					label.image = tk_img[1]
-					atlas = data.addAtlas(atlas, label, tk_img[0])
+					gamedata.addAtlas(label, tk_img[0])
 				else:
-					label = atlas["mountains_inner.png"]
+					label = gamedata.atlas["mountains_inner.png"]
 				texture_name = "mountains_inner.png"
 			elif tl[1] == "forest":
-				if data.checkAtlas(atlas, "conifer_forest_inner.png") == False:
+				if gamedata.checkAtlas("conifer_forest_inner.png") == False:
 					tk_img = data.loadtexturefromdico(dico_file, "conifer_forest_inner.png", tl[1], sizetuile)
-					label = tkinter.Label(lframe,image = tk_img[1])
+					label = tkinter.Label(gamedata.lframe,image = tk_img[1])
 					label.image = tk_img[1]
-					atlas = data.addAtlas(atlas, label, tk_img[0])
+					gamedata.addAtlas(label, tk_img[0])
 				else:
-					label = atlas["conifer_forest_inner.png"]
+					label = gamedata.atlas["conifer_forest_inner.png"]
 				texture_name = "conifer_forest_inner.png"
 			elif tl[1] == "plains":
-				if data.checkAtlas(atlas, "plains.png") == False:
+				if gamedata.checkAtlas("plains.png") == False:
 					tk_img = data.loadtexturefromdico(dico_file, "plains.png", tl[1], sizetuile)
-					label = tkinter.Label(lframe,image = tk_img[1])
+					label = tkinter.Label(gamedata.lframe,image = tk_img[1])
 					label.image = tk_img[1]
-					atlas = data.addAtlas(atlas, label, tk_img[0])
+					gamedata.addAtlas(label, tk_img[0])
 				else:
-					label = atlas["plains.png"]
+					label = gamedata.atlas["plains.png"]
 				texture_name = "plains.png"
 			elif tl[1] == "ocean":
-				if data.checkAtlas(atlas, "ocean_inner.png") == False:
+				if gamedata.checkAtlas("ocean_inner.png") == False:
 					tk_img = data.loadtexturefromdico(dico_file, "ocean_inner.png", tl[1], sizetuile)
-					label = tkinter.Label(lframe,image = tk_img[1])
+					label = tkinter.Label(gamedata.lframe,image = tk_img[1])
 					label.image = tk_img[1]
-					atlas = data.addAtlas(atlas, label, tk_img[0])
+					gamedata.addAtlas(label, tk_img[0])
 				else:
-					label = atlas["ocean_inner.png"]
+					label = gamedata.atlas["ocean_inner.png"]
 				texture_name = "ocean_inner.png"
-			
+
+			mcanvt = mapcanv.create_image((x*sizetuile)+(sizetuile/2), (y*sizetuile)+(sizetuile/2), image = label.image, tags = ["img",tl[1],"tuile","click", x, y, pic[x][y], idtuile])
+
 			################################
 
 			##### Version Aléatoire Dico #####
-			#tk_img = data.randomloadtexturefromdico(dico_file, tl[1], sizetuile)[1]
-
+			#texture_name = data.randomtexturefromdico(gamedata, tl[1])
+			#loadtextureatlas(gamedata, texture_name, tl[1])
+			#mcanvt = mapcanv.create_image((x*sizetuile)+(sizetuile/2), (y*sizetuile)+(sizetuile/2), image = gamedata.atlas[texture_name], tags = ["img",tl[1],"tuile","click", x, y, pic[x][y], idtuile])
+			#instancetuile = Classtuiles(gamedata.atlas, tl[1], x, y, mcanvt)
+			#if gamedata.
+			#
+			#
+			#mcanvt = mapcanv.create_image((x*sizetuile)+(sizetuile/2), (y*sizetuile)+(sizetuile/2), image = label.image, tags = ["img",tl[1],"tuile","click", x, y, pic[x][y], idtuile])
 			################################
 
-			#########Garde en mémoire l'image ######
-			#The solution is to make sure to keep a reference to the Tkinter object, for example by attaching it to a widget attribute:
-			#label = tkinter.Label(lframe,image = tk_img)
-			#label.image = tk_img
-			#########################################
-			mcanvt = mapcanv.create_image((x*sizetuile)+(sizetuile/2), (y*sizetuile)+(sizetuile/2), image = label.image, tags = ["img",tl[1],"tuile","click", x, y, pic[x][y], idtuile])
-
 			# On créer une nouvelle instance de la classe tuiles
-			instancetuile = Classtuiles(atlas, tl[1], x, y, mcanvt)
-			# On le stocker dans la liste de tuile
-			gamedata.list_tuile += [instancetuile]
+			instancetuile = Classtuiles(texture_name, tl[1], x, y, mcanvt)
+			# On le stocker dans la ClassMap
+			#gamedata.list_tuile += [instancetuile]
+			Map.addtuileinlist(instancetuile)
 			idtuile += 1
 
 	#Carrer test
@@ -457,7 +495,7 @@ def createmap(heightWindow, widthWindow, pic, frame, mapx, mapy, sizetuile, dico
 
 	#print("taille atlas: ",len(atlas))
 	#On lie Command+molette aux zoom/dézoom
-	mapcanv.bind("<MouseWheel>", lambda event, lf=lframe , gd = gamedata:moveviewz(event, lf, gd))
+	mapcanv.bind("<MouseWheel>", lambda event, gd = gamedata:moveviewz(event, gd))
 
 	#On focus sur le widget sinon il ne prendra pas en compte les entrées des touches fléchés
 	mapcanv.focus_set()
@@ -481,6 +519,48 @@ def createmap(heightWindow, widthWindow, pic, frame, mapx, mapy, sizetuile, dico
 	mapcanv.pack(expand ="True", fill = "y")
 
 ####################################################################################################
+
+
+
+
+
+def printvillage(Gamedata, Classmap, frame):
+	ts = Gamedata.tuilesize
+	for ele in Classmap.lvillages:
+		if data.checkAtlas(gamedata.atlas, "settlement.png") == False:
+			tk_img = data.loadtexturefromdico(dico_file, "settlement.png", "build", ts)
+			label = tkinter.Label(gamedata.lframe,image = tk_img[1])
+			label.image = tk_img[1]
+			gamedata.addAtlas(label, tk_img[0])
+		else:
+			label = gamedata.atlas["settlement.png"]
+		#On recup la position en x et y 
+		posx = Classmap.listmap[ele].x
+		posy = Classmap.listmap[ele].y
+		#print(Classmap.listmap[ele].type, Classmap.listmap[ele].x, Classmap.listmap[ele].y)
+		Classmap.mapcanv.create_image((posx*ts)+(ts/2), (posy*ts)+(ts/2), tags = ["village","build","tuile","img"], image = label.image)
+
+
+def bordervillage(Gamedata, Classmap, frame):
+	pass
+
+
+
+def loadtextureatlas(gamedata, texture_name, type):
+	######
+	# Fonction pour charger dans l'atlas la texture viser
+	######
+
+	# Si la texture n'est pas déjà présent dans l'atlas on la prépare est place
+	if data.checkAtlas(gamedata.atlas, texture_name) == False:
+		tk_img = data.loadtexturefromdico(gamedata.dico_file, texture_name, type, gamedata.tuilesize)
+		label = tkinter.Label(gamedata.lframe , image = tk_img[1])
+		label.image = tk_img[1]
+		gamedata.addAtlas(gamedata.atlas, label, tk_img[0])
+	# Si la texture est présent dans l'atlas on utlise le label associer on ne fait rien
+
+
+
 
 
 ######################### Fonction Secondaire ############################
@@ -550,31 +630,7 @@ def typetoimgdico(dico_file, type, sizetuile):
 	return img
 
 
-
-def previewmap(frame, pic, mapx, mapy):
-	####################
-	# Fonction pour afficher une mini version de la map
-	# Utilser la version carrer de la map
-	####################
-	mapcanv = tkinter.Canvas(frame)
-
-	for x in range(mapx):
-		for y in range(mapy):
-			tl = tuile(pic[x][y])[0]
-			print(tl, x ,y)
-			mapcanv.create_rectangle((x*2), y*2, (x*2)+2, (y*2)+2, fill=tl, outline='black')
-
-	mapcanv.pack(expand = "True",fill="both")
-
-
-	return mapcanv
-
-
-
-
-
-def moveviewz(event, lframe, gamedata):
-	global atlas
+def moveviewz(event, gamedata):
 	####################
 	# Fonction pour zoomer/dézoomer
 	# En utilisant la molette de la souris
@@ -646,10 +702,22 @@ def moveviewz(event, lframe, gamedata):
 	newsize = x
 	print("newsize : ", newsize)
 
+
+
+	###############################\ !!! À modifier !!! \#############################
+	# Trouver un moyen de se débaraser des 4 variables
+	# Ne plus utiliser le type de la texture
+	# Pouvoir appliquer au Village
+
+
+
+
+	###################################################################################
 	f = 0
 	m = 0
 	o = 0
 	p = 0
+	v = 0
 	#Tuile graphique:
 	for ele in event.widget.find_withtag("img"):
 
@@ -662,31 +730,38 @@ def moveviewz(event, lframe, gamedata):
 				#On recréer l'image
 				tk_img = data.loadtexturefromdico(dico_file, "conifer_forest_inner.png", type, int(newsize))
 				# On change modifier le label associer à la texture dans l'atlas
-				atlas = data.changelabelAtlas(atlas, tk_img[0], tk_img[1])				
+				gamedata.changelabelAtlas(tk_img[0], tk_img[1])				
 				f = 1
 			# On recup le label associer à la texture
-			label = atlas["conifer_forest_inner.png"]
+			label = gamedata.atlas["conifer_forest_inner.png"]
 		elif type == "mountains":
 			if m == 0:
 				tk_img = data.loadtexturefromdico(dico_file, "mountains_inner.png", type, int(newsize))
-				atlas = data.changelabelAtlas(atlas, tk_img[0], tk_img[1])	
+				gamedata.changelabelAtlas(tk_img[0], tk_img[1])	
 				m = 1
-			label = atlas["mountains_inner.png"]
+			label = gamedata.atlas["mountains_inner.png"]
 		elif type == "ocean":
 			if o == 0:
 				tk_img = data.loadtexturefromdico(dico_file, "ocean_inner.png", type, int(newsize))
-				atlas = data.changelabelAtlas(atlas, tk_img[0], tk_img[1])						
+				gamedata.changelabelAtlas(tk_img[0], tk_img[1])						
 				o = 1
-			label = atlas["ocean_inner.png"]
+			label = gamedata.atlas["ocean_inner.png"]
 		elif type == "plains":
 			if p == 0:
 				tk_img = data.loadtexturefromdico(dico_file, "plains.png", type, int(newsize))
-				atlas = data.changelabelAtlas(atlas, tk_img[0], tk_img[1])						
+				gamedata.changelabelAtlas(tk_img[0], tk_img[1])						
 				p = 1
-			label = atlas["plains.png"]
+			label = gamedata.atlas["plains.png"]
+		elif type == "build":
+			if v == 0:
+				tk_img = data.loadtexturefromdico(dico_file, "settlement.png", type, int(newsize))
+				gamedata.changelabelAtlas(tk_img[0], tk_img[1])
+				v = 1
+			label = gamedata.atlas["settlement.png"]
 
 		event.widget.itemconfigure(ele,image = label.image)
-	print("taille Atlas: ", len(atlas))
+	############################################################
+	print("taille Atlas: ", len(gamedata.atlas))
 
 
 	############################################################
@@ -777,7 +852,9 @@ def highlightCase(event):
 	# On supprime l'ancien rectangle highlight si présent
 	event.widget.delete("highlight")
 	# On créer le nouveau
-	event.widget.create_rectangle(coords[0], coords[1], coords[0] + st, coords[1] + st, tags="highlight")
+	x = coords[0] - (st/2)
+	y = coords[1] - (st/2)
+	event.widget.create_rectangle(x, y, x + st, y + st, tags=["highlight","tuile"])
 
 
 def coord(event):
@@ -802,7 +879,7 @@ def coord(event):
 #################### 
 
 # Fonction qui gère la partie
-def game():
+def game(gamedata):
 
 	ingame = True
 	nbtoplay = 0
@@ -810,6 +887,12 @@ def game():
 	while(ingame == True):
 		if nbtoplay == nbplayer:
 			nbtoplay = 0
+
+		# On verifie que c'est le tour du joueur
+		if gamedata.list_lord[nbtoplay].player == True:
+			playerturn()
+		else:
+			notplayerturn(nbtoplay)
 
 
 		nbtoplay += 1
@@ -824,7 +907,7 @@ def endofgame():
 
 
 # Fonction qui gère l'ia des ennemies
-def notplayerturn():
+def notplayerturn(nbtoplay):
 	pass
 
 
@@ -844,13 +927,26 @@ class Classmap:
 	#		--> l'avantage du dictionnaire et de pouvoir balancer l'identificateur pour en recup la tuile
 	####################
 	def __init__(self):
+		# Variable qui vient contenir l'id du mapcanv
+		self.mapcanv = 0
+
+		#Dico qui vient contenir les Classtuiles 
 		self.listmap = {}
 		self.nbtuile = 0
 
+		#Liste qui vient contenir les ids des:
+		#	--> Villages
+		#	--> Plaines
+		self.lvillages = []
+		self.lplaines = []
+
 	def addtuileinlist(self, tuile):
-		self.listmap[nbtuile] = [tuile]
-		tuile.defineidtuile(nbtuile)
+		self.listmap[self.nbtuile] = tuile
+		tuile.setidtuile(self.nbtuile)
 		self.nbtuile += 1
+
+	def setmapcanv(self, mapcanv):
+		self.mapcanv = mapcanv
 
 
 
@@ -888,7 +984,8 @@ class Classtuiles:
 		self.texture_name = texture_name
 		self.background = "plains.png"
 
-		self.build = ""
+		# Si c'est un village
+		self.village = 0
 
 		# nom du propriétaire de la tuile
 		self.possesor = "wild"
@@ -924,11 +1021,14 @@ class Classtuiles:
 			self.moneyield = 0
 			self.movementcost = 4
 
-	def defineidtuile(self, id):
+	def setidtuile(self, id):
 		self.id = id
 
-	def definepossesor(self, possesor):
+	def setpossesor(self, possesor):
 		self.possesor = possesor
+
+	def createvillage(self):
+		self.village = 1
 
 
 
@@ -942,16 +1042,16 @@ class Classtuiles:
 if __name__ == '__main__':
 	#Init de la fenêtre
 	root = tkinter.Tk()
-	#On créer l'atlas
-	atlas = data.createAtlas()
 
 	# Chargement des Options:
 	option = data.ClassOptions()
 	# Initialisation de GameData
 	gamedata = data.ClassGameData()
 
-	seed = random.random()*time()
-	pic = genproc.genNoiseMap(10, seed, option.mapx, option.mapy)
+	# Initialisation de la Carte
+	Map = Classmap()
+
+	pic = genproc.genNoiseMap(10, gamedata.seed, option.mapx, option.mapy)
 	#Chargement en mémoires des images du dico:
 	dico_file = data.assetLoad()
 	

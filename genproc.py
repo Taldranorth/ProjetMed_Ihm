@@ -3,6 +3,7 @@ from perlin_noise.perlin_noise import PerlinNoise
 import random
 from time import time
 import sys
+#import tkinter
 
 #########################
 #
@@ -57,7 +58,7 @@ def genNoiseMap(octaves, seed, mapx, mapy):
 #
 
 
-def genVillage(map):
+def genVillage(Classmap, Options):
 
     ####################
     # Fonction pour Gen les villages
@@ -71,12 +72,24 @@ def genVillage(map):
     ####################
 
 
+    # On recup la liste des Plaines
+    Classmap.lplaines = listidplaines(Classmap)
+    print(Classmap.listmap)
 
+    # On en gen 10 
+    # Valeur Test
+    for x in range(10):
+        # On choisit une plaines aléatoire
+        # On vient selectionner un id aléatoire présent dans lplaines
+        r = Classmap.lplaines[random.randrange(len(Classmap.lplaines))]
+        print("r: ",r)
+        # On verifie que la tuile est une plaines avec aucun village à proximiter
+        while buildvillagepossible(Options, Classmap, r) == False:
+            r = Classmap.lplaines[random.randrange(len(Classmap.lplaines))]
+        Classmap.listmap[r].createvillage()
+        Classmap.lvillages += [r]
 
-
-    pass
-
-
+    print("lvillage: ",Classmap.lvillages)
 
 
 def listidplaines(Classmap):
@@ -91,13 +104,43 @@ def listidplaines(Classmap):
     lplaines = []
     tmap = len(Classmap.listmap)
 
-    for i in range(tmap):
-        if Classmap.listmap[i].type == "plaines":
-            lplaines += [i]
+    for idtuile in range(tmap):
+        #print(Classmap.listmap[idtuile].type)
+        if Classmap.listmap[idtuile].type == "plains":
+            #Classmap.mapcanv.create_rectangle(Classmap.listmap[idtuile].x*20, Classmap.listmap[idtuile].y*20, (Classmap.listmap[idtuile].x*20)+20, (Classmap.listmap[idtuile].y*20)+20)
+            lplaines += [idtuile]
 
     return lplaines
 
+def buildvillagepossible(Options, Classmap, idtuile):
+    ####################
+    # Fonction pour vérifier qu'il n'y a pas de villages déjà construit dans les zones voisines
+    # Utiliser lplaines pour réduire le temps de calcul
+    # 2°) Conditions:
+    #   --> Si le type de la case verif n'est pas une plaines on passe à la suite
+    #   --> Sinon on verif qu'un village n'est pas déjà présent
+    #
+    #   Calcul de l'id selon la position: x+(Xmax*y)
+    #   Calcul de la position selon l'id: x = id%Xmax, y = id//Xmax
+    #
+    #   Returne False Si il y a un village dans la zone
+    #
+    #
+    ####################
+    #On recup la taille max de X
+    xmax = Options.mapx
+    #On calcule les coords X,Y de l'idtuile
+    xidtuile = idtuile%xmax
+    yidtuile = idtuile//xmax
 
+    for x in range(-2,2):
+        for y in range(-2,2):
+            idtemp = (xidtuile+x)+(xmax*(yidtuile+y))
+            print("idtemp: ", idtemp)
+            #On verifie qu'il n'y a pas de villages dans un rayon de 2 cases
+            if idtemp in Classmap.lvillages:
+                return False
+    return True
 
 
 #######################################################################
