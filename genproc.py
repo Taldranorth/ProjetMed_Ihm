@@ -1,10 +1,8 @@
-import matplotlib.pyplot as plt
-from perlin_noise.perlin_noise import PerlinNoise
-import random
-from time import time
 import sys
-#import tkinter
-
+import random
+import matplotlib.pyplot as plt
+from time import time
+from perlin_noise.perlin_noise import PerlinNoise
 #########################
 #
 #

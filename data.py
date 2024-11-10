@@ -1,10 +1,11 @@
 import sys
 import tkinter
-from PIL import ImageTk, Image, ImageShow
 import random
-from time import time
 
 import gameClass
+
+from time import time
+from PIL import ImageTk, Image, ImageShow
 
 
 ######################### On recup le dossier locale dans une variable	#########################
@@ -95,23 +96,31 @@ class ClassGameData:
 
 	def __init__(self):
 
-		self.Nb_tour = 0
-		self.Nb_lord = 3
+		# Variable qui vient contenir le nombre de tour passé
+		self.Nb_tour = 1
+		# Variable qui vient contenir le nombre de joueurs
+		self.Nb_lord = 1
 		self.tuilesize = 20
+
 		#Seed générer au lancement de l'appli
 		self.seed = random.random()*time()
 
+		# Variable bool modifier quand ont veut que le joueur termine son tour
+		self.endturn = False
 
+		# Variable qui vient contenir l'id du lord qui représente le seigneur
 		self.playerid = 0
 		player = gameClass.Classlord("test", True)
 		self.list_lord = [player]
 
+
+
 		# Dico des Assets
 		self.dico_file = assetLoad()
-
+		# Dico des noms
+		self.dico_name = loadnamedico(os.getcwd()+"/Asset/name.txt")
 		# Atlas
 		self.atlas = {}
-
 		# Label Frame Atlas
 		self.lframe = 0
 
@@ -155,6 +164,9 @@ class ClassGameData:
 		####################
 		self.atlas[filename].configure(image = img)
 		self.atlas[filename].image = img
+
+	def changePlayerLord(self, idplayer, player):
+		self.list_lord[idplayer] = player
 
 
 
@@ -384,44 +396,47 @@ def loadtexturefromdico(dico_file, filename, type, sizetuile):
 	else:
 		print("erreur fichier non trouvé")
 
-def createAtlas():
+
+def loadnamedico(filepath):
 	####################
-	# Fonction qui va créer un Atlas
-	# L'atlas est un dico qui sert à stocker:
-	#	le label qui vient contenir la texture
-	#	le nom de la texture contenu dans le label
+	# Fonction qui va revnoyer un dico ayant la liste de nom séparé en 3 partie:
+	#	Nom
+	#	Surnom
+	#	NomVillage
 	####################
-	atlas = {}
-	return atlas
+
+	# On créer le dico
+	dico_name = {"Nom":[], "Surnom":[], "Village":[]}
+	# On ouvre le fichier name.txt
+	f = open(filepath, "r")
+	#print(f.read())
+
+	#
+	var = ""
+
+	# On se balade dans le fichier
+	line = f.readline()
+	while(line != ""):
+		if line[:4] == "Nom:":
+			var = "Nom"
+		elif line[:7] == "Surnom:":
+			var = "Surnom"
+		elif line[:8] == "Village:":
+			var = "Village"
+		else:
+			# on evite de prendre en compte les saut à la ligne
+			if line[-1:] == "\n":
+				dico_name[var] += [line[:-2]]
+			else:
+				dico_name[var] += [line]
+		line = f.readline()
 
 
-
-def addAtlas(atlas, label, filename):
-	####################
-	# Fonction pour ajouter une nouvelle entréer à l'Atlas
-	####################
-	atlas[filename] = label
-	return atlas
-
-
-
-def checkAtlas(atlas, filename):
-	####################
-	# Fonction pour voir si une texture est présente dans l'atlas
-	####################
-	if filename in atlas.keys():
-		return True
-	else:
-		return False
-
-
-def changelabelAtlas(atlas, filename, img):
-	####################
-	# Fonction pour changer la texture associer à un label
-	####################
-	atlas[filename].configure(image = img)
-	atlas[filename].image = img
-	return atlas
+	# On ferme le fichier
+	f.close()
+	#print(dico_name)
+	# On renvoi le dico
+	return dico_name
 
 ###############################################################################
 

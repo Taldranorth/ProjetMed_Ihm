@@ -1,8 +1,9 @@
 import tkinter
-import genproc
 import random
+import genproc
 import data
 import interface
+import gameClass
 from time import time
 
 #Doit terminé de faire un Prototype:
@@ -147,33 +148,56 @@ from time import time
 #
 # Objectif 10 novembre:
 #	--> Refactoriser les fonctions
+#		--> En partie faite, j'ai remplacer l'utilisation de heightWindow et widthWindow par Option
 #	--> Avancer le Tour de Jeu
-#	-->
+#	--> Fix Highlight √
 #
-#
+# Objectif 11 novembre:
+#	--> Refactoriser les fonctions pour utiliser les normes
+#	--> Mettre en place un système de log d'erreur
+#	
+#	
+#	
 #########################
 
-
+######################### Normes #########################
+# https://peps.python.org/pep-0008/#package-and-module-names
+#	Nom de Variable:
+#
+#
+#	Nom de Class:
+#	- CapWords convention
+#
+#	Method Names and Instance Variables	
+#	- lowercase with words separated by underscores as necessary to improve readability
+#	- Use one leading underscore only for non-public methods and instance variables
+#
+#########################################################
 
 ######################### Menu Principale #########################
 
-def mainmenu(heightWindow, widthWindow, root):
+def mainmenu(option, gamedata, classmap,root):
 	# Création de la fenêtre
-	mainmenuwin = tkinter.Toplevel(root, height = heightWindow, width = widthWindow)
+	mainmenuwin = tkinter.Toplevel(root, height = option.heightWindow, width = option.widthWindow)
+	# On centre la fenêtre
+	# Pourquoi ?
+	print(f"{option.heightWindow}x{option.widthWindow}+{option.heightWindow//8}+{option.widthWindow//8}")
+	mainmenuwin.geometry(f"+{option.widthWindow//2}+{option.heightWindow//4}")
+
 
 	# Création de la frame
-	fmainm = tkinter.Frame(mainmenuwin, height = heightWindow, width = widthWindow)
+	fmainm = tkinter.Frame(mainmenuwin, height = option.heightWindow, width = option.widthWindow)
 	fmainm.pack(expand="True", fill="both")
 
 	# Mise en Place des Menus
 
 	# Button Play
 	# !!! A CORRIGER !!!
-	Button_mainm_Play = tkinter.Button(fmainm, command = lambda : playmenu(mainmenuwin, heightWindow, widthWindow, root), text = "Jouer")
+	Button_mainm_Play = tkinter.Button(fmainm, command = lambda : playmenu(mainmenuwin, option, gamedata, root, classmap), text = "Jouer")
 
 	# Button Quickplay
 	# !!! A CORRIGER !!!
-	Button_mainm_QuickPlay = tkinter.Button(fmainm, command = lambda: initgame(mainmenuwin, heightWindow, widthWindow, root), text = "Partie Rapide")
+	Button_mainm_QuickPlay = tkinter.Button(fmainm, command = lambda: initgame(mainmenuwin, option, gamedata, classmap, root), text = "Partie Rapide")
 
 	# Button Load
 	Button_mainm_load = tkinter.Button(fmainm, text = "Load")
@@ -234,17 +258,17 @@ def optionmenu():
 #
 ##################
 
-def playmenu(mainmenuwin, heightWindow, widthWindow, root):
+def playmenu(mainmenuwin, option, gamedata, root, classmap):
 
 
 	# On suprime le frame du menu principale
 	mainmenuwin.winfo_children()[0].destroy()
 	# On Créer un nouveau frame
-	fplaymenu = tkinter.Frame(mainmenuwin, height = heightWindow, width = widthWindow)
+	fplaymenu = tkinter.Frame(mainmenuwin, height = option.heightWindow, width = option.widthWindow)
 	fplaymenu.pack(expand="True", fill="both")
 
 	# Frame dans lequel on va afficher la version réduite de la carte
-	canvasframeminimap = tkinter.Frame(fplaymenu, height = heightWindow/4, width = widthWindow/4)
+	canvasframeminimap = tkinter.Frame(fplaymenu, height = option.heightWindow/4, width = option.widthWindow/4)
 	canvasframeminimap.pack(side="top")
 
 	# Canvas de la minimap
@@ -271,13 +295,12 @@ def playmenu(mainmenuwin, heightWindow, widthWindow, root):
 	# Dropbox pour créer des seigneur
 
 	# Button pour lancer une nouvelle partie
-	Button_playmenu_play = tkinter.Button(fplaymenu, command = lambda: initgame(mainmenuwin, heightWindow, widthWindow, root),text = "Jouer")
+	Button_playmenu_play = tkinter.Button(fplaymenu, command = lambda: initgame(mainmenuwin, option, gamedata, classmap, root),text = "Jouer")
 	Button_playmenu_play.pack()
 
 	# Boutton pour revenir en arrière
-	Button_playmenu_return = tkinter.Button(fplaymenu, command = lambda: playmenutomainmenu(mainmenuwin, root),text = "Retour")
+	Button_playmenu_return = tkinter.Button(fplaymenu, command = lambda: playmenutomainmenu(option, gamedata, mainmenuwin, root),text = "Retour")
 	Button_playmenu_return.pack()
-	pass
 
 
 def regenseed(gamedata, tkvar_seed, mapcanv):
@@ -304,8 +327,8 @@ def previewmap(mapcanv, pic, mapx, mapy):
 
 	mapcanv.pack(expand = "True",fill="both")
 
-def playmenutomainmenu(menu, root):
-	mainmenu(option.heightWindow, option.widthWindow, root)
+def playmenutomainmenu(option, gamedata, menu, root):
+	mainmenu(option, gamedata, root)
 	menu.destroy()
 
 
@@ -326,7 +349,9 @@ def playmenutomainmenu(menu, root):
 ###############
 def globalviewmenu(gamedata):
 
-	#gamedata.listlord[0]
+	# Frame de la fenêtre
+	#frame_global_view = tkinter.Frame(gamedata.)
+	playerdata = gamedata.listlord[gamedata.playerid]
 
 
 
@@ -365,17 +390,19 @@ def globalviewmenu(gamedata):
 
 
 
-
-
-
-def initgame(mainmenuwin, heightWindow, widthWindow, root):
+def initgame(mainmenuwin, option, gamedata, classmap,  root):
 
 
 	# On lance la création de la game
-	mainscreen(heightWindow, widthWindow, root,pic, option.mapx, option.mapy, gamedata)
+	mainscreen(option, root, pic, gamedata, classmap)
 
 	# Une fois l'initialisation lancé on détruit la fenêtre du menu principale
 	mainmenuwin.destroy()
+
+	# On lance la game
+	# Actuellement Bloque le process
+	#game(gamedata)
+
 
 ###########################################################################
 
@@ -383,18 +410,19 @@ def initgame(mainmenuwin, heightWindow, widthWindow, root):
 
 
 ######################### Écran de Jeu #########################
-def mainscreen(heightWindow, widthWindow, root, pic, mapx, mapy, gamedata):
+def mainscreen(option, root, pic, gamedata, classmap):
 
 	# Création de la fenêtre
-	win1 = tkinter.Toplevel(root, height = heightWindow, width= widthWindow)
+	win1 = tkinter.Toplevel(root, height = option.heightWindow, width= option.widthWindow)
+	win1.geometry(f"+{option.widthWindow//8}+{option.heightWindow//4}")
 
-	interface.gameinterface(win1,heightWindow, widthWindow, gamedata)
+	interface.gameinterface(win1, option, gamedata)
 
 	# Frame Map
 	fcanvas = tkinter.Frame(win1)
 	fcanvas.pack(expand="True", fill="both")
 
-	createmap(heightWindow, widthWindow, pic, fcanvas, mapx, mapy, 20, dico_file, gamedata)
+	createmap(option, pic, fcanvas, gamedata, classmap)
 
 	genproc.genVillage(Map, option)
 	printvillage(gamedata, Map, fcanvas)
@@ -403,12 +431,12 @@ def mainscreen(heightWindow, widthWindow, root, pic, mapx, mapy, gamedata):
 
 
 ######################### Gestion de la Carte #######################################################
-def createmap(heightWindow, widthWindow, pic, frame, mapx, mapy, sizetuile, dico_file, gamedata):
+def createmap(option, pic, frame, gamedata, classmap):
 
 	#Si heigthWindow/1.5 le boutton quitter disparait
-	mapcanv = tkinter.Canvas(frame,height = ((heightWindow)/1.6), width = widthWindow)
+	mapcanv = tkinter.Canvas(frame,height = ((option.heightWindow)/1.6), width = option.widthWindow)
 	gamedata.setlframe(tkinter.Frame(frame))
-	Map.setmapcanv(mapcanv)
+	classmap.setmapcanv(mapcanv)
 	# On Créer les Différentes Cases avec le tags tuile pour indiquer et les trouvé plus facilement
 	# On ajoute aussi le tags click pour indiquer qu'ils sont clickables
 	# On ajoute aussi les tags x et y qui correspond à la casse ou ils est situés
@@ -417,11 +445,13 @@ def createmap(heightWindow, widthWindow, pic, frame, mapx, mapy, sizetuile, dico
 
 	idtuile = 0
 
+	sizetuile = gamedata.tuilesize
+
 	# !!!!!!
 	# Différence position entre map texture et map carré causer par le fait que la map texture utilise les coordonnées donnés comme point centrale et non point en haut à gauche
 	# !!!!!!
-	for x in range(mapx):
-		for y in range(mapy):
+	for x in range(option.mapx):
+		for y in range(option.mapy):
 
 			# On utilise la valeur de la case pour définir la tuile que l'on va créer
 			tl = tuile(pic[x][y])
@@ -433,7 +463,7 @@ def createmap(heightWindow, widthWindow, pic, frame, mapx, mapy, sizetuile, dico
 			
 			if tl[1] == "mountains":
 				if gamedata.checkAtlas("mountains_inner.png") == False:
-					tk_img = data.loadtexturefromdico(dico_file, "mountains_inner.png", tl[1], sizetuile)
+					tk_img = data.loadtexturefromdico(gamedata.dico_file, "mountains_inner.png", tl[1], sizetuile)
 					label = tkinter.Label(gamedata.lframe,image = tk_img[1])
 					label.image = tk_img[1]
 					gamedata.addAtlas(label, tk_img[0])
@@ -442,7 +472,7 @@ def createmap(heightWindow, widthWindow, pic, frame, mapx, mapy, sizetuile, dico
 				texture_name = "mountains_inner.png"
 			elif tl[1] == "forest":
 				if gamedata.checkAtlas("conifer_forest_inner.png") == False:
-					tk_img = data.loadtexturefromdico(dico_file, "conifer_forest_inner.png", tl[1], sizetuile)
+					tk_img = data.loadtexturefromdico(gamedata.dico_file, "conifer_forest_inner.png", tl[1], sizetuile)
 					label = tkinter.Label(gamedata.lframe,image = tk_img[1])
 					label.image = tk_img[1]
 					gamedata.addAtlas(label, tk_img[0])
@@ -451,7 +481,7 @@ def createmap(heightWindow, widthWindow, pic, frame, mapx, mapy, sizetuile, dico
 				texture_name = "conifer_forest_inner.png"
 			elif tl[1] == "plains":
 				if gamedata.checkAtlas("plains.png") == False:
-					tk_img = data.loadtexturefromdico(dico_file, "plains.png", tl[1], sizetuile)
+					tk_img = data.loadtexturefromdico(gamedata.dico_file, "plains.png", tl[1], sizetuile)
 					label = tkinter.Label(gamedata.lframe,image = tk_img[1])
 					label.image = tk_img[1]
 					gamedata.addAtlas(label, tk_img[0])
@@ -460,7 +490,7 @@ def createmap(heightWindow, widthWindow, pic, frame, mapx, mapy, sizetuile, dico
 				texture_name = "plains.png"
 			elif tl[1] == "ocean":
 				if gamedata.checkAtlas("ocean_inner.png") == False:
-					tk_img = data.loadtexturefromdico(dico_file, "ocean_inner.png", tl[1], sizetuile)
+					tk_img = data.loadtexturefromdico(gamedata.dico_file, "ocean_inner.png", tl[1], sizetuile)
 					label = tkinter.Label(gamedata.lframe,image = tk_img[1])
 					label.image = tk_img[1]
 					gamedata.addAtlas(label, tk_img[0])
@@ -487,7 +517,7 @@ def createmap(heightWindow, widthWindow, pic, frame, mapx, mapy, sizetuile, dico
 			instancetuile = Classtuiles(texture_name, tl[1], x, y, mcanvt)
 			# On le stocker dans la ClassMap
 			#gamedata.list_tuile += [instancetuile]
-			Map.addtuileinlist(instancetuile)
+			classmap.addtuileinlist(instancetuile)
 			idtuile += 1
 
 	#Carrer test
@@ -527,7 +557,7 @@ def createmap(heightWindow, widthWindow, pic, frame, mapx, mapy, sizetuile, dico
 def printvillage(Gamedata, Classmap, frame):
 	ts = Gamedata.tuilesize
 	for ele in Classmap.lvillages:
-		if data.checkAtlas(gamedata.atlas, "settlement.png") == False:
+		if Gamedata.checkAtlas("settlement.png") == False:
 			tk_img = data.loadtexturefromdico(dico_file, "settlement.png", "build", ts)
 			label = tkinter.Label(gamedata.lframe,image = tk_img[1])
 			label.image = tk_img[1]
@@ -538,7 +568,14 @@ def printvillage(Gamedata, Classmap, frame):
 		posx = Classmap.listmap[ele].x
 		posy = Classmap.listmap[ele].y
 		#print(Classmap.listmap[ele].type, Classmap.listmap[ele].x, Classmap.listmap[ele].y)
-		Classmap.mapcanv.create_image((posx*ts)+(ts/2), (posy*ts)+(ts/2), tags = ["village","build","tuile","img"], image = label.image)
+		# On affiche le village
+		Classmap.mapcanv.create_image((posx*ts)+(ts/2), (posy*ts)+(ts/2), tags = ["village","build","tuile","img", "click"], image = label.image)
+
+		# On affiche en dessous le nom du village
+		Classmap.mapcanv.create_text((posx*ts)+(ts/2), (posy*ts), text = Classmap.listmap[ele].village.name,tags = ["label","village","tuile"])
+
+
+	# On ajoute lie au tag village la fonction pour ouvrir l'interface des villages
 
 
 def bordervillage(Gamedata, Classmap, frame):
@@ -552,7 +589,7 @@ def loadtextureatlas(gamedata, texture_name, type):
 	######
 
 	# Si la texture n'est pas déjà présent dans l'atlas on la prépare est place
-	if data.checkAtlas(gamedata.atlas, texture_name) == False:
+	if gamedata.checkAtlas(gamedata.atlas, texture_name) == False:
 		tk_img = data.loadtexturefromdico(gamedata.dico_file, texture_name, type, gamedata.tuilesize)
 		label = tkinter.Label(gamedata.lframe , image = tk_img[1])
 		label.image = tk_img[1]
@@ -835,16 +872,17 @@ def highlightCase(event):
 	#		--> Pas de fonction de bordure pour une image
 	#			--> Tout simplement créer un canvas rectangle afin d'encercler la tuile
 	#
+	#	--> Après avoir déplacer la carte sur une axe xy la sélection en fonctione plus correctement
+	#	--> N'illumine pas les villages
+	#
 	####################
 
-	####################\!!! A CORRIGER !!!\####################
-	# On recup les coord de la tuile selectionner
-	idclosest = event.widget.find_closest(event.x, event.y)
-	print(idclosest)
-	coords = event.widget.coords(idclosest)
 
-	print(coords)
-	############################################################
+
+	# On recup l'id de la tuiles selectionner
+	idclosest = event.widget.find_withtag("current")
+	# On recup les coords
+	coords = event.widget.coords(idclosest)
 
 
 	# On recup la taille d'une tuile
@@ -865,7 +903,7 @@ def coord(event):
 ###########################################################################
 
 
-######################### Tour de Jeu #########################
+######################### Fonction Jeu #########################
 
 #################### 
 # Ensemble de Fonction qui vont régir un tour de jeu
@@ -873,7 +911,7 @@ def coord(event):
 #		- Début du tour du Joueur
 #		- Event
 #		- action - Réaction
-#		-
+#		- 
 #		-
 #		- Fin du tour quand le Joueur clique sur la case fin de tour
 #################### 
@@ -885,20 +923,20 @@ def game(gamedata):
 	nbtoplay = 0
 	# Boucle principale du jeu
 	while(ingame == True):
-		if nbtoplay == nbplayer:
+		if nbtoplay == gamedata.Nb_lord:
 			nbtoplay = 0
+			gamedata.Nb_tour += 1
 
 		# On verifie que c'est le tour du joueur
-		if gamedata.list_lord[nbtoplay].player == True:
-			playerturn()
+		if gamedata.playerid == nbtoplay:
+			playerturn(gamedata)
 		else:
-			notplayerturn(nbtoplay)
+			notplayerturn(gamedata, nbtoplay)
 
 
 		nbtoplay += 1
 
 
-	pass
 
 
 # Fonction qui gère la fin de partie
@@ -907,14 +945,36 @@ def endofgame():
 
 
 # Fonction qui gère l'ia des ennemies
-def notplayerturn(nbtoplay):
+def notplayerturn(gamedata, nbtoplay):
 	pass
 
 
 
 # Fonction qui gère le tour du joueur
-def playerturn():
+def playerturn(gamedata):
+	while(gamedata.endturn == False):
+		pass
+	gamedata.endturn == True
+
+####
+# Fonction pour tester puis créer un village par le joueur 
+#
+#####
+def buildvillage(Classmap, idtuile, player):
+	if buildvillagepossible(Options, Classmap, idtuile) == True:
+		Classmap.lvillages += [idtuile]
+		Classmap.listmap[idtuile].createvillage()
+		Classmap.listmap[idtuile].setpossesor(player)
+
+
+def moveunit():
 	pass
+
+
+
+
+
+
 
 ###########################################################################
 
@@ -947,11 +1007,6 @@ class Classmap:
 
 	def setmapcanv(self, mapcanv):
 		self.mapcanv = mapcanv
-
-
-
-
-
 
 
 class Classtuiles:
@@ -1028,11 +1083,20 @@ class Classtuiles:
 		self.possesor = possesor
 
 	def createvillage(self):
-		self.village = 1
+		self.village = gameClass.Classvillage(self.x, self.y)
+		r = random.randrange(len(gamedata.dico_name["Village"]))
+		self.village.setnamevillage(gamedata.dico_name["Village"][r])
 
 
+class ClassGameInterface:
+	####################
+	# Classe qui va contenir toute les données liée à l'interface Tkinter
+	#
+	#
+	####################
 
-
+	def __init__(self):
+		self.root = tkinter.Tk()
 
 
 
@@ -1040,6 +1104,9 @@ class Classtuiles:
 
 ######################### Main #########################
 if __name__ == '__main__':
+
+
+	#GameInterface = ClassGameInterface()
 	#Init de la fenêtre
 	root = tkinter.Tk()
 
@@ -1057,9 +1124,9 @@ if __name__ == '__main__':
 	
 
 	# Menu principale
-	mainmenu(option.heightWindow, option.widthWindow, root)
+	mainmenu(option, gamedata, Map, root)
 	# Si on veut tester rapidement la boucle de jeu sans passer par le menu principale
-	#mainscreen(option.heightWindow, option.widthWindow, root, pic, option.mapx, option.mapy)
+	#mainscreen(option, root, pic, gamedata, Map)
 
 
 	root.mainloop()

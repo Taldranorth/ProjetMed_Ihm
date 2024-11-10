@@ -55,27 +55,31 @@ class kingdom(object):
 		pass
 	pass
 
-class village(object):
+class Classvillage(object):
 
 	def __init__(self,x,y):
+		self.name = "test"
 		self.x = x
 		self.y = y
 
 		self.population = []
-		self.priest
-		self.lord
+		self.priest = ""
+		self.lord = ""
 
 	#pop: Classhuman	
 	def addpopulation(self, pop):
 		self.population += [pop]
 
 	#lord: Classlord
-	def definelord(self, lord):
+	def setlord(self, lord):
 		self.lord = lord
 
 	#priest: Classpriest
-	def definepriest(self, priest):
+	def setpriest(self, priest):
 		self.priest = priest
+
+	def setnamevillage(self, name):
+		self.name = name
 
 
 
