@@ -118,8 +118,9 @@ def gameinterface(win, option, gamedata):
 
 	# On associe les Commandes Gestion
 	menu_gestion.add_command(label = "Immigration")
-	menu_gestion.add_command(label = "Église")
 	menu_gestion.add_command(label = "Impôt")
+	menu_gestion.add_command(label = "Construire Église")
+	menu_gestion.add_command(label = "Construire Village")
 
 
 
@@ -129,7 +130,7 @@ def gameinterface(win, option, gamedata):
 	# Exit, Option, Load, Sauvegarder
 	Button_exit = tkinter.Button(bottomFrame, command = exit, text = "Quitter")
 	# Button pour acceder à la vue générale
-	Button_globalview = tkinter.Button(bottomFrame, text = "Vue Générale")
+	Button_globalview = tkinter.Button(bottomFrame, command = lambda: globalviewmenu(win, option, gamedata), text = "Vue Générale")
 
 	# Boutton Central
 	# Bouton Fin de Tour
@@ -144,6 +145,55 @@ def gameinterface(win, option, gamedata):
 	Button_endofturn.pack()
 
 #########################################################################
+
+######################### Menu Vue Globale #########################
+
+
+###############
+# Une Fenêtre qui va afficher une liste de l'ensemble des villages avec la population, le seigneur, l'argent produit, les ressources produites
+# 
+# Comment gérer l'affichage de fenêtre par dessus ?
+#  .transient(parent=None) ?
+# 
+###############
+def globalviewmenu(win ,option, gamedata):
+
+	#On créer dans une nouvelle fenêtre
+	win2 = tkinter.Toplevel(height = option.heightWindow, width= option.widthWindow)
+	win2.geometry(f"+{option.widthWindow//8}+{option.heightWindow//4}")
+	# A transient window always appears in front of its parent
+	win2.transient()
+
+	# Frame de la fenêtre
+	frame_global_view = tkinter.Frame(win2, height = option.heightWindow, width = option.widthWindow)
+	frame_global_view.pack()
+	playerdata = gamedata.list_lord[gamedata.playerid]
+
+	# Frame qui va contenir les Infos Centraux
+
+
+	# On créer la légende au dessus
+	# Frame qui va contenir la légende
+	frame_global_view_legend = tkinter.Frame(frame_global_view)
+	frame_global_view_legend.pack(side="top")
+
+	for legend in ("Village","Population dans le village","Seigneur","Production de Ressource","Production d'argent","Prêtre","Bonheur"):
+		tkinter.Label(frame_global_view_legend, text = legend).pack(side="left")
+
+
+
+	# Frame qui va contenir le boutton pour quitter
+	frame_global_view_exit = tkinter.Frame(frame_global_view)
+	frame_global_view_exit.pack(side ="bottom")
+
+	# Bouton pour quitter le menu
+	Button_exit = tkinter.Button(frame_global_view_exit, text= "Quitter", command = lambda: destroyglobalviewmenu(win2))
+	Button_exit.pack()
+
+def destroyglobalviewmenu(win2):
+	win2.destroy()
+
+###########################################################################
 
 # Fonction lier au bouton de fin de tour
 def turnend(gamedata):

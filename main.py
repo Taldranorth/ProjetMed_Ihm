@@ -337,29 +337,6 @@ def playmenutomainmenu(option, gamedata, menu, root):
 
 
 
-######################### Menu Vue Globale #########################
-
-
-###############
-# Une Fenêtre qui va afficher une liste de l'ensemble des villages avec la population, le seigneur, l'argent produit, les ressources produites
-# 
-# Comment gérer l'affichage de fenêtre par dessus ?
-# 
-# 
-###############
-def globalviewmenu(gamedata):
-
-	# Frame de la fenêtre
-	#frame_global_view = tkinter.Frame(gamedata.)
-	playerdata = gamedata.listlord[gamedata.playerid]
-
-
-
-
-
-
-	pass
-
 ###########################################################################
 
 
@@ -554,28 +531,46 @@ def createmap(option, pic, frame, gamedata, classmap):
 
 
 
-def printvillage(Gamedata, Classmap, frame):
-	ts = Gamedata.tuilesize
-	for ele in Classmap.lvillages:
-		if Gamedata.checkAtlas("settlement.png") == False:
+def printvillage(gamedata, classmap, frame):
+	ts = gamedata.tuilesize
+	for ele in classmap.lvillages:
+		if gamedata.checkAtlas("settlement.png") == False:
 			tk_img = data.loadtexturefromdico(dico_file, "settlement.png", "build", ts)
-			label = tkinter.Label(gamedata.lframe,image = tk_img[1])
+			label = tkinter.Label(gamedata.lframe, image = tk_img[1])
 			label.image = tk_img[1]
 			gamedata.addAtlas(label, tk_img[0])
 		else:
 			label = gamedata.atlas["settlement.png"]
 		#On recup la position en x et y 
-		posx = Classmap.listmap[ele].x
-		posy = Classmap.listmap[ele].y
+		posx = classmap.listmap[ele].x
+		posy = classmap.listmap[ele].y
 		#print(Classmap.listmap[ele].type, Classmap.listmap[ele].x, Classmap.listmap[ele].y)
 		# On affiche le village
-		Classmap.mapcanv.create_image((posx*ts)+(ts/2), (posy*ts)+(ts/2), tags = ["village","build","tuile","img", "click"], image = label.image)
+		classmap.mapcanv.create_image((posx*ts)+(ts/2), (posy*ts)+(ts/2), tags = ["village","build","tuile","img", "click"], image = label.image)
 
 		# On affiche en dessous le nom du village
-		Classmap.mapcanv.create_text((posx*ts)+(ts/2), (posy*ts), text = Classmap.listmap[ele].village.name,tags = ["label","village","tuile"])
+		classmap.mapcanv.create_text((posx*ts)+(ts/2), (posy*ts), text = classmap.listmap[ele].village.name,tags = ["label","village","tuile"], activefill = "Black")
 
 
 	# On ajoute lie au tag village la fonction pour ouvrir l'interface des villages
+	classmap.mapcanv.tag_bind("village","<Button-1>", lambda event, gd = gamedata, fc = frame: villageinterface(event, gd, fc))
+
+
+def villageinterface(event, gamedata, fcanvas):
+	# ON positionne la vue sur le village
+
+
+	# On fait apparaitre l'interface informative
+
+
+	# On fait apparaitre les boutons
+
+
+	# Si le joueur clique autre part on sort de l'interface
+
+
+	pass
+
 
 
 def bordervillage(Gamedata, Classmap, frame):
@@ -908,11 +903,11 @@ def coord(event):
 #################### 
 # Ensemble de Fonction qui vont régir un tour de jeu
 #	Phase d'un Tour de jeu:
-#		- Début du tour du Joueur
+#		- Calcul du gain de Ressource et d'Argent
+#		- Calcul Mort/Viellisement de la population
 #		- Event
+#		-- Début du tour du Joueur
 #		- action - Réaction
-#		- 
-#		-
 #		- Fin du tour quand le Joueur clique sur la case fin de tour
 #################### 
 
@@ -987,7 +982,7 @@ class Classmap:
 	#		--> l'avantage du dictionnaire et de pouvoir balancer l'identificateur pour en recup la tuile
 	####################
 	def __init__(self):
-		# Variable qui vient contenir l'id du mapcanv
+		# Variable qui vient contenir le canvas de la map
 		self.mapcanv = 0
 
 		#Dico qui vient contenir les Classtuiles 

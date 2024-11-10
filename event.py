@@ -53,6 +53,29 @@
 # 
 #############################################################################
 
+##################
+# À chaque début de tour chaque joueur va tirer un chiffre aléatoire
+#
+#
+#
+##################
+
+class Classevent:
+
+	def __init__(self):
+		self.listevent = ["nothing", "plague", "famine"]
+
+	def randomevent(self):
+		pass
+
+	def event_plague(self):
+		pass
+
+	def event_famine(self):
+		pass
+
+
+
 
 
 

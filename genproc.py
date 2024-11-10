@@ -72,7 +72,7 @@ def genVillage(Classmap, Options):
 
     # On recup la liste des Plaines
     Classmap.lplaines = listidplaines(Classmap)
-    print(Classmap.listmap)
+    #print(Classmap.listmap)
 
     # On en gen 10 
     # Valeur Test
@@ -134,7 +134,7 @@ def buildvillagepossible(Options, Classmap, idtuile):
     for x in range(-2,2):
         for y in range(-2,2):
             idtemp = (xidtuile+x)+(xmax*(yidtuile+y))
-            print("idtemp: ", idtemp)
+            #print("idtemp: ", idtemp)
             #On verifie qu'il n'y a pas de villages dans un rayon de 2 cases
             if idtemp in Classmap.lvillages:
                 return False
