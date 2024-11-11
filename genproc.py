@@ -126,7 +126,7 @@ def listidplaines(Classmap):
 
     return lplaines
 
-def buildvillagepossible(Options, Classmap, idtuile):
+def buildvillagepossible(options, Classmap, idtuile):
     ####################
     # Fonction pour vérifier qu'il n'y a pas de villages déjà construit dans les zones voisines
     # Utiliser lplaines pour réduire le temps de calcul
@@ -142,10 +142,17 @@ def buildvillagepossible(Options, Classmap, idtuile):
     #
     ####################
     #On recup la taille max de X
-    xmax = Options.mapx
+    xmax = options.mapx
     #On calcule les coords X,Y de l'idtuile
     xidtuile = idtuile%xmax
     yidtuile = idtuile//xmax
+
+    # On Vérifier que la tuile sélectionner n'est pas en bord de map
+    if (xidtuile == 0) or (yidtuile == 0):
+        return False
+    elif (xidtuile == (options.mapx-1)) or (yidtuile == (options.mapy-1)):
+        return False
+
 
     for x in range(-5,5):
         for y in range(-5,5):

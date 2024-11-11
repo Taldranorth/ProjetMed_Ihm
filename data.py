@@ -194,11 +194,13 @@ class ClassOptions:
 		self.octaves = 10
 
 
-	def loadoption():
+	def loadoption(self):
 		# f = open("user/Config.ini")
 		#
 		#
 		#
+		#
+		# F.close()
 		pass
 
 ###########################################################################

@@ -256,6 +256,7 @@ def mainmenu(option, gamedata, classmap,root):
 def initgame(mainmenuwin, option, gamedata, classmap,  root):
 
 
+	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, option.mapx, option.mapy)
 	# On lance la création de la game
 	mainscreen(option, root, pic, gamedata, classmap)
 
@@ -299,7 +300,7 @@ def mainscreen(option, root, pic, gamedata, classmap):
 	# On rempli les villages de pop
 	for village in classmap.lvillages:
 		genproc.genpopvillage(option, classmap, gamedata,village, 10)
-	
+
 
 ####################################################################################################
 
@@ -338,31 +339,88 @@ def playmenu(mainmenuwin, option, gamedata, root, classmap):
 	# Fonction qui gen la mini carte
 	previewmap(mapcanv, pic, option.mapx, option.mapy)
 
+	# Frame central
+	fplaymenu_center = tkinter.Frame(fplaymenu)
+	fplaymenu_center.pack()
+
+	# top du centre
+	fplaymenu_center_top = tkinter.Frame(fplaymenu_center)
+	fplaymenu_center_top.pack()
+
 	#txt variable seed
 	tkvar_seed = tkinter.IntVar()
 	tkvar_seed.set(gamedata.seed)
 
 	# Button pour générer un nouveau seed ce qui vient update automatiquement la carte
-	Button_playmenu_newseed = tkinter.Button(fplaymenu,command = lambda: regenseed(gamedata, option,tkvar_seed, mapcanv), text = "Genérer nouvelle Seed")
+	Button_playmenu_newseed = tkinter.Button(fplaymenu_center_top,command = lambda: regenseed(gamedata, option,tkvar_seed, mapcanv), text = "Genérer nouvelle Seed")
 	Button_playmenu_newseed.pack()
 
 
 	# Entry widget qui affiche la seed, permet de la modif et de la copier
-	entryseed = tkinter.Entry(fplaymenu, textvariable = tkvar_seed)
-	entryseed.pack()
+	entryseed = tkinter.Entry(fplaymenu_center_top, textvariable = tkvar_seed)
+	entryseed.pack(side = "left")
+	button_entryseed = tkinter.Button(fplaymenu_center_top, command = lambda: validate_entry_seed(entryseed, option, gamedata, tkvar_seed, mapcanv), text = "change")
+	button_entryseed.pack(side = "left")
+
+	# Milieu du centre
+	fplaymenu_center_center = tkinter.Frame(fplaymenu_center)
+	fplaymenu_center_center.pack()
+
+	#txt variable mapx mapy
+	tkvar_mapx = tkinter.IntVar()
+	tkvar_mapx.set(option.mapx)
+	tkvar_mapy = tkinter.IntVar()
+	tkvar_mapy.set(option.mapy)
+
+	# Entry widget qui affiche la taille en x et y 
+	entrymapx = tkinter.Entry(fplaymenu_center_center, textvariable = tkvar_mapx)
+	entrymapx.pack(side = "left")
+	entrymapy = tkinter.Entry(fplaymenu_center_center, textvariable = tkvar_mapy)
+	entrymapy.pack(side = "left")
+	button_entrymap = tkinter.Button(fplaymenu_center_center, command = lambda: validate_entry_map(entrymapx, entrymapy, option, gamedata, tkvar_mapx, tkvar_mapy, mapcanv), text = "change")
+	button_entrymap.pack(side = "left")
+
+	# bottom du centre
+
 
 	# Dropbox pour créer des seigneur
 
+
+	fplaymenu_bottom = tkinter.Frame(fplaymenu)
+	fplaymenu_bottom.pack(side = "bottom")
 	# Button pour lancer une nouvelle partie
-	Button_playmenu_play = tkinter.Button(fplaymenu, command = lambda: initgame(mainmenuwin, option, gamedata, classmap, root),text = "Jouer")
+	Button_playmenu_play = tkinter.Button(fplaymenu_bottom, command = lambda: initgame(mainmenuwin, option, gamedata, classmap, root),text = "Jouer")
 	Button_playmenu_play.pack()
 
 	# Boutton pour revenir en arrière
-	Button_playmenu_return = tkinter.Button(fplaymenu, command = lambda: playmenutomainmenu(option, gamedata, classmap, mainmenuwin, root),text = "Retour")
+	Button_playmenu_return = tkinter.Button(fplaymenu_bottom, command = lambda: playmenutomainmenu(option, gamedata, classmap, mainmenuwin, root),text = "Retour")
 	Button_playmenu_return.pack()
 
+def validate_entry_map(entrymapx, entrymapy, option, gamedata, tkvar_mapx, tkvar_mapy, mapcanv):
+	option.mapx = int(entrymapx.get())
+	option.mapy = int(entrymapy.get())
+
+	tkvar_mapx.set(option.mapx)
+	tkvar_mapy.set(option.mapy)
+
+	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, option.mapx, option.mapy)
+	previewmap(mapcanv, pic, option.mapx, option.mapy)
+
+
+def validate_entry_seed(entryseed, option, gamedata, tkvar_seed, mapcanv):
+	####################
+	# Fonction pour changer automatiquement la seed stocker dans gamedata, tkvar_seed et la minimap
+	####################
+	gamedata.seed = int(entryseed.get())
+	tkvar_seed.set(gamedata.seed)
+	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, option.mapx, option.mapy)
+	previewmap(mapcanv, pic, option.mapx, option.mapy)
 
 def regenseed(gamedata, option, tkvar_seed, mapcanv):
+	####################
+	# Fonction associer à un bouton pour random la seed et changer la minimap
+	####################
+
 	gamedata.seed = random.random()*time()
 	tkvar_seed.set(gamedata.seed)
 	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, option.mapx, option.mapy)
