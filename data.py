@@ -113,8 +113,6 @@ class ClassGameData:
 		player = gameClass.Classlord("test", True)
 		self.list_lord = [player]
 
-
-
 		# Dico des Assets
 		self.dico_file = assetLoad()
 		# Dico des noms
@@ -356,7 +354,7 @@ def randomloadtexturefromdico(dico_file, type, sizetuile):
 		print("erreur type non présent dans les clé du dico")
 		print(dico_file.keys())
 
-def randomtexturefromdico(gamedata, type):
+def randomtexturefromdico(dico_file, type):
 	####################
 	# Fonction qui va renvoyer le nom d'une texture Aléatoire depuis le dico du type désirer
 	####################

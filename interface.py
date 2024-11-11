@@ -1,5 +1,5 @@
 import tkinter
-
+import genproc
 
 
 
@@ -44,53 +44,52 @@ def gameinterface(win, option, gamedata):
 
 
 
-	# on Créer les tkinter variables que l'on va utiliser 
+	# on Créer les tkinter variables que l'on va utiliser
+	tkvar_list = []
 	#Nb_rssource
 	tkvar_nb_ressource = tkinter.IntVar()
-	#self.nb_ressource = tkinter.IntVar()
-	#self.nb_ressource.set(10)
 
 	#Nb_money
 	tkvar_nb_money = tkinter.IntVar()
-	#self.nb_money = tkinter.IntVar()
-	#self.nb_money.set(10)
 
 	#global_joy
 	tkvar_global_joy = tkinter.IntVar()
-	#self.global_joy = tkinter.IntVar()
-	#self.global_joy.set(10)
 
 	#Nb_tour
 	tkvar_nb_turn = tkinter.IntVar()
 
+	tkvar_list +=[tkvar_nb_ressource, tkvar_nb_money, tkvar_global_joy, tkvar_nb_turn]	
+
+
 	# On les set
-	tkvar_nb_ressource.set(gamedata.list_lord[0].nb_ressource) 
-	tkvar_nb_money.set(gamedata.list_lord[0].nb_money) 
-	tkvar_global_joy.set(gamedata.list_lord[0].global_joy)
-	tkvar_nb_turn.set(gamedata.Nb_tour) 
+	# Merde c'est pas dynamique
+	tkvar_list[0].set(gamedata.list_lord[0].nb_ressource)
+	tkvar_list[1].set(gamedata.list_lord[0].nb_money)
+	tkvar_list[2].set(gamedata.list_lord[0].global_joy)
+	tkvar_list[3].set(gamedata.Nb_tour)
 
 	# Info Entête
 	# Nb Total Ressource
 	ressource_labelt = tkinter.Label(topframe, text = "Ressource Total: ")
-	ressource_label = tkinter.Label(topframe, text = "Ressource Total: ", textvariable = tkvar_nb_ressource)
+	ressource_label = tkinter.Label(topframe, text = "Ressource Total: ", textvariable = tkvar_list[0])
 	ressource_labelt.pack(side = "left")
 	ressource_label.pack(side = 'left')
 
 	# Nb Total Argent
 	money_labelt = tkinter.Label(topframe, text = "Argent Total: ")
-	money_label = tkinter.Label(topframe, text = "Argent Total: ", textvariable = tkvar_nb_money)
+	money_label = tkinter.Label(topframe, text = "Argent Total: ", textvariable = tkvar_list[1])
 	money_labelt.pack(side = "left")
 	money_label.pack(side = 'left')
 
 	# Humeur Globale de la Population
 	global_joy_labelt = tkinter.Label(topframe, text = "Taux de Bonheur: ")
-	global_joy_label = tkinter.Label(topframe, text = "Taux de Bonheur: ", textvariable = tkvar_global_joy)
+	global_joy_label = tkinter.Label(topframe, text = "Taux de Bonheur: ", textvariable = tkvar_list[2])
 	global_joy_labelt.pack(side = "left")
 	global_joy_label.pack(side = 'left')
 
 	# N°Tour
-	nb_turn_labelt = tkinter.Label(topframe, text = "Tour N°: ")
-	nb_turn_label = tkinter.Label(topframe, text = "Tour N°: ", textvariable = tkvar_nb_turn)
+	nb_turn_labelt = tkinter.Label(topframe, text = "Tour N°: ")	
+	nb_turn_label = tkinter.Label(topframe, text = "Tour N°: ", textvariable = tkvar_list[3])
 	nb_turn_labelt.pack(side = "left")
 	nb_turn_label.pack(side = 'left')
 
@@ -134,7 +133,7 @@ def gameinterface(win, option, gamedata):
 
 	# Boutton Central
 	# Bouton Fin de Tour
-	Button_endofturn = tkinter.Button(bottomFrame, command = lambda: turnend(gamedata), text = "Fin de Tour")
+	Button_endofturn = tkinter.Button(bottomFrame, command = lambda: turnend(gamedata, tkvar_list), text = "Fin de Tour")
 
 
 	# On pack les Button
@@ -145,6 +144,12 @@ def gameinterface(win, option, gamedata):
 	Button_endofturn.pack()
 
 #########################################################################
+
+def updateinterface(gamedata, tkvar_list):
+	tkvar_list[0].set(gamedata.list_lord[0].nb_ressource) 
+	tkvar_list[1].set(gamedata.list_lord[0].nb_money) 
+	tkvar_list[2].set(gamedata.list_lord[0].global_joy)
+	tkvar_list[3].set(gamedata.Nb_tour)
 
 ######################### Menu Vue Globale #########################
 
@@ -160,7 +165,7 @@ def globalviewmenu(win ,option, gamedata):
 
 	#On créer dans une nouvelle fenêtre
 	win2 = tkinter.Toplevel(height = option.heightWindow, width= option.widthWindow)
-	win2.geometry(f"+{option.widthWindow//8}+{option.heightWindow//4}")
+	win2.geometry(f"+{option.widthWindow//3}+{option.heightWindow//4}")
 	# A transient window always appears in front of its parent
 	win2.transient()
 
@@ -169,7 +174,6 @@ def globalviewmenu(win ,option, gamedata):
 	frame_global_view.pack()
 	playerdata = gamedata.list_lord[gamedata.playerid]
 
-	# Frame qui va contenir les Infos Centraux
 
 
 	# On créer la légende au dessus
@@ -177,10 +181,18 @@ def globalviewmenu(win ,option, gamedata):
 	frame_global_view_legend = tkinter.Frame(frame_global_view)
 	frame_global_view_legend.pack(side="top")
 
-	for legend in ("Village","Population dans le village","Seigneur","Production de Ressource","Production d'argent","Prêtre","Bonheur"):
+	for legend in ("Village","Population","Seigneur","Production de Ressource","Production d'argent","Prêtre","Bonheur"):
 		tkinter.Label(frame_global_view_legend, text = legend).pack(side="left")
 
+	# Frame qui va contenir les Infos Centraux
+	frame_global_view_info = tkinter.Frame(frame_global_view)
+	# affichage des Villages
+	for village in playerdata.fief:
+		for ele in (village.name, len(village.population), village.lord, village.ressource, village.money, village.priest, village.global_joy):
+			tkinter.Label(frame_global_view_info, text = ele).pack(side="left")
+	frame_global_view_info.pack()
 
+	# affichage des Armées
 
 	# Frame qui va contenir le boutton pour quitter
 	frame_global_view_exit = tkinter.Frame(frame_global_view)
@@ -196,17 +208,12 @@ def destroyglobalviewmenu(win2):
 ###########################################################################
 
 # Fonction lier au bouton de fin de tour
-def turnend(gamedata):
+def turnend(gamedata, topframe):
 	print("fin de tour ")
 	gamedata.endturn = True
+	updateinterface(gamedata, topframe)
 
 
-def citiesinteface():
-	pass
-
-
-def unitinterface():
-	pass
 
 
 
@@ -243,111 +250,31 @@ def tax():
 def immigration():
 	pass
 
-def buildvillage():
+
+
+
+
+def buildvillage(option, gamedata, classmap):
+	############
+	# Fonction appeler quand on clique sur Construire Village
+	# 	- Fait rentrer le joueur dans un état "Construction de Village"
+	#	- Place un village là ou la texture pointe
+	#	- Affiche en rouge la texture si ce n'est pas possible
+	#	- Affiche en vert si c'est possible
+	#	- Si on appuie sur ESC on annule
+	#	- Doit afficher une legende
+	############
+	# On permet de sélectionner la case ou on veut constuire un village
+	classmap.mapcanv.tag_bind("click", "Button-1", lambda event, option, gamedata: statbuildvillage(event, option, gamedata))
+
+	# 
+
+
 	pass
 
+def statbuildvillage(event, option, gamedata):
 
 
-"""
-def mainscreen(heightWindow,widthWindow):
-
-	#Init de la fenêtre
-	root = tkinter.Tk()
-
-	#Création de la fenêtre
-	win1 = tkinter.Toplevel(root, height = heightWindow, width= widthWindow)
-
-
-	#label
-	tkinter.Label(win1)
-
-
-	#frame qui prend la taille de la fenêtre
-	f1 = tkinter.Frame(win1)
-	f1.pack(expand="True",fill="both")
-
-
-	################ Canvas ########################
-	#frame canvas
-	fcanvas = tkinter.Frame(win1)
-	fcanvas.pack(side = "bottom")
-	#Canvas qui prend la moitier de la frame 
-	canv = tkinter.Canvas(fcanvas,height = (heightWindow/2),width = (widthWindow/2), bg = "white")
-	canv.pack(side = "top")
-	#On associe Event draw à ctrl+click gauche 
-	canv.bind("<Control-Motion>", draw)
-	canv.bind("<Button-1>", moveline)
-	########################################
-
-
-	################ Menu Fichier ########################
-
-	#Button Fichier en entête
-	#Menu button
-	Button_file = tkinter.Menubutton(f1, text = "fichier")
-	Button_file.pack(side = "left")
-
-	#Menu associé au boutton file
-	Menu_file = tkinter.Menu(Button_file)
-	#On lie le menu_file au button
-	Button_file["menu"] = Menu_file
-
-	#On ajoute les commandes
-	Menu_file.add_command(label = "ouvrir", command = command_open)
-	Menu_file.add_command(label = "nouveau", command = lambda: command_new(canv))
-	Menu_file.add_command(label = "sauvegarder", command = command_save, state = tkinter.DISABLED)
-	Menu_file.add_command(label = "quitter", command = lambda: command_exit(root))
-
-
-	########################################
-
-	#Button Aide en entête
-	Button_help = tkinter.Button(f1, text = "Aide")
-	Button_help.pack(side = "right")
-
-	if False:
-		Menu_file.entryconfigure(2, state = tkinter.ACTIVE)
-	root.mainloop()
-
-def command_open():
 	pass
-
-
-def command_new(canvas):
-	canvas.delete("all")
-
-def command_save():
-	pass
-
-
-def command_exit(root):
-	root.destroy()
-
-
-def text_help():
-	ch = "Merde"
-	tkinter.Message(ch)
-
-
-def draw(event):
-	#saisie trace main levée
-	#Ctrl( Control) + clic gauche (button[1])
-	# coord + _flatten 
-	print("draw on ", event.widget)
-	line = event.widget.create_line(event.x, event.y, event.x+5, event.y+5, fill = "black")
-	#if .entrycget(2, state) == tkinter.DISABLED:
-	#	.entryconfigure(2, state = tkinter.ACTIVE)
-
-	print(line)
-	print(event.widget.coords(line))
-	print(tkinter._flatten(event.widget.coords(line)))
-	print(event.widget.find_all())
-
-def moveline(event):
-	#event.widget.find_closest(event.x,event.y)
-	pass
-
-"""
-
 
 

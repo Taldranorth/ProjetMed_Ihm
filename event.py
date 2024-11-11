@@ -63,6 +63,7 @@
 class Classevent:
 
 	def __init__(self):
+		# Contient la liste des evenement
 		self.listevent = ["nothing", "plague", "famine"]
 
 	def randomevent(self):

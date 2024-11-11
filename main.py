@@ -87,11 +87,6 @@ from time import time
 #
 #	Additif:
 #	- Déplacement en mettant la souris sur la bordure extérieur de la carte
-#	- Menu Principale
-#	- Interface en Jeu
-#		--> Entête
-#
-#	- Affichage En tête
 #	- Landforme
 #	- Préparer Système de la Boucle Principale
 #	- Recup Texture.png des Batiment, Unités, Event, Blason
@@ -171,8 +166,30 @@ from time import time
 #	Method Names and Instance Variables	
 #	- lowercase with words separated by underscores as necessary to improve readability
 #	- Use one leading underscore only for non-public methods and instance variables
+#	Ex: Pour une Class nomer Outer -> self.outer_instance
 #
 #########################################################
+
+
+##############################\ !! Objectif Important !!\###########################
+#	1°)
+#	- Refactorier le Code pour utiliser les normes
+#	- Faire Schéma Classes
+#	- Faire système de Jeu
+#		--> Tour de Jeu
+#		--> Condition Défaite/Victoire
+#		--> Event/prise de villages
+#
+#	2°)
+#	- Faire système de Sauvegarde/Chargement
+#	- Faire
+#	- 
+####################################################################################
+
+
+
+
+
 
 ######################### Menu Principale #########################
 
@@ -218,137 +235,6 @@ def mainmenu(option, gamedata, classmap,root):
 
 ###########################################################################
 
-
-
-######################### Menu Option #########################
-
-###############
-# Fonction appeler pour afficher le menu des Options 
-# On l'affiche par dessus le menu Principale
-#
-# Ce menu va servir à configurer les paramètre globaux de l'application ainsi que les touches, voir à afficher les Combinaisons de touches
-###############
-
-
-
-
-def optionmenu():
-
-
-
-
-
-	pass
-
-
-###########################################################################
-
-
-
-
-######################### Menu Jouer #########################
-
-####
-# Menu pour créer une nouvelle game 
-#
-#
-#### Terminer ####
-# Terminer entryseed en intégrant un Validate qui vérifie que la seed soit un int est change la variable gamedata.seed
-#
-#
-##################
-
-def playmenu(mainmenuwin, option, gamedata, root, classmap):
-
-
-	# On suprime le frame du menu principale
-	mainmenuwin.winfo_children()[0].destroy()
-	# On Créer un nouveau frame
-	fplaymenu = tkinter.Frame(mainmenuwin, height = option.heightWindow, width = option.widthWindow)
-	fplaymenu.pack(expand="True", fill="both")
-
-	# Frame dans lequel on va afficher la version réduite de la carte
-	canvasframeminimap = tkinter.Frame(fplaymenu, height = option.heightWindow/4, width = option.widthWindow/4)
-	canvasframeminimap.pack(side="top")
-
-	# Canvas de la minimap
-	mapcanv = tkinter.Canvas(canvasframeminimap)
-
-	# Fonction qui gen la mini carte
-	previewmap(mapcanv, pic, option.mapx, option.mapy)
-
-
-	#txt variable seed
-	tkvar_seed = tkinter.IntVar()
-	tkvar_seed.set(gamedata.seed)
-
-
-	# Button pour générer un nouveau seed ce qui vient update automatiquement la carte
-	Button_playmenu_newseed = tkinter.Button(fplaymenu,command = lambda: regenseed(gamedata, tkvar_seed, mapcanv), text = "Genérer nouvelle Seed")
-	Button_playmenu_newseed.pack()
-
-
-	# Entry widget qui affiche la seed, permet de la modif et de la copier
-	entryseed = tkinter.Entry(fplaymenu, textvariable = tkvar_seed)
-	entryseed.pack()
-
-	# Dropbox pour créer des seigneur
-
-	# Button pour lancer une nouvelle partie
-	Button_playmenu_play = tkinter.Button(fplaymenu, command = lambda: initgame(mainmenuwin, option, gamedata, classmap, root),text = "Jouer")
-	Button_playmenu_play.pack()
-
-	# Boutton pour revenir en arrière
-	Button_playmenu_return = tkinter.Button(fplaymenu, command = lambda: playmenutomainmenu(option, gamedata, mainmenuwin, root),text = "Retour")
-	Button_playmenu_return.pack()
-
-
-def regenseed(gamedata, tkvar_seed, mapcanv):
-	gamedata.seed = random.random()*time()
-	tkvar_seed.set(gamedata.seed)
-	pic = genproc.genNoiseMap(10, gamedata.seed, option.mapx, option.mapy)
-	previewmap(mapcanv, pic, option.mapx, option.mapy)
-
-
-def previewmap(mapcanv, pic, mapx, mapy):
-	####################
-	# Fonction pour afficher une mini version de la map
-	# Utilser la version carrer de la map
-	####################
-
-	# Si on à déjà afficher une minimap pour un seed différent on efface
-	mapcanv.delete("minimap")
-
-	for x in range(mapx):
-		for y in range(mapy):
-			tl = tuile(pic[x][y])[0]
-			#print(tl, x ,y)
-			mapcanv.create_rectangle((x*2), y*2, (x*2)+2, (y*2)+2, fill=tl, tags = "minimap", outline='black')
-
-	mapcanv.pack(expand = "True",fill="both")
-
-def playmenutomainmenu(option, gamedata, menu, root):
-	mainmenu(option, gamedata, root)
-	menu.destroy()
-
-
-###########################################################################
-
-
-
-
-###########################################################################
-
-
-
-######################### Interface in Game #########################
-
-
-
-###########################################################################
-
-
-
 ######################### Initiation de la partie #########################
 
 ##########
@@ -393,18 +279,180 @@ def mainscreen(option, root, pic, gamedata, classmap):
 	win1 = tkinter.Toplevel(root, height = option.heightWindow, width= option.widthWindow)
 	win1.geometry(f"+{option.widthWindow//8}+{option.heightWindow//4}")
 
+	# Interface de Jeu
 	interface.gameinterface(win1, option, gamedata)
 
 	# Frame Map
 	fcanvas = tkinter.Frame(win1)
 	fcanvas.pack(expand="True", fill="both")
 
+	# Carte de Jeu
 	createmap(option, pic, fcanvas, gamedata, classmap)
 
-	genproc.genVillage(Map, option)
+
+	# Genération des Villages
+	genproc.genVillage(Map, gamedata, option)
+
+	# Affichage des Villages
 	printvillage(gamedata, Map, fcanvas)
+
+	# On rempli les villages de pop
+	for village in classmap.lvillages:
+		genproc.genpopvillage(option, classmap, gamedata,village, 10)
+	
+
 ####################################################################################################
 
+
+
+
+
+######################### Menu Jouer #########################
+
+####
+# Menu pour créer une nouvelle game 
+#
+#
+#### Terminer ####
+# Terminer entryseed en intégrant un Validate qui vérifie que la seed soit un int est change la variable gamedata.seed
+#
+#
+##################
+
+def playmenu(mainmenuwin, option, gamedata, root, classmap):
+
+
+	# On suprime le frame du menu principale
+	mainmenuwin.winfo_children()[0].destroy()
+	# On Créer un nouveau frame
+	fplaymenu = tkinter.Frame(mainmenuwin, height = option.heightWindow, width = option.widthWindow)
+	fplaymenu.pack(expand="True", fill="both")
+
+	# Frame dans lequel on va afficher la version réduite de la carte
+	canvasframeminimap = tkinter.Frame(fplaymenu, height = option.heightWindow/4, width = option.widthWindow/4)
+	canvasframeminimap.pack(side="top")
+
+	# Canvas de la minimap
+	mapcanv = tkinter.Canvas(canvasframeminimap)
+
+	# Fonction qui gen la mini carte
+	previewmap(mapcanv, pic, option.mapx, option.mapy)
+
+	#txt variable seed
+	tkvar_seed = tkinter.IntVar()
+	tkvar_seed.set(gamedata.seed)
+
+	# Button pour générer un nouveau seed ce qui vient update automatiquement la carte
+	Button_playmenu_newseed = tkinter.Button(fplaymenu,command = lambda: regenseed(gamedata, option,tkvar_seed, mapcanv), text = "Genérer nouvelle Seed")
+	Button_playmenu_newseed.pack()
+
+
+	# Entry widget qui affiche la seed, permet de la modif et de la copier
+	entryseed = tkinter.Entry(fplaymenu, textvariable = tkvar_seed)
+	entryseed.pack()
+
+	# Dropbox pour créer des seigneur
+
+	# Button pour lancer une nouvelle partie
+	Button_playmenu_play = tkinter.Button(fplaymenu, command = lambda: initgame(mainmenuwin, option, gamedata, classmap, root),text = "Jouer")
+	Button_playmenu_play.pack()
+
+	# Boutton pour revenir en arrière
+	Button_playmenu_return = tkinter.Button(fplaymenu, command = lambda: playmenutomainmenu(option, gamedata, classmap, mainmenuwin, root),text = "Retour")
+	Button_playmenu_return.pack()
+
+
+def regenseed(gamedata, option, tkvar_seed, mapcanv):
+	gamedata.seed = random.random()*time()
+	tkvar_seed.set(gamedata.seed)
+	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, option.mapx, option.mapy)
+	previewmap(mapcanv, pic, option.mapx, option.mapy)
+
+
+def previewmap(mapcanv, pic, mapx, mapy):
+	####################
+	# Fonction pour afficher une mini version de la map
+	# Utilser la version carrer de la map
+	####################
+
+	# Si on à déjà afficher une minimap pour un seed différent on efface
+	mapcanv.delete("minimap")
+
+	for x in range(mapx):
+		for y in range(mapy):
+			tl = tuile(pic[x][y])[0]
+			#print(tl, x ,y)
+			mapcanv.create_rectangle((x*2), y*2, (x*2)+2, (y*2)+2, fill=tl, tags = "minimap", outline='black')
+
+	mapcanv.pack(expand = "True",fill="both")
+
+def playmenutomainmenu(option, gamedata, classmap, menu, root):
+	mainmenu(option, gamedata, classmap, root)
+	menu.destroy()
+
+
+###########################################################################
+
+
+######################### Menu Load #########################
+
+###############
+# Fonction appeler pour afficher le menu de chargement des Saves
+# On l'affiche par dessus le menu Principale
+#
+# Ce menu va servir à charger une save parmi la liste proposer
+#	- Nom de la save, Nb de tour, nom du seigneur, date de la sauvegarde
+#	- 
+#	- Tant que l'on aura pas lancer le chargement de la save rien n'est charger en arrière plan
+###############
+
+
+
+
+def loadmenu():
+
+
+
+
+
+	pass
+
+
+###########################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+######################### Menu Option #########################
+
+###############
+# Fonction appeler pour afficher le menu des Options 
+# On l'affiche par dessus le menu Principale
+#
+# Ce menu va servir à configurer les paramètre globaux de l'application ainsi que les touches, voir à afficher les Combinaisons de touches
+###############
+
+
+
+
+def optionmenu():
+
+
+
+
+
+	pass
+
+
+###########################################################################
 
 
 ######################### Gestion de la Carte #######################################################
@@ -439,55 +487,35 @@ def createmap(option, pic, frame, gamedata, classmap):
 			##### Version Non-Aléatoire Dico Avec Atlas #####
 			
 			if tl[1] == "mountains":
-				if gamedata.checkAtlas("mountains_inner.png") == False:
-					tk_img = data.loadtexturefromdico(gamedata.dico_file, "mountains_inner.png", tl[1], sizetuile)
-					label = tkinter.Label(gamedata.lframe,image = tk_img[1])
-					label.image = tk_img[1]
-					gamedata.addAtlas(label, tk_img[0])
-				else:
-					label = gamedata.atlas["mountains_inner.png"]
+				loadtextureatlas(gamedata, "mountains_inner.png", tl[1])
 				texture_name = "mountains_inner.png"
 			elif tl[1] == "forest":
-				if gamedata.checkAtlas("conifer_forest_inner.png") == False:
-					tk_img = data.loadtexturefromdico(gamedata.dico_file, "conifer_forest_inner.png", tl[1], sizetuile)
-					label = tkinter.Label(gamedata.lframe,image = tk_img[1])
-					label.image = tk_img[1]
-					gamedata.addAtlas(label, tk_img[0])
-				else:
-					label = gamedata.atlas["conifer_forest_inner.png"]
+				loadtextureatlas(gamedata, "conifer_forest_inner.png", tl[1])
 				texture_name = "conifer_forest_inner.png"
 			elif tl[1] == "plains":
-				if gamedata.checkAtlas("plains.png") == False:
-					tk_img = data.loadtexturefromdico(gamedata.dico_file, "plains.png", tl[1], sizetuile)
-					label = tkinter.Label(gamedata.lframe,image = tk_img[1])
-					label.image = tk_img[1]
-					gamedata.addAtlas(label, tk_img[0])
-				else:
-					label = gamedata.atlas["plains.png"]
+				loadtextureatlas(gamedata, "plains.png", tl[1])
 				texture_name = "plains.png"
 			elif tl[1] == "ocean":
-				if gamedata.checkAtlas("ocean_inner.png") == False:
-					tk_img = data.loadtexturefromdico(gamedata.dico_file, "ocean_inner.png", tl[1], sizetuile)
-					label = tkinter.Label(gamedata.lframe,image = tk_img[1])
-					label.image = tk_img[1]
-					gamedata.addAtlas(label, tk_img[0])
-				else:
-					label = gamedata.atlas["ocean_inner.png"]
+				loadtextureatlas(gamedata, "ocean_inner.png", tl[1])
 				texture_name = "ocean_inner.png"
 
-			mcanvt = mapcanv.create_image((x*sizetuile)+(sizetuile/2), (y*sizetuile)+(sizetuile/2), image = label.image, tags = ["img",tl[1],"tuile","click", x, y, pic[x][y], idtuile])
-
+			mcanvt = mapcanv.create_image((x*sizetuile)+(sizetuile/2), (y*sizetuile)+(sizetuile/2), image = gamedata.atlas[texture_name].image, tags = ["img",tl[1],"tuile","click", x, y, pic[x][y], idtuile])
+			
 			################################
 
+			"""
 			##### Version Aléatoire Dico #####
-			#texture_name = data.randomtexturefromdico(gamedata, tl[1])
-			#loadtextureatlas(gamedata, texture_name, tl[1])
-			#mcanvt = mapcanv.create_image((x*sizetuile)+(sizetuile/2), (y*sizetuile)+(sizetuile/2), image = gamedata.atlas[texture_name], tags = ["img",tl[1],"tuile","click", x, y, pic[x][y], idtuile])
-			#instancetuile = Classtuiles(gamedata.atlas, tl[1], x, y, mcanvt)
-			#if gamedata.
-			#
-			#
-			#mcanvt = mapcanv.create_image((x*sizetuile)+(sizetuile/2), (y*sizetuile)+(sizetuile/2), image = label.image, tags = ["img",tl[1],"tuile","click", x, y, pic[x][y], idtuile])
+			texture_name = data.randomtexturefromdico(gamedata.dico_file, tl[1])
+			# Si la texture afficher n'est pas une texture compléte est que ce n'est pas un ocean
+			if tl[1] != "ocean":
+				if texture_name not in ["mountains_inner.png", "conifer_forest_inner.png", "ocean_inner.png", "plains.png"]:
+					# On affiche en arrière plans une texture background
+					loadtextureatlas(gamedata, "plains.png", "plains")
+					mapcanv.create_image((x*sizetuile)+(sizetuile/2), (y*sizetuile)+(sizetuile/2), image = gamedata.atlas["plains.png"].image, tags = ["img",tl[1],"tuile","click", x, y, pic[x][y], idtuile])
+			
+			loadtextureatlas(gamedata, texture_name, tl[1])
+			mcanvt = mapcanv.create_image((x*sizetuile)+(sizetuile/2), (y*sizetuile)+(sizetuile/2), image = gamedata.atlas[texture_name].image, tags = ["img",tl[1],"tuile","click", x, y, pic[x][y], idtuile])
+			"""
 			################################
 
 			# On créer une nouvelle instance de la classe tuiles
@@ -532,21 +560,19 @@ def createmap(option, pic, frame, gamedata, classmap):
 
 
 def printvillage(gamedata, classmap, frame):
+	##################
+	# Fonction pour afficher les villages ainsi que leur noms
+	##################
+
 	ts = gamedata.tuilesize
 	for ele in classmap.lvillages:
-		if gamedata.checkAtlas("settlement.png") == False:
-			tk_img = data.loadtexturefromdico(dico_file, "settlement.png", "build", ts)
-			label = tkinter.Label(gamedata.lframe, image = tk_img[1])
-			label.image = tk_img[1]
-			gamedata.addAtlas(label, tk_img[0])
-		else:
-			label = gamedata.atlas["settlement.png"]
+		loadtextureatlas(gamedata, "settlement.png", "build")
 		#On recup la position en x et y 
 		posx = classmap.listmap[ele].x
 		posy = classmap.listmap[ele].y
 		#print(Classmap.listmap[ele].type, Classmap.listmap[ele].x, Classmap.listmap[ele].y)
 		# On affiche le village
-		classmap.mapcanv.create_image((posx*ts)+(ts/2), (posy*ts)+(ts/2), tags = ["village","build","tuile","img", "click"], image = label.image)
+		classmap.mapcanv.create_image((posx*ts)+(ts/2), (posy*ts)+(ts/2), tags = ["village","build","tuile","img", "click"], image = gamedata.atlas["settlement.png"].image)
 
 		# On affiche en dessous le nom du village
 		classmap.mapcanv.create_text((posx*ts)+(ts/2), (posy*ts), text = classmap.listmap[ele].village.name,tags = ["label","village","tuile"], activefill = "Black")
@@ -556,10 +582,37 @@ def printvillage(gamedata, classmap, frame):
 	classmap.mapcanv.tag_bind("village","<Button-1>", lambda event, gd = gamedata, fc = frame: villageinterface(event, gd, fc))
 
 
+
+
+
+
+def printunit(gamedata, classmap, frame):
+	##################
+	# Fonction pour afficher les soldat
+	##################
+	pass
+
+
 def villageinterface(event, gamedata, fcanvas):
+	##################
+	# Fonction pour afficher l'interface d'un village
+	##################
+
 	# ON positionne la vue sur le village
 
-
+	idvillage = event.widget.find_withtag("current")
+	coord = event.widget.coords(idvillage)
+	print(coord)
+	# Comment calculer le centre de la fenêtre ?
+	# print(event.x, event.y) == position dans la fenêtre
+	# print(event.widget.canvasx(event.x), event.widget.canvasy(event.y)) == position dans le canvas
+	#
+	# On se place à l'origine puis on se déplace de coords[0] en x et coords[1] en y
+	#
+	# On prend le point d'origine est on ajoute 
+	#
+	#
+	#event.widget.move("tuile", , )
 	# On fait apparaitre l'interface informative
 
 
@@ -572,10 +625,33 @@ def villageinterface(event, gamedata, fcanvas):
 	pass
 
 
+def infovillage(village):
+	print("village name", village.name)
+	print("village lord: ", village.lord.name)
+	print("village priest: ", village.priest.name)
+	print("village global joy: ", village.global_joy)
+	print("village ressource, money: ", village.ressource, village.money)
+
+
 
 def bordervillage(Gamedata, Classmap, frame):
+	##################
+	# Fonction pour afficher les frontière des villages
+	#
+	#
+	#
+	##################
 	pass
 
+
+def moveunit(gamedata, unit):
+	##################
+	# Fonction pour bouger les unit
+	#	- Doit vérifier que l'unit à suffisament de point de mouvement disponible
+	#	- 
+	#	- 
+	##################
+	pass
 
 
 def loadtextureatlas(gamedata, texture_name, type):
@@ -584,13 +660,19 @@ def loadtextureatlas(gamedata, texture_name, type):
 	######
 
 	# Si la texture n'est pas déjà présent dans l'atlas on la prépare est place
-	if gamedata.checkAtlas(gamedata.atlas, texture_name) == False:
+	if gamedata.checkAtlas(texture_name) == False:
+		# On prépare la texture à la taille voulu
 		tk_img = data.loadtexturefromdico(gamedata.dico_file, texture_name, type, gamedata.tuilesize)
-		label = tkinter.Label(gamedata.lframe , image = tk_img[1])
+		# On créer le label associer
+		label = tkinter.Label(gamedata.lframe, image = tk_img[1])
 		label.image = tk_img[1]
-		gamedata.addAtlas(gamedata.atlas, label, tk_img[0])
-	# Si la texture est présent dans l'atlas on utlise le label associer on ne fait rien
-
+		# On stocke le label dans l'atlas
+		gamedata.addAtlas(label, tk_img[0])
+	# Si la texture est présent dans l'atlas on utlise le label associer
+	#else:
+	#	label = gamedata.atlas[texture_name]
+	#On retourne le label obtenue
+	#return label
 
 
 
@@ -734,8 +816,6 @@ def moveviewz(event, gamedata):
 	newsize = x
 	print("newsize : ", newsize)
 
-
-
 	###############################\ !!! À modifier !!! \#############################
 	# Trouver un moyen de se débaraser des 4 variables
 	# Ne plus utiliser le type de la texture
@@ -755,13 +835,14 @@ def moveviewz(event, gamedata):
 
 		type = event.widget.gettags(ele)[1]
 		# Version Non-random ou on utilise les texture de bases:
-		# Quand la classe des tuile sera implémenter utiliser le nom de la texture 
+		# Quand la classe des tuile sera implémenter utiliser le nom de la texture
+		# Utiliser #loadtextureatlas(gamedata, texture_name, type)
 		if type == "forest":
 			#Si dans la fonction on n'a pas déjà recalculer la nouvelle image pour le type selectionner
 			if f == 0:
 				#On recréer l'image
 				tk_img = data.loadtexturefromdico(dico_file, "conifer_forest_inner.png", type, int(newsize))
-				# On change modifier le label associer à la texture dans l'atlas
+				# On change le label associer à la texture dans l'atlas
 				gamedata.changelabelAtlas(tk_img[0], tk_img[1])				
 				f = 1
 			# On recup le label associer à la texture
@@ -794,8 +875,6 @@ def moveviewz(event, gamedata):
 		event.widget.itemconfigure(ele,image = label.image)
 	############################################################
 	print("taille Atlas: ", len(gamedata.atlas))
-
-
 	############################################################
 
 
@@ -888,11 +967,13 @@ def highlightCase(event):
 	x = coords[0] - (st/2)
 	y = coords[1] - (st/2)
 	event.widget.create_rectangle(x, y, x + st, y + st, tags=["highlight","tuile"])
+	coord(event)
 
 
 def coord(event):
 	print(event.x, event.y)
 	print(event.widget.gettags("current"))
+	print(event.widget.canvasx(event.x), event.widget.canvasy(event.y))
 
 
 ###########################################################################
@@ -1078,6 +1159,7 @@ class Classtuiles:
 		self.possesor = possesor
 
 	def createvillage(self):
+		# On créer un nouveau village que l'on stocke
 		self.village = gameClass.Classvillage(self.x, self.y)
 		r = random.randrange(len(gamedata.dico_name["Village"]))
 		self.village.setnamevillage(gamedata.dico_name["Village"][r])
@@ -1113,7 +1195,7 @@ if __name__ == '__main__':
 	# Initialisation de la Carte
 	Map = Classmap()
 
-	pic = genproc.genNoiseMap(10, gamedata.seed, option.mapx, option.mapy)
+	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, option.mapx, option.mapy)
 	#Chargement en mémoires des images du dico:
 	dico_file = data.assetLoad()
 	
