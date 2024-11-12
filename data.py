@@ -167,6 +167,13 @@ class ClassGameData:
 		self.list_lord[idplayer] = player
 
 
+	def randomnametype(self, type):
+		if type not in ["Nom", "Surnom", "Village"]:
+			print("Type non présent dans Nom, Surnom, Village")
+
+		return self.dico_name[type][random.randrange(len(self.dico_name[type]))]
+
+
 
 class ClassOptions:
 	####################
@@ -196,7 +203,7 @@ class ClassOptions:
 
 	def loadoption(self):
 		# f = open("user/Config.ini")
-		#
+		# 
 		#
 		#
 		#

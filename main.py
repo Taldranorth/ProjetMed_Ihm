@@ -372,9 +372,13 @@ def playmenu(mainmenuwin, option, gamedata, root, classmap):
 	tkvar_mapy = tkinter.IntVar()
 	tkvar_mapy.set(option.mapy)
 
+
+	# Label
+	tkinter.Label(fplaymenu_center_center, text = "largeur: ").pack(side = "left")
 	# Entry widget qui affiche la taille en x et y 
 	entrymapx = tkinter.Entry(fplaymenu_center_center, textvariable = tkvar_mapx)
 	entrymapx.pack(side = "left")
+	tkinter.Label(fplaymenu_center_center, text = "hauteur: ").pack(side = "left")
 	entrymapy = tkinter.Entry(fplaymenu_center_center, textvariable = tkvar_mapy)
 	entrymapy.pack(side = "left")
 	button_entrymap = tkinter.Button(fplaymenu_center_center, command = lambda: validate_entry_map(entrymapx, entrymapy, option, gamedata, tkvar_mapx, tkvar_mapy, mapcanv), text = "change")
@@ -411,7 +415,7 @@ def validate_entry_seed(entryseed, option, gamedata, tkvar_seed, mapcanv):
 	####################
 	# Fonction pour changer automatiquement la seed stocker dans gamedata, tkvar_seed et la minimap
 	####################
-	gamedata.seed = int(entryseed.get())
+	gamedata.seed = float(entryseed.get())
 	tkvar_seed.set(gamedata.seed)
 	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, option.mapx, option.mapy)
 	previewmap(mapcanv, pic, option.mapx, option.mapy)
@@ -1219,8 +1223,8 @@ class Classtuiles:
 	def createvillage(self):
 		# On créer un nouveau village que l'on stocke
 		self.village = gameClass.Classvillage(self.x, self.y)
-		r = random.randrange(len(gamedata.dico_name["Village"]))
-		self.village.setnamevillage(gamedata.dico_name["Village"][r])
+		# On set le nom du village
+		self.village.setnamevillage(gamedata.randomnametype("Village"))
 
 
 class ClassGameInterface:

@@ -171,7 +171,7 @@ def genpopvillage(option, classmap, gamedata, idvillage, nbpop):
     ####################
     for x in range(nbpop):
         # On créer le villageois
-        pop = gameClass.ClassHuman(gamedata.dico_name)
+        pop = gameClass.ClassHuman(gamedata.randomnametype("Nom"))
         # On l'ajoute
         classmap.listmap[idvillage].village.addpopulation(pop)
         

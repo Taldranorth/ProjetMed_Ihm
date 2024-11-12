@@ -164,8 +164,8 @@ class Classlord:
 #Classe générale:
 class ClassHuman:
 
-	def __init__(self, dico_name):
-		self.name = random.randrange(len(dico_name["Nom"]))
+	def __init__(self, name):
+		self.name = name
 		self.ressource = 0
 		self.money = 0
 		self.joy = 100

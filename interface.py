@@ -163,6 +163,26 @@ def updateinterface(gamedata, tkvar_list):
 ###############
 def globalviewmenu(win ,option, gamedata):
 
+	# ------------------
+	#	Village
+	# ------------------
+	# |				   |
+	# |				   |
+	# |				   |
+	# ------------------
+	#	Vassaux
+	# ------------------
+	# |				   |
+	# |				   |
+	# |				   |
+	# |				   |
+	# ------------------
+	#	Armée
+	# ------------------
+
+
+	##############################\ À changer\##############################
+	
 	#On créer dans une nouvelle fenêtre
 	win2 = tkinter.Toplevel(height = option.heightWindow, width= option.widthWindow)
 	win2.geometry(f"+{option.widthWindow//3}+{option.heightWindow//4}")
@@ -172,6 +192,8 @@ def globalviewmenu(win ,option, gamedata):
 	# Frame de la fenêtre
 	frame_global_view = tkinter.Frame(win2, height = option.heightWindow, width = option.widthWindow)
 	frame_global_view.pack()
+
+	###########################################################################
 	playerdata = gamedata.list_lord[gamedata.playerid]
 
 
@@ -186,11 +208,17 @@ def globalviewmenu(win ,option, gamedata):
 
 	# Frame qui va contenir les Infos Centraux
 	frame_global_view_info = tkinter.Frame(frame_global_view)
-	# affichage des Villages
-	for village in playerdata.fief:
-		for ele in (village.name, len(village.population), village.lord, village.ressource, village.money, village.priest, village.global_joy):
-			tkinter.Label(frame_global_view_info, text = ele).pack(side="left")
 	frame_global_view_info.pack()
+	# affichage des Villages directement gérer le joueur
+	i = 0
+	frame_global_view_info_list = []
+	for village in playerdata.fief:
+		# Pour chaque village on va créer un sous frame
+		frame_global_view_info_list += [tkinter.Frame(frame_global_view_info)]
+		for ele in (village.name, len(village.population), village.lord, village.ressource, village.money, village.priest, village.global_joy):
+			tkinter.Label(frame_global_view_info_list[i], text = ele).pack(side="left")
+		frame_global_view_info_list[i].pack(side = "top")
+		i += 1
 
 	# affichage des Armées
 
