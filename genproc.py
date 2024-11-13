@@ -134,8 +134,8 @@ def buildvillagepossible(options, Classmap, idtuile):
     #   --> Si le type de la case verif n'est pas une plaines on passe à la suite
     #   --> Sinon on verif qu'un village n'est pas déjà présent
     #
-    #   Calcul de l'id selon la position: x+(Xmax*y)
-    #   Calcul de la position selon l'id: x = id%Xmax, y = id//Xmax
+    #   Calcul de l'id selon la position de la carte: x+(Xmax*y)
+    #   Calcul de la position selon l'id de la tuile sur la carte: x = id%Xmax, y = id//Xmax
     #
     #   Returne False Si il y a un village dans la zone
     #

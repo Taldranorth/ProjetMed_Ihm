@@ -1,5 +1,6 @@
 import tkinter
 import genproc
+import affichage
 
 
 
@@ -7,7 +8,7 @@ import genproc
 
 ######################### Fonction Interface ############################
 
-def gameinterface(win, option, gamedata):
+def gameinterface(win, option, gamedata, classmap, framecanvas):
 
 	####################
 	# Fonction qui met en place l'interface en Jeu, voir l'entête
@@ -119,7 +120,7 @@ def gameinterface(win, option, gamedata):
 	menu_gestion.add_command(label = "Immigration")
 	menu_gestion.add_command(label = "Impôt")
 	menu_gestion.add_command(label = "Construire Église")
-	menu_gestion.add_command(label = "Construire Village")
+	menu_gestion.add_command(label = "Construire Village", command = lambda: statebuildvillage(option, gamedata, classmap, framecanvas))
 
 
 
@@ -129,7 +130,7 @@ def gameinterface(win, option, gamedata):
 	# Exit, Option, Load, Sauvegarder
 	Button_exit = tkinter.Button(bottomFrame, command = exit, text = "Quitter")
 	# Button pour acceder à la vue générale
-	Button_globalview = tkinter.Button(bottomFrame, command = lambda: globalviewmenu(win, option, gamedata), text = "Vue Générale")
+	Button_globalview = tkinter.Button(bottomFrame, command = lambda: globalviewmenu(win, option, gamedata, classmap), text = "Vue Générale")
 
 	# Boutton Central
 	# Bouton Fin de Tour
@@ -161,7 +162,7 @@ def updateinterface(gamedata, tkvar_list):
 #  .transient(parent=None) ?
 # 
 ###############
-def globalviewmenu(win ,option, gamedata):
+def globalviewmenu(win ,option, gamedata, classmap):
 
 	# ------------------
 	#	Village
@@ -182,17 +183,10 @@ def globalviewmenu(win ,option, gamedata):
 
 
 	##############################\ À changer\##############################
-	
-	#On créer dans une nouvelle fenêtre
-	win2 = tkinter.Toplevel(height = option.heightWindow, width= option.widthWindow)
-	win2.geometry(f"+{option.widthWindow//3}+{option.heightWindow//4}")
-	# A transient window always appears in front of its parent
-	win2.transient()
-
 	# Frame de la fenêtre
-	frame_global_view = tkinter.Frame(win2, height = option.heightWindow, width = option.widthWindow)
+	frame_global_view = tkinter.Frame(win, height = option.heightWindow, width = option.widthWindow)
 	frame_global_view.pack()
-
+	canvaswindow = classmap.mapcanv.create_window(option.widthWindow/2, option.heightWindow/4, window = frame_global_view)
 	###########################################################################
 	playerdata = gamedata.list_lord[gamedata.playerid]
 
@@ -227,11 +221,11 @@ def globalviewmenu(win ,option, gamedata):
 	frame_global_view_exit.pack(side ="bottom")
 
 	# Bouton pour quitter le menu
-	Button_exit = tkinter.Button(frame_global_view_exit, text= "Quitter", command = lambda: destroyglobalviewmenu(win2))
+	Button_exit = tkinter.Button(frame_global_view_exit, text= "Quitter", command = lambda: destroyglobalviewmenu(classmap.mapcanv, canvaswindow))
 	Button_exit.pack()
 
-def destroyglobalviewmenu(win2):
-	win2.destroy()
+def destroyglobalviewmenu(canvas, canvaswindow):
+	canvas.delete(canvaswindow)
 
 ###########################################################################
 
@@ -243,7 +237,99 @@ def turnend(gamedata, topframe):
 
 
 
+def villageinterface(event, option, gamedata, classmap, fcanvas):
+	##################
+	# Fonction pour afficher l'interface d'un village
+	##################
 
+	# On recup l'origine du canvas
+	xorigine = classmap.mapcanv.canvasx(0)
+	yorigine = classmap.mapcanv.canvasy(0)
+
+	# On recup l'idée du canvas de la tuile que l'on vient de sélectionner
+	idcanvasvillage = event.widget.find_withtag("current")[0]
+	# On recup les coord-canvas du village
+	coordcanv = event.widget.coords(idcanvasvillage)
+	# On recup la pos x et y du village dans la map
+	print(event.widget.gettags(idcanvasvillage))
+	# Si on à cliqué sur le village
+	if event.widget.type(idcanvasvillage) == "image":
+		posx = event.widget.gettags(idcanvasvillage)[5]
+		posy = event.widget.gettags(idcanvasvillage)[6]
+	# Sinon on à cliqué sur le label
+	else:
+		posx = event.widget.gettags(idcanvasvillage)[3]
+		posy = event.widget.gettags(idcanvasvillage)[4]
+
+	# On calcul l'id map du village
+	idmapvilage = int(posx)+(option.mapx*int(posy))
+	print(idmapvilage)
+
+	centerview(gamedata, option, classmap.mapcanv, coordcanv)
+
+	print("On affiche l'interface du village")
+	# On fait apparaitre l'interface informative
+	# On commence par créer le frame qui vient stocker les infos
+	frame_info = tkinter.Frame(fcanvas)
+	# On créer la frame qui vient contenir les actions possibles
+	frame_button = tkinter.Frame(fcanvas)
+	frame_info.pack()
+	frame_button.pack()
+
+	# On créer les fenêtre
+	# Demade un placement précis
+	canvas_window_list = []
+	# Pour les fenêtre on prend en compte le décalage créer par move()
+	# Fenêtre Info
+	canvas_window_list += [classmap.mapcanv.create_window(xorigine+option.widthWindow/3, yorigine+option.heightWindow/4, window = frame_info)]
+	# Fenêtre Button
+	canvas_window_list += [classmap.mapcanv.create_window(xorigine+option.widthWindow/1.5, yorigine+option.heightWindow/4, window = frame_button)]
+
+
+	# On affiche les infos voulu
+	# Le nom du village
+	tkinter.Label(frame_info, text = classmap.listmap[idmapvilage].village.name).pack(side = "top")
+	print(classmap.listmap[idmapvilage].village.name)
+	# Le seigneur du village
+	if (classmap.listmap[idmapvilage].village.lord == 0):
+		tkinter.Label(frame_info, text = "lord").pack(side = "top")
+	else:
+		tkinter.Label(frame_info, text = classmap.listmap[idmapvilage].village.lord.lordname).pack(side = "top")
+	# Le prêtre du village
+	if classmap.listmap[idmapvilage].village.priest == 0:
+		tkinter.Label(frame_info, text = "priest").pack(side = "top")
+	else:
+		tkinter.Label(frame_info, text = classmap.listmap[idmapvilage].village.priest.name).pack(side = "top")
+	# Le bonheur global
+	tkinter.Label(frame_info, textv = classmap.listmap[idmapvilage].village.global_joy).pack(side = "top")
+	# les ressources du village
+	tkinter.Label(frame_info, text = classmap.listmap[idmapvilage].village.ressource).pack(side = "top")
+	# l'argent du village
+	tkinter.Label(frame_info, text = classmap.listmap[idmapvilage].village.money).pack(side = "top")
+
+	# On fait apparaitre les boutons
+	button_build_church = tkinter.Button(frame_button, text = "Construire Église")
+	button_immigration = tkinter.Button(frame_button, text = "Immigration")
+	button_tax = tkinter.Button(frame_button, text = "Impôt")
+	button_build_church.pack(side="top")
+	button_immigration.pack(side="top")
+	button_tax.pack(side="top")
+
+	# Si le joueur clique autre part on sort de l'interface
+	classmap.mapcanv.tag_bind("click", "<Button-1>",lambda event, mc = classmap.mapcanv, cwl = canvas_window_list: exitvillageinterface(event, mc, cwl))
+
+
+def exitvillageinterface(event, mapcanv, lwindow):
+	################
+	# Fonction pour détruire les fenêtre de l'interface du village
+	################
+	for id in lwindow:
+		mapcanv.delete(id)
+	print("On supprime l'interface du village")
+	# On retire le bind sur la fonction
+	# Comprend pas comment faire donc en attendant remplace avec highlight
+	#mapcanv.tag_unbind("click", "<Button-1>", funcid = "exitvillageinterface")
+	mapcanv.tag_bind("click", "<Button-1>", highlightCase)
 
 
 
@@ -282,7 +368,7 @@ def immigration():
 
 
 
-def buildvillage(option, gamedata, classmap):
+def statebuildvillage(option, gamedata, classmap, framecanvas):
 	############
 	# Fonction appeler quand on clique sur Construire Village
 	# 	- Fait rentrer le joueur dans un état "Construction de Village"
@@ -292,17 +378,57 @@ def buildvillage(option, gamedata, classmap):
 	#	- Si on appuie sur ESC on annule
 	#	- Doit afficher une legende
 	############
+	# - Affiche avec un carrer vert toute les tuiles ou ont peut constuire un village
+	#
+	#
+	############
 	# On permet de sélectionner la case ou on veut constuire un village
-	classmap.mapcanv.tag_bind("click", "Button-1", lambda event, option, gamedata: statbuildvillage(event, option, gamedata))
+	#classmap.mapcanv.tag_bind("click", "Button-1", lambda event, option, gamedata: statbuildvillage(event, option, gamedata))
 
-	# 
+	ts = gamedata.tuilesize
+	xorigine = classmap.mapcanv.canvasx(0)
+	yorigine = classmap.mapcanv.canvasy(0)
 
+	# Pour toute les tuiles de plaines
+	for idtuile in classmap.lplaines:
+		# Si on peut constuire un village
+		if genproc.buildvillagepossible(option, classmap, idtuile) == True:
+			# On calcul les coord x et y
+			x = idtuile%option.mapx
+			y = idtuile//option.mapx
+			# On créer un carrer clickable avec un bord vert
+			classmap.mapcanv.create_rectangle((x*ts) - xorigine, (y*ts)- yorigine, (x*ts)+ts - xorigine, (y*ts)+ts - yorigine,tag = ["buildvillage","tuile", x, y], fill = "green",outline = "green")
 
-	pass
+	# On tag au carrer 
+	classmap.mapcanv.tag_bind("buildvillage", "<Button-1>", lambda event: buildvillage(event, classmap, gamedata, option, framecanvas))
+	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event, mc = classmap.mapcanv: exitstatebuildvillage(event, mc), add = "+")
 
-def statbuildvillage(event, option, gamedata):
+def buildvillage(event, classmap, gamedata, option, framecanvas):
+	############
+	# Fonction pour créer un village selon la tuile sélectionner en état de construction
+	############
 
+	print("On construit le village")
+	# On calcul l'id de la tuile
+	xpos = int(event.widget.gettags("current")[2])
+	ypos = int(event.widget.gettags("current")[3])
+	idtuile = xpos + (option.mapx*ypos)
 
-	pass
+	# On créer
+	classmap.lvillages += [idtuile]
+	classmap.listmap[idtuile].createvillage()
+	classmap.listmap[idtuile].setpossesor("player")
+	gamedata.list_lord[gamedata.playerid].addfief(classmap.listmap[idtuile].village)
 
+	# On retire les ressource 
+
+	# On affiche le nouveau village
+	affichage.printvillageunit(gamedata, classmap, option, framecanvas, [xpos,ypos])
+
+def exitstatebuildvillage(event, mapcanv):
+	# On delete tout les éléments ayant le tag buildvillage
+	print("On Supprimer le grillage constuction")
+	mapcanv.delete("buildvillage")
+	# On retire le bind
+	#mapcanv.tag_unbind()
 

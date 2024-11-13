@@ -122,6 +122,8 @@ class ClassGameData:
 		# Label Frame Atlas
 		self.lframe = 0
 
+		self.log = Classlog()
+
 
 
 	#tuile: Classtuiles
@@ -163,15 +165,37 @@ class ClassGameData:
 		self.atlas[filename].configure(image = img)
 		self.atlas[filename].image = img
 
+	def loadtextureatlas(self, texture_name, type):
+		######
+		# Fonction pour charger dans l'atlas la texture viser
+		######
+
+		# Si la texture n'est pas déjà présent dans l'atlas on la prépare est place
+		if self.checkAtlas(texture_name) == False:
+			# On prépare la texture à la taille voulu
+			tk_img = loadtexturefromdico(self.dico_file, texture_name, type, self.tuilesize)
+			# On créer le label associer
+			label = tkinter.Label(self.lframe, image = tk_img[1])
+			label.image = tk_img[1]
+			# On stocke le label dans l'atlas
+			self.addAtlas(label, tk_img[0])
+		# Si la texture est présent dans l'atlas on utlise le label associer
+		#else:
+		#	label = self.atlas[texture_name]
+		#On retourne le label obtenue
+		#return label
+
+
 	def changePlayerLord(self, idplayer, player):
 		self.list_lord[idplayer] = player
 
 
 	def randomnametype(self, type):
-		if type not in ["Nom", "Surnom", "Village"]:
-			print("Type non présent dans Nom, Surnom, Village")
-
-		return self.dico_name[type][random.randrange(len(self.dico_name[type]))]
+		try:
+			name = self.dico_name[type][random.randrange(len(self.dico_name[type]))]
+			return name
+		except:
+			self.log.printerror("type :"+type+"non présent dans le dico")
 
 
 
@@ -209,6 +233,19 @@ class ClassOptions:
 		#
 		# F.close()
 		pass
+
+
+class Classlog:
+	####################
+	# Classe qui va gérer toute les Erreurs et autre info
+	####################
+
+	def __init__(self):
+		self.log = open("user/log.txt", "w")
+
+	def printerror(self, ch):
+		print(ch)
+		self.log += ch + "\n"
 
 ###########################################################################
 
