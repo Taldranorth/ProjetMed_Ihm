@@ -1,9 +1,11 @@
 import tkinter
 import random
+
 import genproc
 import data
 import interface
 import gameClass
+import affichage
 from time import time
 
 #Doit terminé de faire un Prototype:
@@ -296,7 +298,7 @@ def mainscreen(option, root, pic, gamedata, classmap):
 	genproc.genVillage(Map, gamedata, option)
 
 	# Affichage des Villages
-	printvillage(gamedata, Map, option,fcanvas)
+	affichage.printvillage(gamedata, Map, option,fcanvas)
 
 	# On rempli les villages de pop
 	for village in classmap.lvillages:
@@ -605,13 +607,12 @@ def createmap(option, pic, frame, gamedata, classmap):
 	mapcanv.bind("<KeyPress-Down>", lambda event, x=0,y=-1: moveviewxy(event,x,y))
 
 	#On lie le déplacement de la vue au maintient du bouton droit de la souris + motion
-	mapcanv.bind('<Shift-ButtonPress-1>', startmoveviewmouse)
-	mapcanv.bind('<Shift-B1-Motion>', moveviewmouse)
+	mapcanv.bind('<Shift-ButtonPress-2>', startmoveviewmouse)
+	mapcanv.bind('<Shift-B2-Motion>', moveviewmouse)
 
 
 	#ON lie les différentes Cases à l'action click
-	mapcanv.tag_bind("click", "<Button-1>", coord)
-	mapcanv.tag_bind("click", "<Button-1>", highlightCase)
+	mapcanv.tag_bind("click", "<Button-1>", lambda event:interface.highlightCase(event, gamedata))
 
 	#print(gamedata.list_tuile)
 	mapcanv.pack(expand ="True", fill = "y")
@@ -619,30 +620,6 @@ def createmap(option, pic, frame, gamedata, classmap):
 ####################################################################################################
 
 
-
-
-
-def printvillage(gamedata, classmap, option, frame):
-	##################
-	# Fonction pour afficher les villages ainsi que leur noms à la création
-	##################
-
-	ts = gamedata.tuilesize
-	for ele in classmap.lvillages:
-		gamedata.loadtextureatlas("settlement.png", "build")
-		#On recup la position en x et y 
-		posx = classmap.listmap[ele].x
-		posy = classmap.listmap[ele].y
-		#print(Classmap.listmap[ele].type, Classmap.listmap[ele].x, Classmap.listmap[ele].y)
-		# On affiche le village
-		classmap.mapcanv.create_image((posx*ts)+(ts/2), (posy*ts)+(ts/2), tags = ["village","build","tuile","img", "click", posx, posy], image = gamedata.atlas["settlement.png"].image)
-
-		# On affiche en dessous le nom du village
-		classmap.mapcanv.create_text((posx*ts)+(ts/2), (posy*ts), text = classmap.listmap[ele].village.name,tags = ["label","village","tuile", posx, posy], activefill = "Black")
-
-
-	# On ajoute lie au tag village la fonction pour ouvrir l'interface des villages
-	classmap.mapcanv.tag_bind("village","<Button-1>", lambda event, opt = option, gd = gamedata, cm = classmap, fc = frame: villageinterface(event, opt, gd, cm, fc))
 
 
 
@@ -654,108 +631,6 @@ def printunit(gamedata, classmap, frame):
 	# Fonction pour afficher les soldat
 	##################
 	pass
-
-
-def villageinterface(event, option, gamedata, classmap, fcanvas):
-	##################
-	# Fonction pour afficher l'interface d'un village
-	##################
-
-	##################
-	# Doit régler :
-	#	- Position du village au centre de l'écran
-	#	- Problème dans les id de village
-	##################
-
-	# On recup l'origne du canvas
-	xorigine = classmap.mapcanv.canvasx(0)
-	yorigine = classmap.mapcanv.canvasy(0)
-
-	# On recup l'idée du canvas de la tuile que l'on vient de sélectionner
-	idcanvasvillage = event.widget.find_withtag("current")[0]
-	# On recup les coord-canvas du village
-	coordcanv = event.widget.coords(idcanvasvillage)
-	# On recup la pos x et y du village dans la map
-	print(event.widget.gettags(idcanvasvillage))
-	# Si on à cliqué sur le village
-	if event.widget.type(idcanvasvillage) == "image":
-		posx = event.widget.gettags(idcanvasvillage)[5]
-		posy = event.widget.gettags(idcanvasvillage)[6]
-	# Sinon on à cliqué sur le label
-	else:
-		posx = event.widget.gettags(idcanvasvillage)[3]
-		posy = event.widget.gettags(idcanvasvillage)[4]
-
-	# On calcul l'id map du village
-	idmapvilage = int(posx)+(option.mapx*int(posy))
-	print(idmapvilage)
-
-	centerview(gamedata, option, classmap.mapcanv, coordcanv)
-
-	print("On affiche l'interface du village")
-	# On fait apparaitre l'interface informative
-	# On commence par créer le frame qui vient stocker les infos
-	frame_info = tkinter.Frame(fcanvas)
-	# On créer la frame qui vient contenir les actions possibles
-	frame_button = tkinter.Frame(fcanvas)
-	frame_info.pack()
-	frame_button.pack()
-
-	# On créer les fenêtre
-	# Demade un placement précis
-	canvas_window_list = []
-	# Pour les fenêtre on prend en compte le décalage créer par move()
-	# Fenêtre Info
-	canvas_window_list += [classmap.mapcanv.create_window(xorigine+option.widthWindow/3, yorigine+option.heightWindow/4, window = frame_info)]
-	# Fenêtre Button
-	canvas_window_list += [classmap.mapcanv.create_window(xorigine+option.widthWindow/1.5, yorigine+option.heightWindow/4, window = frame_button)]
-
-
-	# On affiche les infos voulu
-	# Le nom du village
-	tkinter.Label(frame_info, text = classmap.listmap[idmapvilage].village.name).pack(side = "top")
-	print(classmap.listmap[idmapvilage].village.name)
-	# Le seigneur du village
-	if (classmap.listmap[idmapvilage].village.lord == 0):
-		tkinter.Label(frame_info, text = "lord").pack(side = "top")
-	else:
-		tkinter.Label(frame_info, text = classmap.listmap[idmapvilage].village.lord.lordname).pack(side = "top")
-	# Le prêtre du village
-	if classmap.listmap[idmapvilage].village.priest == 0:
-		tkinter.Label(frame_info, text = "priest").pack(side = "top")
-	else:
-		tkinter.Label(frame_info, text = classmap.listmap[idmapvilage].village.priest.name).pack(side = "top")
-	# Le bonheur global
-	tkinter.Label(frame_info, textv = classmap.listmap[idmapvilage].village.global_joy).pack(side = "top")
-	# les ressources du village
-	tkinter.Label(frame_info, text = classmap.listmap[idmapvilage].village.ressource).pack(side = "top")
-	# l'argent du village
-	tkinter.Label(frame_info, text = classmap.listmap[idmapvilage].village.money).pack(side = "top")
-
-	# On fait apparaitre les boutons
-	button_build_church = tkinter.Button(frame_button, text = "Construire Église")
-	button_immigration = tkinter.Button(frame_button, text = "Immigration")
-	button_tax = tkinter.Button(frame_button, text = "Impôt")
-	button_build_church.pack(side="top")
-	button_immigration.pack(side="top")
-	button_tax.pack(side="top")
-
-	# Si le joueur clique autre part on sort de l'interface
-	classmap.mapcanv.tag_bind("click", "<Button-1>",lambda event, mc = classmap.mapcanv, cwl = canvas_window_list: exitvillageinterface(event, mc, cwl))
-
-
-def exitvillageinterface(event, mapcanv, lwindow):
-	################
-	# Fonction pour détruire les fenêtre de l'interface du village
-	################
-	for id in lwindow:
-		mapcanv.delete(id)
-	print("On supprime l'interface du village")
-	# On retire le bind sur la fonction
-	# Comprend pas comment faire donc en attendant remplace avec highlight
-	#mapcanv.tag_unbind("click", "<Button-1>", funcid = "exitvillageinterface")
-	mapcanv.tag_bind("click", "<Button-1>", highlightCase)
-
 
 
 def infovillage(village):
@@ -1109,6 +984,7 @@ def startmoveviewmouse(event):
 	# Utiliser .scan_mark(x, y)
 	#
 	####################
+	#print(startmoveviewmouse)
 	event.widget.scan_mark(event.x, event.y)
 
 def moveviewmouse(event):
@@ -1119,53 +995,12 @@ def moveviewmouse(event):
 	# Utiliser .scan_dragto(x, y)
 	# !!!! A cause de l'utilisation de Move est très couteux !!!!
 	####################
+	#print(moveviewmouse)
 	event.widget.scan_dragto(event.x, event.y, gain = 1)
 
 
 ######################### Autre Fonction #########################
 
-def highlightCase(event):
-	####################
-	# Fonction qui ilumine la tuile sur laquelle est présente la souris
-	# 	--> On ne peut pas "illuminer" une tuile
-	#		--> À moins de créer une animations -_-
-	#	--> A la place on va créer une bordure ?
-	#		--> Pas de fonction de bordure pour une image
-	#			--> Tout simplement créer un canvas rectangle afin d'encercler la tuile
-	#
-	#	--> Après avoir déplacer la carte sur une axe xy la sélection en fonctione plus correctement
-	#	--> N'illumine pas les villages
-	#
-	####################
-
-
-
-	# On recup l'id de la tuiles selectionner
-	idclosest = event.widget.find_withtag("current")
-	# On recup les coords
-	coords = event.widget.coords(idclosest)
-
-
-	# On recup la taille d'une tuile
-	st = gamedata.tuilesize
-	# On supprime l'ancien rectangle highlight si présent
-	event.widget.delete("highlight")
-	# On créer le nouveau
-	x = coords[0] - (st/2)
-	y = coords[1] - (st/2)
-	event.widget.create_rectangle(x, y, x + st, y + st, tags=["highlight","tuile"])
-	coord(event)
-
-
-
-def coord(event):
-	print("\n")
-	print("coord origine x,y: ", event.widget.canvasx(0), event.widget.canvasy(0))
-	print("coord event x,y: ",event.x, event.y)
-	print("coord event canvas x,y: ",event.widget.canvasx(event.x), event.widget.canvasy(event.y))
-	coord = event.widget.coords(event.widget.find_withtag("current")[0])
-	print("coord x,y: ", coord[0], coord[1])
-	print(event.widget.gettags("current"))
 
 
 ###########################################################################

@@ -77,6 +77,9 @@ class Classlord:
 		# Liste des Armées
 		self.army = []
 
+		# Liste des seigneur avec les quelles on est en guerres
+		self.war = []
+
 	def createarmy(self, village):
 		self.army += [Classarmy(village.x, village.y,)]
 
@@ -86,6 +89,7 @@ class Classlord:
 
 	def addfief(self, village):
 		self.fief += [village]
+		village.setlord(self)
 		self.updateinfo()
 
 	def updateinfo(self):
@@ -131,6 +135,10 @@ class Classvillage:
 		self.ressource = 0
 		self.global_joy = 100
 
+		self.influence = 0
+
+		self.church = 0
+
 	#pop: Classhuman	
 	def addpopulation(self, pop):
 		self.population += [pop]
@@ -148,6 +156,13 @@ class Classvillage:
 		# 'list' object has no attribute 'updateinfo'
 		if self.lord != 0:
 			self.lord.updateinfo()
+
+	def buildchurch(self, name):
+		# On définit que le village à une église
+		self.church = 1
+		# On créer le prêtre associé à l'église
+		self.priest = Classpriest(name)
+
 
 	#lord: Classlord
 	def setlord(self, lord):
@@ -191,6 +206,19 @@ class Classarmy:
 		# Méthode pour recruter un Soldat
 		#######
 		pass
+
+
+class Classpriest:
+
+	def __init__(self, name):
+		self.name = name
+		self.ressource = 0
+		self.money = 0
+		self.joy = 100
+
+	def setname(self, name):
+		self.name = name
+
 
 
 #Classe générale:

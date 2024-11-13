@@ -95,9 +95,7 @@ def genVillage(classmap, gamedata, options):
         classmap.lvillages += [r]
         # Si il y a un seigneur non neutre qui n'a pas encore de village on lui assigne un seigneur
         if x < len(gamedata.list_lord):
-            # On assigne la variable qui contient le Seigneurla classe dans village
-            classmap.listmap[r].village.setlord(gamedata.list_lord[x])
-            # On ajoute la variable du  village dans la liste des fief du Seigneur
+            # On ajoute l'instance du village dans la liste des fief du Seigneur
             gamedata.list_lord[x].addfief(classmap.listmap[r].village)
             # On change le Propriétaire de la tuile du village
             classmap.listmap[r].setpossesor(gamedata.list_lord[x].lordname)

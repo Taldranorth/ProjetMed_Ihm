@@ -4,8 +4,6 @@ import data
 import interface
 
 
-
-
 def printvillage(gamedata, classmap, option, frame):
 	##################
 	# Fonction pour afficher les villages ainsi que leur noms à la création

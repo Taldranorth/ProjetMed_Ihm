@@ -123,6 +123,16 @@ class ClassGameData:
 		self.lframe = 0
 
 		self.log = Classlog()
+		# Donnés qui vient contenir l'état du joueur
+		#	Utiliser quand on créer une interface spéciale
+		#	Ex: - quand on affiche l'interface du village
+		#		- quand on affihe l'interface de construction
+		#
+		#	liste des état:
+		#	"build_village", "interface_village", "interface_war"
+		#
+		#
+		self.state = 0
 
 
 
@@ -237,15 +247,25 @@ class ClassOptions:
 
 class Classlog:
 	####################
-	# Classe qui va gérer toute les Erreurs et autre info
+	# Classe qui va gérer toute les Erreurs et autre infos
 	####################
 
 	def __init__(self):
 		self.log = open("user/log.txt", "w")
 
+		self.loglevel = 0
+
 	def printerror(self, ch):
+		ch = "Erreur:" + ch
 		print(ch)
-		self.log += ch + "\n"
+		ch += "\n"
+		self.log.write(ch)
+
+	def printinfo(self, ch):
+		ch = "Info: " +ch
+		print(ch)
+		ch += "\n"
+		self.log.write(ch)
 
 ###########################################################################
 
