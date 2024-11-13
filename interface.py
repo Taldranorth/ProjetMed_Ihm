@@ -17,13 +17,13 @@ def gameinterface(win, option, gamedata, classmap, framecanvas):
 	# Actuellement l'interface est défini à l'extérieur
 	#
 	# ------------------
-	#	en tête haut
+	#	en tête haut	= option.heightwindow * 0.2
 	# ------------------
 	# |				   |
-	# |		Canvas	   |
+	# |		Canvas	   |= option.heightwindow * 0.6
 	# |				   |
 	# ------------------
-	#	en tête bas
+	#	en tête bas 	= option.heightwindow * 0.2
 	# ------------------
 	# A voir pour a terme Ne pas placer à l'extérieur l'interface, avoir un effet de profondeur
 	#
@@ -35,11 +35,10 @@ def gameinterface(win, option, gamedata, classmap, framecanvas):
 
 
 	# En tête Haut
-	topframe = tkinter.Frame(win, height = option.heightWindow/28, width= option.widthWindow, background = "grey")
-	# En tête Bas
-	bottomFrame = tkinter.Frame(win, height = option.heightWindow/18, width= option.widthWindow, background = "grey")
-
+	topframe = tkinter.Frame(win, height = (option.heightWindow*0.2), width= option.widthWindow, background = "grey")
 	topframe.pack(expand = "True", side = "top")
+	# En tête Bas
+	bottomFrame = tkinter.Frame(win, height = (option.heightWindow*0.2), width= option.widthWindow, background = "grey")
 	bottomFrame.pack(expand = "True", side = "bottom")
 
 
@@ -273,7 +272,7 @@ def villageinterface(event, option, gamedata, classmap, fcanvas):
 	# On calcul l'id map du village
 	idmapvilage = int(posx)+(option.mapx*int(posy))
 	gamedata.log.printinfo(f"{idmapvilage}")
-
+	# On place le village au centre de l'écran
 	main.centerview(gamedata, option, classmap.mapcanv, coordcanv)
 
 	gamedata.log.printinfo("On affiche l'interface du village")
@@ -362,9 +361,9 @@ def highlightCase(event, gamedata):
 
 
 	# On recup l'id de la tuiles selectionner
-	idclosest = event.widget.find_withtag("current")
+	idcurrent = event.widget.find_withtag("current")
 	# On recup les coords
-	coords = event.widget.coords(idclosest)
+	coords = event.widget.coords(idcurrent)
 
 
 	# On recup la taille d'une tuile
@@ -374,6 +373,7 @@ def highlightCase(event, gamedata):
 	# On créer le nouveau
 	x = coords[0] - (st/2)
 	y = coords[1] - (st/2)
+	print("highlight x,y:",x,y)
 	event.widget.create_rectangle(x, y, x + st, y + st, tags=["highlight","tuile"])
 	coord(event)
 
@@ -418,12 +418,40 @@ def staterecruitarmy(gamedata, classmap, option, framecanvas):
 		gamedata.state = "interface_recruit_army"
 		gamedata.log.printinfo("entre dans un état interface_recruit_army")
 
-	pass
 
 
-def exitstatestaterecruitarmy():
+	player = gamedata.list_lord[gamedata.playerid]
+	xorigine = classmap.mapcanv.canvasx(0)
+	yorigine = classmap.mapcanv.canvasy(0)
 
-	pass
+	# On créer l'interface qui va contenir le frame
+	frame_interface_army = tkinter.Frame(framecanvas)
+	frame_interface_army.pack()
+
+	# listbox
+	lc_interface_army = tkinter.Listbox(frame_interface_army)
+
+	# On affiche la liste des armées du Joueur uniquement
+	for army in player.army:
+		lc_interface_army.insert(tkinter.END, army.name)
+	#lc_interface_army.bind("<Double-Button-1>",)
+
+	# On créer la window qui va s'afficher sur le canvas
+	idwindow = classmap.mapcanv.create_window(xorigine+option.widthWindow/6, yorigine+option.heightWindow/3, window = frame_interface_army)
+
+	# On bind 
+	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstatestaterecruitarmy(event, gamedata, classmap.mapcanv, idwindow))
+
+
+def exitstatestaterecruitarmy(event, gamedata, mapcanv, idwindow):
+	################
+	# Fonction pour quitter l'interface de recrutement d'armé
+	################
+	gamedata.log.printinfo("On Supprimer l'interface de recretument d'armée '")
+	# On nettoye l'interface
+	mapcanv.delete(idwindow)
+	# On remet à 0 l'état
+	gamedata.state = 0
 
 
 def statewar(gamedata, classmap, option, framecanvas):
@@ -452,14 +480,17 @@ def statewar(gamedata, classmap, option, framecanvas):
 	while gamedata.tuilesize != 20:
 		main.moveviewz(gamedata)
 
-	# On se place au centre
-	main.centerview(gamedata, option, classmap.mapcanv, [option.mapx/2, option.mapy/2])
+
+
 
 
 	player = gamedata.list_lord[gamedata.playerid]
 	ts = gamedata.tuilesize
 	xorigine = classmap.mapcanv.canvasx(0)
 	yorigine = classmap.mapcanv.canvasy(0)
+
+	# On se place au centre
+	main.centerview(gamedata, option, classmap.mapcanv, [(option.mapx/2)*ts, (option.mapy/2)*ts])
 
 	# On affiche les territoire 
 	# On se balade dans la liste des térritoire
@@ -483,16 +514,36 @@ def statewar(gamedata, classmap, option, framecanvas):
 	frame_interface_war.pack()
 
 	# On affiche dans une fenêtre liée au canvas
-	idWindow = classmap.mapcanv.create_window(xorigne+option.widthWindow/6, yorigine+option.heightWindow/3, window = frame_interface_war)
+	idwindow = classmap.mapcanv.create_window(xorigine+option.widthWindow/6, yorigine+option.heightWindow/3, window = frame_interface_war)
 
 	# On affiche une liste des alliés, des ennemies et des neutres
+	frame_interface_war_list_ally = tkinter.Frame(frame_interface_war)
+	frame_interface_war_list_ennemy = tkinter.Frame(frame_interface_war)
+	frame_interface_war_list_neutral = tkinter.Frame(frame_interface_war)
+	frame_interface_war_list_ally.pack(side = "left")
+	frame_interface_war_list_ennemy.pack(side = "left")
+	frame_interface_war_list_neutral.pack(side = "left")
+	tkinter.Label(frame_interface_war_list_ally, text = "Allié").pack(side = "top")
+	tkinter.Label(frame_interface_war_list_ennemy, text = "Ennemie").pack(side = "top")
+	tkinter.Label(frame_interface_war_list_neutral, text = "Neutre").pack(side = "top")
+
+	for lord in gamedata.list_lord:
+		if lord in player.vassal:
+			tkinter.Label(frame_interface_war_list_ally, text = lord.lordname).pack(side = "top")
+		elif lord in player.war:
+			tkinter.Label(frame_interface_war_list_ennemy, text = lord.lordname).pack(side = "top")
+		elif lord.player == False:
+			tkinter.Label(frame_interface_war_list_neutral, text = lord.lordname).pack(side = "top")
+
+	# On bind
+	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstatewar(event, gamedata, classmap.mapcanv, idwindow))
 
 def wardeclaration(gamedata, mapcanv, lord):
 
 	
 	pass
 
-def exitstatewar(gamedata, mapcanv, idwindow):
+def exitstatewar(event, gamedata, mapcanv, idwindow):
 	################
 	# Fonction pour quitter l'interface de guerre
 	################
@@ -550,7 +601,9 @@ def statebuildvillage(gamedata, classmap, option, framecanvas):
 			x = idtuile%option.mapx
 			y = idtuile//option.mapx
 			# On créer un carrer clickable avec un bord vert
-			classmap.mapcanv.create_rectangle((x*ts) - xorigine, (y*ts)- yorigine, (x*ts)+ts - xorigine, (y*ts)+ts - yorigine,tag = ["buildvillage","tuile", x, y], fill = "green",outline = "green")
+			print(xorigine,yorigine)
+			#print("coord: ", (x*ts) + xorigine, (y*ts) + yorigine, (x*ts)+ts + xorigine, (y*ts)+ts + yorigine)
+			classmap.mapcanv.create_rectangle(xorigine + (x*ts), yorigine + (y*ts) , xorigine + (x*ts)+ts, yorigine + (y*ts)+ts,tag = ["buildvillage","tuile", x, y], fill = "green",outline = "green")
 
 	# On tag au carrer 
 	classmap.mapcanv.tag_bind("buildvillage", "<Button-1>", lambda event: buildvillage(event, classmap, gamedata, option, framecanvas))
@@ -613,7 +666,7 @@ def exitstatebuildvillage(event, mapcanv, gamedata):
 	mapcanv.delete("buildvillage")
 	# On retire le bind
 	#mapcanv.tag_unbind()
-
+	mapcanv.tag_bind("click", "<Button-1>", lambda event:highlightCase(event, gamedata))
 	gamedata.state = 0
 
 def statebuildchurch(gamedata, classmap, option, framecanvas):
@@ -658,7 +711,7 @@ def statebuildchurch(gamedata, classmap, option, framecanvas):
 		if village.church == 0:
 			x = village.x
 			y = village.y
-			classmap.mapcanv.create_rectangle((x*ts) - xorigine, (y*ts)- yorigine, (x*ts)+ts - xorigine, (y*ts)+ts - yorigine , tags = "buildchurch", outline = "green")
+			classmap.mapcanv.create_rectangle((x*ts) - xorigine, (y*ts)- yorigine, (x*ts)+ts - xorigine, (y*ts)+ts - yorigine , tags = ["buildchurch","tuile"], outline = "green")
 			# On calcul l'id de la tuile
 			idvillage =x + (option.mapx*y)
 			# On bind la fonction buildchurch à la tuile du village
@@ -669,10 +722,12 @@ def centervillagechurch(event, gamedata, classmap, option):
 	############
 	# Fonction appeler par la listbox lc_interface_church pour centrer la carte sur le village selectionner dans la listbox
 	############
-
+	gamedata.log.printinfo("On se déplace vers le village")
 	# On recup le village actuellement selectionner dans la listbox
 	village_selected = event.widget.curselection()
 	# On recup les coord du village
+
+
 
 	# On centre la vu sur le village
 	main.centerview(gamedata, option, classmap.mapcanv, coordcanv)
@@ -697,8 +752,10 @@ def exitstatebuildchurch(event, gamedata, mapcanv, idwindow):
 	gamedata.log.printinfo("On Supprimer l'interface build_church'")
 	# On détruit l'interface
 	mapcanv.delete(idwindow)
-	# On retire le bind
-
+	# On retire le bind exit
+	#mapcanv.tag_unbnd()
+	# On retir le bind build
+	#mapcanv.tag_unbnd()
 	# On sort de l'état build_church
 	gamedata.state = 0
 

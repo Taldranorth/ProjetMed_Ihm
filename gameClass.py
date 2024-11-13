@@ -81,7 +81,7 @@ class Classlord:
 		self.war = []
 
 	def createarmy(self, village):
-		self.army += [Classarmy(village.x, village.y,)]
+		self.army += [Classarmy(village.x, village.y, ("unit_" + village.name))]
 
 	def addvassal(self, vassal):
 		self.vassal += [vassal]
@@ -179,7 +179,10 @@ class Classvillage:
 # Classe qui vient définir une armée
 class Classarmy:
 
-	def __init__(self, x, y):
+	def __init__(self, x, y, name):
+		# Nom de la troupe
+		self.name = 0
+
 		#position actuelle de la troupe
 		self.x = x
 		self.y = y

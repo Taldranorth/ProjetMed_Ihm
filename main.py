@@ -16,14 +16,6 @@ from time import time
 #			--> Un dico ?
 #			--> Place les bases du stockage de données
 #	--> Doit modifier afin d'accèlerer le déplacement avec le maintient de la touche
-#	--> Doit modifier afin de pouvoir drag le terrain √
-# - Ajouter un moyen de save la carte gen
-# - Pas assez d'eau gen, doit trouver un moyen d'améliorer cela √
-#	--> Inverser le sens de gen et est réduit la condition pour les extreme
-#		Avant: NB <=-0.5 == Blue; -0.5 < NB <= 0 == Yellow; 0<NB <= 0.5 == Green; 0.5< NB == Grey
-#		Maintenant: NB <=-0.25 == Grey; -0.25< NB <= 0 == Green; 0< NB <= 0.25 == Yellow; 0.25< NB == Blue
-# - Ajouter un moyen de Zoomer/Dézoomer √
-
 
 # !!! Attention pour une grande carte cela ram !!!
 # C'est l'affichage de plein de case qui cause la ram, voir si c'est le cache ou l'affichage
@@ -36,42 +28,6 @@ from time import time
 # J'ai tester avec une valeur incrémenter à chaque fois que la fonction motion est appelé, l'appel à la fonction est relativement léger
 # pour une carte de 250*250 on y fait appel que 16* pour aller d'un bout à l'autre de la map
 
-
-# Le Garbage Collector emmerde √
-# ils suppriment l'image obtenue à la sortie de loadtexture()
-# https://github.com/ythy/blog/issues/302
-
-# mapcanv.create_image((x*sizetuile), (y*sizetuile), image = tk_img, tags = "img")
-# Créer un décalage avec l'affichage arrière
-
-# Doit adapter le zoom/dezoom aux texture √
-# 	--> tester la sélection des tuiles textures
-#	--> tester le resize des tuiles textures
-#
-# Problème:
-#	--> Trop de mémoire pris
-#	--> Doit refactorer pour utiliser le dico √
-#	--> Doit garder les anciennes fonctions afin de pouvoir les réutiliser pour charger une texture particulière √
-#	--> Ne connais pas le fonctionnement exacte du label
-#		--> Quand je créer une nouveau label du nom de label sachant qu'un label existe déjà, l'ancien label est t'il supprimer ou garder en mémoire ?
-#			--> c'est créer par dessus, tout est garder en mémoire
-#
-#	!!! Doit créer un Atlas des label !!!
-#	Quand une texture est adapter dans le bon format on stocker le nom de la texture avec le label associer dans l'atlas
-#
-#	--> Cela permettrait de garder en mémoire que 4 texture et 4 label plutôt que 100*100 texture et labels 
-#	--> Cela permettrait aussi de ne pas avoir à recréer de label et de juste modifier la texture associer
-
-# Atlas Mis en Place !!!!
-# Je viens de réduire l'utilisation de la mémoire à seulement 115 Mo
-# Maintenant je dois comprendre d'ou vient le lag quand on observe beaucoup de case à la fois
-
-# J'ai terminé de refactoriser l'utilisation du dico
-
-
-
-
-
 # Objectif:
 #	Correctif:
 #	- Faire la doc de ce qui a était fait
@@ -82,18 +38,15 @@ from time import time
 #		--> Le Nettoyer
 #		--> Retirer les Commentaires Inutiles
 #	- !!!! Commencer a s'entrainer avec les CLasses !!!!
-#		--> Transformer Atlas en classe
 #
 #	- !!! Voir pour ajouter la taille de la texture resize à l'atlas !!!
 #	- Prendre en compte linux dans la fonction moveviewz
 #
 #	Additif:
-#	- Déplacement en mettant la souris sur la bordure extérieur de la carte
 #	- Landforme
 #	- Préparer Système de la Boucle Principale
 #	- Recup Texture.png des Batiment, Unités, Event, Blason
 #		--> Recup Image Event depuis CK 2 ou 3
-#	- Sauvegarde des données
 #	- Ajouter du Son
 #		--> https://stackoverflow.com/questions/28795859/how-can-i-play-a-sound-when-a-tkinter-button-is-pushed
 #
@@ -107,7 +60,7 @@ from time import time
 #		--> Vérifier le cout en perf et garder l'ancien système dans un coin au cas ou
 #
 #	- Changer tout les EXIT pour ajouter une fenêtre de confirmation
-#		--> Rappel de la derniière sauvegarde si >1 minute
+#		--> Rappel de la dernière sauvegarde si >1 minute
 #
 #	Partie Graphique:
 #
@@ -115,8 +68,6 @@ from time import time
 #		--> Ajouter un Fond d'écran un peu joli
 #			--> Ajouter un Peu d'anim
 #
-#	- Ajouter un systeme de randomisation des texture
-#		--> SI la texture tirer n'est pas une texture de base mais une "Incomplète" charger en dessous une texture
 #
 #	- Changer la police d'écriture
 #		--> font = "Police"
@@ -124,38 +75,11 @@ from time import time
 #	- Changer la souris
 #		--> root.config(cursor="") 
 #		--> https://stackoverflow.com/questions/66203294/how-to-add-custom-image-to-cursor-when-hovered-over-python-tkinter-window
-
-
-#
-# Système d'état qui serait utiliser pour trigger des fonctions liéer à l'affichage, exemple affichage des territoires ennemies --> 
-#
-
 # !!!!!!
 # Faire des fonctions de recherche optimiser
 #		--> Cela devrait permettre de réduire l'utilisation de la mémoire
 # !!!!!!
 
-#########################
-# Objectif 9 novembre:
-#	--> Adapter l'atlas en Class √
-#	--> Faire un Dessin des Class
-#	--> Faire la doc des normes
-#	--> corriger les noms des variables
-#
-#
-# Objectif 10 novembre:
-#	--> Refactoriser les fonctions
-#		--> En partie faite, j'ai remplacer l'utilisation de heightWindow et widthWindow par Option
-#	--> Avancer le Tour de Jeu
-#	--> Fix Highlight √
-#
-# Objectif 11 novembre:
-#	--> Refactoriser les fonctions pour utiliser les normes
-#	--> Mettre en place un système de log d'erreur
-#	
-#	
-#	
-#########################
 
 ######################### Normes #########################
 # https://peps.python.org/pep-0008/#package-and-module-names
@@ -184,13 +108,36 @@ from time import time
 #
 #	2°)
 #	- Faire système de Sauvegarde/Chargement
-#	- Faire
-#	- 
 ####################################################################################
 
-
-
-
+##################\ Doit Faire: \#######################
+# Main:
+# - réglé le décalage entre les state et la carte
+# 	--> Voir pour modifier moveviewz
+#			--> On à un décalage qui se créer à cause de move qui change la position à partir de event.x et event.y
+#				--> Cela cause inévitablement un décalage autour event.x et event.y de delta
+#					--> ex quand on zoom la première fois avec la souris sur la zone 50,50 on a un décalage de 100,100 qui va se créer à partir de cette coord
+#			--> Il faut faire une translation vers le point d'origne du canvas, appliquer le scale puis se repositionner aux coord voulu
+#				--> centerview(gamedata, option, mapcanv, [0,0])
+#				--> scale()
+#				--> centerview(gamedata, option, mapcanv, coordcanv)
+#	- Déplacement en mettant la souris sur la bordure extérieur de la carte
+# Interface:
+# - réglé les tags unbind
+# - terminer statewar()
+# - terminer staterecruitarmy
+# - commencer statesubjugate
+# - commencer stateimmigration
+# - commencer statetax
+# - ajout la création de pop à buildvillage
+# - définir les régles de création de village, création d'église
+#
+# GameClass:
+# - définir les particularités des prêtre
+#
+# Data:
+#	- Sauvegarde des données
+#########################################################
 
 
 ######################### Menu Principale #########################
@@ -212,11 +159,11 @@ def mainmenu(option, gamedata, classmap,root):
 
 	# Button Play
 	# !!! A CORRIGER !!!
-	Button_mainm_Play = tkinter.Button(fmainm, command = lambda : playmenu(mainmenuwin, option, gamedata, root, classmap), text = "Jouer")
+	Button_mainm_Play = tkinter.Button(fmainm, command = lambda : playmenu(mainmenuwin, gamedata, classmap, option, root), text = "Jouer")
 
 	# Button Quickplay
 	# !!! A CORRIGER !!!
-	Button_mainm_QuickPlay = tkinter.Button(fmainm, command = lambda: initgame(mainmenuwin, option, gamedata, classmap, root), text = "Partie Rapide")
+	Button_mainm_QuickPlay = tkinter.Button(fmainm, command = lambda: initgame(mainmenuwin, gamedata, classmap, option, root), text = "Partie Rapide")
 
 	# Button Load
 	Button_mainm_load = tkinter.Button(fmainm, text = "Load")
@@ -255,7 +202,7 @@ def mainmenu(option, gamedata, classmap,root):
 
 
 
-def initgame(mainmenuwin, option, gamedata, classmap,  root):
+def initgame(mainmenuwin, gamedata, classmap, option, root):
 
 
 	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, option.mapx, option.mapy)
@@ -291,7 +238,7 @@ def mainscreen(option, root, pic, gamedata, classmap):
 	interface.gameinterface(win1, option, gamedata, classmap, fcanvas)
 
 	# Carte de Jeu
-	createmap(option, pic, fcanvas, gamedata, classmap)
+	createmap(gamedata, classmap, option, pic, fcanvas)
 
 
 	# Genération des Villages
@@ -323,7 +270,7 @@ def mainscreen(option, root, pic, gamedata, classmap):
 #
 ##################
 
-def playmenu(mainmenuwin, option, gamedata, root, classmap):
+def playmenu(mainmenuwin, gamedata, classmap, option, root):
 
 
 	# On suprime le frame du menu principale
@@ -388,19 +335,34 @@ def playmenu(mainmenuwin, option, gamedata, root, classmap):
 	button_entrymap.pack(side = "left")
 
 	# bottom du centre
+	fplaymenu_center_bottom = tkinter.Frame(fplaymenu_center)
+	fplaymenu_center_bottom.pack(side = "bottom")
+	# On affiche la liste des seigneurs actuellement créer
+	tkinter.Label(fplaymenu_center_bottom, text = "liste des Seigneur: ").pack(side ="top")
+	fplaymenu_center_bottom_listlord = tkinter.Frame(fplaymenu_center_bottom)
+	fplaymenu_center_bottom_listlord.pack()
+
+	for lord in gamedata.list_lord:
+		tkinter.Label(fplaymenu_center_bottom_listlord, text = lord.lordname).pack(side = "top")
 
 
-	# Dropbox pour créer des seigneur
-
+	fplaymenu_center_bottom_button = tkinter.Frame(fplaymenu_center_bottom)
+	fplaymenu_center_bottom_button.pack(side = "bottom")
+	# On affiche un bouton pour en créer un nouveau
+	button_newlord = tkinter.Button(fplaymenu_center_bottom_button, text = "Créer un seigneur", command = lambda: playmenucreatelord(gamedata, fplaymenu_center_bottom_listlord))
+	button_newlord.pack(side = "left")
+	# On affiche un bouton pour supprimer le dernier
+	button_deletelastlord = tkinter.Button(fplaymenu_center_bottom_button, text = "Supprimer le dernier seigneur", command = lambda:playmenudeletelord(gamedata, fplaymenu_center_bottom_listlord))
+	button_deletelastlord.pack(side = "left")
 
 	fplaymenu_bottom = tkinter.Frame(fplaymenu)
 	fplaymenu_bottom.pack(side = "bottom")
 	# Button pour lancer une nouvelle partie
-	Button_playmenu_play = tkinter.Button(fplaymenu_bottom, command = lambda: initgame(mainmenuwin, option, gamedata, classmap, root),text = "Jouer")
+	Button_playmenu_play = tkinter.Button(fplaymenu_bottom, command = lambda: initgame(mainmenuwin, gamedata, classmap, option, root),text = "Jouer")
 	Button_playmenu_play.pack()
 
 	# Boutton pour revenir en arrière
-	Button_playmenu_return = tkinter.Button(fplaymenu_bottom, command = lambda: playmenutomainmenu(option, gamedata, classmap, mainmenuwin, root),text = "Retour")
+	Button_playmenu_return = tkinter.Button(fplaymenu_bottom, command = lambda: playmenutomainmenu(gamedata, classmap, option, mainmenuwin, root),text = "Retour")
 	Button_playmenu_return.pack()
 
 def validate_entry_map(entrymapx, entrymapy, option, gamedata, tkvar_mapx, tkvar_mapy, mapcanv):
@@ -451,10 +413,35 @@ def previewmap(mapcanv, pic, mapx, mapy):
 
 	mapcanv.pack(expand = "True",fill="both")
 
-def playmenutomainmenu(option, gamedata, classmap, menu, root):
+def playmenutomainmenu(gamedata, classmap, option, menu, root):
 	mainmenu(option, gamedata, classmap, root)
 	menu.destroy()
 
+
+def playmenucreatelord(gamedata, frame_listlord):
+	####################
+	# Fonction pour Créer un seigneur dans le menu play
+	####################
+	gamedata.log.printinfo("On Créer un nouveau Seigneur")
+	gamedata.createlord()
+
+	gamedata.log.printinfo("On l'ajoute au frame")
+	tkinter.Label(frame_listlord, text = gamedata.list_lord[gamedata.Nb_lord-1].lordname).pack(side = "top")
+
+
+def playmenudeletelord(gamedata, frame_listlord):
+	####################
+	# Fonction pour Suprimer un seigneur dans le menu play
+	####################
+	if gamedata.list_lord[gamedata.Nb_lord-1].player == False:
+		gamedata.log.printinfo("On supprime le Dernier Seigneur de la liste")
+		del gamedata.list_lord[gamedata.Nb_lord-1]
+		gamedata.Nb_lord -= 1
+		gamedata.log.printinfo("On le retire du frame")
+		frame_listlord.winfo_children()[gamedata.Nb_lord].destroy()
+
+	else:
+		gamedata.log.printerror("Il ne reste plus que le joueur")
 
 ###########################################################################
 
@@ -521,10 +508,10 @@ def optionmenu():
 
 
 ######################### Creation de la Carte Canvas #######################################################
-def createmap(option, pic, frame, gamedata, classmap):
+def createmap(gamedata, classmap, option, pic, frame):
 
 	#Si heigthWindow/1.5 le boutton quitter disparait
-	mapcanv = tkinter.Canvas(frame,height = ((option.heightWindow)/1.6), width = option.widthWindow)
+	mapcanv = tkinter.Canvas(frame,height = ((option.heightWindow)*0.6), width = option.widthWindow)
 	gamedata.setlframe(tkinter.Frame(frame))
 	classmap.setmapcanv(mapcanv)
 	# On Créer les Différentes Cases avec le tags tuile pour indiquer et les trouvé plus facilement
@@ -595,7 +582,7 @@ def createmap(option, pic, frame, gamedata, classmap):
 
 	#print("taille atlas: ",len(atlas))
 	#On lie Command+molette aux zoom/dézoom
-	mapcanv.bind("<MouseWheel>", lambda event, gd = gamedata:moveviewz(event, gd))
+	mapcanv.bind("<MouseWheel>", lambda event: moveviewz(event, gamedata, option))
 
 	#On focus sur le widget sinon il ne prendra pas en compte les entrées des touches fléchés
 	mapcanv.focus_set()
@@ -640,9 +627,9 @@ def infovillage(village):
 	print("village global joy: ", village.global_joy)
 	print("village ressource, money: ", village.ressource, village.money)
 
-def centerview(gamedata, option, mapcanv, coord):
+def centerview(gamedata, option, mapcanv, coordcanv):
 	##################
-	# Fonction pour centrer la vue sur les coordonnées donnés
+	# Fonction pour centrer la vue sur les coordonnées canvas donnés
 	##################
 
 	# On position à l'origine du canvas
@@ -660,8 +647,8 @@ def centerview(gamedata, option, mapcanv, coord):
 	# On ajoute les coord
 	#  movex = coorcanva[0] - tuilesize*30, movey = coorcanva[0] - tuilesize*18
 
-	movex = coord[0] - ((option.widthWindow/gamedata.tuilesize)//2) * gamedata.tuilesize
-	movey = coord[1] - (((option.heightWindow/1.6)/gamedata.tuilesize)//2) * gamedata.tuilesize
+	movex = coordcanv[0] - ((option.widthWindow/gamedata.tuilesize)//2) * gamedata.tuilesize
+	movey = coordcanv[1] - (((option.heightWindow/1.6)/gamedata.tuilesize)//2) * gamedata.tuilesize
 	print("déplacement de x,y: ", movex, movey)
 	mapcanv.move("tuile", -movex, -movey)
 
@@ -792,7 +779,7 @@ def typetoimgdico(dico_file, type, sizetuile):
 	return img
 
 
-def moveviewz(event, gamedata):
+def moveviewz(event, gamedata, option):
 	####################
 	# Fonction pour zoomer/dézoomer
 	# En utilisant la molette de la souris
@@ -820,9 +807,15 @@ def moveviewz(event, gamedata):
 
 
 	####################\ 1°) \####################
+
 	x0 = int(event.widget.canvasx(event.x))
 	y0 = int(event.widget.canvasy(event.y))
+
+	# On recup les coord-canvas de la tuile
+	coordcanv = event.widget.coords(event.widget.find_closest(x0,y0))
+
 	print("x0, y0: ", x0, y0)
+	print("coord canv tuile plus proche: ", coordcanv[0], coordcanv[1])
 	############################################################
 
 	####################\ 2°) \####################
@@ -851,9 +844,10 @@ def moveviewz(event, gamedata):
 	#Zoom
 	print("x avant zoom: ", event.widget.coords(idorigine)[0])
 	print("y avant zoom: ", event.widget.coords(idorigine)[1])
+	#centerview(gamedata, option, event.widget, [event.widget.canvasx(0),event.widget.canvasy(0)])
 	if (x<320) and (delta == 2):
 		print("Zoom")
-		event.widget.scale("tuile", x0, y0, delta, delta)
+		event.widget.scale("tuile", 0, 0, delta, delta)
 		print("x: ", event.widget.canvasx(event.x))
 		print("y: ", event.widget.canvasy(event.y))
 		#print("x: ", x*delta)
@@ -862,9 +856,10 @@ def moveviewz(event, gamedata):
 	elif(x>5) and (delta == -2):
 		print("DeZoom")
 		#On rend positive le delta sinon il inverse le sens de la carte
-		event.widget.scale("tuile", x0, y0, -1/(delta), -1/(delta))
+		event.widget.scale("tuile", 0, 0, -1/(delta), -1/(delta))
 		#print("x: ",x*(-1/(delta)))
 		x = x*(-1/(delta))
+	centerview(gamedata, option, event.widget, [coordcanv[0], coordcanv[1]])
 	# On change la taille des tuiles stocker dans les données globaux
 	gamedata.newsizetuile(x)
 	############################################################
@@ -881,10 +876,6 @@ def moveviewz(event, gamedata):
 	###############################\ !!! À modifier !!! \#############################
 	# Trouver un moyen de se débaraser des 4 variables
 	# Ne plus utiliser le type de la texture
-	# Pouvoir appliquer au Village
-
-
-
 
 	###################################################################################
 	f = 0

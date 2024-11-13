@@ -50,5 +50,11 @@ def printvillageunit(gamedata, classmap, option, frame, coordmap):
 	classmap.mapcanv.tag_bind("village","<Button-1>", lambda event, opt = option, gd = gamedata, cm = classmap, fc = frame: interface.villageinterface(event, opt, gd, cm, fc))
 
 
+def printarmy(gamedata, classmap, option):
+	##################
+	# Fonction pour afficher une armée 
+	##################
+	pass
+
 
 

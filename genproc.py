@@ -93,7 +93,7 @@ def genVillage(classmap, gamedata, options):
         classmap.listmap[r].createvillage()
         # On ajoute son id dans la liste
         classmap.lvillages += [r]
-        # Si il y a un seigneur non neutre qui n'a pas encore de village on lui assigne un seigneur
+        # Si il y a un seigneur non neutre qui n'a pas encore de village on lui assigne un village
         if x < len(gamedata.list_lord):
             # On ajoute l'instance du village dans la liste des fief du Seigneur
             gamedata.list_lord[x].addfief(classmap.listmap[r].village)

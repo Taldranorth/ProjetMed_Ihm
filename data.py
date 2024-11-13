@@ -199,6 +199,11 @@ class ClassGameData:
 	def changePlayerLord(self, idplayer, player):
 		self.list_lord[idplayer] = player
 
+	def createlord(self):
+		self.list_lord += [gameClass.Classlord(self.randomnametype("Surnom"), False)]
+		self.Nb_lord += 1
+
+
 
 	def randomnametype(self, type):
 		try:
