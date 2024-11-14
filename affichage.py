@@ -24,10 +24,10 @@ def printvillage(gamedata, classmap, option, frame):
 
 
 	# On ajoute lie au tag village la fonction pour ouvrir l'interface des villages
-	classmap.mapcanv.tag_bind("village","<Button-1>", lambda event, opt = option, gd = gamedata, cm = classmap, fc = frame: interface.villageinterface(event, opt, gd, cm, fc))
+	classmap.mapcanv.tag_bind("village","<Button-1>", lambda event, opt = option, gd = gamedata, cm = classmap: interface.villageinterface(event, opt, gd, cm))
 
 
-def printvillageunit(gamedata, classmap, option, frame, coordmap):
+def printvillageunit(gamedata, classmap, option, coordmap):
 	##################
 	# Fonction pour afficher un unique village avec les coord_map envoyer
 	##################	
@@ -47,7 +47,7 @@ def printvillageunit(gamedata, classmap, option, frame, coordmap):
 	classmap.mapcanv.create_text((posx*ts)+(ts/2), (posy*ts), text = classmap.listmap[idtuile].village.name,tags = ["label","village","tuile", posx, posy], activefill = "Black")
 
 	# On ajoute lie au village la fonction pour ouvrir l'interface
-	classmap.mapcanv.tag_bind("village","<Button-1>", lambda event, opt = option, gd = gamedata, cm = classmap, fc = frame: interface.villageinterface(event, opt, gd, cm, fc))
+	classmap.mapcanv.tag_bind("village","<Button-1>", lambda event, opt = option, gd = gamedata, cm = classmap: interface.villageinterface(event, opt, gd, cm, fc))
 
 
 def printarmy(gamedata, classmap, option):

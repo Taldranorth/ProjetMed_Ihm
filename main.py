@@ -121,16 +121,27 @@ from time import time
 #				--> centerview(gamedata, option, mapcanv, [0,0])
 #				--> scale()
 #				--> centerview(gamedata, option, mapcanv, coordcanv)
-#	- Déplacement en mettant la souris sur la bordure extérieur de la carte
+# - Déplacement en mettant la souris sur la bordure extérieur de la carte
+# - Pouvoir renommer le Seigneur Joueur √
+#	--> Remplacer par un Entry √
+# - ajouter dans les options quickplay 3 Seigneurs √
+# - Ajouter un lord devant les noms des Seigneurs √
+# - Définir le système de tour de jeu √
+#
+#
 # Interface:
 # - réglé les tags unbind
-# - terminer statewar()
+#		--> C'est de la merde
+#			--> à la place on remet le tags highlight
+# - terminer statewar
 # - terminer staterecruitarmy
 # - commencer statesubjugate
 # - commencer stateimmigration
 # - commencer statetax
-# - ajout la création de pop à buildvillage
+# - ajouter la création de pop à buildvillage
 # - définir les régles de création de village, création d'église
+# - terminer centervillagechurch
+# - Voir pour une fonction exitstate générale
 #
 # GameClass:
 # - définir les particularités des prêtre
@@ -214,7 +225,8 @@ def initgame(mainmenuwin, gamedata, classmap, option, root):
 
 	# On lance la game
 	# Actuellement Bloque le process
-	#game(gamedata)
+	gameloop(gamedata, classmap, option, root)
+	root.mainloop()
 
 
 ###########################################################################
@@ -227,18 +239,20 @@ def mainscreen(option, root, pic, gamedata, classmap):
 
 	# Création de la fenêtre
 	win1 = tkinter.Toplevel(root, height = option.heightWindow, width= option.widthWindow)
+	print("taille écran x,y: ", root.winfo_screenwidth(), root.winfo_screenheight())
 	win1.geometry(f"+{option.widthWindow//8}+{option.heightWindow//4}")
 
 
 	# Frame Map
 	fcanvas = tkinter.Frame(win1)
 	fcanvas.pack(expand="True", fill="both")
+	classmap.setlframecanvas(fcanvas)
 
 	# Interface de Jeu
-	interface.gameinterface(win1, option, gamedata, classmap, fcanvas)
+	interface.gameinterface(win1, option, gamedata, classmap)
 
 	# Carte de Jeu
-	createmap(gamedata, classmap, option, pic, fcanvas)
+	createmap(gamedata, classmap, option, pic)
 
 
 	# Genération des Villages
@@ -278,6 +292,7 @@ def playmenu(mainmenuwin, gamedata, classmap, option, root):
 	# On Créer un nouveau frame
 	fplaymenu = tkinter.Frame(mainmenuwin, height = option.heightWindow, width = option.widthWindow)
 	fplaymenu.pack(expand="True", fill="both")
+	mainmenuwin.geometry(f"+{option.widthWindow//3}+{option.heightWindow//5}")
 
 	# Frame dans lequel on va afficher la version réduite de la carte
 	canvasframeminimap = tkinter.Frame(fplaymenu, height = option.heightWindow/4, width = option.widthWindow/4)
@@ -342,8 +357,21 @@ def playmenu(mainmenuwin, gamedata, classmap, option, root):
 	fplaymenu_center_bottom_listlord = tkinter.Frame(fplaymenu_center_bottom)
 	fplaymenu_center_bottom_listlord.pack()
 
+	#txt variable nom joueur
+	tkvar_playername = tkinter.StringVar()
+	tkvar_playername.set(gamedata.list_lord[gamedata.playerid].lordname)
+
 	for lord in gamedata.list_lord:
-		tkinter.Label(fplaymenu_center_bottom_listlord, text = lord.lordname).pack(side = "top")
+		# Si c'est le joueur on met affiche un label Player est on met en place un Entry afin de pouvoir modifier le nom du Seigneur
+		if lord.player == True:
+			fplaymenu_center_bottom_listlord_player = tkinter.Frame(fplaymenu_center_bottom_listlord)
+			fplaymenu_center_bottom_listlord_player.pack(side = "top")
+			tkinter.Label(fplaymenu_center_bottom_listlord_player, text = "Player").pack(side = "left")
+			entryplayername = tkinter.Entry(fplaymenu_center_bottom_listlord_player, textvariable = tkvar_playername)
+			entryplayername.pack(side = "left")
+			tkinter.Button(fplaymenu_center_bottom_listlord_player, text = "change", command = lambda: validate_entry_lordname(gamedata, tkvar_playername)).pack(side = "left")
+		else:
+			tkinter.Label(fplaymenu_center_bottom_listlord, text = lord.lordname).pack(side = "top")
 
 
 	fplaymenu_center_bottom_button = tkinter.Frame(fplaymenu_center_bottom)
@@ -384,6 +412,13 @@ def validate_entry_seed(entryseed, option, gamedata, tkvar_seed, mapcanv):
 	tkvar_seed.set(gamedata.seed)
 	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, option.mapx, option.mapy)
 	previewmap(mapcanv, pic, option.mapx, option.mapy)
+
+def validate_entry_lordname(gamedata, tkvar_playername):
+	####################
+	# Fonction pour changer le nom du seigneur player
+	####################
+	gamedata.list_lord[gamedata.playerid].lordname = tkvar_playername.get()
+
 
 def regenseed(gamedata, option, tkvar_seed, mapcanv):
 	####################
@@ -435,10 +470,11 @@ def playmenudeletelord(gamedata, frame_listlord):
 	####################
 	if gamedata.list_lord[gamedata.Nb_lord-1].player == False:
 		gamedata.log.printinfo("On supprime le Dernier Seigneur de la liste")
-		del gamedata.list_lord[gamedata.Nb_lord-1]
-		gamedata.Nb_lord -= 1
+		gamedata.deletelord(gamedata.Nb_lord-1)
 		gamedata.log.printinfo("On le retire du frame")
-		frame_listlord.winfo_children()[gamedata.Nb_lord].destroy()
+		# On retire le seigneur de la liste
+		frame_listlord.winfo_children()[gamedata.Nb_lord-1].destroy()
+		gamedata.Nb_lord -= 1
 
 	else:
 		gamedata.log.printerror("Il ne reste plus que le joueur")
@@ -446,7 +482,9 @@ def playmenudeletelord(gamedata, frame_listlord):
 ###########################################################################
 
 
-######################### Menu Load #########################
+
+
+######################### Menu Save/Load #########################
 
 ###############
 # Fonction appeler pour afficher le menu de chargement des Saves
@@ -458,6 +496,11 @@ def playmenudeletelord(gamedata, frame_listlord):
 #	- Tant que l'on aura pas lancer le chargement de la save rien n'est charger en arrière plan
 ###############
 
+def savemenu():
+
+
+
+	pass
 
 
 
@@ -508,11 +551,13 @@ def optionmenu():
 
 
 ######################### Creation de la Carte Canvas #######################################################
-def createmap(gamedata, classmap, option, pic, frame):
+def createmap(gamedata, classmap, option, pic):
 
 	#Si heigthWindow/1.5 le boutton quitter disparait
-	mapcanv = tkinter.Canvas(frame,height = ((option.heightWindow)*0.6), width = option.widthWindow)
-	gamedata.setlframe(tkinter.Frame(frame))
+	mapcanv = tkinter.Canvas(classmap.framecanvas,height = ((option.heightWindow)*0.6), width = option.widthWindow)
+	# On setup le frame de l'atlas
+	gamedata.setlframe(tkinter.Frame(classmap.framecanvas))
+	# On lie le mapcanvas à classmap
 	classmap.setmapcanv(mapcanv)
 	# On Créer les Différentes Cases avec le tags tuile pour indiquer et les trouvé plus facilement
 	# On ajoute aussi le tags click pour indiquer qu'ils sont clickables
@@ -1010,67 +1055,86 @@ def moveviewmouse(event):
 #		- Fin du tour quand le Joueur clique sur la case fin de tour
 #		- Les Vassaux du joueur Joue
 #################### 
+# fin de tour:
+#	- CP = capacité de production >=2
+#	- Chaque roturier produit CP ressource
+#	- Chaque roturier consomme 1 ressource
+#	- Si 1 roturier atteint le plafond de ressource qu'il peut posséder la ressource produite est vendu
+#	- Si 1 roturier n'a plus de ressource il achète 1 ressource
+#	- Chaque roturier voit son âge augmenté de 1
+#	- Si 1 roturier voit son âge atteindre 100 il meurt et c'est ressource/money son transférer au Seigneur du village
+#	- Le bonheur augmente 
+####################
+#Tcl/Tk applications are normally event-driven, meaning that after initialization, the interpreter runs an event loop (i.e. Tk.mainloop()) and responds to events.
+#Because it is single-threaded, event handlers must respond quickly, otherwise they will block other events from being processed.
+#To avoid this, any long-running computations should not run in an event handler, but are either broken into smaller pieces using timers, or run in another thread.
+#This is different from many GUI toolkits where the GUI runs in a completely separate thread from all application code including event handlers.
+####################
 
-# Fonction qui gère la partie
-def game(gamedata):
 
-	ingame = True
-	nbtoplay = 0
-	# Boucle principale du jeu
-	while(ingame == True):
-		if nbtoplay == gamedata.Nb_lord:
-			nbtoplay = 0
-			gamedata.Nb_tour += 1
 
-		# On verifie que c'est le tour du joueur
-		if gamedata.playerid == nbtoplay:
+
+
+def gameloop(gamedata, classmap, option, root):
+	####################
+	#
+	#	Le Retour des Sémaphore :)
+	#
+	#
+	####################
+
+	if gamedata.semaphore == False:
+		# si on a fait le tour des joueurs
+		if gamedata.Nb_toplay == gamedata.Nb_lord:
+			endofturn(gamedata)
+
+		# Si c'est au joueurs de jouer
+		if gamedata.Nb_toplay == gamedata.playerid:
+			# On entre dans la loop du tour du joueur
 			playerturn(gamedata)
+		# Sinon c'est à un Ia de jouer
 		else:
-			notplayerturn(gamedata, nbtoplay)
+			# On entre dans la loop de l'ia
+			notplayerturn(gamedata)
+
+	# On vérifie que la partie n'est pas terminé
+	if gamedata.is_finished == False:
+		# Si elle ne l'est pas on rapelle cette fonction dans 
+		root.after(50, lambda: gameloop(gamedata, classmap, option, root))
 
 
-		nbtoplay += 1
+
+def playerturn(gamedata):
+	# Si le joueur à appuier sur le bouton fin de tour
+	if gamedata.endturn == True:
+		print("Player hit end of turn button")
+		# On incrémente le joueur qui doit jouer
+		gamedata.Nb_toplay += 1
+		# On indique au joueurs que c'est à l'ia de Jouer
+
+# Fonction qui gère l'ia des ennemies
+def notplayerturn(gamedata):
+	gamedata.semaphore = True
+	print("tour de: ", gamedata.list_lord[gamedata.Nb_toplay].lordname, gamedata.Nb_toplay)
+	# L'ia Joue
+
+	gamedata.Nb_toplay += 1
+	gamedata.semaphore = False
+
+def endofturn(gamedata):
+	gamedata.semaphore = True
+	gamedata.Nb_toplay = 0
+	gamedata.endofturn()
+	gamedata.endturn = False
+	gamedata.semaphore = False
 
 
 
+# after(time, function)
 
 # Fonction qui gère la fin de partie
 def endofgame():
 	pass
-
-
-# Fonction qui gère l'ia des ennemies
-def notplayerturn(gamedata, nbtoplay):
-	pass
-
-
-
-# Fonction qui gère le tour du joueur
-def playerturn(gamedata):
-	while(gamedata.endturn == False):
-		pass
-	gamedata.endturn == True
-
-def buildvillage(Classmap, idtuile, player):
-	####
-	# Fonction pour tester puis créer un village par le joueur 
-	#####
-
-	# On vérifie que la construction est possible
-	if buildvillagepossible(Options, Classmap, idtuile) == True:
-		# Si c'est possible on créer
-		Classmap.lvillages += [idtuile]
-		Classmap.listmap[idtuile].createvillage()
-		Classmap.listmap[idtuile].setpossesor("player")
-
-
-def moveunit():
-	pass
-
-
-
-
-
 
 
 ###########################################################################
@@ -1084,10 +1148,11 @@ class Classmap:
 	#		--> l'avantage du dictionnaire et de pouvoir balancer l'identificateur pour en recup la tuile
 	####################
 	def __init__(self):
+
+		# Variable qui vient contenir le frame du canvas
+		self.framecanvas = 0
 		# Variable qui vient contenir le canvas de la map
 		self.mapcanv = 0
-		# liste qui vient contenir le décalage en x et y
-		self.gap = [0,0]
 
 		#Dico qui vient contenir les Classtuiles 
 		self.listmap = {}
@@ -1106,6 +1171,17 @@ class Classmap:
 
 	def setmapcanv(self, mapcanv):
 		self.mapcanv = mapcanv
+
+	def setlframecanvas(self, framecanvas):
+		self.framecanvas = framecanvas
+
+	def nametoid(self, name):
+		####################
+		# Méthode pour obtenir l'id d'un village selon son nom
+		####################
+		for ele in lvillages:
+			if self.listmap[ele].village.name == name:
+				return ele
 
 
 class Classtuiles:
@@ -1187,19 +1263,6 @@ class Classtuiles:
 		# On set le nom du village
 		self.village.setnamevillage(gamedata.randomnametype("Village"))
 
-
-class ClassGameInterface:
-	####################
-	# Classe qui va contenir toute les données liée à l'interface Tkinter
-	#
-	#
-	####################
-
-	def __init__(self):
-		self.root = tkinter.Tk()
-
-
-
 ###########################################################################
 
 ######################### Main #########################
@@ -1230,3 +1293,4 @@ if __name__ == '__main__':
 
 
 	root.mainloop()
+

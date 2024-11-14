@@ -45,10 +45,22 @@ import random
 #	--> Seigneur
 #	--> Territoire associé
 #		--> Quand un villageois travail sur une plaine un Champ apparaît
+#	--> Quand un village est construit il est automatiquement 
+#
+#	Conditions pour créer un Village:
+#		--> ressource = 10
+#		--> money = 4
+#
+#	Conditions pour créer une Église:
+#		--> ressource = 4 
+#		--> money = 4
 #
 ####################
 
 class Classlord:
+	####################
+	# Class Seigneur 
+	####################
 
 	def __init__(self, lordname: str, player: bool):
 
@@ -101,6 +113,8 @@ class Classlord:
 		############
 
 		temp_joy = 0
+		self.nb_ressource = self.personnal_ressource
+		self.nb_money = self.personnal_money
 		# On calcul pour les vassaux
 		for vassal in self.vassal:
 			self.nb_ressource += vassal.nb_ressource
@@ -118,6 +132,11 @@ class Classlord:
 		# On calcule les troupes
 		for army in self.army:
 			power += army.power
+
+	def endofturn(self):
+		for village in self.fief:
+			village.endofturn()
+
 
 
 class Classvillage:
@@ -175,6 +194,10 @@ class Classvillage:
 	def setnamevillage(self, name):
 		self.name = name
 
+	def endofturn(self):
+		for pop in self.population:
+			pop.endofturn()
+
 
 # Classe qui vient définir une armée
 class Classarmy:
@@ -217,7 +240,7 @@ class Classpriest:
 		self.name = name
 		self.ressource = 0
 		self.money = 0
-		self.joy = 100
+		self.joy = 50
 
 	def setname(self, name):
 		self.name = name
@@ -229,9 +252,14 @@ class ClassHuman:
 
 	def __init__(self, name):
 		self.name = name
-		self.ressource = 0
+		self.ressource = 1
 		self.money = 0
-		self.joy = 100
+		self.joy = 50
+		self.cp = 2
+		self.age = random.randrange(15,30)
+
+	def endofturn(self):
+		pass
 
 
 

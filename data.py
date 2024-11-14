@@ -99,7 +99,9 @@ class ClassGameData:
 		# Variable qui vient contenir le nombre de tour passé
 		self.Nb_tour = 1
 		# Variable qui vient contenir le nombre de joueurs
-		self.Nb_lord = 1
+		self.Nb_lord = 0
+		# variable qui vient contenir le Seigneur qui doit jouer
+		self.Nb_toplay = 0
 		self.tuilesize = 20
 
 		#Seed générer au lancement de l'appli
@@ -107,11 +109,15 @@ class ClassGameData:
 
 		# Variable bool modifier quand ont veut que le joueur termine son tour
 		self.endturn = False
+		# Variable bool qui vient représenter un sémaphore qui vient bloquer le process quand un ia ou la fin du tour est actuellement lancé
+		self.semaphore = False
+
+		# Variable bool pour indiquer que la partie est terminé
+		self.is_finished = False
 
 		# Variable qui vient contenir l'id du lord qui représente le seigneur
 		self.playerid = 0
-		player = gameClass.Classlord("test", True)
-		self.list_lord = [player]
+		self.list_lord = []
 
 		# Dico des Assets
 		self.dico_file = assetLoad()
@@ -134,6 +140,14 @@ class ClassGameData:
 		#
 		self.state = 0
 
+		# Une fois toute les valeur charger on charge les seigneur de base
+		# On créer le seigneur qui représente le joueur
+		player = gameClass.Classlord("test", True)
+		self.list_lord += [player]
+		self.Nb_lord += 1
+
+		for x in range(3):
+			self.createlord()
 
 
 	#tuile: Classtuiles
@@ -200,17 +214,44 @@ class ClassGameData:
 		self.list_lord[idplayer] = player
 
 	def createlord(self):
-		self.list_lord += [gameClass.Classlord(self.randomnametype("Surnom"), False)]
+		self.list_lord += [gameClass.Classlord(("lord "+self.randomnametype("Surnom")), False)]
 		self.Nb_lord += 1
 
+	def deletelord(self, idlord):
+		name = self.list_lord[idlord].lordname[5:]
+		# On détruit le seigneur
+		del self.list_lord[idlord]
+		# On libérer le nom utilisé
+		# Comment parcourir efficacement ?
+		i = 0
+		while self.dico_name["Surnom"][i][0] != name:
+			i += 1
+		self.dico_name["Surnom"][i][1] = 0
 
 
 	def randomnametype(self, type):
 		try:
-			name = self.dico_name[type][random.randrange(len(self.dico_name[type]))]
+			r = random.randrange(len(self.dico_name[type]))
+			# Si c'est un Surnom ou NomVillage déjà utilisé on regen
+			if (self.dico_name[type][r][1] == 1) and (type != "Nom"):
+				r = random.randrange(len(self.dico_name[type]))
+			# On met à 1 le compteur pour indiquer que le nom est utiliser
+			self.dico_name[type][r][1] = 1
+			name = self.dico_name[type][r][0]
 			return name
 		except:
 			self.log.printerror("type :"+type+"non présent dans le dico")
+
+	def endofturn(self):
+		################
+		# Méthode appeler pour mettre fin au tour
+		################
+
+		self.Nb_tour += 1
+		#On appele les méthode des instances des sous class lord
+		for lord in self.list_lord:
+			lord.endofturn()
+
 
 
 
@@ -472,6 +513,7 @@ def loadnamedico(filepath):
 	#	Nom
 	#	Surnom
 	#	NomVillage
+	# + une variable int initialisé à 0 qui permet de compter le nombre de fois que le nom est utilisé
 	####################
 
 	# On créer le dico
@@ -495,9 +537,9 @@ def loadnamedico(filepath):
 		else:
 			# on evite de prendre en compte les saut à la ligne
 			if line[-1:] == "\n":
-				dico_name[var] += [line[:-2]]
+				dico_name[var] += [[line[:-2], 0]]
 			else:
-				dico_name[var] += [line]
+				dico_name[var] += [[line, 0]]
 		line = f.readline()
 
 
@@ -505,6 +547,7 @@ def loadnamedico(filepath):
 	f.close()
 	#print(dico_name)
 	# On renvoi le dico
+	#print(dico_name)
 	return dico_name
 
 ###############################################################################

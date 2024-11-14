@@ -77,7 +77,7 @@ def genVillage(classmap, gamedata, options):
     classmap.lplaines = listidplaines(classmap)
     #print(Classmap.listmap)
 
-    nb_neutral_village = 10
+    nb_neutral_village = 5
 
     # On en gen 10 
     # Valeur Test
