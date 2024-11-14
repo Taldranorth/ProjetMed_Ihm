@@ -1,11 +1,12 @@
 import sys
 import random
+
+import functions.gameclass as gameclass
+
 import matplotlib.pyplot as plt
-
-import gameClass
-
 from time import time
-from perlin_noise.perlin_noise import PerlinNoise
+import perlin_noise.perlin_noise as Perlin_noise
+
 #########################
 #
 #
@@ -20,26 +21,9 @@ from perlin_noise.perlin_noise import PerlinNoise
 
 random.seed()
 
-"""
-#Version De base
-#Pour s'assurer on génére un chiffre entre 0 et 1 que l'on multiplie par l'horloge interne
-noise = PerlinNoise(octaves=10, seed=(random.random()*time()))
-xpix, ypix = 100, 100
-pic = [[noise([i/xpix, j/ypix]) for j in range(xpix)] for i in range(ypix)]
-
-
-#print(pic)
-
-plt.imshow(pic, cmap='gray')
-plt.show()
-"""
-
-
-
-
 def genNoiseMap(octaves, seed, mapx, mapy):
     #On génére le bruit
-    noise = PerlinNoise(octaves, seed)
+    noise = Perlin_noise.PerlinNoise(octaves, seed)
     xpix, ypix = mapx, mapy
     pic = [[noise([i/xpix, j/ypix]) for j in range(xpix)] for i in range(ypix)]
     #print(len(pic))
@@ -59,7 +43,7 @@ def genNoiseMap(octaves, seed, mapx, mapy):
 #
 
 
-def genVillage(classmap, gamedata, options):
+def genVillage(gamedata, classmap, options):
 
     ####################
     # Fonction pour Gen les villages
@@ -90,7 +74,7 @@ def genVillage(classmap, gamedata, options):
         while buildvillagepossible(options, classmap, r) == False:
             r = classmap.lplaines[random.randrange(len(classmap.lplaines))]
         # On créer le village
-        classmap.listmap[r].createvillage()
+        classmap.listmap[r].createvillage(gamedata)
         # On ajoute son id dans la liste
         classmap.lvillages += [r]
         # Si il y a un seigneur non neutre qui n'a pas encore de village on lui assigne un village
@@ -169,7 +153,7 @@ def genpopvillage(option, classmap, gamedata, idvillage, nbpop):
     ####################
     for x in range(nbpop):
         # On créer le villageois
-        pop = gameClass.ClassHuman(gamedata.randomnametype("Nom"))
+        pop = gameclass.ClassHuman(gamedata.randomnametype("Nom"))
         # On l'ajoute
         classmap.listmap[idvillage].village.addpopulation(pop)
         
@@ -192,9 +176,19 @@ if __name__ == '__main__':
 
 
 
+"""
+#Version De base
+#Pour s'assurer on génére un chiffre entre 0 et 1 que l'on multiplie par l'horloge interne
+noise = PerlinNoise(octaves=10, seed=(random.random()*time()))
+xpix, ypix = 100, 100
+pic = [[noise([i/xpix, j/ypix]) for j in range(xpix)] for i in range(ypix)]
 
 
+#print(pic)
 
+plt.imshow(pic, cmap='gray')
+plt.show()
+"""
 
 """
 #Version avec Plusieurs Octaves

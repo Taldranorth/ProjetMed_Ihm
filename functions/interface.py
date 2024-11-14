@@ -1,10 +1,8 @@
 import tkinter
-import genproc
-import affichage
 
-import main
-
-
+import functions.genproc as genproc
+import functions.affichage as affichage
+import functions.moveview as moveview
 
 ######################### Fonction Interface ############################
 
@@ -327,7 +325,7 @@ def statewar(gamedata, classmap, option):
 
 	# Tant que la carte n'est pas dezoom à 20
 	while gamedata.tuilesize != 20:
-		main.moveviewz(gamedata)
+		moveview.moveviewz(gamedata)
 
 
 
@@ -339,7 +337,7 @@ def statewar(gamedata, classmap, option):
 	yorigine = classmap.mapcanv.canvasy(0)
 
 	# On se place au centre
-	main.centerview(gamedata, option, classmap.mapcanv, [(option.mapx/2)*ts, (option.mapy/2)*ts])
+	moveview.centerviewcanvas(gamedata, option, classmap.mapcanv, [(option.mapx/2)*ts, (option.mapy/2)*ts])
 
 	# On affiche les territoire 
 	# On se balade dans la liste des térritoire
@@ -484,7 +482,7 @@ def buildvillage(event, gamedata, classmap, option):
 	# On ajoute l'id de la tuile à la liste des villages
 	classmap.lvillages += [idtuile]
 	# On créer le village
-	classmap.listmap[idtuile].createvillage()
+	classmap.listmap[idtuile].createvillage(gamedata)
 	classmap.listmap[idtuile].setpossesor("player")
 	# On ajoute l'instance de vilalge à la liste de fief du lord
 	gamedata.list_lord[gamedata.playerid].addfief(classmap.listmap[idtuile].village)
@@ -598,12 +596,12 @@ def centervillagechurch(event, gamedata, classmap, option):
 	x = classmap.listmap[idvillage].x
 	y = classmap.listmap[idvillage].y
 	#print("x,y: ", x, y)
-	coord = main.coordmaptocanvas(gamedata, classmap, option, [x, y])
+	coord = moveview.coordmaptocanvas(gamedata, classmap, option, [x, y])
 	#print("Coord Canvas: ", coord[0], coord[1])
 
 
 	# On centre la vu sur le village
-	main.centerviewcanvas(gamedata, option, classmap.mapcanv, coord)
+	moveview.centerviewcanvas(gamedata, option, classmap.mapcanv, coord)
 
 def buildchurch(event, gamedata, idvillage):
 	############
@@ -677,7 +675,7 @@ def villageinterface(event, option, gamedata, classmap):
 
 	####################\ Comment j'ai fait ???? \########################
 	# On place le village au centre de l'écran
-	main.centerviewcanvas(gamedata, option, classmap.mapcanv, coordcanv)
+	moveview.centerviewcanvas(gamedata, option, classmap.mapcanv, coordcanv)
 	######################################################################
 
 	gamedata.log.printinfo("On affiche l'interface du village")

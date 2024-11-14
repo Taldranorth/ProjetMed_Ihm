@@ -1,7 +1,6 @@
 import tkinter
 import random
 
-
 ####################
 #
 # Utiliser un Id pour séparer les instance ?

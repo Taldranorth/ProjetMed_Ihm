@@ -1,8 +1,7 @@
 import tkinter
-import data
 
-import interface
-
+import functions.data as data
+import functions.interface as interface
 
 def printvillage(gamedata, classmap, option, frame):
 	##################

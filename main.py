@@ -1,11 +1,15 @@
 import tkinter
 import random
+import sys
+import os
 
-import genproc
-import data
-import interface
-import gameClass
-import affichage
+import functions.data as data
+import functions.interface as interface
+import functions.gameclass as gameclass
+import functions.affichage as affichage
+import functions.moveview as moveview
+import functions.genproc as genproc
+
 from time import time
 
 #Doit terminé de faire un Prototype:
@@ -119,12 +123,20 @@ from time import time
 # - ajouter dans les options quickplay 3 Seigneurs √
 # - Ajouter un lord devant les noms des Seigneurs √
 # - Définir le système de tour de jeu √
+# - Changer MainMenu pour utiliser create_window
+#		--> C'est une fonction uniquement liéer aux Canvas -_-
+#			--> En créer un et l'utiliser seulement pour cela ?
+#			--> Comme cela on à juste à détruire le canvas quand ont veut revenir en arrière
+#			--> Et on a pas à créer une nouvelle fenêtre de 0 totalement séparé
+# - Améliorer le Zoom/Dezoom
+# - Retirer Move de centerviewcanvas
 #
 #
 # Interface:
 # - réglé les tags unbind
 #		--> C'est de la merde
 #			--> à la place on remet le tags highlight
+#				--> Peut être utiliser funcid = .execute(func)
 # - terminer statewar
 # - terminer staterecruitarmy
 # - commencer statesubjugate
@@ -138,8 +150,30 @@ from time import time
 # GameClass:
 # - définir les particularités des prêtre
 #
+# affichage:
+# - Régler les labels des noms
+#	--> Actuellement ils ont tendance à ce couper
+#
 # Data:
 #	- Sauvegarde des données
+#
+# Projet:
+# - Placer dans un sous-dossier fonctions les fonctions.py √
+# - Placer dans un sous-dossier doc les fichiers docs √
+#
+# Main:
+# - Réarranger par ordre d'execution √
+#
+# Gameclass:
+# - Créer une methode pour vérifier l'etat
+# - Régler le problème de sauvegarde du log
+#		--> Il faut f.close()
+#			--> Créer un fonction dans gamedata appeler quand on quitte l'application
+# - Ajouter une Methode de Formatage du log qui gère les sauts à la ligne, le time code etc ....
+# 
+# Interface:
+# - remplacer les vérification de state par une methode de Gameclass pour 
+#
 #########################################################
 
 
@@ -160,15 +194,14 @@ from time import time
 #
 
 
-
 ######################### Menu Principale #########################
 
-def mainmenu(option, gamedata, classmap,root):
+def mainmenu(gamedata, classmap, option, root):
 	# Création de la fenêtre
 	mainmenuwin = tkinter.Toplevel(root, height = option.heightWindow, width = option.widthWindow)
 	# On centre la fenêtre
 	# Pourquoi ?
-	print(f"{option.heightWindow}x{option.widthWindow}+{option.heightWindow//8}+{option.widthWindow//8}")
+	gamedata.log.printinfo(f"{option.heightWindow}x{option.widthWindow}+{option.heightWindow//8}+{option.widthWindow//8}")
 	mainmenuwin.geometry(f"+{option.widthWindow//2}+{option.heightWindow//4}")
 
 
@@ -205,83 +238,6 @@ def mainmenu(option, gamedata, classmap,root):
 
 ###########################################################################
 
-######################### Initiation de la partie #########################
-
-##########
-#
-# Appeler par Quickplay ou Play depuis le Menu Principale
-#
-# On initialise le Gamedata:
-#	Tour 1:
-#		- Chaque Seigneur Possède 10 de Ressource et 10 d'argent
-#
-#
-#
-# Doit détruire le MenuPrincipale
-#
-##########
-
-
-
-def initgame(mainmenuwin, gamedata, classmap, option, root):
-
-
-	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, option.mapx, option.mapy)
-	# On lance la création de la game
-	mainscreen(option, root, pic, gamedata, classmap)
-
-	# Une fois l'initialisation lancé on détruit la fenêtre du menu principale
-	mainmenuwin.destroy()
-
-	# On lance la game
-	# Actuellement Bloque le process
-	gameloop(gamedata, classmap, option, root)
-	root.mainloop()
-
-
-###########################################################################
-
-
-
-
-######################### Écran de Jeu #########################
-def mainscreen(option, root, pic, gamedata, classmap):
-
-	# Création de la fenêtre
-	win1 = tkinter.Toplevel(root, height = option.heightWindow, width= option.widthWindow)
-	print("taille écran x,y: ", root.winfo_screenwidth(), root.winfo_screenheight())
-	win1.geometry(f"+{option.widthWindow//8}+{option.heightWindow//4}")
-
-
-	# Frame Map
-	fcanvas = tkinter.Frame(win1)
-	fcanvas.pack(expand="True", fill="both")
-	classmap.setlframecanvas(fcanvas)
-
-	# Interface de Jeu
-	interface.gameinterface(win1, option, gamedata, classmap)
-
-	# Carte de Jeu
-	createmap(gamedata, classmap, option, pic)
-
-
-	# Genération des Villages
-	genproc.genVillage(Map, gamedata, option)
-
-	# Affichage des Villages
-	affichage.printvillage(gamedata, Map, option,fcanvas)
-
-	# On rempli les villages de pop
-	for village in classmap.lvillages:
-		genproc.genpopvillage(option, classmap, gamedata,village, 10)
-
-
-####################################################################################################
-
-
-
-
-
 ######################### Menu Jouer #########################
 
 ####
@@ -311,6 +267,7 @@ def playmenu(mainmenuwin, gamedata, classmap, option, root):
 	# Canvas de la minimap
 	mapcanv = tkinter.Canvas(canvasframeminimap)
 
+	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, option.mapx, option.mapy)
 	# Fonction qui gen la mini carte
 	previewmap(mapcanv, pic, option.mapx, option.mapy)
 
@@ -453,13 +410,12 @@ def previewmap(mapcanv, pic, mapx, mapy):
 	for x in range(mapx):
 		for y in range(mapy):
 			tl = tuile(pic[x][y])[0]
-			#print(tl, x ,y)
 			mapcanv.create_rectangle((x*2), y*2, (x*2)+2, (y*2)+2, fill=tl, tags = "minimap", outline='black')
 
 	mapcanv.pack(expand = "True",fill="both")
 
 def playmenutomainmenu(gamedata, classmap, option, menu, root):
-	mainmenu(option, gamedata, classmap, root)
+	mainmenu(gamedata, classmap, option, root)
 	menu.destroy()
 
 
@@ -559,6 +515,75 @@ def optionmenu():
 
 ###########################################################################
 
+######################### Initiation de la partie #########################
+
+##########
+#
+# Appeler par Quickplay ou Play depuis le Menu Principale
+#
+# On initialise le Gamedata:
+#	Tour 1:
+#		- Chaque Seigneur Possède 10 de Ressource et 10 d'argent
+#
+#
+#
+# Doit détruire le MenuPrincipale
+#
+##########
+
+
+
+def initgame(mainmenuwin, gamedata, classmap, option, root):
+
+
+	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, option.mapx, option.mapy)
+	# On lance la création de la game
+	mainscreen(gamedata, classmap, option, root, pic)
+
+	# Une fois l'initialisation lancé on détruit la fenêtre du menu principale
+	mainmenuwin.destroy()
+
+	# On lance la game
+	# Actuellement Bloque le process
+	gameloop(gamedata, classmap, option, root)
+	root.mainloop()
+
+
+###########################################################################
+
+######################### Écran de Jeu #########################
+def mainscreen(gamedata, classmap, option, root, pic):
+
+	# Création de la fenêtre
+	win1 = tkinter.Toplevel(root, height = option.heightWindow, width= option.widthWindow)
+	gamedata.log.printinfo(f"taille écran x,y: , {root.winfo_screenwidth()}, {root.winfo_screenheight()}")
+	win1.geometry(f"+{option.widthWindow//8}+{option.heightWindow//4}")
+
+
+	# Frame Map
+	fcanvas = tkinter.Frame(win1)
+	fcanvas.pack(expand="True", fill="both")
+	classmap.setlframecanvas(fcanvas)
+
+	# Interface de Jeu
+	interface.gameinterface(win1, option, gamedata, classmap)
+
+	# Carte de Jeu
+	createmap(gamedata, classmap, option, pic)
+
+
+	# Genération des Villages
+	genproc.genVillage(gamedata, classmap, option)
+
+	# Affichage des Villages
+	affichage.printvillage(gamedata, classmap, option,fcanvas)
+
+	# On rempli les villages de pop
+	for village in classmap.lvillages:
+		genproc.genpopvillage(option, classmap, gamedata,village, 10)
+
+
+####################################################################################################
 
 ######################### Creation de la Carte Canvas #######################################################
 def createmap(gamedata, classmap, option, pic):
@@ -626,133 +651,36 @@ def createmap(gamedata, classmap, option, pic):
 			################################
 
 			# On créer une nouvelle instance de la classe tuiles
-			instancetuile = Classtuiles(texture_name, tl[1], x, y, mcanvt)
+			instancetuile = data.Classtuiles(texture_name, tl[1], x, y, mcanvt)
 			# On le stocker dans la ClassMap
 			#gamedata.list_tuile += [instancetuile]
 			classmap.addtuileinlist(instancetuile)
 			idtuile += 1
 
-	#Carrer test
-	#mapcanv.create_rectangle(0,0,20,20,tags = "tuile")
-
-	#print("taille atlas: ",len(atlas))
 	#On lie Command+molette aux zoom/dézoom
-	mapcanv.bind("<MouseWheel>", lambda event: moveviewz(event, gamedata, classmap, option))
+	mapcanv.bind("<MouseWheel>", lambda event: moveview.moveviewz(event, gamedata, classmap, option))
 
 	#On focus sur le widget sinon il ne prendra pas en compte les entrées des touches fléchés
 	mapcanv.focus_set()
 
 	#On lie les touches fléchés aux déplacement de la vue
-	mapcanv.bind('<KeyPress-Left>', lambda event, x=1,y=0: moveviewxy(event,x,y, classmap, option))
-	mapcanv.bind("<KeyPress-Right>", lambda event, x=-1,y=0: moveviewxy(event,x,y, classmap, option))
-	mapcanv.bind("<KeyPress-Up>", lambda event, x=0,y=1: moveviewxy(event,x,y, classmap, option))
-	mapcanv.bind("<KeyPress-Down>", lambda event, x=0,y=-1: moveviewxy(event,x,y, classmap, option))
+	mapcanv.bind('<KeyPress-Left>', lambda event, x=1,y=0: moveview.moveviewxy(event, x, y, gamedata, classmap, option))
+	mapcanv.bind("<KeyPress-Right>", lambda event, x=-1,y=0: moveview.moveviewxy(event, x, y, gamedata, classmap, option))
+	mapcanv.bind("<KeyPress-Up>", lambda event, x=0,y=1: moveview.moveviewxy(event, x, y, gamedata, classmap, option))
+	mapcanv.bind("<KeyPress-Down>", lambda event, x=0,y=-1: moveview.moveviewxy(event, x, y, gamedata, classmap, option))
 
 	#On lie le déplacement de la vue au maintient du bouton droit de la souris + motion
-	mapcanv.bind('<Shift-ButtonPress-2>', startmoveviewmouse)
-	mapcanv.bind('<Shift-B2-Motion>', moveviewmouse)
+	mapcanv.bind('<Shift-ButtonPress-2>', moveview.startmoveviewmouse)
+	mapcanv.bind('<Shift-B2-Motion>', moveview.moveviewmouse)
 
 
 	#ON lie les différentes Cases à l'action click
-	mapcanv.tag_bind("click", "<Button-1>", lambda event:interface.highlightCase(event, gamedata, classmap))
+	mapcanv.tag_bind("click", "<Button-1>", lambda event: interface.highlightCase(event, gamedata, classmap))
 
-	#print(gamedata.list_tuile)
+	# on termine par pack le mapcanv
 	mapcanv.pack(expand ="True", fill = "y")
 
 ####################################################################################################
-
-
-
-
-
-
-
-
-def printunit(gamedata, classmap, frame):
-	##################
-	# Fonction pour afficher les soldat
-	##################
-	pass
-
-
-def infovillage(village):
-	print("village name", village.name)
-	print("village lord: ", village.lord.name)
-	print("village priest: ", village.priest.name)
-	print("village global joy: ", village.global_joy)
-	print("village ressource, money: ", village.ressource, village.money)
-
-def centerviewcanvas(gamedata, option, mapcanv, coordcanv):
-	##################
-	# Fonction pour centrer la vue sur les coordonnées canvas donnés
-	##################
-	# Si on appelle la fonction en envoyant seulement l'origine du canvas cela centre la vue sur l'origine
-	##################
-
-	# On recup le décalage entre le haut-gauche de la window(pas screen) et le canvas
-	movex = mapcanv.canvasx(0)
-	movey = mapcanv.canvasy(0)
-	print("déplacement de x,y: ", movex, movey)
-	# On déplace de movex et movey Pour avoir Wind(0,0) = Canv(0,0)
-	mapcanv.move("tuile", +movex, +movey)
-
-
-	# On calcule les coordonnées Windows nécessaires pour placer au centre de la window les coords Canvas Voulu
-	# On se place en coord[0], coord[1]
-	# On veut se placer au centre
-	# On calcul donc le centre de la window du canvas
-	# x = (1200/20)/2 = 30
-	# y = ((1200/1.6)/20)//2 = 18
-	# On ajoute les coord
-	#  movex = coorcanva[0] - tuilesize*30, movey = coorcanva[0] - tuilesize*18
-
-	movex = coordcanv[0] - ((option.widthWindow/gamedata.tuilesize)//2) * gamedata.tuilesize
-	movey = coordcanv[1] - (((option.heightWindow*0.6)/gamedata.tuilesize)//2) * gamedata.tuilesize
-	print("déplacement de x,y: ", movex, movey)
-	mapcanv.move("tuile", -movex, -movey)
-
-#################################### Fonction Calcul de coord ####################################
-
-
-def coordcanvastomap(option, tuilesize, coord, mapcanv):
-	##################
-	# Fonction pour traduire les coordonnées du canvas en coordonnées de la carte
-	##################
-	xorigine = mapcanv.canvasx(0)
-	yorigine = mapcanv.canvasy(0)
-	print("xorigine: ", xorigine)
-	print("yorigine: ", yorigine)
-	print("coord: ", coord)
-
-	xmap = (((coord[0] + xorigine) - tuilesize/2)%tuilesize)
-	ymap = (((coord[1] + yorigine) - tuilesize/2)%tuilesize)
-
-
-	return [xmap, ymap]
-
-def coordmaptocanvas(gamedata, classmap, option, coord):
-	##################
-	# Fonction pour traduire les coordonnées map en coordonnées du canvas √
-	##################
-
-	print("Pour coord map:", coord[0],coord[1])
-
-	ts = gamedata.tuilesize
-
-	# calcul de base
-	xcanvas = (coord[0]*ts)+(ts/2)
-	ycanvas = (coord[1]*ts)+(ts/2)
-	print("On a coordcanv sans décalage origine: ", xcanvas, ycanvas)
-	# On prend en compte le point d'origine du canvas qui peut être actuellement déplacer à une valeur != 0
-	print("Point d'origine", classmap.mapcanv.canvasx(0), classmap.mapcanv.canvasy(0))
-	xcanvas = xcanvas - classmap.mapcanv.canvasx(0)
-	ycanvas = ycanvas - classmap.mapcanv.canvasy(0)
-	print("On a coordcanv avec décalage origine: ", xcanvas, ycanvas)
-
-	return [xcanvas, ycanvas]
-
-##########################################################################################
-
 
 
 def bordervillage(Gamedata, Classmap, frame):
@@ -801,16 +729,12 @@ def typetoimg(type, sizetuile):
 	img = ""
 
 	if type == "mountains":
-		#print("mountain")
 		img = data.loadtexture("/asset/texture/terrain/mountains/mountains_inner.png", sizetuile)
 	elif type == "forest":
-		#print("forest")
 		img = data.loadtexture("/asset/texture/terrain/conifer_forest/conifer_forest_inner.png", sizetuile)
 	elif type == "plains":
-		#print("plains")
 		img = data.loadtexture("/asset/texture/terrain/plains/plains.png", sizetuile)
 	elif type == "ocean":
-		#print("ocean")
 		img = data.loadtexture("/asset/texture/terrain/ocean/ocean_inner.png", sizetuile)
 	return img
 
@@ -824,259 +748,14 @@ def typetoimgdico(dico_file, type, sizetuile):
 	img = ""
 
 	if type == "mountains":
-		#print("mountain")
 		img = data.loadtexturefromdico(dico_file, "mountains_inner.png", type, sizetuile)[1]
 	elif type == "forest":
-		#print("forest")
 		img = data.loadtexturefromdico(dico_file, "conifer_forest_inner.png", type, sizetuile)[1]
 	elif type == "plains":
-		#print("plains")
 		img = data.loadtexturefromdico(dico_file, "plains.png", type, sizetuile)[1]
 	elif type == "ocean":
-		#print("ocean")
 		img = data.loadtexturefromdico(dico_file, "ocean_inner.png", type, sizetuile)[1]
 	return img
-
-
-def moveviewz(event, gamedata, classmap, option):
-	####################
-	# Fonction pour zoomer/dézoomer
-	# - En utilisant la molette de la souris
-	# - Depuis le centre de la window
-	# - On prend pour valeur min de la taille d'une tuile 5
-	#
-	# On zoome quand on multiplie par delta
-	# On dezoome quand on divise par delta
-	#
-	#	--- * 2 = ------ 	== Zoom car on agrandit
-	#
-	# 	--- / 3 = - 		== DeZoom car on réduit
-	####################
-	# 1°) On calcul les coord canvas de la souris
-	# 2°) On normalise le delta pour prendre en compte les différentes plateformes
-	# 3°) On recup la taille d'une tuile
-	# 4°) On scale 
-	# 5°) On change les texture des tuiles pour la nouvelles tuiles
-	#####################
-
-	idorigine = 0
-	while event.widget.type(idorigine) != "image":
-		idorigine += 1
-
-	print("coord de la tuile 0,0 Canvas: ", classmap.mapcanv.coords(classmap.listmap[0].canvastuiles))
-
-
-
-	####################\ 1°) \####################
-
-	mousex = int(event.widget.canvasx(event.x))
-	mousey = int(event.widget.canvasy(event.y))
-
-	# On recup les coord-canvas de la tuile
-	idtuile = event.widget.find_closest(mousex, mousey)
-
-	print("coordonnées window de la souris: ", mousex, mousey)
-	############################################################
-
-	####################\ 2°) \####################
-	#Pour éviter les différence entre windows et Mac ont normalise delta
-	#Doit prendre en compte linux -_-
-	print(event.delta)
-	if event.delta <= 0:
-		delta = -2
-	else:
-		delta = 2
-	############################################################
-
-
-	####################\ 3°) \####################
-	# On recup la taille d'une tuile
-	x = gamedata.tuilesize
-	#print("x, event.delta, delta: ",x, event.delta, delta)
-	############################################################
-
-	# Doit trouver les valeurs parfaite max et min
-	# Zoom = max = x = 320
-	# DeZoom = min = x = 5
-	# À l'avenir changer la valeur minimum par une valeur calculer a partir de la taille de la carte
-
-	####################\ 4°) \####################
-	#Zoom
-	canvasgooriginewindow(classmap)
-	if (x<320) and (delta == 2):
-		print("Zoom")
-		event.widget.scale("tuile", 0, 0, delta, delta)
-		x = x*delta
-	#Dezoom
-	elif(x>5) and (delta == -2):
-		print("DeZoom")
-		#On rend positive le delta sinon il inverse le sens de la carte
-		event.widget.scale("tuile", 0, 0, -1/(delta), -1/(delta))
-		x = x*(-1/(delta))
-	#On recup les nouvelles coord du pointeur de la souris
-	coordcanv = event.widget.coords(idtuile)
-	# SI on veut recup depuis le centre de l'écran
-	coordcanv = [event.widget.canvasx(option.widthWindow//2), event.widget.canvasx((option.heightWindow*0.6)//2)]
-	centerviewcanvas(gamedata, option, event.widget, coordcanv)
-	# On change la taille des tuiles stocker dans les données globaux
-	gamedata.newsizetuile(x)
-	############################################################
-
-	####################\ 5°) \####################
-	#Recalcul des images
-	newsize = x
-	print("newsize : ", newsize)
-
-	###############################\ !!! À modifier !!! \#############################
-	# Trouver un moyen de se débaraser des 4 variables
-	# Ne plus utiliser le type de la texture
-
-	###################################################################################
-	f = 0
-	m = 0
-	o = 0
-	p = 0
-	v = 0
-	#Tuile graphique:
-	for ele in event.widget.find_withtag("img"):
-
-		type = event.widget.gettags(ele)[1]
-		# Version Non-random ou on utilise les texture de bases:
-		# Quand la classe des tuile sera implémenter utiliser le nom de la texture
-		# Utiliser #gamedata.loadtextureatlas(texture_name, type)
-		if type == "forest":
-			#Si dans la fonction on n'a pas déjà recalculer la nouvelle image pour le type selectionner
-			if f == 0:
-				#On recréer l'image
-				tk_img = data.loadtexturefromdico(dico_file, "conifer_forest_inner.png", type, int(newsize))
-				# On change le label associer à la texture dans l'atlas
-				gamedata.changelabelAtlas(tk_img[0], tk_img[1])				
-				f = 1
-			# On recup le label associer à la texture
-			label = gamedata.atlas["conifer_forest_inner.png"]
-		elif type == "mountains":
-			if m == 0:
-				tk_img = data.loadtexturefromdico(dico_file, "mountains_inner.png", type, int(newsize))
-				gamedata.changelabelAtlas(tk_img[0], tk_img[1])	
-				m = 1
-			label = gamedata.atlas["mountains_inner.png"]
-		elif type == "ocean":
-			if o == 0:
-				tk_img = data.loadtexturefromdico(dico_file, "ocean_inner.png", type, int(newsize))
-				gamedata.changelabelAtlas(tk_img[0], tk_img[1])						
-				o = 1
-			label = gamedata.atlas["ocean_inner.png"]
-		elif type == "plains":
-			if p == 0:
-				tk_img = data.loadtexturefromdico(dico_file, "plains.png", type, int(newsize))
-				gamedata.changelabelAtlas(tk_img[0], tk_img[1])						
-				p = 1
-			label = gamedata.atlas["plains.png"]
-		elif type == "build":
-			if v == 0:
-				tk_img = data.loadtexturefromdico(dico_file, "settlement.png", type, int(newsize))
-				gamedata.changelabelAtlas(tk_img[0], tk_img[1])
-				v = 1
-			label = gamedata.atlas["settlement.png"]
-
-		event.widget.itemconfigure(ele,image = label.image)
-	############################################################
-	print("taille Atlas: ", len(gamedata.atlas))
-	############################################################
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#################### 
-# Ensemble de Fonction pour déplacer la vue en:
-# Maintenant le click gauche de la souris √
-# En placant le souris sur une extrémité de la caméra
-# En appyant sur les touches fléchés √
-####################
-#
-# Bon bon bon, alors scan_dragto déplace le canvas dans la fenêtre de la X, Y différent stocker dans 
-# scan_mark
-# !!!! Il ne faut pas utiliser les coordonnées canvas mais de la fenêtre !!!!
-#
-####################
-
-def moveviewxy(event, deltax, deltay, classmap, option):
-	####################
-	# Fonction pour déplacer la vue en:
-	# En appyant sur les touches fléchés 
-	####################
-	mult = 100
-
-	print("move map arrow")
-
-	################ Déplacement de la vue ################
-	# On recup le point central de la fenêtre
-	x = int((option.widthWindow)//2)
-	y = int((option.heightWindow*0.6)//2)
-
-	event.widget.scan_mark(x, y)
-
-	movex = x + (mult * deltax)
-	movey = y + (mult * deltay)
-
-	classmap.mapcanv.scan_dragto(movex, movey, gain = 1)
-	print(classmap.mapcanv.coords(classmap.listmap[0].canvastuiles))
-	#######################################################
-
-def startmoveviewmouse(event):
-	####################
-	# Fonction pour déplacer la vue en:
-	# Maintenant le click droit de la souris
-	# Partie 1
-	# Utiliser .scan_mark(x, y)
-	#
-	####################
-	print(startmoveviewmouse)
-	event.widget.scan_mark(event.x, event.y)
-
-def moveviewmouse(event):
-	####################
-	# Fonction pour déplacer la vue en:
-	# Maintenant le click droit de la souris
-	# Partie 2
-	# Utiliser .scan_dragto(x, y)
-	# !!!! A cause de l'utilisation de Move est très couteux !!!!
-	####################
-	print(moveviewmouse)
-	event.widget.scan_dragto(event.x, event.y, gain = 1)
-
-
-######################### Autre Fonction #########################
-
-######################### Fonction Coord ############################
-
-def canvasgooriginewindow(classmap):
-	##################
-	# Fonction pour faire déplacer le canvas vers l'origine de la fenêtre
-	##################
-	# On cherche la différence entre la window et la canvas
-	coord = [classmap.mapcanv.canvasx(0), classmap.mapcanv.canvasy(0)]
-
-	# On indique ou vont aller
-	classmap.mapcanv.scan_mark(0,0)
-	# On drague la différence
-	classmap.mapcanv.scan_dragto(int(coord[0]), int(coord[1]), gain = 1)
-
-###########################################################################
-
-
-
-###########################################################################
 
 
 ######################### Fonction Jeu #########################
@@ -1144,7 +823,7 @@ def gameloop(gamedata, classmap, option, root):
 def playerturn(gamedata):
 	# Si le joueur à appuier sur le bouton fin de tour
 	if gamedata.endturn == True:
-		print("Player hit end of turn button")
+		gamedata.log.printinfo("Player hit end of turn button")
 		# On incrémente le joueur qui doit jouer
 		gamedata.Nb_toplay += 1
 		# On indique au joueurs que c'est à l'ia de Jouer
@@ -1152,7 +831,7 @@ def playerturn(gamedata):
 # Fonction qui gère l'ia des ennemies
 def notplayerturn(gamedata):
 	gamedata.semaphore = True
-	print("tour de: ", gamedata.list_lord[gamedata.Nb_toplay].lordname, gamedata.Nb_toplay)
+	gamedata.log.printinfo(f"tour de: , {gamedata.list_lord[gamedata.Nb_toplay].lordname}, {gamedata.Nb_toplay}")
 	# L'ia Joue
 
 	gamedata.Nb_toplay += 1
@@ -1176,162 +855,43 @@ def endofgame():
 
 ###########################################################################
 
-######################### Def de Classes #########################
-
-class Classmap:
-	####################
-	# Classe qui va contenir toute les sous-classes tuiles dans une liste associer à un identificateur
-	#		--> Une liste ou un dictionnaire ?
-	#		--> l'avantage du dictionnaire et de pouvoir balancer l'identificateur pour en recup la tuile
-	####################
-	def __init__(self):
-
-		# Variable qui vient contenir le frame du canvas
-		self.framecanvas = 0
-		# Variable qui vient contenir le canvas de la map
-		self.mapcanv = 0
-
-		#dico qui vient contenir les Classtuiles 
-		self.listmap = {}
-		self.nbtuile = 0
-
-		#Liste qui vient contenir les ids des:
-		#	--> Villages
-		#	--> Plaines
-		self.lvillages = []
-		self.lplaines = []
-
-	def addtuileinlist(self, tuile):
-		self.listmap[self.nbtuile] = tuile
-		tuile.setidtuile(self.nbtuile)
-		self.nbtuile += 1
-
-	def setmapcanv(self, mapcanv):
-		self.mapcanv = mapcanv
-
-	def setlframecanvas(self, framecanvas):
-		self.framecanvas = framecanvas
-
-	def nametoid(self, name):
-		####################
-		# Méthode pour obtenir l'id d'un village selon son nom
-		####################
-		#print("On cherche: ", name)
-		for ele in self.lvillages:
-			#print("ele: ", ele)
-			#print("village.name: ", self.listmap[ele].village.name)
-			if self.listmap[ele].village.name == name:
-				#print("idvillage trouvé: ", ele)
-				return ele
 
 
-class Classtuiles:
-	####################
-	# Classe qui va contenir toute les données liée à une tuile:
-	#
-	#	- N° de la tuile
-	#	- Propriétaire de la tuile:
-	#		--> Un seigneur ou personne(nature)
-	#		--> Quand la tuile est créer personne ne possède la tuile
-	#	- Ressource présente
-	#	- Ressource particulière
-	#		--> Optionnelle, pour après que le projet soit terminer
-	#	- Bonus/Malus
-	#	- texture file associé
-	#			--> On sépare le texture file du texture
-	#				--> texture_name = le nom du fichier
-	#				--> texture = le fichier charger est resize
-	#			--> Selon le type on associe un background
-	####################
 
-	def __init__(self, texture_name, type, x, y, canvasobject):
-		# N° de la tuile, défini par classmap
-		self.id = 0
-		#Position de la tuile
-		self.x = x
-		self.y = y
-		self.type = type
-		# nom du fichier texture associé
-		self.texture_name = texture_name
-		self.background = "plains.png"
+def printunit(gamedata, classmap, frame):
+	##################
+	# Fonction pour afficher les soldat
+	##################
+	pass
 
-		# Si c'est un village
-		self.village = 0
 
-		# nom du propriétaire de la tuile
-		self.possesor = "wild"
+def infovillage(village):
+	print("village name", village.name)
+	print("village lord: ", village.lord.name)
+	print("village priest: ", village.priest.name)
+	print("village global joy: ", village.global_joy)
+	print("village ressource, money: ", village.ressource, village.money)
 
-		# Objet du canvas associer
-		self.canvastuiles = canvasobject
-
-		# Selon le type de la classe on définit:
-		#	- le rendement en ressource et argent
-		#	- le cout en déplacement pour traverser la tuile
-
-		if type == "plains":
-
-			self.ressourceyield = 0
-			self.moneyield = 0
-			self.movementcost = 1
-
-		elif type == "forest":
-
-			self.ressourceyield = 0
-			self.moneyield = 0
-			self.movementcost = 2
-
-		elif type == "mountains":
-
-			self.ressourceyield = 0
-			self.moneyield = 0
-			self.movementcost = 3
-
-		elif type == "ocean":
-
-			self.ressourceyield = 0
-			self.moneyield = 0
-			self.movementcost = 4
-
-	def setidtuile(self, id):
-		self.id = id
-
-	def setpossesor(self, possesor):
-		self.possesor = possesor
-
-	def createvillage(self):
-		# On créer un nouveau village que l'on stocke
-		self.village = gameClass.Classvillage(self.x, self.y)
-		# On set le nom du village
-		self.village.setnamevillage(gamedata.randomnametype("Village"))
-
-###########################################################################
+######################### Autre Fonction #########################
 
 ######################### Main #########################
 if __name__ == '__main__':
 
-
-	#GameInterface = ClassGameInterface()
 	#Init de la fenêtre
 	root = tkinter.Tk()
 
 	# Chargement des Options:
-	option = data.ClassOptions()
+	option_instance = data.ClassOptions()
 	# Initialisation de GameData
-	gamedata = data.ClassGameData()
+	gamedata_instance = data.ClassGameData()
 
 	# Initialisation de la Carte
-	Map = Classmap()
-
-	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, option.mapx, option.mapy)
-	#Chargement en mémoires des images du dico:
-	dico_file = data.assetLoad()
-	
+	map_instance = data.Classmap()
 
 	# Menu principale
-	mainmenu(option, gamedata, Map, root)
-	# Si on veut tester rapidement la boucle de jeu sans passer par le menu principale
-	#mainscreen(option, root, pic, gamedata, Map)
+	mainmenu(gamedata_instance, map_instance, option_instance, root)
 
 
 	root.mainloop()
+
 

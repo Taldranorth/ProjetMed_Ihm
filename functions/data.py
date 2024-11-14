@@ -2,11 +2,10 @@ import sys
 import tkinter
 import random
 
-import gameClass
+import functions.gameclass as gameclass
 
 from time import time
 from PIL import ImageTk, Image, ImageShow
-
 
 ######################### On recup le dossier locale dans une variable	#########################
 import os
@@ -142,7 +141,7 @@ class ClassGameData:
 
 		# Une fois toute les valeur charger on charge les seigneur de base
 		# On créer le seigneur qui représente le joueur
-		player = gameClass.Classlord("test", True)
+		player = gameclass.Classlord("test", True)
 		self.list_lord += [player]
 		self.Nb_lord += 1
 
@@ -214,7 +213,7 @@ class ClassGameData:
 		self.list_lord[idplayer] = player
 
 	def createlord(self):
-		self.list_lord += [gameClass.Classlord(("lord "+self.randomnametype("Surnom")), False)]
+		self.list_lord += [gameclass.Classlord(("lord "+self.randomnametype("Surnom")), False)]
 		self.Nb_lord += 1
 
 	def deletelord(self, idlord):
@@ -252,6 +251,11 @@ class ClassGameData:
 		for lord in self.list_lord:
 			lord.endofturn()
 
+	def exit(self):
+		################
+		# Méthode appeler quand ont veut quitter le jeu
+		################
+		self.log.file.close()
 
 
 
@@ -297,7 +301,7 @@ class Classlog:
 	####################
 
 	def __init__(self):
-		self.log = open("user/log.txt", "w")
+		self.file = open("user/log.txt", "w")
 
 		self.loglevel = 0
 
@@ -305,13 +309,143 @@ class Classlog:
 		ch = "Erreur:" + ch
 		print(ch)
 		ch += "\n"
-		self.log.write(ch)
+		self.file.write(ch)
 
 	def printinfo(self, ch):
 		ch = "Info: " +ch
 		print(ch)
 		ch += "\n"
-		self.log.write(ch)
+		self.file.write(ch)
+
+
+class Classmap:
+	####################
+	# Classe qui va contenir toute les sous-classes tuiles dans une liste associer à un identificateur
+	#		--> Une liste ou un dictionnaire ?
+	#		--> l'avantage du dictionnaire et de pouvoir balancer l'identificateur pour en recup la tuile
+	####################
+	def __init__(self):
+
+		# Variable qui vient contenir le frame du canvas
+		self.framecanvas = 0
+		# Variable qui vient contenir le canvas de la map
+		self.mapcanv = 0
+
+		#dico qui vient contenir les Classtuiles 
+		self.listmap = {}
+		self.nbtuile = 0
+
+		#Liste qui vient contenir les ids des:
+		#	--> Villages
+		#	--> Plaines
+		self.lvillages = []
+		self.lplaines = []
+
+	def addtuileinlist(self, tuile):
+		self.listmap[self.nbtuile] = tuile
+		tuile.setidtuile(self.nbtuile)
+		self.nbtuile += 1
+
+	def setmapcanv(self, mapcanv):
+		self.mapcanv = mapcanv
+
+	def setlframecanvas(self, framecanvas):
+		self.framecanvas = framecanvas
+
+	def nametoid(self, name):
+		####################
+		# Méthode pour obtenir l'id d'un village selon son nom
+		####################
+		#print("On cherche: ", name)
+		for ele in self.lvillages:
+			#print("ele: ", ele)
+			#print("village.name: ", self.listmap[ele].village.name)
+			if self.listmap[ele].village.name == name:
+				#print("idvillage trouvé: ", ele)
+				return ele
+
+
+class Classtuiles:
+	####################
+	# Classe qui va contenir toute les données liée à une tuile:
+	#
+	#	- N° de la tuile
+	#	- Propriétaire de la tuile:
+	#		--> Un seigneur ou personne(nature)
+	#		--> Quand la tuile est créer personne ne possède la tuile
+	#	- Ressource présente
+	#	- Ressource particulière
+	#		--> Optionnelle, pour après que le projet soit terminer
+	#	- Bonus/Malus
+	#	- texture file associé
+	#			--> On sépare le texture file du texture
+	#				--> texture_name = le nom du fichier
+	#				--> texture = le fichier charger est resize
+	#			--> Selon le type on associe un background
+	####################
+
+	def __init__(self, texture_name, type, x, y, canvasobject):
+		# N° de la tuile, défini par classmap
+		self.id = 0
+		#Position de la tuile
+		self.x = x
+		self.y = y
+		self.type = type
+		# nom du fichier texture associé
+		self.texture_name = texture_name
+		self.background = "plains.png"
+
+		# Si c'est un village
+		self.village = 0
+
+		# nom du propriétaire de la tuile
+		self.possesor = "wild"
+
+		# Objet du canvas associer
+		self.canvastuiles = canvasobject
+
+		# Selon le type de la classe on définit:
+		#	- le rendement en ressource et argent
+		#	- le cout en déplacement pour traverser la tuile
+
+		if type == "plains":
+
+			self.ressourceyield = 0
+			self.moneyield = 0
+			self.movementcost = 1
+
+		elif type == "forest":
+
+			self.ressourceyield = 0
+			self.moneyield = 0
+			self.movementcost = 2
+
+		elif type == "mountains":
+
+			self.ressourceyield = 0
+			self.moneyield = 0
+			self.movementcost = 3
+
+		elif type == "ocean":
+
+			self.ressourceyield = 0
+			self.moneyield = 0
+			self.movementcost = 4
+
+	def setidtuile(self, id):
+		self.id = id
+
+	def setpossesor(self, possesor):
+		self.possesor = possesor
+
+	def createvillage(self, gamedata):
+		# On créer un nouveau village que l'on stocke
+		self.village = gameclass.Classvillage(self.x, self.y)
+		# On set le nom du village
+		self.village.setnamevillage(gamedata.randomnametype("Village"))
+
+###########################################################################
+
 
 ###########################################################################
 
