@@ -219,17 +219,23 @@ class Classarmy:
 		self.power = 0
 
 		# Déplacement possible de la troupe
-		self.move = 0		
+		self.movecapacity = 0		
 
-	def recruitknight():
+	def recruitknight(self):
 		#######
 		# Méthode pour recruter un Chevalier
 		#######
 		pass
 
-	def recruitsolder():
+	def recruitsolder(self):
 		#######
 		# Méthode pour recruter un Soldat
+		#######
+		pass
+
+	def updatemovementcapacity(self):
+		#######
+		# Méthode pour update la capacité de mouvement
 		#######
 		pass
 

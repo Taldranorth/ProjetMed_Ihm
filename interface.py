@@ -142,7 +142,6 @@ def gameinterface(win, option, gamedata, classmap):
 	Button_exit.pack(side="right")
 	Button_globalview.pack(side="right")
 	Button_endofturn.pack()
-
 #########################################################################
 # Fonction lier au bouton de fin de tour
 def turnend(gamedata, topframe):
@@ -286,18 +285,18 @@ def staterecruitarmy(gamedata, classmap, option):
 	idwindow = classmap.mapcanv.create_window(xorigine+option.widthWindow/6, yorigine+option.heightWindow/3, window = frame_interface_army)
 
 	# On bind 
-	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstatestaterecruitarmy(event, gamedata, classmap.mapcanv, idwindow))
+	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstatestaterecruitarmy(event, gamedata, classmap, idwindow))
 
 
-def exitstatestaterecruitarmy(event, gamedata, mapcanv, idwindow):
+def exitstatestaterecruitarmy(event, gamedata, classmap, idwindow):
 	################
 	# Fonction pour quitter l'interface de recrutement d'armé
 	################
 	gamedata.log.printinfo("On Supprimer l'interface de recretument d'armée '")
 	# On nettoye l'interface
-	mapcanv.delete(idwindow)
+	classmap.mapcanv.delete(idwindow)
 	# On Unbind
-	mapcanv.tag_bind("click", "<Button-1>", lambda event: highlightCase(event, gamedata))
+	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: highlightCase(event, gamedata, classmap))
 	# On remet à 0 l'état
 	gamedata.state = 0
 
@@ -389,27 +388,27 @@ def statewar(gamedata, classmap, option):
 			tkinter.Label(frame_interface_war_list_neutral, text = lord.lordname).pack(side = "top")
 
 	# On bind
-	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstatewar(event, gamedata, classmap.mapcanv, idwindow))
+	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstatewar(event, gamedata, classmap, idwindow))
 
 def wardeclaration(gamedata, mapcanv, lord):
 
 	
 	pass
 
-def exitstatewar(event, gamedata, mapcanv, idwindow):
+def exitstatewar(event, gamedata, classmap, idwindow):
 	################
 	# Fonction pour quitter l'interface de guerre
 	################
 	gamedata.log.printinfo("On Supprimer le grillage war")
 	# On delete les carrer
-	mapcanv.delete("interface_war")
+	classmap.mapcanv.delete("interface_war")
 
 	gamedata.log.printinfo("On Supprimer l'interface war")
 	# On delete la fenêtre
-	mapcanv.delete(idwindow)
+	classmap.mapcanv.delete(idwindow)
 
 	# On unbind
-	mapcanv.tag_bind("click", "<Button-1>", lambda event: highlightCase(event, gamedata))
+	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: highlightCase(event, gamedata, classmap))
 
 	# On quitter l'état de guerre
 	gamedata.state = 0
@@ -448,8 +447,9 @@ def statebuildvillage(gamedata, classmap, option):
 
 
 	ts = gamedata.tuilesize
-	xorigine = classmap.mapcanv.canvasx(0)
-	yorigine = classmap.mapcanv.canvasy(0)
+	xoriginewindow = classmap.mapcanv.canvasx(0)
+	yoriginewindow = classmap.mapcanv.canvasy(0)
+	originecanvas = classmap.mapcanv.coords(classmap.listmap[0].canvastuiles)
 
 	# Pour toute les tuiles de plaines
 	for idtuile in classmap.lplaines:
@@ -461,11 +461,11 @@ def statebuildvillage(gamedata, classmap, option):
 			# On créer un carrer clickable avec un bord vert
 			#print(xorigine,yorigine)
 			#print("coord: ", (x*ts) + xorigine, (y*ts) + yorigine, (x*ts)+ts + xorigine, (y*ts)+ts + yorigine)
-			classmap.mapcanv.create_rectangle(xorigine + (x*ts), yorigine + (y*ts) , xorigine + (x*ts)+ts, yorigine + (y*ts)+ts,tag = ["buildvillage","tuile", x, y], fill = "green",outline = "green")
+			classmap.mapcanv.create_rectangle(originecanvas[0]+(x*ts)-(ts/2), originecanvas[1]+(y*ts)-(ts/2), originecanvas[0]+(x*ts)+ts-(ts/2), originecanvas[1]+(y*ts)+ts-(ts/2), tag = ["buildvillage","tuile", x, y], fill = "green",outline = "green")
 
 	# On tag au carrer 
 	classmap.mapcanv.tag_bind("buildvillage", "<Button-1>", lambda event: buildvillage(event, gamedata, classmap, option))
-	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event, mc = classmap.mapcanv: exitstatebuildvillage(event, gamedata, mc), add = "+")
+	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstatebuildvillage(event, gamedata, classmap), add = "+")
 
 	# Si on appuie sur esc on quitte automatiquement le mode de construction
 
@@ -518,12 +518,12 @@ def updatestatbuildvillage(classmap, option):
 
 
 
-def exitstatebuildvillage(event, gamedata, mapcanv):
+def exitstatebuildvillage(event, gamedata, classmap):
 	# On delete tout les éléments ayant le tag buildvillage
 	gamedata.log.printinfo("On Supprimer le grillage constuction")
-	mapcanv.delete("buildvillage")
+	classmap.mapcanv.delete("buildvillage")
 	# On retire le bind
-	mapcanv.tag_bind("click", "<Button-1>", lambda event: highlightCase(event, gamedata))
+	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: highlightCase(event, gamedata, classmap))
 
 	gamedata.state = 0
 
@@ -546,8 +546,9 @@ def statebuildchurch(gamedata, classmap, option):
 
 	player = gamedata.list_lord[gamedata.playerid]
 	ts = gamedata.tuilesize
-	xorigine = classmap.mapcanv.canvasx(0)
-	yorigine = classmap.mapcanv.canvasy(0)
+	xoriginewindow = classmap.mapcanv.canvasx(0)
+	yoriginewindow = classmap.mapcanv.canvasy(0)
+	originecanvas = classmap.mapcanv.coords(classmap.listmap[0].canvastuiles)
 
 	# On affiche une interface montrant une liste des villages ou on peut construire + données du village
 
@@ -566,7 +567,7 @@ def statebuildchurch(gamedata, classmap, option):
 	lc_interface_church.bind("<Double-Button-1>", lambda event: centervillagechurch(event, gamedata, classmap, option))
 			
 	#ON créer un window dans le canvas
-	idwindow = classmap.mapcanv.create_window(xorigine+option.widthWindow/6, yorigine+option.heightWindow/3, window = frame_interface_church)
+	idwindow = classmap.mapcanv.create_window(xoriginewindow+option.widthWindow/6, yoriginewindow+option.heightWindow/3, window = frame_interface_church)
 
 	# On bind la fonction d'exit à tout ce qui n'est pas un village construisible
 	classmap.mapcanv.tag_bind("click", "<Button-1>",lambda event: exitstatebuildchurch(event, gamedata, classmap, option, idwindow))
@@ -576,7 +577,7 @@ def statebuildchurch(gamedata, classmap, option):
 		if village.church == 0:
 			x = village.x
 			y = village.y
-			classmap.mapcanv.create_rectangle((x*ts) - xorigine, (y*ts)- yorigine, (x*ts)+ts - xorigine, (y*ts)+ts - yorigine , tags = ["buildchurch","tuile"], outline = "green")
+			classmap.mapcanv.create_rectangle(originecanvas[0]+(x*ts)-(ts/2), originecanvas[1]+(y*ts)-(ts/2), originecanvas[0]+(x*ts)+ts-(ts/2), originecanvas[1]+(y*ts)+ts-(ts/2), tags = ["buildchurch","tuile"], outline = "green")
 			# On calcul l'id de la tuile
 			idvillage =x + (option.mapx*y)
 			# On bind la fonction buildchurch à la tuile du village
@@ -590,16 +591,19 @@ def centervillagechurch(event, gamedata, classmap, option):
 	############
 	gamedata.log.printinfo("On se déplace vers le village")
 	# On recup le village actuellement selectionner dans la listbox
-	village_selected = event.widget.curselection()
+	village_selected = event.widget.get(event.widget.curselection()[0])
 	
 	idvillage = classmap.nametoid(village_selected)
 	# On recup les coord du village
 	x = classmap.listmap[idvillage].x
 	y = classmap.listmap[idvillage].y
+	#print("x,y: ", x, y)
+	coord = main.coordmaptocanvas(gamedata, classmap, option, [x, y])
+	#print("Coord Canvas: ", coord[0], coord[1])
 
 
 	# On centre la vu sur le village
-	main.centerview(gamedata, option, classmap.mapcanv, [classmap.mapcanv.canvasx(x),classmap.mapcanv.canvasy(y)])
+	main.centerviewcanvas(gamedata, option, classmap.mapcanv, coord)
 
 def buildchurch(event, gamedata, idvillage):
 	############
@@ -607,9 +611,6 @@ def buildchurch(event, gamedata, idvillage):
 	############
 
 	village.buildchurch(gamedata.randomnametype("Nom"))
-
-
-
 
 def exitstatebuildchurch(event, gamedata, classmap, option, idwindow):
 	############
@@ -622,7 +623,7 @@ def exitstatebuildchurch(event, gamedata, classmap, option, idwindow):
 	# On détruit l'interface
 	classmap.mapcanv.delete(idwindow)
 	# On retire le bind exit
-	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: highlightCase(event, gamedata))
+	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: highlightCase(event, gamedata, classmap))
 	# On retir le bind build
 	classmap.mapcanv.tag_bind("village","<Button-1>", lambda event, opt = option, gd = gamedata, cm = classmap: villageinterface(event, opt, gd, cm))
 	# On sort de l'état build_church
@@ -673,8 +674,11 @@ def villageinterface(event, option, gamedata, classmap):
 	# On calcul l'id map du village
 	idmapvilage = int(posx)+(option.mapx*int(posy))
 	gamedata.log.printinfo(f"{idmapvilage}")
+
+	####################\ Comment j'ai fait ???? \########################
 	# On place le village au centre de l'écran
-	main.centerview(gamedata, option, classmap.mapcanv, coordcanv)
+	main.centerviewcanvas(gamedata, option, classmap.mapcanv, coordcanv)
+	######################################################################
 
 	gamedata.log.printinfo("On affiche l'interface du village")
 	# On fait apparaitre l'interface informative
@@ -688,7 +692,7 @@ def villageinterface(event, option, gamedata, classmap):
 	# On créer les fenêtre
 	# Demade un placement précis
 	canvas_window_list = []
-	# Pour les fenêtre on prend en compte le décalage créer par move()
+	# Pour les fenêtre on prend en compte le décalage créer par scan_dragto()
 	# Fenêtre Info
 	canvas_window_list += [classmap.mapcanv.create_window(xorigine+option.widthWindow/3, yorigine+option.heightWindow/4, window = frame_info)]
 	# Fenêtre Button
@@ -736,14 +740,14 @@ def exitvillageinterface(event, gamedata, mapcanv, lwindow):
 		mapcanv.delete(id)
 	gamedata.log.printinfo("On supprime l'interface du village")
 	# On retire le bind sur la fonction
-	mapcanv.tag_bind("click", "<Button-1>", lambda event: highlightCase(event, gamedata))
+	mapcanv.tag_bind("click", "<Button-1>", lambda event: highlightCase(event, gamedata, classmap))
 
 	# On quitte l'état de construction de village
 	gamedata.state = 0
 
 
 
-def highlightCase(event, gamedata):
+def highlightCase(event, gamedata, classmap):
 	####################
 	# Fonction qui ilumine la tuile sur laquelle est présente la souris
 	# 	--> On ne peut pas "illuminer" une tuile
@@ -772,17 +776,20 @@ def highlightCase(event, gamedata):
 	# On créer le nouveau
 	x = coords[0] - (st/2)
 	y = coords[1] - (st/2)
+	print("\n")
 	print("highlight x,y:",x,y)
 	event.widget.create_rectangle(x, y, x + st, y + st, tags=["highlight","tuile"])
-	coord(event)
+	coord(event, classmap)
 
 
 
-def coord(event):
-	print("\n")
-	print("coord origine x,y: ", event.widget.canvasx(0), event.widget.canvasy(0))
+def coord(event, classmap):
+	print("coord tuile (0,0) dans canvas x,y: ", classmap.mapcanv.coords(classmap.listmap[0].canvastuiles))
+	print("coord Window (0,0) dans canvas x,y:", classmap.mapcanv.canvasx(0), classmap.mapcanv.canvasy(0))
 	print("coord event x,y: ",event.x, event.y)
 	print("coord event canvas x,y: ",event.widget.canvasx(event.x), event.widget.canvasy(event.y))
 	coord = event.widget.coords(event.widget.find_withtag("current")[0])
 	print("coord x,y: ", coord[0], coord[1])
 	print(event.widget.gettags("current"))
+
+

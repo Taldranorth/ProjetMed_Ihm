@@ -112,15 +112,7 @@ from time import time
 
 ##################\ Doit Faire: \#######################
 # Main:
-# - réglé le décalage entre les state et la carte
-# 	--> Voir pour modifier moveviewz
-#			--> On à un décalage qui se créer à cause de move qui change la position à partir de event.x et event.y
-#				--> Cela cause inévitablement un décalage autour event.x et event.y de delta
-#					--> ex quand on zoom la première fois avec la souris sur la zone 50,50 on a un décalage de 100,100 qui va se créer à partir de cette coord
-#			--> Il faut faire une translation vers le point d'origne du canvas, appliquer le scale puis se repositionner aux coord voulu
-#				--> centerview(gamedata, option, mapcanv, [0,0])
-#				--> scale()
-#				--> centerview(gamedata, option, mapcanv, coordcanv)
+# - réglé le décalage entre les state et la carte √
 # - Déplacement en mettant la souris sur la bordure extérieur de la carte
 # - Pouvoir renommer le Seigneur Joueur √
 #	--> Remplacer par un Entry √
@@ -149,6 +141,24 @@ from time import time
 # Data:
 #	- Sauvegarde des données
 #########################################################
+
+
+# Il y a 2 décalage possible:
+#	- c'elle causer par moveviewxy
+#		--> décalage de l'affichage sur le canvas
+#			--> Réglable par l'utilisation des coord du point d'origine de la map_canvas
+#	- c'elle causer par moveviewmouse
+#		--> décalage du canvas sur la fenêtre
+#			--> Je ne sais pas, je ne vois pas comment la régler
+
+# Décider d'adapter moveviewxy pour utiliser scan_dragto
+#	--> Plus performant car liés à l'afichage des coord et non le changement des coord de tout les objets du canvas comme move()
+
+
+# !!!!! Doit modifier centerviewcanvas pour retirer le move() !!!!!
+#
+#
+
 
 
 ######################### Menu Principale #########################
@@ -627,16 +637,16 @@ def createmap(gamedata, classmap, option, pic):
 
 	#print("taille atlas: ",len(atlas))
 	#On lie Command+molette aux zoom/dézoom
-	mapcanv.bind("<MouseWheel>", lambda event: moveviewz(event, gamedata, option))
+	mapcanv.bind("<MouseWheel>", lambda event: moveviewz(event, gamedata, classmap, option))
 
 	#On focus sur le widget sinon il ne prendra pas en compte les entrées des touches fléchés
 	mapcanv.focus_set()
 
 	#On lie les touches fléchés aux déplacement de la vue
-	mapcanv.bind('<KeyPress-Left>', lambda event, x=1,y=0: moveviewxy(event,x,y))
-	mapcanv.bind("<KeyPress-Right>", lambda event, x=-1,y=0: moveviewxy(event,x,y))
-	mapcanv.bind("<KeyPress-Up>", lambda event, x=0,y=1: moveviewxy(event,x,y))
-	mapcanv.bind("<KeyPress-Down>", lambda event, x=0,y=-1: moveviewxy(event,x,y))
+	mapcanv.bind('<KeyPress-Left>', lambda event, x=1,y=0: moveviewxy(event,x,y, classmap, option))
+	mapcanv.bind("<KeyPress-Right>", lambda event, x=-1,y=0: moveviewxy(event,x,y, classmap, option))
+	mapcanv.bind("<KeyPress-Up>", lambda event, x=0,y=1: moveviewxy(event,x,y, classmap, option))
+	mapcanv.bind("<KeyPress-Down>", lambda event, x=0,y=-1: moveviewxy(event,x,y, classmap, option))
 
 	#On lie le déplacement de la vue au maintient du bouton droit de la souris + motion
 	mapcanv.bind('<Shift-ButtonPress-2>', startmoveviewmouse)
@@ -644,7 +654,7 @@ def createmap(gamedata, classmap, option, pic):
 
 
 	#ON lie les différentes Cases à l'action click
-	mapcanv.tag_bind("click", "<Button-1>", lambda event:interface.highlightCase(event, gamedata))
+	mapcanv.tag_bind("click", "<Button-1>", lambda event:interface.highlightCase(event, gamedata, classmap))
 
 	#print(gamedata.list_tuile)
 	mapcanv.pack(expand ="True", fill = "y")
@@ -672,18 +682,22 @@ def infovillage(village):
 	print("village global joy: ", village.global_joy)
 	print("village ressource, money: ", village.ressource, village.money)
 
-def centerview(gamedata, option, mapcanv, coordcanv):
+def centerviewcanvas(gamedata, option, mapcanv, coordcanv):
 	##################
 	# Fonction pour centrer la vue sur les coordonnées canvas donnés
 	##################
+	# Si on appelle la fonction en envoyant seulement l'origine du canvas cela centre la vue sur l'origine
+	##################
 
-	# On position à l'origine du canvas
+	# On recup le décalage entre le haut-gauche de la window(pas screen) et le canvas
 	movex = mapcanv.canvasx(0)
 	movey = mapcanv.canvasy(0)
 	print("déplacement de x,y: ", movex, movey)
+	# On déplace de movex et movey Pour avoir Wind(0,0) = Canv(0,0)
 	mapcanv.move("tuile", +movex, +movey)
 
 
+	# On calcule les coordonnées Windows nécessaires pour placer au centre de la window les coords Canvas Voulu
 	# On se place en coord[0], coord[1]
 	# On veut se placer au centre
 	# On calcul donc le centre de la window du canvas
@@ -693,10 +707,9 @@ def centerview(gamedata, option, mapcanv, coordcanv):
 	#  movex = coorcanva[0] - tuilesize*30, movey = coorcanva[0] - tuilesize*18
 
 	movex = coordcanv[0] - ((option.widthWindow/gamedata.tuilesize)//2) * gamedata.tuilesize
-	movey = coordcanv[1] - (((option.heightWindow/1.6)/gamedata.tuilesize)//2) * gamedata.tuilesize
+	movey = coordcanv[1] - (((option.heightWindow*0.6)/gamedata.tuilesize)//2) * gamedata.tuilesize
 	print("déplacement de x,y: ", movex, movey)
 	mapcanv.move("tuile", -movex, -movey)
-
 
 #################################### Fonction Calcul de coord ####################################
 
@@ -717,19 +730,24 @@ def coordcanvastomap(option, tuilesize, coord, mapcanv):
 
 	return [xmap, ymap]
 
-def coordmaptocanvas(option, tuilesize, coord, mapcanv):
+def coordmaptocanvas(gamedata, classmap, option, coord):
 	##################
-	# Fonction pour traduire les coordonnées map en coordonnées du canvas
+	# Fonction pour traduire les coordonnées map en coordonnées du canvas √
 	##################
+
+	print("Pour coord map:", coord[0],coord[1])
+
+	ts = gamedata.tuilesize
 
 	# calcul de base
-	xcanvas = (coord[0]*tuilesize)+(tuilesize/2)
-	ycanvas = (coord[1]*tuilesize)+(tuilesize/2)
-
-	# Maintenant on prend en compte le décalage que créer le zoom/dézoom
-	# 20 est la taille de base d'une tuile sans avoir appliquer de zoom/dezoom
-	xcanvas = xcanvas + (tuilesize/20) - 1
-	ycanvas = ycanvas + (tuilesize/20) - 1
+	xcanvas = (coord[0]*ts)+(ts/2)
+	ycanvas = (coord[1]*ts)+(ts/2)
+	print("On a coordcanv sans décalage origine: ", xcanvas, ycanvas)
+	# On prend en compte le point d'origine du canvas qui peut être actuellement déplacer à une valeur != 0
+	print("Point d'origine", classmap.mapcanv.canvasx(0), classmap.mapcanv.canvasy(0))
+	xcanvas = xcanvas - classmap.mapcanv.canvasx(0)
+	ycanvas = ycanvas - classmap.mapcanv.canvasy(0)
+	print("On a coordcanv avec décalage origine: ", xcanvas, ycanvas)
 
 	return [xcanvas, ycanvas]
 
@@ -740,22 +758,18 @@ def coordmaptocanvas(option, tuilesize, coord, mapcanv):
 def bordervillage(Gamedata, Classmap, frame):
 	##################
 	# Fonction pour afficher les frontière des villages
-	#
-	#
-	#
 	##################
 	pass
 
 
-def moveunit(gamedata, unit):
+def movearmy(gamedata, unit):
 	##################
 	# Fonction pour bouger les unit
-	#	- Doit vérifier que l'unit à suffisament de point de mouvement disponible
+	#	- Doit vérifier que l'armée à suffisament de point de mouvement disponible
 	#	- 
 	#	- 
 	##################
 	pass
-
 
 ######################### Fonction Secondaire ############################
 def tuile(nb):
@@ -824,12 +838,12 @@ def typetoimgdico(dico_file, type, sizetuile):
 	return img
 
 
-def moveviewz(event, gamedata, option):
+def moveviewz(event, gamedata, classmap, option):
 	####################
 	# Fonction pour zoomer/dézoomer
-	# En utilisant la molette de la souris
-	#
-	# On prend pour valeur min de la taille d'une tuile 5
+	# - En utilisant la molette de la souris
+	# - Depuis le centre de la window
+	# - On prend pour valeur min de la taille d'une tuile 5
 	#
 	# On zoome quand on multiplie par delta
 	# On dezoome quand on divise par delta
@@ -838,7 +852,7 @@ def moveviewz(event, gamedata, option):
 	#
 	# 	--- / 3 = - 		== DeZoom car on réduit
 	####################
-	# 1°) On recup les point d'origine du canvas
+	# 1°) On calcul les coord canvas de la souris
 	# 2°) On normalise le delta pour prendre en compte les différentes plateformes
 	# 3°) On recup la taille d'une tuile
 	# 4°) On scale 
@@ -849,18 +863,19 @@ def moveviewz(event, gamedata, option):
 	while event.widget.type(idorigine) != "image":
 		idorigine += 1
 
+	print("coord de la tuile 0,0 Canvas: ", classmap.mapcanv.coords(classmap.listmap[0].canvastuiles))
+
 
 
 	####################\ 1°) \####################
 
-	x0 = int(event.widget.canvasx(event.x))
-	y0 = int(event.widget.canvasy(event.y))
+	mousex = int(event.widget.canvasx(event.x))
+	mousey = int(event.widget.canvasy(event.y))
 
 	# On recup les coord-canvas de la tuile
-	coordcanv = event.widget.coords(event.widget.find_closest(x0,y0))
+	idtuile = event.widget.find_closest(mousex, mousey)
 
-	print("x0, y0: ", x0, y0)
-	print("coord canv tuile plus proche: ", coordcanv[0], coordcanv[1])
+	print("coordonnées window de la souris: ", mousex, mousey)
 	############################################################
 
 	####################\ 2°) \####################
@@ -887,31 +902,25 @@ def moveviewz(event, gamedata, option):
 
 	####################\ 4°) \####################
 	#Zoom
-	print("x avant zoom: ", event.widget.coords(idorigine)[0])
-	print("y avant zoom: ", event.widget.coords(idorigine)[1])
-	#centerview(gamedata, option, event.widget, [event.widget.canvasx(0),event.widget.canvasy(0)])
+	canvasgooriginewindow(classmap)
 	if (x<320) and (delta == 2):
 		print("Zoom")
 		event.widget.scale("tuile", 0, 0, delta, delta)
-		print("x: ", event.widget.canvasx(event.x))
-		print("y: ", event.widget.canvasy(event.y))
-		#print("x: ", x*delta)
 		x = x*delta
 	#Dezoom
 	elif(x>5) and (delta == -2):
 		print("DeZoom")
 		#On rend positive le delta sinon il inverse le sens de la carte
 		event.widget.scale("tuile", 0, 0, -1/(delta), -1/(delta))
-		#print("x: ",x*(-1/(delta)))
 		x = x*(-1/(delta))
-	centerview(gamedata, option, event.widget, [coordcanv[0], coordcanv[1]])
+	#On recup les nouvelles coord du pointeur de la souris
+	coordcanv = event.widget.coords(idtuile)
+	# SI on veut recup depuis le centre de l'écran
+	coordcanv = [event.widget.canvasx(option.widthWindow//2), event.widget.canvasx((option.heightWindow*0.6)//2)]
+	centerviewcanvas(gamedata, option, event.widget, coordcanv)
 	# On change la taille des tuiles stocker dans les données globaux
 	gamedata.newsizetuile(x)
 	############################################################
-	print("x après zoom: ", event.widget.coords(idorigine)[0])
-	print("y après zoom: ", event.widget.coords(idorigine)[1])
-
-
 
 	####################\ 5°) \####################
 	#Recalcul des images
@@ -994,12 +1003,16 @@ def moveviewz(event, gamedata, option):
 # En placant le souris sur une extrémité de la caméra
 # En appyant sur les touches fléchés √
 ####################
+#
+# Bon bon bon, alors scan_dragto déplace le canvas dans la fenêtre de la X, Y différent stocker dans 
+# scan_mark
+# !!!! Il ne faut pas utiliser les coordonnées canvas mais de la fenêtre !!!!
+#
+####################
 
-def moveviewxy(event, deltax, deltay):
+def moveviewxy(event, deltax, deltay, classmap, option):
 	####################
 	# Fonction pour déplacer la vue en:
-	# Maintenant le click gauche de la souris
-	# En placant le souris sur une extrémité de la caméra
 	# En appyant sur les touches fléchés 
 	####################
 	mult = 100
@@ -1007,9 +1020,17 @@ def moveviewxy(event, deltax, deltay):
 	print("move map arrow")
 
 	################ Déplacement de la vue ################
+	# On recup le point central de la fenêtre
+	x = int((option.widthWindow)//2)
+	y = int((option.heightWindow*0.6)//2)
 
-	event.widget.move("tuile", mult*deltax, mult*deltay)
+	event.widget.scan_mark(x, y)
 
+	movex = x + (mult * deltax)
+	movey = y + (mult * deltay)
+
+	classmap.mapcanv.scan_dragto(movex, movey, gain = 1)
+	print(classmap.mapcanv.coords(classmap.listmap[0].canvastuiles))
 	#######################################################
 
 def startmoveviewmouse(event):
@@ -1020,7 +1041,7 @@ def startmoveviewmouse(event):
 	# Utiliser .scan_mark(x, y)
 	#
 	####################
-	#print(startmoveviewmouse)
+	print(startmoveviewmouse)
 	event.widget.scan_mark(event.x, event.y)
 
 def moveviewmouse(event):
@@ -1031,11 +1052,27 @@ def moveviewmouse(event):
 	# Utiliser .scan_dragto(x, y)
 	# !!!! A cause de l'utilisation de Move est très couteux !!!!
 	####################
-	#print(moveviewmouse)
+	print(moveviewmouse)
 	event.widget.scan_dragto(event.x, event.y, gain = 1)
 
 
 ######################### Autre Fonction #########################
+
+######################### Fonction Coord ############################
+
+def canvasgooriginewindow(classmap):
+	##################
+	# Fonction pour faire déplacer le canvas vers l'origine de la fenêtre
+	##################
+	# On cherche la différence entre la window et la canvas
+	coord = [classmap.mapcanv.canvasx(0), classmap.mapcanv.canvasy(0)]
+
+	# On indique ou vont aller
+	classmap.mapcanv.scan_mark(0,0)
+	# On drague la différence
+	classmap.mapcanv.scan_dragto(int(coord[0]), int(coord[1]), gain = 1)
+
+###########################################################################
 
 
 
@@ -1154,7 +1191,7 @@ class Classmap:
 		# Variable qui vient contenir le canvas de la map
 		self.mapcanv = 0
 
-		#Dico qui vient contenir les Classtuiles 
+		#dico qui vient contenir les Classtuiles 
 		self.listmap = {}
 		self.nbtuile = 0
 
@@ -1179,8 +1216,12 @@ class Classmap:
 		####################
 		# Méthode pour obtenir l'id d'un village selon son nom
 		####################
-		for ele in lvillages:
+		#print("On cherche: ", name)
+		for ele in self.lvillages:
+			#print("ele: ", ele)
+			#print("village.name: ", self.listmap[ele].village.name)
 			if self.listmap[ele].village.name == name:
+				#print("idvillage trouvé: ", ele)
 				return ele
 
 
