@@ -1,5 +1,12 @@
 import functions.data as data
 
+
+#########################
+# Fichier qui vient contenir les fonctions liées aux déplacement du canvas
+#########################
+
+
+
 ########################################\ Fonction Déplacement Vue \##################################################
 
 #################### 
@@ -137,8 +144,8 @@ def moveviewz(event, gamedata, classmap, option):
 	#On recup les nouvelles coord du pointeur de la souris
 	coordcanv = event.widget.coords(idtuile)
 	# SI on veut recup depuis le centre de l'écran
-	coordcanv = [event.widget.canvasx(option.widthWindow//2), event.widget.canvasx((option.heightWindow*0.6)//2)]
-	centerviewcanvas(gamedata, option, event.widget, coordcanv)
+	#coordcanv = [event.widget.canvasx(option.widthWindow//2), event.widget.canvasx((option.heightWindow*0.6)//2)]
+	centerviewcanvas(gamedata, classmap, option, coordcanv)
 	# On change la taille des tuiles stocker dans les données globaux
 	gamedata.newsizetuile(x)
 	############################################################
@@ -147,79 +154,40 @@ def moveviewz(event, gamedata, classmap, option):
 	#Recalcul des images
 	newsize = x
 	print("newsize : ", newsize)
-
-	###############################\ !!! À modifier !!! \#############################
-	# Trouver un moyen de se débaraser des 4 variables
-	# Ne plus utiliser le type de la texture
+	############################################################
 
 	###################################################################################
-	f = 0
-	m = 0
-	o = 0
-	p = 0
-	v = 0
+	# On Update l'atlas pour prendre en compte la nouvelle taille des textures
+	gamedata.resizeatlas(newsize)
 	#Tuile graphique:
-	for ele in event.widget.find_withtag("img"):
+	for imgid in event.widget.find_withtag("img"):
 
-		type = event.widget.gettags(ele)[1]
-		# Version Non-random ou on utilise les texture de bases:
-		# Quand la classe des tuile sera implémenter utiliser le nom de la texture
-		# Utiliser #gamedata.loadtextureatlas(texture_name, type)
-		if type == "forest":
-			#Si dans la fonction on n'a pas déjà recalculer la nouvelle image pour le type selectionner
-			if f == 0:
-				#On recréer l'image
-				tk_img = data.loadtexturefromdico(gamedata.dico_file, "conifer_forest_inner.png", type, int(newsize))
-				# On change le label associer à la texture dans l'atlas
-				gamedata.changelabelAtlas(tk_img[0], tk_img[1])				
-				f = 1
-			# On recup le label associer à la texture
-			label = gamedata.atlas["conifer_forest_inner.png"]
-		elif type == "mountains":
-			if m == 0:
-				tk_img = data.loadtexturefromdico(gamedata.dico_file, "mountains_inner.png", type, int(newsize))
-				gamedata.changelabelAtlas(tk_img[0], tk_img[1])	
-				m = 1
-			label = gamedata.atlas["mountains_inner.png"]
-		elif type == "ocean":
-			if o == 0:
-				tk_img = data.loadtexturefromdico(gamedata.dico_file, "ocean_inner.png", type, int(newsize))
-				gamedata.changelabelAtlas(tk_img[0], tk_img[1])						
-				o = 1
-			label = gamedata.atlas["ocean_inner.png"]
-		elif type == "plains":
-			if p == 0:
-				tk_img = data.loadtexturefromdico(gamedata.dico_file, "plains.png", type, int(newsize))
-				gamedata.changelabelAtlas(tk_img[0], tk_img[1])						
-				p = 1
-			label = gamedata.atlas["plains.png"]
-		elif type == "build":
-			if v == 0:
-				tk_img = data.loadtexturefromdico(gamedata.dico_file, "settlement.png", type, int(newsize))
-				gamedata.changelabelAtlas(tk_img[0], tk_img[1])
-				v = 1
-			label = gamedata.atlas["settlement.png"]
+		# Si c'est un village on assigne directiement la variable texture
+		if "village" in event.widget.gettags(imgid):
+			texture = "settlement.png"
+		else:
+			# Sinon On vient recup la texture stocker dans la Classtuile
+			texture = classmap.listmap[imgid-1].texture_name
 
-		event.widget.itemconfigure(ele,image = label.image)
+
+		# On change la texture lié
+		event.widget.itemconfigure(imgid, image = gamedata.atlas[texture].image)
 	############################################################
 	gamedata.log.printinfo(f"taille Atlas: , {len(gamedata.atlas)}")
 	############################################################
 
 ###########################################################################
 
-def centerviewcanvas(gamedata, option, mapcanv, coordcanv):
+def centerviewcanvas(gamedata, classmap, option, coordcanv):
 	##################
 	# Fonction pour centrer la vue sur les coordonnées canvas donnés
 	##################
-	# Si on appelle la fonction en envoyant seulement l'origine du canvas cela centre la vue sur l'origine
-	##################
 
-	# On recup le décalage entre le haut-gauche de la window(pas screen) et le canvas
-	movex = mapcanv.canvasx(0)
-	movey = mapcanv.canvasy(0)
-	gamedata.log.printinfo(f"déplacement de x,y: , {movex}, {movey}")
-	# On déplace de movex et movey Pour avoir Wind(0,0) = Canv(0,0)
-	mapcanv.move("tuile", +movex, +movey)
+
+	# On se place à l'origine
+	canvasgooriginewindow(classmap)
+
+	ts = gamedata.tuilesize
 
 
 	# On calcule les coordonnées Windows nécessaires pour placer au centre de la window les coords Canvas Voulu
@@ -231,10 +199,15 @@ def centerviewcanvas(gamedata, option, mapcanv, coordcanv):
 	# On ajoute les coord
 	#  movex = coorcanva[0] - tuilesize*30, movey = coorcanva[0] - tuilesize*18
 
-	movex = coordcanv[0] - ((option.widthWindow/gamedata.tuilesize)//2) * gamedata.tuilesize
-	movey = coordcanv[1] - (((option.heightWindow*0.6)/gamedata.tuilesize)//2) * gamedata.tuilesize
+	movex = coordcanv[0] - ((option.widthWindow/ts)//2) * ts
+	movey = coordcanv[1] - (((option.heightWindow*0.6)/ts)//2) * ts
 	gamedata.log.printinfo(f"déplacement de x,y: , {movex}, {movey}")
-	mapcanv.move("tuile", -movex, -movey)
+
+	# On indique ou on veut aller
+	classmap.mapcanv.scan_mark(0,0)
+	# On drag la différence
+	classmap.mapcanv.scan_dragto(-int(movex), -int(movey), gain = 1)
+	#classmap.mapcanv.move("tuile", -movex, -movey)
 
 ######################### Fonction Coord ############################
 
@@ -247,7 +220,7 @@ def canvasgooriginewindow(classmap):
 
 	# On indique ou vont aller
 	classmap.mapcanv.scan_mark(0,0)
-	# On drague la différence
+	# On drag la différence
 	classmap.mapcanv.scan_dragto(int(coord[0]), int(coord[1]), gain = 1)
 
 ###########################################################################
@@ -283,12 +256,7 @@ def coordmaptocanvas(gamedata, classmap, option, coord):
 	# calcul de base
 	xcanvas = (coord[0]*ts)+(ts/2)
 	ycanvas = (coord[1]*ts)+(ts/2)
-	gamedata.log.printinfo(f"On a coordcanv sans décalage origine: , {xcanvas}, {ycanvas}")
-	# On prend en compte le point d'origine du canvas qui peut être actuellement déplacer à une valeur != 0
-	gamedata.log.printinfo(f"Point d'origine, {classmap.mapcanv.canvasx(0)}, {classmap.mapcanv.canvasy(0)}")
-	xcanvas = xcanvas - classmap.mapcanv.canvasx(0)
-	ycanvas = ycanvas - classmap.mapcanv.canvasy(0)
-	gamedata.log.printinfo(f"On a coordcanv avec décalage origine: , {xcanvas}, {ycanvas}")
+	gamedata.log.printinfo(f"coordcanv: , {xcanvas}, {ycanvas}")
 
 	return [xcanvas, ycanvas]
 

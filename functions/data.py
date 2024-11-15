@@ -153,28 +153,30 @@ class ClassGameData:
 	def addtuile(self, tuile):
 		self.list_tuile += [tuile]
 
-	# Fonction pour changer la taille de la tuile
+	# Methode pour changer la taille de la tuile
 	def newsizetuile(self, size: int):
 		self.tuilesize = size
 
-	# Fonction pour charger les données d'une save
+	# Methode pour charger les données d'une save
 	def loaddata():
 		pass
 
-	# Fonction pour define le labelframe
+	# Methode pour define le labelframe
 	def setlframe(self, lframe):
 		self.lframe = lframe
 
-	# Fontion Atlas
+	######################## Methode Atlas	########################
+
+	# Methode Atlas
 	def addAtlas(self, label, filename):
 		####################
-		# Fonction pour ajouter une nouvelle entréer à l'Atlas
+		# Methode pour ajouter une nouvelle entréer à l'Atlas
 		####################		
 		self.atlas[filename] = label
 
 	def checkAtlas(self, filename):
 		####################
-		# Fonction pour voir si une texture est présente dans l'atlas
+		# Methode pour voir si une texture est présente dans l'atlas
 		####################
 		if filename in self.atlas.keys():
 			return True
@@ -183,14 +185,14 @@ class ClassGameData:
 
 	def changelabelAtlas(self, filename, img):
 		####################
-		# Fonction pour changer la texture associer à un label
+		# Methode pour changer la texture associer à un label
 		####################
 		self.atlas[filename].configure(image = img)
 		self.atlas[filename].image = img
 
 	def loadtextureatlas(self, texture_name, type):
 		######
-		# Fonction pour charger dans l'atlas la texture viser
+		# Methode pour charger dans l'atlas la texture viser
 		######
 
 		# Si la texture n'est pas déjà présent dans l'atlas on la prépare est place
@@ -202,11 +204,39 @@ class ClassGameData:
 			label.image = tk_img[1]
 			# On stocke le label dans l'atlas
 			self.addAtlas(label, tk_img[0])
-		# Si la texture est présent dans l'atlas on utlise le label associer
-		#else:
-		#	label = self.atlas[texture_name]
-		#On retourne le label obtenue
-		#return label
+
+	def resizeatlas(self, tuilesize):
+		######
+		# Methode pour resize toute les textures de l'atlas à la valeur indiqué
+		######
+
+		# Pour le tuple stocker dans l'atlas
+		for key_atlas in self.atlas.keys():
+			# on cherche le type du fichier de l'atlas
+			type = self.searchtexturetypeindico(key_atlas)
+
+
+			# on recalcul l'image depuis son fichier source mais avec la nouvelle résolution
+			tk_img = loadtexturefromdico(self.dico_file, key_atlas, type, int(tuilesize))
+			# On change le label associer à l'image
+			self.changelabelAtlas(tk_img[0], tk_img[1])
+
+
+	def searchtexturetypeindico(self, texture_name):
+		######
+		# Fonction qui renvoit le type de la texture
+		######	
+
+		for key_type in self.dico_file.keys():
+			# on cherche dans les tuples du type
+			for entry in self.dico_file[key_type]:
+				if texture_name in entry:
+					return key_type
+
+
+
+
+	################################################################################################
 
 
 	def changePlayerLord(self, idplayer, player):
@@ -240,6 +270,27 @@ class ClassGameData:
 			return name
 		except:
 			self.log.printerror("type :"+type+"non présent dans le dico")
+
+	def changenewstate(self, newstate: chr):
+		####################
+		# Fonction pour changer state si == 0
+		# Renvoit 0 si l'état n'a pas était changer
+		# Renvoit 1 si l'état à était changer
+		####################
+		if self.state != 0:
+			self.log.printerror(f"déjà dans un état {self.state}")
+			return False
+		else:
+			self.state = "build_church"
+			self.log.printinfo(f"entre dans un état {newstate}")
+			return True
+
+
+	def statenull(self):
+		####################
+		# Methode pour renvoyer l'état à null
+		####################
+		self.state = 0
 
 	def endofturn(self):
 		################
@@ -679,9 +730,6 @@ def loadnamedico(filepath):
 
 	# On ferme le fichier
 	f.close()
-	#print(dico_name)
-	# On renvoi le dico
-	#print(dico_name)
 	return dico_name
 
 ###############################################################################

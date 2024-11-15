@@ -91,6 +91,11 @@ class Classlord:
 		# Liste des seigneur avec les quelles on est en guerres
 		self.war = []
 
+		#Type du seigneur si non joueur, cela vient coder son comportement
+		# liste de type: ["expansionniste", "belliciste", "économique"]
+		# Pour plus tard
+		self.type = 0
+
 	def createarmy(self, village):
 		self.army += [Classarmy(village.x, village.y, ("unit_" + village.name))]
 
@@ -235,6 +240,12 @@ class Classarmy:
 	def updatemovementcapacity(self):
 		#######
 		# Méthode pour update la capacité de mouvement
+		#######
+		pass
+
+	def movearmy(self):
+		#######
+		# Méthode pour déplacer l'armée
 		#######
 		pass
 

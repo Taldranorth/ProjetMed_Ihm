@@ -8,14 +8,7 @@ from time import time
 import perlin_noise.perlin_noise as Perlin_noise
 
 #########################
-#
-#
-#
-#
-#
-#
-#
-#
+# Fichier qui vient contenir les fonctions liées à la génération procédurale et la mise en place aléatoire
 #
 #########################
 

@@ -1,25 +1,25 @@
 Main.py:
 
-heightWindow = int, Taille en hauteur de la fenêtre de Jeu
 
-widthWindow = int, Taille en largeur de la fenêtre de Jeu
 
-pic = Tuple, liste de liste qui contient les valeurs Générer pour chaque case de la Carte
+affichage.py:
 
-sizetuile = int, Taille d’une tuile
+ailord.py:
 
-mapx = int, Taille en hauteur de la Carte
 
-mapy = int, Taille en largeur de la Carte
+data.py:
 
-GenProc.py:
 
-pic = Tuple, liste de liste qui contient les valeurs Générer pour chaque case de la Carte 
+event.py:
 
-Octaves = Niveau de Détail de la Génération
+gameclass.py:
 
-Seed = float, Graine de Génération, doit être créer sur le moment est enregistré afin de pouvoir récréer la carte
+genproc.py:
 
-mapx = int, Taille en hauteur de la Carte
+interface.py:
 
-mapy = int, Taille en largeur de la Carte
+interfacegame.py:
+
+interfacemenu.py:
+
+moveview.py:

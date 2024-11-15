@@ -9,6 +9,7 @@ import functions.gameclass as gameclass
 import functions.affichage as affichage
 import functions.moveview as moveview
 import functions.genproc as genproc
+import functions.ailord as ailord
 
 from time import time
 
@@ -41,7 +42,6 @@ from time import time
 #	- Refactoriser le Code
 #		--> Le Nettoyer
 #		--> Retirer les Commentaires Inutiles
-#	- !!!! Commencer a s'entrainer avec les CLasses !!!!
 #
 #	- !!! Voir pour ajouter la taille de la texture resize à l'atlas !!!
 #	- Prendre en compte linux dans la fonction moveviewz
@@ -71,7 +71,6 @@ from time import time
 #	- Centrer la fenêtre du Menu principale
 #		--> Ajouter un Fond d'écran un peu joli
 #			--> Ajouter un Peu d'anim
-#
 #
 #	- Changer la police d'écriture
 #		--> font = "Police"
@@ -116,21 +115,14 @@ from time import time
 
 ##################\ Doit Faire: \#######################
 # Main:
-# - réglé le décalage entre les state et la carte √
 # - Déplacement en mettant la souris sur la bordure extérieur de la carte
-# - Pouvoir renommer le Seigneur Joueur √
-#	--> Remplacer par un Entry √
-# - ajouter dans les options quickplay 3 Seigneurs √
-# - Ajouter un lord devant les noms des Seigneurs √
-# - Définir le système de tour de jeu √
 # - Changer MainMenu pour utiliser create_window
 #		--> C'est une fonction uniquement liéer aux Canvas -_-
 #			--> En créer un et l'utiliser seulement pour cela ?
 #			--> Comme cela on à juste à détruire le canvas quand ont veut revenir en arrière
 #			--> Et on a pas à créer une nouvelle fenêtre de 0 totalement séparé
 # - Améliorer le Zoom/Dezoom
-# - Retirer Move de centerviewcanvas
-#
+# - Refactoriser Zoom/Dezoom pour réduire les lignes sur le rechargement des textures √
 #
 # Interface:
 # - réglé les tags unbind
@@ -144,11 +136,16 @@ from time import time
 # - commencer statetax
 # - ajouter la création de pop à buildvillage
 # - définir les régles de création de village, création d'église
-# - terminer centervillagechurch
 # - Voir pour une fonction exitstate générale
+# - Améliorer l'interface
+# - régler la création d'église
+#		--> Problème de tag bind sur le village
+# - Retirer les possibilité d'acceder au actions de constructions pour les villages qui ne nous appartiennent pas √
+# - terminer centervillagechurch √
 #
 # GameClass:
 # - définir les particularités des prêtre
+# - Continuer ClassArmy
 #
 # affichage:
 # - Régler les labels des noms
@@ -157,22 +154,18 @@ from time import time
 # Data:
 #	- Sauvegarde des données
 #
-# Projet:
-# - Placer dans un sous-dossier fonctions les fonctions.py √
-# - Placer dans un sous-dossier doc les fichiers docs √
-#
-# Main:
-# - Réarranger par ordre d'execution √
-#
 # Gameclass:
-# - Créer une methode pour vérifier l'etat
 # - Régler le problème de sauvegarde du log
 #		--> Il faut f.close()
 #			--> Créer un fonction dans gamedata appeler quand on quitte l'application
 # - Ajouter une Methode de Formatage du log qui gère les sauts à la ligne, le time code etc ....
+# - Créer une methode pour vérifier l'etat √
 # 
 # Interface:
-# - remplacer les vérification de state par une methode de Gameclass pour 
+# - Changer le canvas liée à l'interface, actuellement l'interface est accroché aux canvas est n'est donc pas déplacer quand on déplace la vue
+# - améliorer interface
+# - Implémenter une scrollbar ou trouver un moyen d'afficher efficaement la liste des Seigneur dans list_lord
+# - remplacer les vérification de state par une methode de Gameclass √
 #
 #########################################################
 
@@ -683,22 +676,6 @@ def createmap(gamedata, classmap, option, pic):
 ####################################################################################################
 
 
-def bordervillage(Gamedata, Classmap, frame):
-	##################
-	# Fonction pour afficher les frontière des villages
-	##################
-	pass
-
-
-def movearmy(gamedata, unit):
-	##################
-	# Fonction pour bouger les unit
-	#	- Doit vérifier que l'armée à suffisament de point de mouvement disponible
-	#	- 
-	#	- 
-	##################
-	pass
-
 ######################### Fonction Secondaire ############################
 def tuile(nb):
 	####################
@@ -856,15 +833,7 @@ def endofgame():
 ###########################################################################
 
 
-
-
-def printunit(gamedata, classmap, frame):
-	##################
-	# Fonction pour afficher les soldat
-	##################
-	pass
-
-
+######################### Autre Fonction #########################
 def infovillage(village):
 	print("village name", village.name)
 	print("village lord: ", village.lord.name)
@@ -872,7 +841,12 @@ def infovillage(village):
 	print("village global joy: ", village.global_joy)
 	print("village ressource, money: ", village.ressource, village.money)
 
-######################### Autre Fonction #########################
+
+def bordervillage(Gamedata, Classmap, frame):
+	##################
+	# Fonction pour afficher les frontière des villages
+	##################
+	pass
 
 ######################### Main #########################
 if __name__ == '__main__':
@@ -884,13 +858,14 @@ if __name__ == '__main__':
 	option_instance = data.ClassOptions()
 	# Initialisation de GameData
 	gamedata_instance = data.ClassGameData()
+	gamedata_instance.log.printinfo("Initialisation log terminé")
 
 	# Initialisation de la Carte
 	map_instance = data.Classmap()
 
 	# Menu principale
 	mainmenu(gamedata_instance, map_instance, option_instance, root)
-
+	gamedata_instance.log.printinfo("Initialisation de l'application terminé")
 
 	root.mainloop()
 

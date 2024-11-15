@@ -3,6 +3,10 @@ import tkinter
 import functions.data as data
 import functions.interface as interface
 
+#########################
+# Fichier qui vient contenir les fonctions liées à l'affichage
+#########################
+
 def printvillage(gamedata, classmap, option, frame):
 	##################
 	# Fonction pour afficher les villages ainsi que leur noms à la création
@@ -23,7 +27,7 @@ def printvillage(gamedata, classmap, option, frame):
 
 
 	# On ajoute lie au tag village la fonction pour ouvrir l'interface des villages
-	classmap.mapcanv.tag_bind("village","<Button-1>", lambda event, opt = option, gd = gamedata, cm = classmap: interface.villageinterface(event, opt, gd, cm))
+	classmap.mapcanv.tag_bind("village","<Button-1>", lambda event, opt = option, gd = gamedata, cm = classmap: interface.villageinterface(event, gd, cm, opt))
 
 
 def printvillageunit(gamedata, classmap, option, coordmap):
@@ -46,7 +50,7 @@ def printvillageunit(gamedata, classmap, option, coordmap):
 	classmap.mapcanv.create_text((posx*ts)+(ts/2), (posy*ts), text = classmap.listmap[idtuile].village.name,tags = ["label","village","tuile", posx, posy], activefill = "Black")
 
 	# On ajoute lie au village la fonction pour ouvrir l'interface
-	classmap.mapcanv.tag_bind("village","<Button-1>", lambda event, opt = option, gd = gamedata, cm = classmap: interface.villageinterface(event, opt, gd, cm, fc))
+	classmap.mapcanv.tag_bind("village","<Button-1>", lambda event, opt = option, gd = gamedata, cm = classmap: interface.villageinterface(event, gd, cm, opt))
 
 
 def printarmy(gamedata, classmap, option):
@@ -56,4 +60,8 @@ def printarmy(gamedata, classmap, option):
 	pass
 
 
-
+def printunit(gamedata, classmap, frame):
+	##################
+	# Fonction pour afficher les soldat
+	##################
+	pass
