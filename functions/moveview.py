@@ -148,23 +148,25 @@ def moveviewz(event, gamedata, classmap, option):
 	centerviewcanvas(gamedata, classmap, option, coordcanv)
 	# On change la taille des tuiles stocker dans les données globaux
 	gamedata.newsizetuile(x)
-	############################################################
+	###################################################################
 
-	####################\ 5°) \####################
-	#Recalcul des images
-	newsize = x
-	print("newsize : ", newsize)
-	############################################################
-
-	###################################################################################
+	####################\ 5°) \#########################################
+	# Recalcul des images
 	# On Update l'atlas pour prendre en compte la nouvelle taille des textures
-	gamedata.resizeatlas(newsize)
+	gamedata.resizeatlas(x)
 	#Tuile graphique:
 	for imgid in event.widget.find_withtag("img"):
 
 		# Si c'est un village on assigne directiement la variable texture
 		if "village" in event.widget.gettags(imgid):
 			texture = "settlement.png"
+		# Si c'est une armée
+		elif "army" in event.widget.gettags(imgid):
+			coord = [int(event.widget.gettags(imgid)[3]), int(event.widget.gettags(imgid)[4])]
+			for lord in range(gamedata.Nb_lord):
+				army = gamedata.coordtoarmy(lord, coord)
+				if army != 0:
+					texture = army.texture
 		else:
 			# Sinon On vient recup la texture stocker dans la Classtuile
 			texture = classmap.listmap[imgid-1].texture_name
@@ -173,7 +175,7 @@ def moveviewz(event, gamedata, classmap, option):
 		# On change la texture lié
 		event.widget.itemconfigure(imgid, image = gamedata.atlas[texture].image)
 	############################################################
-	gamedata.log.printinfo(f"taille Atlas: , {len(gamedata.atlas)}")
+	gamedata.log.printinfo(f"taille Atlas: {len(gamedata.atlas)}")
 	############################################################
 
 ###########################################################################
@@ -228,18 +230,13 @@ def canvasgooriginewindow(classmap):
 #################################### Fonction Calcul de coord ####################################
 
 
-def coordcanvastomap(option, tuilesize, coord, mapcanv):
+def coordcanvastomap(gamedata, classmap, option, coord):
 	##################
 	# Fonction pour traduire les coordonnées du canvas en coordonnées de la carte
 	##################
-	xorigine = mapcanv.canvasx(0)
-	yorigine = mapcanv.canvasy(0)
-	gamedata.log.printinfo(f"xorigine: , {xorigine}")
-	gamedata.log.printinfo(f"yorigine: , {yorigine}")
-	gamedata.log.printinfo(f"coord: , {coord}")
 
-	xmap = (((coord[0] + xorigine) - tuilesize/2)%tuilesize)
-	ymap = (((coord[1] + yorigine) - tuilesize/2)%tuilesize)
+	xmap = (((coord[0]) - tuilesize/2)/tuilesize)
+	ymap = (((coord[1]) - tuilesize/2)/tuilesize)
 
 
 	return [xmap, ymap]

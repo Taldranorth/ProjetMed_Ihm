@@ -142,7 +142,7 @@ class ClassGameData:
 
 		# Une fois toute les valeur charger on charge les seigneur de base
 		# On créer le seigneur qui représente le joueur
-		player = gameclass.Classlord("test", True)
+		player = gameclass.Classlord("test", True, self.Nb_lord)
 		self.list_lord += [player]
 		self.Nb_lord += 1
 
@@ -206,6 +206,21 @@ class ClassGameData:
 			# On stocke le label dans l'atlas
 			self.addAtlas(label, tk_img[0])
 
+	def loadtextureatlassize(self, texture_name, type, size):
+		######
+		# Methode pour charger dans l'atlas la texture viser avec une taille spécifique
+		######
+		# Si la texture n'est pas déjà présent dans l'atlas on la prépare est place
+		if self.checkAtlas(texture_name) == False:
+			# On prépare la texture à la taille voulu
+			tk_img = loadtexturefromdico(self.dico_file, texture_name, type, int(size))
+			# On créer le label associer
+			label = tkinter.Label(self.lframe, image = tk_img[1])
+			label.image = tk_img[1]
+			# On stocke le label dans l'atlas
+			self.addAtlas(label, tk_img[0])
+
+
 	def resizeatlas(self, tuilesize):
 		######
 		# Methode pour resize toute les textures de l'atlas à la valeur indiqué
@@ -216,9 +231,12 @@ class ClassGameData:
 			# on cherche le type du fichier de l'atlas
 			type = self.searchtexturetypeindico(key_atlas)
 
+			ts = tuilesize
+			if type in ["soldier", "knight"]:
+				ts = tuilesize/2
 
 			# on recalcul l'image depuis son fichier source mais avec la nouvelle résolution
-			tk_img = loadtexturefromdico(self.dico_file, key_atlas, type, int(tuilesize))
+			tk_img = loadtexturefromdico(self.dico_file, key_atlas, type, int(ts))
 			# On change le label associer à l'image
 			self.changelabelAtlas(tk_img[0], tk_img[1])
 
@@ -244,7 +262,7 @@ class ClassGameData:
 		self.list_lord[idplayer] = player
 
 	def createlord(self):
-		self.list_lord += [gameclass.Classlord(("lord "+self.randomnametype("Surnom")), False)]
+		self.list_lord += [gameclass.Classlord(("lord "+self.randomnametype("Surnom")), False, self.Nb_lord)]
 		self.Nb_lord += 1
 
 	def deletelord(self, idlord):
@@ -257,6 +275,20 @@ class ClassGameData:
 		while self.dico_name["Surnom"][i][0] != name:
 			i += 1
 		self.dico_name["Surnom"][i][1] = 0
+
+	def coordtoarmy(self, idlord, coord):
+		#######
+		# Fonction qui pour les coord map données et l'idlord renvoit l'objet army du lord
+		# Return l'objet army si il trouve
+		# Sinon 0
+		#######
+		for army in self.list_lord[idlord].army:
+			if (army.x == coord[0]) and (army.y == coord[1]):
+				#self.log.printinfo(f"armée trouvé pour x: {army.x} et y: {army.y}")
+				return army
+		#self.log.printerror(f"armée non trouvé pour coord x: {coord[0]} et y: {coord[1]}")
+		return 0
+
 
 
 	def randomnametype(self, type):
@@ -353,45 +385,26 @@ class Classlog:
 	####################
 
 	def __init__(self):
-		self.file = "user/log.txt"
-		self.loglevel = 0
-		self.semaphore = False
 
-		# On nettoye le log présent à l'emplacement
-		f = open(self.file, "w")
-		f.close()
+		self.file = open("user/log.txt", "w")
+		self.loglevel = 0
+
 
 	def printerror(self, ch):
 
-		# On s'assure que le fichier n'est pas actuellement ouvert 
-		if self.semaphore == False:
-			self.semaphore = True
-			# On ouvre le log
-			f = open(self.file, "r+")
-			f.readlines()
-			ch = "Erreur:" + ch
-			ch = self.formatlog(ch)
-			print(ch)
-			f.write(ch+"\n")
-			# On ferme le log
-			f.close()
-			self.semaphore = False
+		ch = "Erreur: " + ch
+		ch = self.formatlog(ch)
+		print(ch)
+		self.file.write(ch+"\n")
+		self.file.flush()
 
 	def printinfo(self, ch):
-		# On s'assure que le fichier n'est pas actuellement ouvert
-		if self.semaphore == False:
-			self.semaphore = True
-			#On Ouvre le log
-			f = open(self.file, "r+")
-			# On se place à la dernière ligne
-			f.readlines()
-			ch = "Info: " +ch
-			ch = self.formatlog(ch)
-			print(ch)
-			f.write(ch+"\n")
-			# On ferme le log
-			f.close()
-			self.semaphore = False
+
+		ch = "Info: " +ch
+		ch = self.formatlog(ch)
+		print(ch)
+		self.file.write(ch+"\n")
+		self.file.flush()
 
 	def formatlog(self, ch):
 		####################
@@ -587,7 +600,7 @@ def assetLoad():
 	#print(pf)
 	#print(len(os.listdir()))
 	# On créer le Dico que l'on va renvoyer:
-	dico_file = {"mountains": [],"ocean": [],"plains": [],"forest": [],"build":[],"event":[],"unit":[] ,"other": []}
+	dico_file = {"mountains": [],"ocean": [],"plains": [],"forest": [],"interface":[],"build":[],"event":[],"unit":[], "knight":[], "soldier":[] ,"other": []}
 
 
 	dico_file = exploresubfolder(dico_file, pf)
@@ -605,7 +618,7 @@ def exploresubfolder(dico_file, filepath):
 	####################
 
 	for file in os.listdir(filepath):
-		# Si ce n'est pas un fichier .png c'est un sous dossier qye l'on explore dans un sous appel de la même fonction
+		# Si ce n'est pas un fichier .png c'est un sous dossier que l'on explore dans un sous appel de la même fonction
 		if (file[-4:] != ".png") and (file != ".DS_Store" ):
 			dico_file = exploresubfolder(dico_file, filepath+"/"+file)
 		# Sinon c'est un fichier que l'on teste
@@ -631,9 +644,18 @@ def exploresubfolder(dico_file, filepath):
 				# Si présent dans le dossier event
 				elif filepath[-5:] == "event":
 					dico_file["event"] += [[file, loadtexturedico(filepath+"/"+file)]]
+				# Si présent dans le dossier interface
+				elif filepath[-9:] == "interface":
+					dico_file["interface"] += [[file, loadtexturedico(filepath+"/"+file)]]
 				# Si présent dans le dossier unit
 				elif filepath[-4:] == "unit":
 					dico_file["unit"] += [[file, loadtexturedico(filepath+"/"+file)]]
+				# Si présent dans le dossier knight
+				elif filepath[-6:] == "knight":
+					dico_file["knight"] += [[file, loadtexturedico(filepath+"/"+file)]]
+				# Si présent dans le dossier soldier
+				elif filepath[-7:] == "soldier":
+					dico_file["soldier"] += [[file, loadtexturedico(filepath+"/"+file)]]
 				#Si il n'est rentrée dans aucun des 4 types il rentre dans other
 				else:
 					#print(sub_folder)
@@ -778,8 +800,8 @@ if __name__ == '__main__':
 	#	print(key,dico_file[key])
 	#	print("\n")
 	####################
-	#print(dico_file["build"])
-	#print(dico_file["ocean"])
+	#print(dico_file["knight"])
+	#print(dico_file["soldier"])
 
 
 

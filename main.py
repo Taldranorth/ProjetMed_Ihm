@@ -122,12 +122,9 @@ from time import time
 #			--> Comme cela on à juste à détruire le canvas quand ont veut revenir en arrière
 #			--> Et on a pas à créer une nouvelle fenêtre de 0 totalement séparé
 # - Améliorer le Zoom/Dezoom
+# - Normaliser les Tags
 #
 # Interface:
-# - réglé les tags unbind
-#		--> C'est de la merde
-#			--> à la place on remet le tags highlight
-#				--> Peut être utiliser funcid = .execute(func)
 # - terminer statewar
 # - commencer statesubjugate
 # - commencer stateimmigration
@@ -139,37 +136,33 @@ from time import time
 # - régler la création d'église
 #		--> Problème de tag bind sur le village
 # - Faire une classe qui Combine un label avec un label(textvariable) afin des les afficher côte a côte
-# - Retirer les possibilité d'acceder au actions de constructions pour les villages qui ne nous appartiennent pas √
-# - terminer centervillagechurch √
-# - terminer staterecruitarmy √
-# - Fix globalviewmenu pour centrer sur l'écran l'interface quand le canvas est déplacer √
-# - Retire une vielle variable qui n'est plus nécessaire √
+# - Terminer statebuildchurch √
+# - Définire les régles de création d'armée qui doive avoir au moins 1 unités et donc avec les cout en ressource
+# - la texture de l'armée doit changer si un chevalier rejoit ou part de l'armée
 #
 # GameClass:
 # 	- définir les particularités des prêtre
 # 	- Continuer ClassArmy
 #
 # affichage:
-#	 - Régler les labels des noms
+#	- Régler les labels des noms
 #		--> Actuellement ils ont tendance à ce couper
+#	- Faire fonction d'affichage d'unit √
+#
 #
 # Data:
 #	- Sauvegarde des données
 #	- Faire Résolution Dynamique
 #	- Faire Placement Dynamique
+#	- Intégrer les units √
 #
-# Gameclass:
-# - Régler le problème de sauvegarde du log √
-#		--> Il faut f.close()
-#			--> Créer un fonction dans gamedata appeler quand on quitte l'application
-# - Ajouter une Methode de Formatage du log qui gère les sauts à la ligne, le time code etc .... √
-# - Créer une methode pour vérifier l'etat √
+# moveview:
+#	- Changer la logique pour récupérer la texture des armées, utiliser coord pour obtenir objet
 # 
 # Interface:
 # - Changer le canvas liée à l'interface, actuellement l'interface est accroché aux canvas est n'est donc pas déplacer quand on déplace la vue 
 # - améliorer interface
 # - Implémenter une scrollbar ou trouver un moyen d'afficher efficaement la liste des Seigneur dans list_lord
-# - remplacer les vérification de state par une methode de Gameclass √
 #
 #########################################################
 
@@ -185,10 +178,7 @@ from time import time
 # Décider d'adapter moveviewxy pour utiliser scan_dragto
 #	--> Plus performant car liés à l'afichage des coord et non le changement des coord de tout les objets du canvas comme move()
 
-
-# !!!!! Doit modifier centerviewcanvas pour retirer le move() !!!!!
-#
-#
+# Pour le pathfinding Utiliser l'algo de Nguyen qui calcul les pixel à allumer
 
 
 ######################### Menu Principale #########################
@@ -468,7 +458,8 @@ def savemenu():
 
 
 def loadmenu():
-
+	# On suprime le frame du menu principale
+	mainmenuwin.winfo_children()[0].destroy()
 
 
 
@@ -502,7 +493,10 @@ def loadmenu():
 
 
 def optionmenu():
+	# On suprime le frame du menu principale
+	mainmenuwin.winfo_children()[0].destroy()
 
+	# On créer le nouveaux frame
 
 
 

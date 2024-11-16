@@ -61,7 +61,9 @@ class Classlord:
 	# Class Seigneur 
 	####################
 
-	def __init__(self, lordname: str, player: bool):
+	def __init__(self, lordname: str, player: bool, id: int):
+
+		self.idlord = 0
 
 		self.personnal_ressource = 10
 		self.personnal_money = 10
@@ -224,7 +226,11 @@ class Classarmy:
 		self.power = 0
 
 		# Déplacement possible de la troupe
-		self.movecapacity = 0		
+		self.movecapacity = 0
+		self.moveturn = self.movecapacity
+
+		# Texture de l'armée
+		self.texture = 0
 
 	def recruitknight(self, name:chr):
 		#######
@@ -262,7 +268,7 @@ class Classarmy:
 		# Sinon si seulement unit
 		elif len(self.unit) != 0:
 			self.movecapacity = 4
-
+		self.moveturn = self.movecapacity
 
 
 

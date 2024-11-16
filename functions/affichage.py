@@ -20,7 +20,7 @@ def printvillage(gamedata, classmap, option, frame):
 		posy = classmap.listmap[ele].y
 		#print(Classmap.listmap[ele].type, Classmap.listmap[ele].x, Classmap.listmap[ele].y)
 		# On affiche le village
-		classmap.mapcanv.create_image((posx*ts)+(ts/2), (posy*ts)+(ts/2), tags = ["village","build","tuile","img", "click", posx, posy], image = gamedata.atlas["settlement.png"].image)
+		classmap.mapcanv.create_image((posx*ts)+(ts/2), (posy*ts)+(ts/2), tags = ["village","build","tuile","img", posx, posy], image = gamedata.atlas["settlement.png"].image)
 
 		# On affiche en dessous le nom du village
 		classmap.mapcanv.create_text((posx*ts)+(ts/2), (posy*ts), text = classmap.listmap[ele].village.name,tags = ["label","village","tuile", posx, posy], activefill = "Black")
@@ -52,12 +52,32 @@ def printvillageunit(gamedata, classmap, option, coordmap):
 	# On ajoute lie au village la fonction pour ouvrir l'interface
 	classmap.mapcanv.tag_bind("village","<Button-1>", lambda event, opt = option, gd = gamedata, cm = classmap: interface.villageinterface(event, gd, cm, opt))
 
-
-def printarmy(gamedata, classmap, option):
+def printarmy(gamedata, classmap, option, army):
 	##################
 	# Fonction pour afficher une armée 
 	##################
-	pass
+
+	ts = gamedata.tuilesize
+	posx = army.x
+	posy = army.y
+
+	# On affiche un portrait de chevalier Si l'armée possède un Chevalier
+	if army.knight == 0:
+		unit = "knight"
+	# Sinon on affiche un portrait de Soldat
+	else:
+		unit = "soldier"
+	# On prend une texture aléatoire
+	texture_name = data.randomtexturefromdico(gamedata.dico_file, unit)
+	# On assigne dans l'armée la texture
+	army.texture = texture_name
+	# On charge dans l'atlas la texture préparer avec une taille qui correspond à la moitier d'une tuile
+	gamedata.loadtextureatlassize(texture_name, unit, ts/2)
+	# On créer à l'emplacement voulu
+	classmap.mapcanv.create_image((posx*ts)+(ts/2), (posy*ts)+(ts/2), tags = ["army","tuile","img", army.x, army.y], image = gamedata.atlas[texture_name].image)
+
+	# On bind l'interface
+	classmap.mapcanv.tag_bind("army", "<Button-1>", lambda event: interface.armyinterface(event, gamedata, classmap, option))
 
 
 def printunit(gamedata, classmap, frame):
