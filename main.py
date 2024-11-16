@@ -122,7 +122,6 @@ from time import time
 #			--> Comme cela on à juste à détruire le canvas quand ont veut revenir en arrière
 #			--> Et on a pas à créer une nouvelle fenêtre de 0 totalement séparé
 # - Améliorer le Zoom/Dezoom
-# - Refactoriser Zoom/Dezoom pour réduire les lignes sur le rechargement des textures √
 #
 # Interface:
 # - réglé les tags unbind
@@ -130,7 +129,6 @@ from time import time
 #			--> à la place on remet le tags highlight
 #				--> Peut être utiliser funcid = .execute(func)
 # - terminer statewar
-# - terminer staterecruitarmy
 # - commencer statesubjugate
 # - commencer stateimmigration
 # - commencer statetax
@@ -140,29 +138,35 @@ from time import time
 # - Améliorer l'interface
 # - régler la création d'église
 #		--> Problème de tag bind sur le village
+# - Faire une classe qui Combine un label avec un label(textvariable) afin des les afficher côte a côte
 # - Retirer les possibilité d'acceder au actions de constructions pour les villages qui ne nous appartiennent pas √
 # - terminer centervillagechurch √
+# - terminer staterecruitarmy √
+# - Fix globalviewmenu pour centrer sur l'écran l'interface quand le canvas est déplacer √
+# - Retire une vielle variable qui n'est plus nécessaire √
 #
 # GameClass:
-# - définir les particularités des prêtre
-# - Continuer ClassArmy
+# 	- définir les particularités des prêtre
+# 	- Continuer ClassArmy
 #
 # affichage:
-# - Régler les labels des noms
-#	--> Actuellement ils ont tendance à ce couper
+#	 - Régler les labels des noms
+#		--> Actuellement ils ont tendance à ce couper
 #
 # Data:
 #	- Sauvegarde des données
+#	- Faire Résolution Dynamique
+#	- Faire Placement Dynamique
 #
 # Gameclass:
-# - Régler le problème de sauvegarde du log
+# - Régler le problème de sauvegarde du log √
 #		--> Il faut f.close()
 #			--> Créer un fonction dans gamedata appeler quand on quitte l'application
-# - Ajouter une Methode de Formatage du log qui gère les sauts à la ligne, le time code etc ....
+# - Ajouter une Methode de Formatage du log qui gère les sauts à la ligne, le time code etc .... √
 # - Créer une methode pour vérifier l'etat √
 # 
 # Interface:
-# - Changer le canvas liée à l'interface, actuellement l'interface est accroché aux canvas est n'est donc pas déplacer quand on déplace la vue
+# - Changer le canvas liée à l'interface, actuellement l'interface est accroché aux canvas est n'est donc pas déplacer quand on déplace la vue 
 # - améliorer interface
 # - Implémenter une scrollbar ou trouver un moyen d'afficher efficaement la liste des Seigneur dans list_lord
 # - remplacer les vérification de state par une methode de Gameclass √
@@ -549,17 +553,20 @@ def mainscreen(gamedata, classmap, option, root, pic):
 
 	# Création de la fenêtre
 	win1 = tkinter.Toplevel(root, height = option.heightWindow, width= option.widthWindow)
-	gamedata.log.printinfo(f"taille écran x,y: , {root.winfo_screenwidth()}, {root.winfo_screenheight()}")
+	gamedata.log.printinfo(f"taille écran x,y: {root.winfo_screenwidth()}, {root.winfo_screenheight()}")
 	win1.geometry(f"+{option.widthWindow//8}+{option.heightWindow//4}")
+	win1.title("Medieval Game")
 
 
 	# Frame Map
-	fcanvas = tkinter.Frame(win1)
-	fcanvas.pack(expand="True", fill="both")
+	fcanvas = tkinter.Frame(win1, height = (option.heightWindow*0.6), width= option.widthWindow)
+	gamedata.log.printinfo(f"Taille de la Frame du Canvas: {fcanvas.winfo_width()}, {fcanvas.winfo_height()}")
 	classmap.setlframecanvas(fcanvas)
 
 	# Interface de Jeu
-	interface.gameinterface(win1, option, gamedata, classmap)
+	interface.gameinterface(gamedata, classmap, option, win1)
+
+	fcanvas.pack()
 
 	# Carte de Jeu
 	createmap(gamedata, classmap, option, pic)
@@ -582,9 +589,10 @@ def mainscreen(gamedata, classmap, option, root, pic):
 def createmap(gamedata, classmap, option, pic):
 
 	#Si heigthWindow/1.5 le boutton quitter disparait
-	mapcanv = tkinter.Canvas(classmap.framecanvas,height = ((option.heightWindow)*0.6), width = option.widthWindow)
+	mapcanv = tkinter.Canvas(classmap.framecanvas, height = (option.heightWindow*0.6), width= option.widthWindow)
+	gamedata.log.printinfo(f"Taille du Canvas:{mapcanv.winfo_width()}, {mapcanv.winfo_height()}")
 	# On setup le frame de l'atlas
-	gamedata.setlframe(tkinter.Frame(classmap.framecanvas))
+	gamedata.setlframe(classmap.framecanvas)
 	# On lie le mapcanvas à classmap
 	classmap.setmapcanv(mapcanv)
 	# On Créer les Différentes Cases avec le tags tuile pour indiquer et les trouvé plus facilement
@@ -784,11 +792,11 @@ def gameloop(gamedata, classmap, option, root):
 		# Si c'est au joueurs de jouer
 		if gamedata.Nb_toplay == gamedata.playerid:
 			# On entre dans la loop du tour du joueur
-			playerturn(gamedata)
+			playerturn(gamedata, classmap, option)
 		# Sinon c'est à un Ia de jouer
 		else:
 			# On entre dans la loop de l'ia
-			notplayerturn(gamedata)
+			notplayerturn(gamedata, classmap, option)
 
 	# On vérifie que la partie n'est pas terminé
 	if gamedata.is_finished == False:
@@ -797,7 +805,7 @@ def gameloop(gamedata, classmap, option, root):
 
 
 
-def playerturn(gamedata):
+def playerturn(gamedata, classmap, option):
 	# Si le joueur à appuier sur le bouton fin de tour
 	if gamedata.endturn == True:
 		gamedata.log.printinfo("Player hit end of turn button")
@@ -806,13 +814,12 @@ def playerturn(gamedata):
 		# On indique au joueurs que c'est à l'ia de Jouer
 
 # Fonction qui gère l'ia des ennemies
-def notplayerturn(gamedata):
+def notplayerturn(gamedata, classmap, option):
+	# On affiche la banderole
 	gamedata.semaphore = True
 	gamedata.log.printinfo(f"tour de: , {gamedata.list_lord[gamedata.Nb_toplay].lordname}, {gamedata.Nb_toplay}")
 	# L'ia Joue
-
-	gamedata.Nb_toplay += 1
-	gamedata.semaphore = False
+	ailord.mainai(gamedata, classmap, option)
 
 def endofturn(gamedata):
 	gamedata.semaphore = True
@@ -847,6 +854,13 @@ def bordervillage(Gamedata, Classmap, frame):
 	# Fonction pour afficher les frontière des villages
 	##################
 	pass
+
+def fight(gamedata, classmap):
+	##################
+	# Fonction pour gérer le combat entre 2 armée
+	##################
+	pass
+
 
 ######################### Main #########################
 if __name__ == '__main__':

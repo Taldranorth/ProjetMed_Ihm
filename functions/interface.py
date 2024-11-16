@@ -6,7 +6,7 @@ import functions.moveview as moveview
 
 ######################### Fonction Interface ############################
 
-def gameinterface(win, option, gamedata, classmap):
+def gameinterface(gamedata, classmap, option, win):
 
 	####################
 	# Fonction qui met en place l'interface en Jeu, voir l'entête
@@ -33,13 +33,14 @@ def gameinterface(win, option, gamedata, classmap):
 
 
 	# En tête Haut
-	topframe = tkinter.Frame(win, height = (option.heightWindow*0.2), width= option.widthWindow, background = "grey")
-	topframe.pack(expand = "True", side = "top")
+	topframe = tkinter.Frame(win, height = (option.heightWindow*0.4), width= option.widthWindow)
+	topframe.pack(expand = "True", fill = "none", side = "top")
 	# En tête Bas
-	bottomFrame = tkinter.Frame(win, height = (option.heightWindow*0.2), width= option.widthWindow, background = "grey")
-	bottomFrame.pack(expand = "True", side = "bottom")
+	bottomFrame = tkinter.Frame(win, height = (option.heightWindow*0.2), width= option.widthWindow)
+	bottomFrame.pack(expand = "True", fill = "none", side = "bottom")
 
-
+	gamedata.log.printinfo(f"Taille de la Frame du top: {topframe.winfo_width()}, {topframe.winfo_height()}")
+	gamedata.log.printinfo(f"Taille de la Frame du bas: {bottomFrame.winfo_width()}, {bottomFrame.winfo_height()}")
 
 
 	# on Créer les tkinter variables que l'on va utiliser
@@ -127,7 +128,7 @@ def gameinterface(win, option, gamedata, classmap):
 	# Exit, Option, Load, Sauvegarder
 	Button_exit = tkinter.Button(bottomFrame, command = exit, text = "Quitter")
 	# Button pour acceder à la vue générale
-	Button_globalview = tkinter.Button(bottomFrame, command = lambda: globalviewmenu(win, option, gamedata, classmap), text = "Vue Générale")
+	Button_globalview = tkinter.Button(bottomFrame, command = lambda: globalviewmenu(gamedata, classmap, option), text = "Vue Générale")
 
 	# Boutton Central
 	# Bouton Fin de Tour
@@ -164,7 +165,7 @@ def updateinterface(gamedata, tkvar_list):
 #  .transient(parent=None) ?
 # 
 ###############
-def globalviewmenu(win ,option, gamedata, classmap):
+def globalviewmenu(gamedata, classmap, option):
 
 	# ------------------
 	#	Village
@@ -183,12 +184,14 @@ def globalviewmenu(win ,option, gamedata, classmap):
 	#	Armée
 	# ------------------
 
+	xpos = classmap.mapcanv.canvasx(0)
+	ypos = classmap.mapcanv.canvasy(0)
 
 	##############################\ À changer\##############################
 	# Frame de la fenêtre
-	frame_global_view = tkinter.Frame(win, height = option.heightWindow, width = option.widthWindow)
+	frame_global_view = tkinter.Frame(classmap.framecanvas, height = option.heightWindow, width = option.widthWindow)
 	frame_global_view.pack()
-	canvaswindow = classmap.mapcanv.create_window(option.widthWindow/2, option.heightWindow/4, window = frame_global_view)
+	canvaswindow = classmap.mapcanv.create_window(xpos +option.widthWindow/2, ypos + option.heightWindow/4, window = frame_global_view)
 	###########################################################################
 	playerdata = gamedata.list_lord[gamedata.playerid]
 
@@ -263,13 +266,21 @@ def staterecruitarmy(gamedata, classmap, option):
 		frame_interface_army = tkinter.Frame(classmap.framecanvas)
 		frame_interface_army.pack()
 
+		frame_interface_army_left = tkinter.Frame(frame_interface_army)
+		frame_interface_army_left.pack(side = "left")
+
 		# listbox
-		lc_interface_army = tkinter.Listbox(frame_interface_army)
+		lc_interface_army = tkinter.Listbox(frame_interface_army_left)
+		lc_interface_army.pack()
 
 		# On affiche la liste des armées du Joueur uniquement
 		for army in player.army:
 			lc_interface_army.insert(tkinter.END, army.name)
-		#lc_interface_army.bind("<Double-Button-1>",)
+		# On bind l'objet à une fonction pour center sur l'armée selectionner
+		lc_interface_army.bind("<Double-Button-1>", lambda event: interfacerecruit(event, gamedata, classmap, option, frame_interface_army ))
+		# On créer un boutton pour créer une nouvelle armée
+		button_createarmy = tkinter.Button(frame_interface_army_left, text= "Nouvelle Armée", command = lambda: interfacecreatearmy(gamedata, lc_interface_army))
+		button_createarmy.pack(side = "bottom")
 
 		# On créer la window qui va s'afficher sur le canvas
 		idwindow = classmap.mapcanv.create_window(xorigine+option.widthWindow/6, yorigine+option.heightWindow/3, window = frame_interface_army)
@@ -289,6 +300,110 @@ def exitstatestaterecruitarmy(event, gamedata, classmap, idwindow):
 	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: highlightCase(event, gamedata, classmap))
 	# On remet à 0 l'état
 	gamedata.statenull()
+
+def interfacecreatearmy(gamedata, lc_interface_army):
+
+
+	player = gamedata.list_lord[gamedata.playerid]
+	lastarmy = len(player.army)
+
+	# On créer la nouvelle armée
+	player.createarmy(player.fief[0])
+	# On update l'interface de la listbox
+	lc_interface_army.insert(tkinter.END, player.army[lastarmy].name)
+
+def interfacerecruit(event, gamedata, classmap, option, frame_interface_army):
+
+	# On recup l'armée
+	army_selected = event.widget.get(event.widget.curselection()[0])
+
+	point_army_object = 0
+	# On recup l'objet army
+	for army in (gamedata.list_lord[gamedata.playerid].army):
+		if army.name == army_selected:
+			point_army_object = army
+
+
+	# On centre la vue sur l'armée selectionner
+	centerarmy(event, gamedata, classmap, option)
+
+	# On créer l'interface pour recruter
+	frame_interface_army_right = tkinter.Frame(frame_interface_army)
+	frame_interface_army_right.pack(side = "right")
+
+
+	# On créer les variables pour l'affichage
+	tkvar_power = tkinter.IntVar()
+	tkvar_power.set(army.power)
+
+	tkvar_lenknight = tkinter.IntVar()
+	tkvar_lenknight.set(army.knight)
+
+	tkvar_lenunit = tkinter.IntVar()
+	tkvar_lenunit.set(len(army.unit))
+
+	tkvar_list = [tkvar_power, tkvar_lenknight, tkvar_lenunit]
+
+	# On affiche les Infos de l'armée
+	frame_interface_army_right_top = tkinter.Frame(frame_interface_army_right)
+	frame_interface_army_right_top.pack(side = "top")
+
+	# La puissance de l'armée
+	tkinter.Label(frame_interface_army_right_top, textvariable = tkvar_list[0]).pack()
+	# Le nombre de Chevalier
+	tkinter.Label(frame_interface_army_right_top, textvariable = tkvar_list[1]).pack()
+	# Le nombre de Soldat
+	tkinter.Label(frame_interface_army_right_top, textvariable = tkvar_list[2]).pack()
+
+	# On créer un bouttons pour recruter un soldat
+	button_recruit_soldier = tkinter.Button(frame_interface_army_right, command = lambda unit="soldier": button_recruit(gamedata, tkvar_list, army, unit), text = "Recruter soldat")
+	button_recruit_soldier.pack(side = "bottom")
+
+	# On créer un bouttons pour recruter un Chevalier
+	button_recruit_knight = tkinter.Button(frame_interface_army_right, command = lambda unit="knight": button_recruit(gamedata, tkvar_list, army, unit), text = "Recruter Chevalier")
+	button_recruit_knight.pack(side = "bottom")
+
+def centerarmy(event, gamedata, classmap, option):
+	############
+	# Fonction appeler par la listbox lc_interface_army pour centrer la vue sur l'armée sélectionner
+	############
+	gamedata.log.printinfo("On se déplace vers le village")
+	# On recup le village actuellement selectionner dans la listbox
+	army_selected = event.widget.get(event.widget.curselection()[0])
+	
+	point_army_object = 0
+	# On recup l'objet army
+	for army in (gamedata.list_lord[gamedata.playerid].army):
+		if army.name == army_selected:
+			point_army_object = army
+
+
+	#print("x,y: ", x, y)
+	coord = moveview.coordmaptocanvas(gamedata, classmap, option, [army.x, army.y])
+	#print("Coord Canvas: ", coord[0], coord[1])
+
+
+	# On centre la vu sur le village
+	moveview.centerviewcanvas(gamedata, classmap, option, coord)
+
+def button_recruit(gamedata, tkvar_list, army, unit):
+	################
+	# Fonction appeler pour recruter
+	################
+
+
+	# On recrute l'unité
+	if unit == "knight":
+		army.recruitknight(gamedata.randomnametype("Surnom"))
+		tkvar_list[1].set(army.knight.name)
+	elif unit == "soldier":
+		army.recruitsoldier(gamedata.randomnametype("Nom"))
+		tkvar_list[2].set(len(army.unit))
+
+	# On update l'interface
+	tkvar_list[0].set(army.power)
+
+
 
 
 ############################################# War #############################################
@@ -709,6 +824,32 @@ def exitvillageinterface(event, gamedata, classmap, lwindow):
 
 	# On quitte l'état de construction de village
 	gamedata.statenull()
+
+
+
+def banderole(gamedata, classmap, option):
+	################
+	# Fonction pour afficher une banderole aux joueurs qui indique qu'elle AI est entrain de jouer
+	################
+
+	# On créer le Frame
+	frame_banderole = tkinter.Frame(classmap.framecanvas)
+	frame_banderole.pack()
+
+	# On lie le frame au canvas principale
+	idwindow = classmap.mapcanv.create_window(option.widthWindow/2 , option.widthWindow/4, window = frame_banderole)
+
+	# On créer le canvas utiliser pour gérer l'affichage
+	canvas_banderole = tkinter.Canvas(frame_banderole)
+	canvas_banderole.pack()
+
+	tkinter.Label(canvas_banderole, text = f"C'est au Seigneur N°{gamedata.Nb_toplay} {gamedata.list_lord[gamedata.Nb_toplay].lordname} de jouer").pack()
+
+	return idwindow
+
+
+def destroybanderole(gamedata, classmap, idwindow):
+	classmap.mapcanv.delete(idwindow)
 
 
 

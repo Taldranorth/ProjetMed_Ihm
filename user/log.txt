@@ -1,0 +1,8 @@
+[13:59:58]Info: Initialisation log terminé
+[13:59:58]Info: 1200x1200+150+150
+[13:59:58]Info: Initialisation de l'application terminé
+[14:00:00]Info: taille écran x,y: 1440, 900
+[14:00:00]Info: Taille de la Frame du Canvas: 1, 1
+[14:00:00]Info: Taille de la Frame du top: 1, 1
+[14:00:00]Info: Taille de la Frame du bas: 1, 1
+[14:00:00]Info: Taille du Canvas:1, 1

@@ -97,6 +97,7 @@ class Classlord:
 		self.type = 0
 
 	def createarmy(self, village):
+		print("On créer une armée dans le village: ", village.name)
 		self.army += [Classarmy(village.x, village.y, ("unit_" + village.name))]
 
 	def addvassal(self, vassal):
@@ -206,9 +207,9 @@ class Classvillage:
 # Classe qui vient définir une armée
 class Classarmy:
 
-	def __init__(self, x, y, name):
+	def __init__(self, x, y, name:chr):
 		# Nom de la troupe
-		self.name = 0
+		self.name = name
 
 		#position actuelle de la troupe
 		self.x = x
@@ -225,17 +226,45 @@ class Classarmy:
 		# Déplacement possible de la troupe
 		self.movecapacity = 0		
 
-	def recruitknight(self):
+	def recruitknight(self, name:chr):
 		#######
 		# Méthode pour recruter un Chevalier
 		#######
-		pass
+		self.knight = ClassKnight(name)
 
-	def recruitsolder(self):
+
+	def recruitsoldier(self, name:chr):
 		#######
 		# Méthode pour recruter un Soldat
 		#######
-		pass
+		self.unit += [ClassSoldier(name)]
+
+	def updatearmy(self):
+		#######
+		# Méthode pour Update les infos de l'armée
+		#######
+
+		# On update la capacité militaire
+		self.power = 0
+		if self.knight != 0:
+			self.power = self.knight.power
+		for unit in self.unit:
+			self.power += unit.power
+
+		# On update la capicité de mouvement
+		self.movecapacity = 0
+		# Si soldat et knight
+		if (self.knight != 0) and (len(self.unit) != 0):
+			self.movecapacity = 7
+		# Sinon si seulement knight
+		elif self.knight != 0:
+			self.movecapacity = 10
+		# Sinon si seulement unit
+		elif len(self.unit) != 0:
+			self.movecapacity = 4
+
+
+
 
 	def updatemovementcapacity(self):
 		#######
@@ -271,6 +300,7 @@ class ClassHuman:
 		self.ressource = 1
 		self.money = 0
 		self.joy = 50
+		#capacité de production
 		self.cp = 2
 		self.age = random.randrange(15,30)
 
@@ -279,7 +309,26 @@ class ClassHuman:
 
 
 
+class ClassKnight:
+
+	def __init__(self, name:chr):
+		self.name = name
+		self.ressource = 10
+		self.money = 10
+		self.joy = 50
+		self.age = random.randrange(15,30)
+		self.power = 10
+		self.movecapacity = 10
 
 
+class ClassSoldier:
 
+	def __init__(self, name:chr):
+		self.name = name
+		self.ressource = 1
+		self.money = 0
+		self.joy = 50
+		self.age = random.randrange(15,30)
+		self.power = 1
+		self.movecapacity = 4
 

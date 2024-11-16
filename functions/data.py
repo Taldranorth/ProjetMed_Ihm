@@ -4,6 +4,7 @@ import random
 
 import functions.gameclass as gameclass
 
+from datetime import datetime
 from time import time
 from PIL import ImageTk, Image, ImageShow
 
@@ -326,8 +327,8 @@ class ClassOptions:
 	def __init__(self):
 
 		#Défintion de la fenêtre
-		self.heightWindow = 1200
 		self.widthWindow = 1200
+		self.heightWindow = 1200
 		# Définition de la carte
 		self.mapx = 100
 		self.mapy = 100
@@ -352,21 +353,53 @@ class Classlog:
 	####################
 
 	def __init__(self):
-		self.file = open("user/log.txt", "w")
-
+		self.file = "user/log.txt"
 		self.loglevel = 0
+		self.semaphore = False
+
+		# On nettoye le log présent à l'emplacement
+		f = open(self.file, "w")
+		f.close()
 
 	def printerror(self, ch):
-		ch = "Erreur:" + ch
-		print(ch)
-		ch += "\n"
-		self.file.write(ch)
+
+		# On s'assure que le fichier n'est pas actuellement ouvert 
+		if self.semaphore == False:
+			self.semaphore = True
+			# On ouvre le log
+			f = open(self.file, "r+")
+			f.readlines()
+			ch = "Erreur:" + ch
+			ch = self.formatlog(ch)
+			print(ch)
+			f.write(ch+"\n")
+			# On ferme le log
+			f.close()
+			self.semaphore = False
 
 	def printinfo(self, ch):
-		ch = "Info: " +ch
-		print(ch)
-		ch += "\n"
-		self.file.write(ch)
+		# On s'assure que le fichier n'est pas actuellement ouvert
+		if self.semaphore == False:
+			self.semaphore = True
+			#On Ouvre le log
+			f = open(self.file, "r+")
+			# On se place à la dernière ligne
+			f.readlines()
+			ch = "Info: " +ch
+			ch = self.formatlog(ch)
+			print(ch)
+			f.write(ch+"\n")
+			# On ferme le log
+			f.close()
+			self.semaphore = False
+
+	def formatlog(self, ch):
+		####################
+		# Fonction qui formatte le message pour l'écriture
+		####################
+		ch = "[" + str(datetime.now())[11:19] +"]" + ch
+		return ch
+
 
 
 class Classmap:
