@@ -128,6 +128,10 @@ class ClassGameData:
 		# Label Frame Atlas
 		self.lframe = 0
 
+		# Variable qui vient contenir la file des actions
+		# liste de Piles
+		self.actionlist = []
+
 		self.log = Classlog()
 		# Donnés qui vient contenir l'état du joueur
 		#	Utiliser quand on créer une interface spéciale
@@ -314,7 +318,7 @@ class ClassGameData:
 			self.log.printerror(f"déjà dans un état {self.state}")
 			return False
 		else:
-			self.state = "build_church"
+			self.state = newstate
 			self.log.printinfo(f"entre dans un état {newstate}")
 			return True
 
@@ -323,6 +327,7 @@ class ClassGameData:
 		####################
 		# Methode pour renvoyer l'état à null
 		####################
+		self.log.printinfo(f"On quitte l'état {self.state}")
 		self.state = 0
 
 	def endofturn(self):
@@ -340,6 +345,44 @@ class ClassGameData:
 		# Méthode appeler quand ont veut quitter le jeu
 		################
 		self.log.file.close()
+
+		######################## Methode Queue des Actions	########################
+
+	def addactionlist(self, action, turn):
+		################
+		# Méthode appeler quand ont veut ajouter une action qui se produira dans x tour
+		# Définit les variables stocker dans action
+		################
+
+		# Si actuellement la liste des action prévu est inférieur on ajoute turn liste vide
+		if len(self.actionlist) < turn:
+			for x in range(turn - len(self.actionlist)):
+				self.actionlist += [[]]
+
+		# On ajoute l'action dans la turn pile à la dernière place
+		self.actionlist[turn] += [action]
+
+	def removeactionlist(self, action, turn):
+		################
+		# Méthode appeler quand ont veut retirer une action
+		################
+		pass
+
+	def eotactionlist(self):
+		################
+		# Méthode appeler à la fin du tour
+		################
+
+		# On éxécute toute les actions en 0
+		for action in self.actionlist[0]:
+			pass
+
+		# On déplace les piles vers la gauche 1->0, 2->1
+		i = 0
+		while i < len(self.actionlist):
+			self.actionlist[i] = self.actionlist[i+1]
+
+	####################################################################################
 
 
 

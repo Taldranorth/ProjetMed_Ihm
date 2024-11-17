@@ -191,7 +191,7 @@ def globalviewmenu(gamedata, classmap, option):
 	# Frame de la fenêtre
 	frame_global_view = tkinter.Frame(classmap.framecanvas, height = option.heightWindow, width = option.widthWindow)
 	frame_global_view.pack()
-	canvaswindow = classmap.mapcanv.create_window(xpos +option.widthWindow/2, ypos + option.heightWindow/4, window = frame_global_view)
+	canvaswindow = classmap.mapcanv.create_window(xpos +option.widthWindow/2, ypos + option.heightWindow/4, window = frame_global_view, tags = "interface")
 	###########################################################################
 	playerdata = gamedata.list_lord[gamedata.playerid]
 
@@ -263,49 +263,30 @@ def staterecruitarmy(gamedata, classmap, option):
 	#
 	################
 
-	if gamedata.changenewstate("interface_recruit_army" == True):
+	if gamedata.changenewstate("interface_recruit_army") == True:
 		player = gamedata.list_lord[gamedata.playerid]
 		xorigine = classmap.mapcanv.canvasx(0)
 		yorigine = classmap.mapcanv.canvasy(0)
 
 		# On créer l'interface qui va contenir le frame
-		frame_interface_army = tkinter.Frame(classmap.framecanvas)
-		frame_interface_army.pack()
-
-		frame_interface_army_left = tkinter.Frame(frame_interface_army)
-		frame_interface_army_left.pack(side = "left")
+		frame_interface_army = tkinter.Frame(classmap.framecanvas, height = 200, width = 300)
+		frame_interface_army.place(x = (option.widthWindow/6), y = (option.heightWindow*0.2))
 
 		# listbox
-		lc_interface_army = tkinter.Listbox(frame_interface_army_left)
-		lc_interface_army.pack()
+		lc_interface_army = tkinter.Listbox(frame_interface_army)
+		lc_interface_army.place(relx = 0, rely = 0, width = 150, anchor = tkinter.NW)
 
 		# On affiche la liste des armées du Joueur uniquement
 		for army in player.army:
 			lc_interface_army.insert(tkinter.END, army.name)
 		# On bind l'objet à une fonction pour center sur l'armée selectionner
-		lc_interface_army.bind("<Double-Button-1>", lambda event: interfacerecruit(event, gamedata, classmap, option, frame_interface_army ))
+		lc_interface_army.bind("<Double-Button-1>", lambda event: interfacerecruit(event, gamedata, classmap, option, frame_interface_army))
 		# On créer un boutton pour créer une nouvelle armée
-		button_createarmy = tkinter.Button(frame_interface_army_left, text= "Nouvelle Armée", command = lambda: interfacecreatearmy(gamedata, classmap, option, lc_interface_army))
-		button_createarmy.pack(side = "bottom")
-
-		# On créer la window qui va s'afficher sur le canvas
-		idwindow = classmap.mapcanv.create_window(xorigine+option.widthWindow/6, yorigine+option.heightWindow/3, window = frame_interface_army)
+		button_createarmy = tkinter.Button(frame_interface_army, text= "Nouvelle Armée", command = lambda: interfacecreatearmy(gamedata, classmap, option, lc_interface_army))
+		button_createarmy.place(x=30, y=200, anchor = tkinter.SW)
 
 		# On bind 
-		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstatestaterecruitarmy(event, gamedata, classmap, idwindow))
-
-
-def exitstatestaterecruitarmy(event, gamedata, classmap, idwindow):
-	################
-	# Fonction pour quitter l'interface de recrutement d'armé
-	################
-	gamedata.log.printinfo("On Supprimer l'interface de recretument d'armée")
-	# On nettoye l'interface
-	classmap.mapcanv.delete(idwindow)
-	# On Unbind
-	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: highlightCase(event, gamedata, classmap))
-	# On remet à 0 l'état
-	gamedata.statenull()
+		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], [frame_interface_army]))
 
 def interfacecreatearmy(gamedata, classmap, option, lc_interface_army):
 
@@ -339,7 +320,7 @@ def interfacerecruit(event, gamedata, classmap, option, frame_interface_army):
 
 	# On créer l'interface pour recruter
 	frame_interface_army_right = tkinter.Frame(frame_interface_army)
-	frame_interface_army_right.pack(side = "right")
+	frame_interface_army_right.place(x = 150, rely = 0 )
 
 
 	# On créer les variables pour l'affichage
@@ -366,11 +347,11 @@ def interfacerecruit(event, gamedata, classmap, option, frame_interface_army):
 	tkinter.Label(frame_interface_army_right_top, textvariable = tkvar_list[2]).pack()
 
 	# On créer un bouttons pour recruter un soldat
-	button_recruit_soldier = tkinter.Button(frame_interface_army_right, command = lambda unit="soldier": button_recruit(gamedata, tkvar_list, army, unit), text = "Recruter soldat")
+	button_recruit_soldier = tkinter.Button(frame_interface_army_right, command = lambda unit="soldier": button_recruit(gamedata, classmap, tkvar_list, army, unit), text = "Recruter soldat")
 	button_recruit_soldier.pack(side = "bottom")
 
 	# On créer un bouttons pour recruter un Chevalier
-	button_recruit_knight = tkinter.Button(frame_interface_army_right, command = lambda unit="knight": button_recruit(gamedata, tkvar_list, army, unit), text = "Recruter Chevalier")
+	button_recruit_knight = tkinter.Button(frame_interface_army_right, command = lambda unit="knight": button_recruit(gamedata, classmap, tkvar_list, army, unit), text = "Recruter Chevalier")
 	button_recruit_knight.pack(side = "bottom")
 
 def centerarmy(event, gamedata, classmap, option):
@@ -396,7 +377,7 @@ def centerarmy(event, gamedata, classmap, option):
 	# On centre la vu sur le village
 	moveview.centerviewcanvas(gamedata, classmap, option, coord)
 
-def button_recruit(gamedata, tkvar_list, army, unit):
+def button_recruit(gamedata, classmap, tkvar_list, army, unit):
 	################
 	# Fonction appeler pour recruter
 	################
@@ -409,6 +390,9 @@ def button_recruit(gamedata, tkvar_list, army, unit):
 	elif unit == "soldier":
 		army.recruitsoldier(gamedata.randomnametype("Nom"))
 		tkvar_list[2].set(len(army.unit))
+	# On update l'armée
+	if gamedata.searchtexturetypeindico(army.texture) != "knight":
+		affichage.printupdatearmy(gamedata, classmap, army)
 
 	# On update l'interface
 	tkvar_list[0].set(army.power)
@@ -434,9 +418,9 @@ def statewar(gamedata, classmap, option):
 	#################
 
 	if gamedata.changenewstate("interface_war") == True :
-		# Tant que la carte n'est pas dezoom à 20
-		while gamedata.tuilesize != 20:
-			moveview.moveviewz(gamedata)
+		# Tant que la carte n'est pas dezoom à 10
+		while gamedata.tuilesize != 10:
+			moveview.moveviewzcenter(gamedata, classmap, option)
 
 		player = gamedata.list_lord[gamedata.playerid]
 		ts = gamedata.tuilesize
@@ -468,21 +452,27 @@ def statewar(gamedata, classmap, option):
 
 		# On créer l'interface
 		frame_interface_war = tkinter.Frame(classmap.framecanvas)
-		frame_interface_war.pack()
+		frame_interface_war.place(x = (option.widthWindow/6), y = (option.heightWindow*0.2))
 
-		# On affiche dans une fenêtre liée au canvas
-		idwindow = classmap.mapcanv.create_window(xorigine+option.widthWindow/6, yorigine+option.heightWindow/3, window = frame_interface_war)
-
-		# On affiche une liste des alliés, des ennemies et des neutres
 		frame_interface_war_list_ally = tkinter.Frame(frame_interface_war)
 		frame_interface_war_list_ennemy = tkinter.Frame(frame_interface_war)
 		frame_interface_war_list_neutral = tkinter.Frame(frame_interface_war)
 		frame_interface_war_list_ally.pack(side = "left")
 		frame_interface_war_list_ennemy.pack(side = "left")
 		frame_interface_war_list_neutral.pack(side = "left")
-		tkinter.Label(frame_interface_war_list_ally, text = "Allié").pack(side = "top")
-		tkinter.Label(frame_interface_war_list_ennemy, text = "Ennemie").pack(side = "top")
-		tkinter.Label(frame_interface_war_list_neutral, text = "Neutre").pack(side = "top")
+
+		frame_interface_war_list_ally_top = tkinter.Frame(frame_interface_war_list_ally)
+		frame_interface_war_list_ennemy_top = tkinter.Frame(frame_interface_war_list_ennemy)
+		frame_interface_war_list_neutral_top = tkinter.Frame(frame_interface_war_list_neutral)
+
+		frame_interface_war_list_ally_top.pack(side = "top")
+		frame_interface_war_list_ennemy_top.pack(side = "top")
+		frame_interface_war_list_neutral_top.pack(side = "top")
+
+
+		tkinter.Label(frame_interface_war_list_ally_top, text = "Allié").pack(side = "top")
+		tkinter.Label(frame_interface_war_list_ennemy_top, text = "Ennemie").pack(side = "top")
+		tkinter.Label(frame_interface_war_list_neutral_top, text = "Neutre").pack(side = "top")
 
 		for lord in gamedata.list_lord:
 			if lord in player.vassal:
@@ -493,32 +483,12 @@ def statewar(gamedata, classmap, option):
 				tkinter.Label(frame_interface_war_list_neutral, text = lord.lordname).pack(side = "top")
 
 		# On bind
-		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstatewar(event, gamedata, classmap, idwindow))
+		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], [frame_interface_war, "interface_war"]))
 
 def wardeclaration(gamedata, mapcanv, lord):
 
 	
 	pass
-
-def exitstatewar(event, gamedata, classmap, idwindow):
-	################
-	# Fonction pour quitter l'interface de guerre
-	################
-	gamedata.log.printinfo("On Supprimer le grillage war")
-	# On delete les carrer
-	classmap.mapcanv.delete("interface_war")
-
-	gamedata.log.printinfo("On Supprimer l'interface war")
-	# On delete la fenêtre
-	classmap.mapcanv.delete(idwindow)
-
-	# On unbind
-	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: highlightCase(event, gamedata, classmap))
-
-	# On quitter l'état de guerre
-	gamedata.statenull()
-
-
 
 ##############################################################\ Gestion  \###########################################################################
 
@@ -562,7 +532,7 @@ def statebuildvillage(gamedata, classmap, option):
 
 		# On tag au carrer 
 		classmap.mapcanv.tag_bind("buildvillage", "<Button-1>", lambda event: buildvillage(event, gamedata, classmap, option))
-		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstatebuildvillage(event, gamedata, classmap), add = "+")
+		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], ["buildvillage"]))
 
 	# Si on appuie sur esc on quitte automatiquement le mode de construction
 
@@ -612,22 +582,6 @@ def updatestatbuildvillage(classmap, option):
 		if genproc.buildvillagepossible(option, classmap, idtuile) == False:
 			classmap.mapcanv.delete(tuile)
 
-
-
-
-def exitstatebuildvillage(event, gamedata, classmap):
-	# On delete tout les éléments ayant le tag buildvillage
-	gamedata.log.printinfo("On Supprimer le grillage constuction")
-	classmap.mapcanv.delete("buildvillage")
-	# On retire le bind
-	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: highlightCase(event, gamedata, classmap))
-
-	gamedata.statenull()
-
-
-
-
-
 ############################################# Build Church #############################################
 
 def statebuildchurch(gamedata, classmap, option):
@@ -644,7 +598,7 @@ def statebuildchurch(gamedata, classmap, option):
 
 		# On créer la frame
 		frame_interface_church = tkinter.Frame(classmap.framecanvas)
-		frame_interface_church.pack()
+		frame_interface_church.place(x = (option.widthWindow/6), y = (option.heightWindow*0.2))
 
 		# On créer la listbox
 		lc_interface_church = tkinter.Listbox(frame_interface_church)
@@ -655,9 +609,6 @@ def statebuildchurch(gamedata, classmap, option):
 				lc_interface_church.insert(tkinter.END, village.name)
 		# Quand un village est double click on appele la fonction pour centrer la vue sur le village
 		lc_interface_church.bind("<Double-Button-1>", lambda event: centervillagechurch(event, gamedata, classmap, option))
-		
-		#ON créer un window dans le canvas
-		idwindow = classmap.mapcanv.create_window(xoriginewindow+option.widthWindow/6, yoriginewindow+option.heightWindow/3, window = frame_interface_church)
 
 		# On affiche en vert tout les villages ou on peut construire une église
 		for village in player.fief:
@@ -670,7 +621,7 @@ def statebuildchurch(gamedata, classmap, option):
 		idbuildchurch = classmap.mapcanv.tag_bind("village", "<Button-1>", lambda event: triggerbuildchurch(event, gamedata, classmap, option), add = "+")
 
 		# On bind la fonction d'exit à tout ce qui n'est pas un village
-		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstatebuildchurch(event, gamedata, classmap, option, idwindow, idbuildchurch))
+		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event, lsequ = [["village","<Button-1>"]], lf = [idbuildchurch], lidw = [frame_interface_church, "buildchurch"]: exitstate(gamedata, classmap, option, lsequ, lf, lidw))
 
 
 def centervillagechurch(event, gamedata, classmap, option):
@@ -719,24 +670,7 @@ def triggerbuildchurch(event, gamedata, classmap, option):
 	# On vérife que le village appartient au joueur
 	if village in gamedata.list_lord[gamedata.playerid].fief:
 		village.buildchurch(gamedata.randomnametype("Nom"))
-
-def exitstatebuildchurch(event, gamedata, classmap, option, idwindow, funcid_buildchurch):
-	############
-	# Fonction pour sortir de l'état build_church et néttoyer l'interface
-	############
-	gamedata.log.printinfo("On Supprimer le grillage church")
-	# On détruit les cases verte
-	classmap.mapcanv.delete("buildchurch")
-	gamedata.log.printinfo("On Supprimer l'interface build_church'")
-	# On détruit l'interface
-	classmap.mapcanv.delete(idwindow)
-	# On retire le bind exit
-	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: highlightCase(event, gamedata, classmap))
-	# On retir le bind build
-	classmap.mapcanv.tag_unbind("village", "<Button-1>", funcid = funcid_buildchurch)
-	# On sort de l'état build_church
-	gamedata.statenull()
-
+		# On retire le carrer 
 
 def tax():
 	pass
@@ -759,14 +693,13 @@ def villageinterface(event, gamedata, classmap, option):
 		# On recup la pos x et y du village dans la map
 		gamedata.log.printinfo(f"{event.widget.gettags(idcanvasvillage)}")
 		# Si on à cliqué sur le village
-		if event.widget.type(idcanvasvillage) == "img":
-			posx = event.widget.gettags(idcanvasvillage)[5]
-			posy = event.widget.gettags(idcanvasvillage)[6]
+		if event.widget.gettags(idcanvasvillage)[0] == "village":
+			posx = event.widget.gettags(idcanvasvillage)[4]
+			posy = event.widget.gettags(idcanvasvillage)[5]
 		# Sinon on à cliqué sur le label
 		else:
 			posx = event.widget.gettags(idcanvasvillage)[3]
 			posy = event.widget.gettags(idcanvasvillage)[4]
-
 		# On calcul l'id map du village
 		idmapvillage = int(posx)+(option.mapx*int(posy))
 		gamedata.log.printinfo(f"{idmapvillage}")
@@ -789,21 +722,16 @@ def villageinterface(event, gamedata, classmap, option):
 		frame_info = tkinter.Frame(classmap.framecanvas)
 		# On créer la frame qui vient contenir les actions possibles
 		frame_button = tkinter.Frame(classmap.framecanvas)
-		frame_info.pack()
-		frame_button.pack()
+		frame_info.place(x = (option.widthWindow/6), y = (option.heightWindow*0.2))
+		frame_button.place(x = (option.widthWindow/2), y = (option.heightWindow*0.2))
 
 		# On créer les fenêtre
 		# Demade un placement précis
-		canvas_window_list = []
-		# Pour les fenêtre on prend en compte le décalage créer par scan_dragto()
-		# Fenêtre Info
-		canvas_window_list += [classmap.mapcanv.create_window(xorigine+option.widthWindow/3, yorigine+option.heightWindow/4, window = frame_info)]
+		canvas_window_list = [frame_info, frame_button]
 
 		# Si le village appartient au joueur on affiche l'interface Button
 		# On vérifie que l'objet village est présent dans la liste de fief du joueur
 		if classmap.listmap[idmapvillage].village in gamedata.list_lord[gamedata.playerid].fief:
-			# Fenêtre Button
-			canvas_window_list += [classmap.mapcanv.create_window(xorigine+option.widthWindow/1.5, yorigine+option.heightWindow/4, window = frame_button)]
 			# On fait apparaitre les boutons
 			button_build_church = tkinter.Button(frame_button, text = "Construire Église")
 			button_immigration = tkinter.Button(frame_button, text = "Immigration")
@@ -837,21 +765,7 @@ def villageinterface(event, gamedata, classmap, option):
 		######################################################################
 
 		# Si le joueur clique autre part on sort de l'interface
-		classmap.mapcanv.tag_bind("click", "<Button-1>",lambda event, cwl = canvas_window_list: exitvillageinterface(event, gamedata, classmap, cwl))
-
-
-def exitvillageinterface(event, gamedata, classmap, lwindow):
-	################
-	# Fonction pour détruire les fenêtre de l'interface du village
-	################
-	for id in lwindow:
-		classmap.mapcanv.delete(id)
-	gamedata.log.printinfo("On supprime l'interface du village")
-	# On retire le bind sur la fonction
-	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: highlightCase(event, gamedata, classmap))
-
-	# On quitte l'état de l'interface du village
-	gamedata.statenull()
+		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event, cwl = canvas_window_list: exitstate(gamedata, classmap, option, [], [], cwl))
 
 
 def armyinterface(event, gamedata, classmap, option):
@@ -863,7 +777,7 @@ def armyinterface(event, gamedata, classmap, option):
 
 		# On créer le frame
 		frame_interface_army = tkinter.Frame(classmap.framecanvas)
-		frame_interface_army.pack()
+		frame_interface_army.place(x = (option.widthWindow/3), y = (option.heightWindow/2))
 
 		ts = gamedata.tuilesize
 		# on recup les coord (0,0) de la window
@@ -875,10 +789,6 @@ def armyinterface(event, gamedata, classmap, option):
 		posy = classmap.mapcanv.coords(classmap.mapcanv.find_withtag("current"))[1]
 		# On recup l'objet army
 		army = gamedata.coordtoarmy(gamedata.playerid, [int((posx-ts/2)/ts), int((posy-ts/2)/ts)])
-
-		# On le lie au canvas
-		idwindow = classmap.mapcanv.create_window(xorigine+(option.widthWindow/2), yorigine+(option.heightWindow/3), window = frame_interface_army)
-
 
 		# On affiche le nom
 		tkinter.Label(frame_interface_army, text = army.name).pack(side = "left")
@@ -899,22 +809,7 @@ def armyinterface(event, gamedata, classmap, option):
 		# Si on clique droit sur une armée non allié alors que l'on à selectionner une armée on attaque
 
 		# Si on clique sur autre chose on quitte l'interface
-		classmap.mapcanv.tag_bind("click", "<Button-1>",lambda event: exitinterfacearmy(event, gamedata, classmap, idwindow))
-
-
-def exitinterfacearmy(event, gamedata, classmap, idwindow):
-	################
-	# Fonction pour détruire la fenêtre de l'interface de l'armée sélectionné
-	################
-	# On détruit l'interface
-	classmap.mapcanv.delete(idwindow)
-	gamedata.log.printinfo("On supprime l'interface de l'armée")
-	# On debind
-	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: highlightCase(event, gamedata, classmap))
-
-	# On quitte l'état de l'interface de l'armée
-	gamedata.statenull()
-
+		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], [frame_interface_army]))
 
 def banderole(gamedata, classmap, option):
 	################
@@ -926,7 +821,7 @@ def banderole(gamedata, classmap, option):
 	frame_banderole.pack()
 
 	# On lie le frame au canvas principale
-	idwindow = classmap.mapcanv.create_window(option.widthWindow/2 , option.widthWindow/4, window = frame_banderole)
+	idwindow = classmap.mapcanv.create_window(option.widthWindow/2 , option.widthWindow/4, window = frame_banderole, tags = "interface")
 
 	# On créer le canvas utiliser pour gérer l'affichage
 	canvas_banderole = tkinter.Canvas(frame_banderole)
@@ -939,6 +834,36 @@ def banderole(gamedata, classmap, option):
 
 def destroybanderole(gamedata, classmap, idwindow):
 	classmap.mapcanv.delete(idwindow)
+
+
+
+def exitstate(gamedata, classmap, option, lsequbind, lfuncid, lidwindow):
+	################
+	# Fonction générale pour détruire l'interface, unbind les touches et sortir de l'état
+	# demande:
+	# - une liste qui contient les séquence du bind ["tag" , "Button"]
+	# - une liste qui contient les funcid du bind
+	# - une liste qui contient les idwindow ou canvas à détruire
+	################
+	# On détruit l'idwindow
+	for idw in lidwindow:
+		#print(type(idw), idw)
+		if (type(idw) == int) or (type(idw) == str):
+			classmap.mapcanv.delete(idw)
+		else:
+			idw.destroy()
+
+	# On unbind les fonctions
+	i = 0
+	while(i < len(lfuncid)):
+		classmap.mapcanv.tag_unbind(lsequbind[i][0], lsequbind[i][1], lfuncid[i])
+		i += 1
+
+	# De manière générale on vient remplacer le bin click par le highlight case
+	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: highlightCase(event, gamedata, classmap))
+
+	# On quitte l'état
+	gamedata.statenull()
 
 
 

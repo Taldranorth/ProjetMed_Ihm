@@ -213,9 +213,12 @@ class Classarmy:
 		# Nom de la troupe
 		self.name = name
 
-		#position actuelle de la troupe
+		# position actuelle de la troupe
 		self.x = x
 		self.y = y
+		# objet tuile
+		self.idtcanvas = 0
+
 
 		# Chevalier qui mène la troupe
 		self.knight = 0

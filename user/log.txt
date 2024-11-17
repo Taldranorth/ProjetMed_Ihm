@@ -1,33 +1,12 @@
-[19:21:56]Info: Initialisation log terminé
-[19:21:56]Info: 1200x1200+150+150
-[19:21:56]Info: Initialisation de l'application terminé
-[19:21:56]Info: taille écran x,y: 1440, 900
-[19:21:56]Info: Taille de la Frame du Canvas: 1, 1
-[19:21:56]Info: Taille de la Frame du top: 1, 1
-[19:21:56]Info: Taille de la Frame du bas: 1, 1
-[19:21:56]Info: Taille du Canvas:1, 1
-[19:21:57]Info: coord de la tuile 0,0 Canvas: , [10.0, 10.0]
-[19:21:57]Info: coordonnées window de la souris: , 586, 361
-[19:21:57]Info: 1
-[19:21:57]Info: déplacement de x,y: , 580.0, 380.0
-[19:21:58]Info: taille Atlas: 5
-[19:21:58]Info: coord de la tuile 0,0 Canvas: , [20.0, 20.0]
-[19:21:58]Info: coordonnées window de la souris: , 1166, 741
-[19:21:58]Info: 1
-[19:21:58]Info: déplacement de x,y: , 1760.0, 1120.0
-[19:21:58]Info: taille Atlas: 5
-[19:21:58]Info: coord de la tuile 0,0 Canvas: , [40.0, 40.0]
-[19:21:58]Info: coordonnées window de la souris: , 2346, 1481
-[19:21:58]Info: -1
-[19:21:58]Info: déplacement de x,y: , 620.0, 420.0
-[19:21:58]Info: taille Atlas: 5
-[19:21:58]Info: coord de la tuile 0,0 Canvas: , [20.0, 20.0]
-[19:21:58]Info: coordonnées window de la souris: , 1206, 781
-[19:21:58]Info: -1
-[19:21:58]Info: déplacement de x,y: , 10.0, 30.0
-[19:21:58]Info: taille Atlas: 5
-[19:21:58]Info: coord de la tuile 0,0 Canvas: , [10.0, 10.0]
-[19:21:58]Info: coordonnées window de la souris: , 596, 391
-[19:21:58]Info: -1
-[19:21:58]Info: déplacement de x,y: , -305.0, -165.0
-[19:21:58]Info: taille Atlas: 5
+[20:37:25]Info: Initialisation log terminé
+[20:37:25]Info: 1200x1200+150+150
+[20:37:25]Info: Initialisation de l'application terminé
+[20:37:27]Info: taille écran x,y: 1440, 900
+[20:37:27]Info: Taille de la Frame du Canvas: 1, 1
+[20:37:27]Info: Taille de la Frame du top: 1, 1
+[20:37:27]Info: Taille de la Frame du bas: 1, 1
+[20:37:27]Info: Taille du Canvas:1, 1
+[20:37:30]Info: entre dans un état interface_war
+[20:37:30]Info: déplacement de x,y: , 0.0, 0.0
+[20:37:30]Info: taille Atlas: 5
+[20:37:30]Info: déplacement de x,y: , -100.0, 140.0

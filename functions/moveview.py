@@ -178,6 +178,56 @@ def moveviewz(event, gamedata, classmap, option):
 	gamedata.log.printinfo(f"taille Atlas: {len(gamedata.atlas)}")
 	############################################################
 
+def moveviewzcenter(gamedata, classmap, option):
+	####################
+	# Version simplifié pour dezoom au centre de la carte
+	#####################
+
+	####################\ 1°) \####################
+	# On recup la taille d'une tuile et définit le delta
+	x = gamedata.tuilesize
+	delta = -2
+	############################################################
+
+	####################\ 2°) \####################
+	# DeZoom
+	canvasgooriginewindow(classmap)
+	classmap.mapcanv.scale("tuile", 0, 0, -1/(delta), -1/(delta))
+	x = x*(-1/(delta))
+	print(x)
+	# Place au centre de l'écran
+	coordcanv = [classmap.mapcanv.canvasx(option.widthWindow//2), classmap.mapcanv.canvasx((option.heightWindow*0.6)//2)]
+	centerviewcanvas(gamedata, classmap, option, coordcanv)
+	# On change la taille des tuiles stocker dans les données globaux
+	gamedata.newsizetuile(x)
+	###################################################################
+
+	####################\ 5°) \#########################################
+	# Recalcul des images
+	# On Update l'atlas pour prendre en compte la nouvelle taille des textures
+	gamedata.resizeatlas(x)
+	#Tuile graphique:
+	for imgid in classmap.mapcanv.find_withtag("img"):
+		# Si c'est un village on assigne directiement la variable texture
+		if "village" in classmap.mapcanv.gettags(imgid):
+			texture = "settlement.png"
+		# Si c'est une armée
+		elif "army" in classmap.mapcanv.gettags(imgid):
+			coord = [int(classmap.mapcanv.gettags(imgid)[3]), int(classmap.mapcanv.gettags(imgid)[4])]
+			for lord in range(gamedata.Nb_lord):
+				army = gamedata.coordtoarmy(lord, coord)
+				if army != 0:
+					texture = army.texture
+		else:
+			# Sinon On vient recup la texture stocker dans la Classtuile
+			texture = classmap.listmap[imgid-1].texture_name
+
+
+		# On change la texture lié
+		classmap.mapcanv.itemconfigure(imgid, image = gamedata.atlas[texture].image)
+	############################################################
+	gamedata.log.printinfo(f"taille Atlas: {len(gamedata.atlas)}")
+
 ###########################################################################
 
 def centerviewcanvas(gamedata, classmap, option, coordcanv):
@@ -232,7 +282,7 @@ def canvasgooriginewindow(classmap):
 
 def coordcanvastomap(gamedata, classmap, option, coord):
 	##################
-	# Fonction pour traduire les coordonnées du canvas en coordonnées de la carte
+	# Fonction pour traduire les coordonnées du canvas en coordonnées de la carte √
 	##################
 
 	xmap = (((coord[0]) - tuilesize/2)/tuilesize)
@@ -256,5 +306,13 @@ def coordmaptocanvas(gamedata, classmap, option, coord):
 	gamedata.log.printinfo(f"coordcanv: , {xcanvas}, {ycanvas}")
 
 	return [xcanvas, ycanvas]
+
+def coordmaptoidtuile(option, coord):
+	##################
+	# Fonction pour traduire les coordonnées map en idtuile
+	##################
+
+	idtuile = coord[0] + (option.movex*coord[1])
+	return idtuile
 
 ##########################################################################################
