@@ -217,7 +217,7 @@ class Classarmy:
 		self.x = x
 		self.y = y
 		# objet tuile
-		self.idtcanvas = 0
+		self.idCanv = 0
 
 
 		# Chevalier qui mène la troupe

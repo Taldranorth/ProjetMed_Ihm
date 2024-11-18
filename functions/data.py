@@ -3,6 +3,7 @@ import tkinter
 import random
 
 import functions.gameclass as gameclass
+import functions.affichage as affichage
 
 from datetime import datetime
 from time import time
@@ -352,15 +353,24 @@ class ClassGameData:
 		################
 		# Méthode appeler quand ont veut ajouter une action qui se produira dans x tour
 		# Définit les variables stocker dans action
+		# On utilise la fonction eval() qui intérpréte une chaîne de caractère en une expression
+		# Action est donc une chaîne de carac qui reprèsente la fonction et les variables que l'on veut utiliser
+		# Ex:  eval("moveunit(gamedata, classmap, option, army, coord)")
+		# Il faut voir si il garde le contexte des variables
+		# Si non simplement utiliser f"{}"
 		################
 
 		# Si actuellement la liste des action prévu est inférieur on ajoute turn liste vide
-		if len(self.actionlist) < turn:
-			for x in range(turn - len(self.actionlist)):
+		if len(self.actionlist) < (turn+1):
+			#print("taille file inférieur aux tour:", len(self.actionlist), turn)
+			for x in range((turn - len(self.actionlist))+1):
+				#print("file action :",self.actionlist)
 				self.actionlist += [[]]
-
+		#print("file action tour 0:", self.actionlist[0])
+		#print("file action tour 1:", self.actionlist[1])
 		# On ajoute l'action dans la turn pile à la dernière place
 		self.actionlist[turn] += [action]
+		#print("file action après ajout:",self.actionlist)
 
 	def removeactionlist(self, action, turn):
 		################
@@ -375,7 +385,7 @@ class ClassGameData:
 
 		# On éxécute toute les actions en 0
 		for action in self.actionlist[0]:
-			pass
+			eval(action)
 
 		# On déplace les piles vers la gauche 1->0, 2->1
 		i = 0

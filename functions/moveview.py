@@ -284,9 +284,10 @@ def coordcanvastomap(gamedata, classmap, option, coord):
 	##################
 	# Fonction pour traduire les coordonnées du canvas en coordonnées de la carte √
 	##################
+	ts = gamedata.tuilesize
 
-	xmap = (((coord[0]) - tuilesize/2)/tuilesize)
-	ymap = (((coord[1]) - tuilesize/2)/tuilesize)
+	xmap = (((coord[0]) - ts/2)//ts)
+	ymap = (((coord[1]) - ts/2)//ts)
 
 
 	return [xmap, ymap]

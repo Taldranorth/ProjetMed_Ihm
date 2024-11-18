@@ -722,8 +722,8 @@ def villageinterface(event, gamedata, classmap, option):
 		frame_info = tkinter.Frame(classmap.framecanvas)
 		# On créer la frame qui vient contenir les actions possibles
 		frame_button = tkinter.Frame(classmap.framecanvas)
-		frame_info.place(x = (option.widthWindow/6), y = (option.heightWindow*0.2))
-		frame_button.place(x = (option.widthWindow/2), y = (option.heightWindow*0.2))
+		frame_info.place(x = (option.widthWindow/4), y = (option.heightWindow*0.2))
+		frame_button.place(x = (option.widthWindow/1.5), y = (option.heightWindow*0.2))
 
 		# On créer les fenêtre
 		# Demade un placement précis
@@ -803,13 +803,65 @@ def armyinterface(event, gamedata, classmap, option):
 		tkinter.Label(frame_interface_army, text = army.moveturn).pack(side = "left")
 
 		# On créer le bouton pour se déplacer
-		Button_move_army = tkinter.Button(frame_interface_army, text = "Déplacement")
+		Button_move_army = tkinter.Button(frame_interface_army, text = "Déplacement", command = lambda: statemovearmy(gamedata, classmap, option, army))
 		Button_move_army.pack(side="left")
 
 		# Si on clique droit sur une armée non allié alors que l'on à selectionner une armée on attaque
 
 		# Si on clique sur autre chose on quitte l'interface
 		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], [frame_interface_army]))
+
+
+
+def statemovearmy(gamedata, classmap, option, army):
+	##################
+	# Fonction pour Entréer le joueur dans un état de déplacement d'armé Si il clique sur le bouton déplacer dabs l'interface d'armée
+	##################
+
+	# On change la souris Pour l'icone de déplacement
+	# On charge en mémoire dans l'atlas la texture préparer
+	#gamedata.loadtextureatlas("rally_point.png", "other")
+	# On change la souris afficher dans la toplevel Window
+	# On recup la fenêtre
+	root =  classmap.framecanvas.winfo_toplevel()
+	# On config la fenêtre 
+	root.config(cursor = "man")
+
+	# On bind l'affiche de la trajectoire sur l'emplacement de la souris quand elle est sur le canvas
+	#funcpath = classmap.mapcanv.tag_bind("click","<Motion>", lambda event: showpathfinding(event, gamedata), add= "+")
+
+	# On debind le exitstate
+	classmap.mapcanv.tag_unbind("click", "<Button-1>")
+
+	# On bind le click gauche sur aller 
+	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: affichage.sequencemoveunit(event, gamedata, classmap, option, army))
+
+	# On bind l'exit de l'état aux clic gauche
+	#classmap.mapcanv.tag_bin("click", "<Button-2>", lambda: exitstate(gamedata, classmap, option, [["click","<Move>"]], [funcpath], ["path"]) )
+
+def showpathfinding(event, gamedata):
+	# On calcul la meilleur trajectoire
+	sequ = affichage.pathfinding(coord0, coord1)
+
+	# On détruit la précédante trajectoire afficher
+	event.widget.destroy("Path")
+
+	ts = gamedata.tuilesize
+	# On affiche la trajectoire
+	for cases in sequ:
+		classmap.mapcanv.create_line( (sequ[0]*ts), (sequ[1]*ts), (sequ[0]*ts)+ts, (sequ[1]*ts)+ts, width = 5, tags = "path")
+
+
+
+
+def exitstatemovearmy():
+
+
+
+	pass
+
+
+
 
 def banderole(gamedata, classmap, option):
 	################
@@ -834,6 +886,8 @@ def banderole(gamedata, classmap, option):
 
 def destroybanderole(gamedata, classmap, idwindow):
 	classmap.mapcanv.delete(idwindow)
+
+
 
 
 

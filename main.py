@@ -134,10 +134,7 @@ from time import time
 # - Faire une classe qui Combine un label avec un label(textvariable) afin des les afficher côte a côte
 # - Définire les régles de création d'armée qui doive avoir au moins 1 unités et donc avec les cout en ressource
 # - Suprimmer le carrer du village ou l'église a était construite
-# - Terminer statebuildchurch √
-# - la texture de l'armée doit changer si un chevalier rejoint ou part de l'armée √
-# - Créer fonction exitstate global √
-# - terminer statewar √
+# - Léger décalage sur la droite lorsque l'on centre la vue
 #
 # GameClass:
 # 	- définir les particularités des prêtre
@@ -146,15 +143,12 @@ from time import time
 # affichage:
 #	- Régler les labels des noms
 #		--> Actuellement ils ont tendance à ce couper
-#	- Faire fonction d'affichage d'unit √
-#
 #
 # Data:
 #	- Sauvegarde des données
 #	- Faire Résolution Dynamique
 #	- Faire Placement Fenêtre Dynamique
-#	- Intégrer les units √
-#	- Faire QueuPileAction
+#	- Faire Actionliste
 #		--> Terminer de définir la variable Action envoyer
 #		--> Terminer de définir removeactionqueu
 #
@@ -162,25 +156,9 @@ from time import time
 #	- Implémenter une limite sur le déplacement de la vue pour ne pas aller plus loin que nécessaires
 #
 # Interface:
-# - Changer le canvas liée à l'interface, actuellement l'interface est accroché aux canvas est n'est donc pas déplacer quand on déplace la vue √
-#	--> Implémenter une nouvelle fonction qui vient déplacer les canvas_window avec le tag "Interface"√
-#		--> FONCTIONNE PAS ET PAS PERFORMANT PUTAIN DE MERDZBFZUIEHFBZIEFNZBEHIUFNZEIYGUB
-#			--> L'interface est sensé être ancré sur l'écran
-#			--> doit créer les interface dans un child du frame du canvas
-#				--> Ne doit plus utiliser create_Window
-#					--> Comment placer précisément avec le .pack ?
-#						--> Remplacer les .pack par des places
-#							--> Refaire toute les fonctions pour prendre en compte les modifications
-#								--> C'est bon il suffit de changer le 1 frame de l'interface pour un .place()
-#								--> Refaire exitstate() √
-#								--> staterecruitarmy() √
-#								--> statewar() √
-#								--> stateBuildchurch() √
-#								--> VillageInterface() √
-#								--> armyInterface() √
-#							--> Recalculer toute les positions
+# - Recalculer toute les positions d'interfaces
+#		--> Rentre dans la partie résolution dynamique
 # - améliorer interface
-# - Implémenter une scrollbar ou trouver un moyen d'afficher efficaement la liste des Seigneur dans list_lord
 #
 #########################################################
 
@@ -200,8 +178,8 @@ from time import time
 
 
 # - Terminer Brensenham
-#
-#
+# -> Terminer déplacement d'unités
+# 	-> Terminer Pathfinding
 #
 #
 
