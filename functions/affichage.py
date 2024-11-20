@@ -122,11 +122,10 @@ def sequencemoveunit(event, gamedata, classmap, option, army):
 	# Une fois la liste rempli ont éxécute autant que l'on peut
 	i = 0
 	idtuile = lmovement[i][0]+(option.mapx*lmovement[i][1])
-	while army.moveturn - classmap.listmap[idtuile].movementcost >=0:
-		while i < len(lmovement):
-			moveunit(gamedata, classmap, option, army, lmovement[i])
-			i += 1
-			idtuile = lmovement[i][0]+(option.mapx*lmovement[i][1])
+	while (army.moveturn - classmap.listmap[idtuile].movementcost >=0) and (i < len(lmovement)):
+		idtuile = lmovement[i][0]+(option.mapx*lmovement[i][1])
+		moveunit(gamedata, classmap, option, army, lmovement[i])
+		i += 1
 
 	# Si la liste n'est pas vide on ajoute dans la liste des séquence à appliquer
 	if i != len(lmovement):
@@ -158,10 +157,11 @@ def moveunit(gamedata, classmap, option, army, coord):
 	# On calcul les nouvelles coord
 	x = coord[0] - army.x
 	y = coord[1] - army.y
-
+	coord = moveview.coordmaptocanvas(gamedata, classmap, option, [x, y])
+	print(coord)
 	gamedata.log.printinfo(f"On déplace l'armée {army.name} avec l'id Canvas: {army.idCanv} de: {x}x,{y}y ")
 	# On déplace l'objet
-	classmap.mapcanv.move(army.idCanv, x, y)
+	classmap.mapcanv.move(army.idCanv, coord[0]- (gamedata.tuilesize/2), coord[1]-(gamedata.tuilesize/2))
 
 	# On change les coord de l'armée
 	army.x += x
@@ -169,7 +169,7 @@ def moveunit(gamedata, classmap, option, army, coord):
 
 
 	# On réduit la capacité de mouvement du tour
-	army.moveturn -= gamedata.listmap[idtuile].movementcost
+	army.moveturn -= classmap.listmap[idtuile].movementcost
 
 
 
@@ -228,12 +228,11 @@ def brensenham(coord0, coord1):
 			dx = dx*2
 			dy = dy*2
 			while(y != y2):
-				print("e: ",e)
 				# déplacement [1, -1]
-				e -= dx
+				e += dx
 				y -= 1
 				lcase += [[coord0[0] + x, coord0[1] + y]]
-				if e <0:
+				if e > 0:
 					x += 1
 					e += dy
 					lcase += [[coord0[0] + x, coord0[1] + y]]
@@ -242,9 +241,8 @@ def brensenham(coord0, coord1):
 			dx = dx*2
 			dy = dy*2
 			while(x != x2):
-				print("e: ",e)
 				# déplacement [1, -1]
-				e -= dy
+				e += dy
 				x += 1
 				lcase += [[coord0[0] + x, coord0[1] + y]]
 				if e <0:
@@ -313,21 +311,116 @@ def brensenham(coord0, coord1):
 	return lcase
 
 
-def pathfinding(coord0, coord1):
+def pathfinding(gamedata, classmap, option, coord0, coord1, degr):
 	##################
 	# Fonction pour calculer déplacement d'une unité valable
 	# On utilise Brensenham
-	# 3 snapshot
+	# Que pour 3 snapshot (3 itinéraires)
 	##################
-	# calcul plusieurs itinéraires possibles
-	# On décompose l'itinéraires en plusieurs groupes que l'on utilise
+	# 1°) On prend un le point C centre de la droite D Qui va de C0 à C1
+	# 2°) On calcul le point C1, soit C avec une rotation de pi/6 (30°)
+	#		On Calcul le point C2, soit C avec une rotaion de -pi/6 (30°)
+	#
+	# Après avoir calculer la formule matricielle suivante:
+	# C1 = T0->c0.R30°.Tc0->0.C
+	# On obtient l'équation suivante:
+	# C1x = ((dx/2 - C0x) * cos(pi/6)) + ((dy/2 - C0y) * (-sin(pi/6))) + C0x
+	# C1y = ((dx/2 - C0x) * sin(pi/6)) + ((dy/2 - C0y) * (cos(pi/6))) + C0y
+	# On convertit cos(pi/6) = √3/2 +-= 0.86 et sin(pi/6) = 1/2 = 0.5
+	# C1x = ((dx//2 - C0x) * 0.86) + ((dy//2 - C0y) * -1/2) + C0x
+	# C1y = ((dx//2 - C0x) * 1/2)  + ((dy//2 - C0y) * 0.86) + C0y
+	# Pour obtenir la rotation de C2 qui négatif on change le signe de sin √
+	##################
+	# Pour l'instant on ne prend en compte que 2 degr
+	# Pour degré = 30°:
+	# cos(30°) = √3/2 +-= 0.86
+	# sin(3°) = 1/2 = 0.5
+
+	# Pour degré = 45°:
+	# cos(45°) = √2/2 +-= 0.707
+	# sin(45°) = √2/2 +-= 0.707
+
+	if degr == 30:
+		cosdegr = 0.86
+		sindegr = 1/2
+	elif degr == 45:
+		cosdegr = 0.707
+		sindegr = 0.707
+	else:
+		gamedata.log.printerror("degrer non valide (30 ou 45)")
+		return
+
+	# On calcul la distance en C0 et C1
+	dx = coord1[0] - coord0[0]
+	dy = coord1[1] - coord0[1]
+	print("dx, dy: ",dx, dy)
+
+	# Point Central 
+	C = [coord0[0] + dx//2, coord0[1] + dy//2]
 
 
+	# Point Central haut
+	C1 = [0,0]
+	# C1x:
+	C1[0] = int(((C[0] - coord0[0])*cosdegr) + ((C[1] - coord0[1])*(-sindegr)) + coord0[0])
+	# C1y:
+	C1[1] = int(((C[0] - coord0[0])*(sindegr)) + ((C[1] - coord0[1])* cosdegr) + coord0[1])
+	# Point Central bas 
+	C2 = [0,0]
+	# C2x:
+	C2[0] = int(((C[0] - coord0[0])*cosdegr) + ((C[1] - coord0[1])*(sindegr)) + coord0[0])
+	# C2y:
+	C2[1] = int(((C[0] - coord0[0])*(-sindegr)) + ((C[1] - coord0[1])*cosdegr) + coord0[1])
+
+	print("coord0: ",coord0)
+	print("coord1: ",coord1)
+
+	print("C: ",C)
+	print("C1: ",C1)
+	print("C2: ",C2)
+
+	# On calcul les 3 itinéraires
+	iti1 = brensenham(coord0, C)
+	iti2 = brensenham(coord0, C1)
+	iti3 = brensenham(coord0, C2)
+
+	iti1 += brensenham(C, coord1)
+	iti2 += brensenham(C1, coord1)
+	iti3 += brensenham(C2, coord1)
+
+	lsnapshot = [iti1, iti2, iti3]
+	gamedata.log.printinfo(f"liste des itinéraires: {lsnapshot}")
+	lcostiti = []
 
 	# On vérifie qu'un itinéraires ne passe pas par une cases interdites
 
 	# compare le cout en déplacement de chaque itinéraires
+	gamedata.log.printinfo(f"Calcul Cout itinéraire")
+	for itinéraire in lsnapshot:
+		cost = 0
+		# On se balade dans l'itinéraire
+		for cases in itinéraire:
+			gamedata.log.printinfo(f"Calcul case: {cases}")
+			# On calcule l'id de la tuile 
+			idtuile = moveview.coordmaptoidtuile(option, cases)
+			gamedata.log.printinfo(f"Idtuile: {idtuile}")
+			# On additione le cout de la tuile
+			cost += classmap.listmap[idtuile].movementcost
+		# Une fois que l'on à le cout total du déplacement on l'ajoute dans la liste
+		gamedata.log.printinfo(f"CM: {cost}")
+		lcostiti += [cost]
 
-	# Ressort l'itinéraires avec le cout le plus faibles
+	i = 0
+	small = 0
+	# On Ressort l'itinéraires avec le cout le plus faibles
+	while i < len(lcostiti):
+		if lcostiti[i] < lcostiti[small]:
+			small = i
+		i += 1
 
-	pass
+	gamedata.log.printinfo(f"itinéraires le moins couteux avec {lcostiti[small]}PM : {lsnapshot[small]}")
+
+	return lsnapshot[small]
+
+
+

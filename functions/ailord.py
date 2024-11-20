@@ -26,9 +26,6 @@ def mainai(gamedata, classmap, option):
 
 	#L'Ia joue
 
-
-
-
 	# Une fois que l'ia à terminé on incrémente Nb_toplay
 	gamedata.Nb_toplay += 1
 	# Supprime la banderole

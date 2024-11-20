@@ -166,6 +166,7 @@ def moveviewz(event, gamedata, classmap, option):
 			for lord in range(gamedata.Nb_lord):
 				army = gamedata.coordtoarmy(lord, coord)
 				if army != 0:
+					print(texture)
 					texture = army.texture
 		else:
 			# Sinon On vient recup la texture stocker dans la Classtuile
@@ -297,14 +298,14 @@ def coordmaptocanvas(gamedata, classmap, option, coord):
 	# Fonction pour traduire les coordonnées map en coordonnées du canvas √
 	##################
 
-	gamedata.log.printinfo(f"Pour coord map: , {coord[0]}, {coord[1]}")
+	gamedata.log.printinfo(f"Pour coord map: {coord[0]}, {coord[1]}")
 
 	ts = gamedata.tuilesize
 
 	# calcul de base
 	xcanvas = (coord[0]*ts)+(ts/2)
 	ycanvas = (coord[1]*ts)+(ts/2)
-	gamedata.log.printinfo(f"coordcanv: , {xcanvas}, {ycanvas}")
+	gamedata.log.printinfo(f"coordcanv: {xcanvas}, {ycanvas}")
 
 	return [xcanvas, ycanvas]
 
@@ -313,7 +314,7 @@ def coordmaptoidtuile(option, coord):
 	# Fonction pour traduire les coordonnées map en idtuile
 	##################
 
-	idtuile = coord[0] + (option.movex*coord[1])
+	idtuile = coord[0] + (option.mapx*coord[1])
 	return idtuile
 
 ##########################################################################################

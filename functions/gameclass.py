@@ -240,6 +240,7 @@ class Classarmy:
 		# Méthode pour recruter un Chevalier
 		#######
 		self.knight = ClassKnight(name)
+		self.updatearmy()
 
 
 	def recruitsoldier(self, name:chr):
@@ -247,6 +248,7 @@ class Classarmy:
 		# Méthode pour recruter un Soldat
 		#######
 		self.unit += [ClassSoldier(name)]
+		self.updatearmy()
 
 	def updatearmy(self):
 		#######

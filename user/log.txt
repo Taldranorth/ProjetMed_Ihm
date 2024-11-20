@@ -1,32 +1,13 @@
-[18:15:27]Info: Initialisation log terminé
-[18:15:27]Info: 1200x1200+150+150
-[18:15:27]Info: Initialisation de l'application terminé
-[18:15:28]Info: taille écran x,y: 1440, 900
-[18:15:28]Info: Taille de la Frame du Canvas: 1, 1
-[18:15:28]Info: Taille de la Frame du top: 1, 1
-[18:15:28]Info: Taille de la Frame du bas: 1, 1
-[18:15:28]Info: Taille du Canvas:1, 1
-[18:15:31]Info: entre dans un état interface_recruit_army
-[18:15:32]Info: Le Joueur Créer une armée
-[18:15:33]Info: On se déplace vers l'armée 
-[18:15:33]Info: Pour coord map: , 72, 62
-[18:15:33]Info: coordcanv: , 1450.0, 1250.0
-[18:15:33]Info: déplacement de x,y: , 850.0, 890.0
-[18:15:33]Info: On quitte l'état interface_recruit_army
-[18:15:34]Info: coord de la tuile 0,0 Canvas: , [10.0, 10.0]
-[18:15:34]Info: coordonnées window de la souris: , 1448, 1260
-[18:15:34]Info: 1
-[18:15:34]Info: déplacement de x,y: , 2300.0, 2140.0
-[18:15:34]Info: taille Atlas: 6
-[18:15:34]Info: coord de la tuile 0,0 Canvas: , [20.0, 20.0]
-[18:15:34]Info: coordonnées window de la souris: , 2898, 2510
-[18:15:34]Info: 1
-[18:15:34]Info: déplacement de x,y: , 5200.0, 4640.0
-[18:15:34]Info: taille Atlas: 6
-[18:15:35]Info: entre dans un état interface_army
-[18:15:38]Info: On calcul les déplacement nécessaire
-[18:15:38]Info: coord0, coord1: (72, 62), [69.0, 64.0]
-[18:15:38]Info: lmovement: [[71, 62], [71, 63], [70, 63], [69, 63], [69, 64]]
-[18:15:45]Info: On calcul les déplacement nécessaire
-[18:15:45]Info: coord0, coord1: (72, 62), [74.0, 64.0]
-[18:15:45]Info: lmovement: [[73, 62], [73, 63], [74, 63], [74, 64]]
+[18:17:33]Info: Initialisation log terminé
+[18:17:33]Info: 1200x1200+150+150
+[18:17:33]Info: Initialisation de l'application terminé
+[18:17:34]Info: taille écran x,y: 1440, 900
+[18:17:34]Info: Taille de la Frame du Canvas: 1, 1
+[18:17:34]Info: Taille de la Frame du top: 1, 1
+[18:17:34]Info: Taille de la Frame du bas: 1, 1
+[18:17:34]Info: Taille du Canvas:1, 1
+[18:17:36]Info: entre dans un état interface_war
+[18:17:36]Info: déplacement de x,y: , 0.0, 0.0
+[18:17:36]Info: taille Atlas: 5
+[18:17:36]Info: déplacement de x,y: , -100.0, 140.0
+[18:17:37]Info: On quitte l'état interface_war

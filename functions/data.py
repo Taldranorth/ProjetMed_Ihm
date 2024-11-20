@@ -382,6 +382,9 @@ class ClassGameData:
 		################
 		# Méthode appeler à la fin du tour
 		################
+		# - Doit fix le comportement pour que les actions soit accompli si elles peuvent être accompli
+		#	--> On éxécute donc autant d'actions que l'on peut 
+		#		--> C'elle qui ne sont pas éxécuter sont garder dans la pile 0
 
 		# On éxécute toute les actions en 0
 		for action in self.actionlist[0]:
@@ -574,13 +577,13 @@ class Classtuiles:
 
 			self.ressourceyield = 0
 			self.moneyield = 0
-			self.movementcost = 3
+			self.movementcost = 4
 
 		elif type == "ocean":
 
 			self.ressourceyield = 0
 			self.moneyield = 0
-			self.movementcost = 4
+			self.movementcost = 10
 
 	def setidtuile(self, id):
 		self.id = id

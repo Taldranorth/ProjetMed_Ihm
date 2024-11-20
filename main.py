@@ -116,11 +116,6 @@ from time import time
 ##################\ Doit Faire: \#######################
 # Main:
 # - Déplacement en mettant la souris sur la bordure extérieur de la carte
-# - Changer MainMenu pour utiliser create_window
-#		--> C'est une fonction uniquement liéer aux Canvas -_-
-#			--> En créer un et l'utiliser seulement pour cela ?
-#			--> Comme cela on à juste à détruire le canvas quand ont veut revenir en arrière
-#			--> Et on a pas à créer une nouvelle fenêtre de 0 totalement séparé
 # - Améliorer le Zoom/Dezoom
 # - Normaliser les Tags
 #
@@ -135,10 +130,11 @@ from time import time
 # - Définire les régles de création d'armée qui doive avoir au moins 1 unités et donc avec les cout en ressource
 # - Suprimmer le carrer du village ou l'église a était construite
 # - Léger décalage sur la droite lorsque l'on centre la vue
+# - Fix affichage de l'entête 1er tour
+#		--> Actuellement il n'affiche pas les données
 #
 # GameClass:
 # 	- définir les particularités des prêtre
-# 	- Continuer ClassArmy
 #
 # affichage:
 #	- Régler les labels des noms
@@ -177,11 +173,36 @@ from time import time
 # Pour le pathfinding Utiliser l'algo de Nguyen qui calcul les pixel à allumer
 
 
-# - Terminer Brensenham
-# -> Terminer déplacement d'unités
-# 	-> Terminer Pathfinding
+# -> Fix Affichage ShowPathfinding
+# -> Terminer Pathfinding √
 #
-#
+# -> Fix déplacement d'unité √
+#	--> Améliorer déplacement unité
+#		--> C'est aproximatif
+#			--> Revoir Brensenham
+# Changer Interface War pour utiliser Listboxes
+
+
+######## Fonctionnalité Principale à Implémenter
+# - Implémenter Fonction Bataille
+# - Implémenter prise de Village
+# - Implémenter Class Roturier et Class Paysan
+# - Implémenter Update Fin de Tour
+# - Implémenter Interface Tax, Vassalisation et Immigration avec Fonction qui suivent
+# - Implémenter Event
+# - Implémenter marché 
+########
+
+######## Fonctionnalité Secondaire
+# - Implémenter Sauvegarde et Chargement de Données
+# - Implémenter Options
+# - Implémenter IA
+# - Implémenter Landforme
+# - Implémenter Bordure Village
+# - Terminer GlobalViewMenu
+########
+
+
 
 ######################### Menu Principale #########################
 

@@ -111,7 +111,7 @@ def gameinterface(gamedata, classmap, option, win):
 	# On associe les Commandes Militaires
 	menu_military.add_command(label = "Vassaliser")
 	menu_military.add_command(label = "Soldat", command = lambda: staterecruitarmy(gamedata, classmap, option))
-	menu_military.add_command(label = "Guerre", command = lambda: statewar(gamedata, classmap, option))
+	menu_military.add_command(label = "Déclarer Guerre", command = lambda: statewar(gamedata, classmap, option))
 
 
 	# On associe les Commandes Gestion
@@ -431,7 +431,7 @@ def statewar(gamedata, classmap, option):
 		moveview.centerviewcanvas(gamedata, classmap, option, [(option.mapx/2)*ts, (option.mapy/2)*ts])
 
 		# On affiche les territoire 
-		# On se balade dans la liste des térritoire
+		# On se balade dans la liste des territoire
 		for nblord in range(len(gamedata.list_lord)):
 			color = "white"
 			# Si c'est un joueur actuellement en guerre on change la couleur en rouge
@@ -444,16 +444,19 @@ def statewar(gamedata, classmap, option):
 				for village in gamedata.list_lord[nblord].fief:
 					x = village.x
 					y = village.y
-					classmap.mapcanv.create_rectangle((x*ts) - xorigine, (y*ts)- yorigine, (x*ts)+ts - xorigine, (y*ts)+ts - yorigine, tag = ["interface_war","tuile", x, y], outline = color)
+					classmap.mapcanv.create_rectangle((x*ts), (y*ts), (x*ts)+ts, (y*ts)+ts, tag = ["interface_war","tuile", x, y], outline = color)
 					if color == "white":
 						print("village neutre: ", village.name)
 					elif color == "re":
 						print("village ennemie: ", village.name)
 
-		# On créer l'interface
-		frame_interface_war = tkinter.Frame(classmap.framecanvas)
-		frame_interface_war.place(x = (option.widthWindow/6), y = (option.heightWindow*0.2))
 
+		############# Interface ############
+		frame_interface_war = tkinter.Frame(classmap.framecanvas)
+		frame_interface_war.place(x = (option.widthWindow/6), y = (option.heightWindow*0.15))
+
+		# Version avec .Pack
+		"""
 		frame_interface_war_list_ally = tkinter.Frame(frame_interface_war)
 		frame_interface_war_list_ennemy = tkinter.Frame(frame_interface_war)
 		frame_interface_war_list_neutral = tkinter.Frame(frame_interface_war)
@@ -481,7 +484,45 @@ def statewar(gamedata, classmap, option):
 				tkinter.Label(frame_interface_war_list_ennemy, text = lord.lordname).pack(side = "top")
 			elif lord.player == False:
 				tkinter.Label(frame_interface_war_list_neutral, text = lord.lordname).pack(side = "top")
+		"""
 
+		# Version avec .grid
+		#"""
+		frame_interface_war_main = tkinter.Frame(frame_interface_war)
+		frame_interface_war_main.grid()
+		
+		frame_interface_war_list_ally = tkinter.Frame(frame_interface_war_main)
+		frame_interface_war_list_ennemy = tkinter.Frame(frame_interface_war_main)
+		frame_interface_war_list_neutral = tkinter.Frame(frame_interface_war_main)
+		frame_interface_war_list_ally.grid(row = 0, column = 0)
+		frame_interface_war_list_ennemy.grid(row = 0, column = 1)
+		frame_interface_war_list_neutral.grid(row = 0, column = 2)
+
+		tkinter.Label(frame_interface_war_list_ally, text = "Allié").grid(row = 0)
+		tkinter.Label(frame_interface_war_list_ennemy, text = "Ennemie").grid(row = 0)
+		tkinter.Label(frame_interface_war_list_neutral, text = "Neutre").grid(row = 0)
+
+		# On créer les menu déroulant
+		Lb_ally = tkinter.Listbox(frame_interface_war_list_ally)
+		Lb_ally.grid(row = 1)
+		Lb_ennemy = tkinter.Listbox(frame_interface_war_list_ennemy)
+		Lb_ennemy.grid(row = 1)
+		Lb_neutral = tkinter.Listbox(frame_interface_war_list_neutral)
+		Lb_neutral.grid(row = 1)
+		# On les remplis
+		for lord in gamedata.list_lord:
+			# On vérifie que ce soit pas le joueur:
+			if lord.player == False:
+				# Si dans la liste des Ennemies
+				if lord in player.war:
+					Lb_ennemy.insert(tkinter.END, lord.lordname)
+				# Sinon Si il est dans les liste des Vassaux
+				elif lord in player.vassal:
+					Lb_ally.insert(tkinter.END, lord.lordname)
+				# Sinon il est neutre
+				else:
+					Lb_neutral.insert(tkinter.END, lord.lordname)
+		#"""
 		# On bind
 		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], [frame_interface_war, "interface_war"]))
 
@@ -803,7 +844,7 @@ def armyinterface(event, gamedata, classmap, option):
 		tkinter.Label(frame_interface_army, text = army.moveturn).pack(side = "left")
 
 		# On créer le bouton pour se déplacer
-		Button_move_army = tkinter.Button(frame_interface_army, text = "Déplacement", command = lambda: statemovearmy(gamedata, classmap, option, army))
+		Button_move_army = tkinter.Button(frame_interface_army, text = "Déplacement", command = lambda: statemovearmy(gamedata, classmap, option, army, frame_interface_army))
 		Button_move_army.pack(side="left")
 
 		# Si on clique droit sur une armée non allié alors que l'on à selectionner une armée on attaque
@@ -813,7 +854,7 @@ def armyinterface(event, gamedata, classmap, option):
 
 
 
-def statemovearmy(gamedata, classmap, option, army):
+def statemovearmy(gamedata, classmap, option, army, fra):
 	##################
 	# Fonction pour Entréer le joueur dans un état de déplacement d'armé Si il clique sur le bouton déplacer dabs l'interface d'armée
 	##################
@@ -823,12 +864,12 @@ def statemovearmy(gamedata, classmap, option, army):
 	#gamedata.loadtextureatlas("rally_point.png", "other")
 	# On change la souris afficher dans la toplevel Window
 	# On recup la fenêtre
-	root =  classmap.framecanvas.winfo_toplevel()
+	#root =  classmap.framecanvas.winfo_toplevel()
 	# On config la fenêtre 
-	root.config(cursor = "man")
+	#root.config(cursor = "man")
 
 	# On bind l'affiche de la trajectoire sur l'emplacement de la souris quand elle est sur le canvas
-	#funcpath = classmap.mapcanv.tag_bind("click","<Motion>", lambda event: showpathfinding(event, gamedata), add= "+")
+	funcpath = classmap.mapcanv.tag_bind("click","<Motion>", lambda event: showpathfinding(event, gamedata, classmap, option, army), add= "+")
 
 	# On debind le exitstate
 	classmap.mapcanv.tag_unbind("click", "<Button-1>")
@@ -837,29 +878,60 @@ def statemovearmy(gamedata, classmap, option, army):
 	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: affichage.sequencemoveunit(event, gamedata, classmap, option, army))
 
 	# On bind l'exit de l'état aux clic gauche
-	#classmap.mapcanv.tag_bin("click", "<Button-2>", lambda: exitstate(gamedata, classmap, option, [["click","<Move>"]], [funcpath], ["path"]) )
+	classmap.mapcanv.tag_bind("click", "<Button-2>", lambda event: cancelmovearmy(event, gamedata, classmap, option, funcpath, fra))
 
-def showpathfinding(event, gamedata):
+def showpathfinding(event, gamedata, classmap, option, army):
+	################
+	# Fonction qui affiche le chemin que va parcourir l'armée pour atteindre la case
+	# Elle affiche en vert le chemin que l'armée parcoura ce tour
+	# Elle affiche en rouge le chemin que l'armée ne parcoura pas ce tour
+	################
+
+	# On recup les coord Canvas
+	posx = event.widget.canvasx(event.x)
+	posy = event.widget.canvasy(event.y)
+	# On transforme en coord Map
+	coord1 = moveview.coordcanvastomap(gamedata, classmap, option, [posx, posy])
+
 	# On calcul la meilleur trajectoire
-	sequ = affichage.pathfinding(coord0, coord1)
+	sequ = affichage.pathfinding(gamedata, classmap, option,[army.x, army.y], coord1, 45)
+	#sequ = affichage.brensenham([army.x, army.y], coord1)
 
 	# On détruit la précédante trajectoire afficher
-	event.widget.destroy("Path")
+	event.widget.delete("path")
 
 	ts = gamedata.tuilesize
 	# On affiche la trajectoire
+	move = army.moveturn
 	for cases in sequ:
-		classmap.mapcanv.create_line( (sequ[0]*ts), (sequ[1]*ts), (sequ[0]*ts)+ts, (sequ[1]*ts)+ts, width = 5, tags = "path")
+		#On calcule la tuile à partir des coord Map
+		idtuile = cases[0]+(option.mapx*cases[1])
+		if (move - classmap.listmap[idtuile].movementcost) >= 0:
+			color = "green"
+			move -= classmap.listmap[idtuile].movementcost
+		else:
+			color = "red"
+		classmap.mapcanv.create_line( (cases[0]*ts), (cases[1]*ts), (cases[0]*ts)+ts, (cases[1]*ts)+ts, width = 2, tags = "path", fill = color)
 
 
 
+def cancelmovearmy(event, gamedata, classmap, option, funcpath, fra):
+	################
+	# Fonction pour annuler le déplacement d'une armée
+	################
+	print("exit movearmy")
+	# On debind l'affichage
+	classmap.mapcanv.tag_unbind("click", "<Motion>", funcpath)
 
-def exitstatemovearmy():
+	# On détruit les chemins afficher
+	classmap.mapcanv.delete("path")
 
+	# On rebind la destruction de l'interface de l'armée
+	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], [fra]))
+	# On debind le click Gauche
+	classmap.mapcanv.tag_unbind("click", "<Button-2>")
 
-
-	pass
-
+	# On retire le curseur
 
 
 
