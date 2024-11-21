@@ -154,7 +154,6 @@ class ClassGameData:
 		for x in range(3):
 			self.createlord()
 
-
 	#tuile: Classtuiles
 	def addtuile(self, tuile):
 		self.list_tuile += [tuile]
@@ -270,10 +269,40 @@ class ClassGameData:
 		self.list_lord += [gameclass.Classlord(("lord "+self.randomnametype("Surnom")), False, self.Nb_lord)]
 		self.Nb_lord += 1
 
+	def lordnametoid(self, name):
+		#####
+		# Fonction qui renvoie l'id du seigneur dont le nom a été donné
+		#####
+		# On se balade dans la liste des Seigneurs
+		for lord in self.list_lord:
+			# Si on trouve un seigneur qui à le même nom on renvoit son ID
+			if lord.lordname == name:
+				return lord.idlord
+		# Si on ne trouve pas on Renvoit False
+		return False
+
+
 	def deletelord(self, idlord):
 		name = self.list_lord[idlord].lordname[5:]
+		# On récup l'objet
+		lord = self.list_lord[idlord]
+
+		# On reconstruit la liste de Seigneur
+		# On ne peut avoir au minimum que 2 seigneurs avec le Joueur en position 0:
+		if len(self.list_lord) > 2:
+			self.list_lord = self.list_lord[:i] + self.list_lord[i+1:]
+			i = idlord
+			while i<len(self.list_lord):
+				self.list_lord[i].idlord = i
+				i += 1
+		else:
+			self.list_lord = [self.list_lord[0]]
+
 		# On détruit le seigneur
-		del self.list_lord[idlord]
+		del lord
+		# On réduit le compteur de seigneur
+		self.Nb_lord -= 1
+
 		# On libérer le nom utilisé
 		# Comment parcourir efficacement ?
 		i = 0
@@ -488,7 +517,7 @@ class Classmap:
 		self.listmap = {}
 		self.nbtuile = 0
 
-		#Liste qui vient contenir les ids des:
+		#Liste qui vient contenir les idTuile des:
 		#	--> Villages
 		#	--> Plaines
 		self.lvillages = []
@@ -504,6 +533,13 @@ class Classmap:
 
 	def setlframecanvas(self, framecanvas):
 		self.framecanvas = framecanvas
+
+	def idtovillage(self, idvillage):
+		####################
+		# Fonction qui retoure l'objet village selon l'id de la tuile renvoyer
+		####################
+
+		return self.listmap[idvillage].village
 
 	def nametoid(self, name):
 		####################

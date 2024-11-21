@@ -370,8 +370,7 @@ def centerarmy(event, gamedata, classmap, option):
 
 
 	#print("x,y: ", x, y)
-	coord = moveview.coordmaptocanvas(gamedata, classmap, option, [army.x, army.y])
-	#print("Coord Canvas: ", coord[0], coord[1])
+	coord = moveview.coordmaptocanvas(gamedata, classmap, option, [army.x, army.y], True)
 
 
 	# On centre la vu sur le village
@@ -420,7 +419,10 @@ def statewar(gamedata, classmap, option):
 	if gamedata.changenewstate("interface_war") == True :
 		# Tant que la carte n'est pas dezoom à 10
 		while gamedata.tuilesize != 10:
-			moveview.moveviewzcenter(gamedata, classmap, option)
+			if gamedata.tuilesize > 10:
+				moveview.moveviewzcenter(gamedata, classmap, option, -2)
+			else:
+				moveview.moveviewzcenter(gamedata, classmap, option, 2)
 
 		player = gamedata.list_lord[gamedata.playerid]
 		ts = gamedata.tuilesize
@@ -445,6 +447,7 @@ def statewar(gamedata, classmap, option):
 					x = village.x
 					y = village.y
 					classmap.mapcanv.create_rectangle((x*ts), (y*ts), (x*ts)+ts, (y*ts)+ts, tag = ["interface_war","tuile", x, y], outline = color)
+					classmap.mapcanv.create_text((x*ts), (y*ts)-(3*ts), tag = ["interface_war","tuile"], text = gamedata.list_lord[nblord].lordname, fill = color)
 					if color == "white":
 						print("village neutre: ", village.name)
 					elif color == "re":
@@ -455,39 +458,12 @@ def statewar(gamedata, classmap, option):
 		frame_interface_war = tkinter.Frame(classmap.framecanvas)
 		frame_interface_war.place(x = (option.widthWindow/6), y = (option.heightWindow*0.15))
 
-		# Version avec .Pack
-		"""
-		frame_interface_war_list_ally = tkinter.Frame(frame_interface_war)
-		frame_interface_war_list_ennemy = tkinter.Frame(frame_interface_war)
-		frame_interface_war_list_neutral = tkinter.Frame(frame_interface_war)
-		frame_interface_war_list_ally.pack(side = "left")
-		frame_interface_war_list_ennemy.pack(side = "left")
-		frame_interface_war_list_neutral.pack(side = "left")
-
-		frame_interface_war_list_ally_top = tkinter.Frame(frame_interface_war_list_ally)
-		frame_interface_war_list_ennemy_top = tkinter.Frame(frame_interface_war_list_ennemy)
-		frame_interface_war_list_neutral_top = tkinter.Frame(frame_interface_war_list_neutral)
-
-		frame_interface_war_list_ally_top.pack(side = "top")
-		frame_interface_war_list_ennemy_top.pack(side = "top")
-		frame_interface_war_list_neutral_top.pack(side = "top")
-
-
-		tkinter.Label(frame_interface_war_list_ally_top, text = "Allié").pack(side = "top")
-		tkinter.Label(frame_interface_war_list_ennemy_top, text = "Ennemie").pack(side = "top")
-		tkinter.Label(frame_interface_war_list_neutral_top, text = "Neutre").pack(side = "top")
-
-		for lord in gamedata.list_lord:
-			if lord in player.vassal:
-				tkinter.Label(frame_interface_war_list_ally, text = lord.lordname).pack(side = "top")
-			elif lord in player.war:
-				tkinter.Label(frame_interface_war_list_ennemy, text = lord.lordname).pack(side = "top")
-			elif lord.player == False:
-				tkinter.Label(frame_interface_war_list_neutral, text = lord.lordname).pack(side = "top")
-		"""
+		# On créer l'interface War déclaration
+		# Elle reste cacher tant qu'ont la pas appeler 
+		interface_war_declaration = tkinter.Frame(classmap.framecanvas)
+		interface_war_declaration.place(x = (option.widthWindow/1.5), y = (option.heightWindow*0.15))
 
 		# Version avec .grid
-		#"""
 		frame_interface_war_main = tkinter.Frame(frame_interface_war)
 		frame_interface_war_main.grid()
 		
@@ -522,14 +498,102 @@ def statewar(gamedata, classmap, option):
 				# Sinon il est neutre
 				else:
 					Lb_neutral.insert(tkinter.END, lord.lordname)
-		#"""
+		list_LC = [Lb_ally, Lb_ennemy, Lb_neutral]
+		Lb_ally.bind("<Double-Button-1>", lambda event, iwd = interface_war_declaration: warcentervillage(event, gamedata, classmap, option, list_LC, iwd))
+		Lb_ennemy.bind("<Double-Button-1>", lambda event, iwd = interface_war_declaration: warcentervillage(event, gamedata, classmap, option, list_LC, iwd))
+		Lb_neutral.bind("<Double-Button-1>", lambda event, iwd = interface_war_declaration: warcentervillage(event, gamedata, classmap, option, list_LC, iwd))
+
 		# On bind
-		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], [frame_interface_war, "interface_war"]))
+		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], [frame_interface_war, interface_war_declaration, "interface_war"]))
 
-def wardeclaration(gamedata, mapcanv, lord):
+def warcentervillage(event, gamedata, classmap, option, list_LC, iwd):
+	############
+	# Fonction appeler par Lb_neutral, Lb_ally ou Lb_ennemy pour centrer la vue sur le village principale du joueur Sélectionner
+	############
+	# On recup le joueur
+	player = gamedata.list_lord[gamedata.playerid]
 
-	
-	pass
+	# On recup le nom du seigneur Selectionner
+	lordname = event.widget.get(event.widget.curselection()[0])
+	gamedata.log.printinfo(f"lordname: , {lordname}")
+	# On recup son id
+	lordid = gamedata.lordnametoid(lordname)
+	gamedata.log.printinfo(f"lordid: , {lordid}")
+	# On recup l'objet lord
+	lord = gamedata.list_lord[lordid]
+	# On recup son village principale
+	city = lord.fief[0]
+
+	# On convertit les coord Map de l'objet en coord Canvas
+	coord = moveview.coordmaptocanvas(gamedata, classmap, option, [city.x, city.y], True)
+
+	# On centre la vue sur le village
+	moveview.centerviewcanvas(gamedata, classmap, option, coord)
+
+	# On créer une interface War déclaration
+
+	# Si elle existe déjà on supprime l'ancienne
+	# FFFFFFLLLLLLEEEEEMMMMMMMMEEEEE
+	if len(iwd.winfo_children()) > 0:
+		iwd.winfo_children()[0].destroy()
+
+	frame_war_decl = tkinter.Frame(iwd)
+	frame_war_decl.grid()
+
+	# On ajoute les Info sur le Seigneur Ennemie:
+	# Nb vassaux, Nb Village, Nb armée, Puissance
+	# Power
+	tkinter.Label(frame_war_decl, text = "Power:").grid(row = 0, column = 0)
+	tkinter.Label(frame_war_decl, text = lord.power).grid(row = 0, column = 1)
+	# NB Armée
+	tkinter.Label(frame_war_decl, text = "Armée:").grid(row = 1, column = 0)
+	tkinter.Label(frame_war_decl, text = len(lord.army)).grid(row = 1, column = 1)
+
+	# Nb Villgae
+	tkinter.Label(frame_war_decl, text = "Village:").grid(row = 2, column = 0)
+	tkinter.Label(frame_war_decl, text = len(lord.fief)).grid(row = 2, column = 1)
+
+	# Nb vassaux
+	tkinter.Label(frame_war_decl, text = "Vassaux:").grid(row = 3, column = 0)
+	tkinter.Label(frame_war_decl, text = len(lord.vassal)).grid(row = 3, column = 1)
+
+
+	# On créer un bouton pour déclarer la guerre
+	button_war_declaration = tkinter.Button(frame_war_decl, command = lambda: buttonwardeclaration(gamedata, classmap, option, list_LC, player, lord), text = "Déclarer Guerre")
+	button_war_declaration.grid(row = 4, column = 0, columnspan = 2)
+
+def buttonwardeclaration(gamedata, classmap, option, list_LC, player, lord):
+	############
+	# Fonction appeler par le button de déclarer Guerre
+	############
+
+	# Les 2 seigneurs se déclare la guerre
+	wardeclaration(gamedata, player, lord)
+	# On update l'interface
+	# On retire le Seigneur des Neutre
+
+	# On l'ajoute à ceux en guerre
+
+	# On change l'affichage du territoire pour indiquer qu'il est en guerre
+	# On supprimer l'affichage des anciens territoire du Seigneurs
+	classmap.mapcanv.delete(["tuile", "border", lord.lordname])
+	# Village gérer directement par le seigneur Ennemie
+	for village in lord.fief:
+		affichage.bordervillageunit(gamedata, classmap, option, village)
+	for vassal in lord.vassal:
+		classmap.mapcanv.delete(["tuile", "border", vassal.lordname])
+		for vassal_village in vassal.fief:
+			affichage.bordervillageunit(gamedata, classmap, option, vassal_village)
+
+def wardeclaration(gamedata, lord1, lord2):
+	############
+	# Fonction appeler pour déclarer la gerre entre 2 Seigneurs
+	############
+	gamedata.log.printinfo(f"Déclaration de guerre entre: {lord1.lordname} et {lord2.lordname}")
+
+	lord1.addwar(lord2)
+	lord2.addwar(lord1)
+
 
 ##############################################################\ Gestion  \###########################################################################
 
@@ -603,6 +667,9 @@ def buildvillage(event, gamedata, classmap, option):
 
 	# On affiche le nouveau village
 	affichage.printvillageunit(gamedata, classmap, option, [xpos,ypos])
+
+	# On affiche la bordure du nouveau village
+	affichage.bordervillageunit(gamedata, classmap, option, classmap.listmap[idtuile].village)
 
 	# On update la carte des villages possible
 	updatestatbuildvillage(classmap, option)
@@ -679,7 +746,7 @@ def centervillagechurch(event, gamedata, classmap, option):
 	x = classmap.listmap[idvillage].x
 	y = classmap.listmap[idvillage].y
 
-	coord = moveview.coordmaptocanvas(gamedata, classmap, option, [x, y])
+	coord = moveview.coordmaptocanvas(gamedata, classmap, option, [x, y], True)
 
 	# On centre la vu sur le village
 	moveview.centerviewcanvas(gamedata, classmap, option, coord)
@@ -859,15 +926,6 @@ def statemovearmy(gamedata, classmap, option, army, fra):
 	# Fonction pour Entréer le joueur dans un état de déplacement d'armé Si il clique sur le bouton déplacer dabs l'interface d'armée
 	##################
 
-	# On change la souris Pour l'icone de déplacement
-	# On charge en mémoire dans l'atlas la texture préparer
-	#gamedata.loadtextureatlas("rally_point.png", "other")
-	# On change la souris afficher dans la toplevel Window
-	# On recup la fenêtre
-	#root =  classmap.framecanvas.winfo_toplevel()
-	# On config la fenêtre 
-	#root.config(cursor = "man")
-
 	# On bind l'affiche de la trajectoire sur l'emplacement de la souris quand elle est sur le canvas
 	funcpath = classmap.mapcanv.tag_bind("click","<Motion>", lambda event: showpathfinding(event, gamedata, classmap, option, army), add= "+")
 
@@ -877,8 +935,17 @@ def statemovearmy(gamedata, classmap, option, army, fra):
 	# On bind le click gauche sur aller 
 	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: affichage.sequencemoveunit(event, gamedata, classmap, option, army))
 
+	# On bind sur les villages l'attaque
+	funcvillage =  classmap.mapcanv.tag_bind("village", "<Button-1>", lambda event: movetakevillage(event, gamedata, classmap, option, army))
+
+	# On bind sur les armées l'attaque
+	funcarmy = classmap.mapcanv.tag_bind("army", "<Button-1>", lambda event: movefight(event, gamedata, classmap, army))
+
 	# On bind l'exit de l'état aux clic gauche
-	classmap.mapcanv.tag_bind("click", "<Button-2>", lambda event: cancelmovearmy(event, gamedata, classmap, option, funcpath, fra))
+	classmap.mapcanv.tag_bind("click", "<Button-2>", lambda event: cancelmovearmy(event, gamedata, classmap, option, [funcpath, funcvillage, funcarmy], fra))
+
+
+
 
 def showpathfinding(event, gamedata, classmap, option, army):
 	################
@@ -915,13 +982,19 @@ def showpathfinding(event, gamedata, classmap, option, army):
 
 
 
-def cancelmovearmy(event, gamedata, classmap, option, funcpath, fra):
+def cancelmovearmy(event, gamedata, classmap, option, lfuncpath, fra):
 	################
 	# Fonction pour annuler le déplacement d'une armée
 	################
 	print("exit movearmy")
 	# On debind l'affichage
-	classmap.mapcanv.tag_unbind("click", "<Motion>", funcpath)
+	classmap.mapcanv.tag_unbind("click", "<Motion>", lfuncpath[0])
+
+	# On debind l'attaque de village
+	classmap.mapcanv.tag_unbind("village", "<Button-1>", lfuncpath[1])
+
+	# On debind l'attaque d'armée
+	classmap.mapcanv.tag_unbind("army", "<Button-1>", lfuncpath[2])
 
 	# On détruit les chemins afficher
 	classmap.mapcanv.delete("path")
@@ -931,7 +1004,96 @@ def cancelmovearmy(event, gamedata, classmap, option, funcpath, fra):
 	# On debind le click Gauche
 	classmap.mapcanv.tag_unbind("click", "<Button-2>")
 
-	# On retire le curseur
+
+def movefight(event, gamedata, classmap, army):
+	##################
+	# Fonction qui gérer le déplacement d'une armée puis le combat avec une autre
+	##################
+
+	# On calcul l'armé adverse
+	pass
+
+
+
+def movetakevillage(event, gamedata, classmap, option, army):
+	##################
+	# Fonction qui gérer le déplacement d'une armée puis la prise d'un village
+	##################
+	# V1 on ne prend pas en compte la vassalisation d'un Seigneur
+	# On recup les coord Canvas de la tuile 
+	coord = classmap.mapcanv.coords( event.widget.gettags("current"))
+	# On traduit en coord Map 
+	coord = moveview.coordcanvastomap(gamedata, classmap, option, coord)
+	idvillage = moveview.coordmaptoidtuile(option, coord)
+
+	# On recup l'objet village
+	village = classmap.idtovillage(idvillage)
+	gamedata.log.printinfo(f"Objet village trouvé pour les coord({coord}): {village}")
+
+	# On prend le contrôle du village
+	TakeVillage(gamedata, classmap, army, village, False)
+
+def fight(gamedata, classmap, army1 , army2):
+	##################
+	# Fonction pour gérer le combat entre 2 armée
+	##################
+	# Prend en entrée l'objet armée1 et l'objet armée2
+	# - Renvoit True Si Armée1 gagne le combat
+	# - Renvoit False Si Armée2 gagne le Combat
+	# Selon certaines Conditions Armée 1 gagne le Combat
+	# SI army1.power > army2.power
+	#
+	if army1.power > army2.power:
+		return True
+	else:
+		return False
+
+def TakeVillage(gamedata, classmap, army, village, subjugate):
+	##################
+	# Fonction pour gérer la prise de Village par le Joueur
+	##################
+	# Subjugate vient définir 2 comportement:
+	# Si C'est le Seul Village Du Seigneur Ennemie:
+	#	- Soit ajoute au domaine personelle de l'attaquant 	(subjugate == False)
+	#	- Soit Vassaliser le Seigneur Ennemie				(subjufate == True)
+	# Si ce n'est pas le Seul Village du Seigneur Ennemie:
+	#	- Ajoute au domaine personelle de l'attaquant
+	# Si le Seigneur Ennemie possède des Vassaux ils sont soit libérer soit ajouté a c'est vassaux
+	#	- On prend comme cas de figure standars la prise de contrôle immédiate des Vassaux
+
+	Ennemielord = village.lord
+	player = gamedata.list_lord[gamedata.playerid]
+
+
+	# Si le Seigneur Ennemies possède Encore plus d'1 Village
+	if len(Ennemielord.fief) > 1:
+		# On debind le Village du Seigneur Ennemie
+		Ennemielord.removefief(village)
+		# ON Prend le contrôle du village
+		player.addfief(village)
+	# Sinon On Vassalise le Seigneur ou on le détruit et récupère le village
+	else:
+		# on retire le seigneur et c'est vassaux de la liste War
+		player.removewar(Ennemielord)
+		# On retire le joueur de la liste war du Seigneurs Ennemie et de c'est vassaux
+		Ennemielord.removewar(player)
+		# On transfert le controle des Vassaux du Seigneurs Ennemie aux joueur
+		for vassallord in Ennemielord.vassal:
+			# On retire le vassal de la liste du seigneurs Ennemie
+			Ennemielord.removevassal(vassallord)
+			# On l'ajoute à la liste du Joueur
+			player.addvassal(vassal)
+		# On Vassalise le Seigneur
+		if subjugate == True:
+			# On Vassalise le Seigneurs Ennemie
+			player.addvassal(Ennemielord)
+		# On détruit le Seigneur
+		else:
+			# On transfert le contrôle du Village du Seigneur Ennemies
+			Ennemielord.removefief(village)
+			player.addfief(village)
+			# ON LE DELETE NIARK NIARK NIARK NIARK
+			gamedata.deletelord(Ennemielord.idlord)
 
 
 
@@ -973,6 +1135,7 @@ def exitstate(gamedata, classmap, option, lsequbind, lfuncid, lidwindow):
 	################
 	# On détruit l'idwindow
 	for idw in lidwindow:
+		# Si objet du Canvas
 		#print(type(idw), idw)
 		if (type(idw) == int) or (type(idw) == str):
 			classmap.mapcanv.delete(idw)

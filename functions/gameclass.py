@@ -61,9 +61,9 @@ class Classlord:
 	# Class Seigneur 
 	####################
 
-	def __init__(self, lordname: str, player: bool, id: int):
+	def __init__(self, lordname: str, player: bool, idlord: int):
 
-		self.idlord = 0
+		self.idlord = idlord
 
 		self.personnal_ressource = 10
 		self.personnal_money = 10
@@ -111,6 +111,68 @@ class Classlord:
 		village.setlord(self)
 		self.updateinfo()
 
+	def removevassal(self, vassal):
+		# On retire le vassal de la liste des vassaux
+		if len(self.vassal)>1:
+			i = 0
+			while i< len(self.vassal):
+				if self.vassal[i] == vassal:
+					self.vassal = self.vassal[:i] + self.vassal[i+1:]
+					return True
+		elif len(self.vassal) == 1:
+			if self.vassal[0] == vassal:
+				self.vassal = []
+				return True
+
+		return False
+
+
+	def removefief(self, village):
+		# On Unbind le seigneur de l'objet village
+		village.lord = 0
+		# On retire le village de la liste des fief
+		if len(self.fief) > 1:
+			i = 0
+			while i < len(self.fief):
+				if self.fief[i] == village:
+					self.fief = self.fief[:i] + self.fief[i+1:]
+					# On renvoit True pour indiquer que l'éxécution est correcte
+					return True
+		elif len(self.fief) == 1:
+			if self.fief[0] == village:
+				self.fief = []
+				return True
+		return False
+
+	def addwar(self, lord):
+		############
+		# Fonction appeler pour ajouter un seigneur et ses vassaux à la liste des Seigneurs en Guerre
+		############
+		# On ajoute les Vassaux
+		for vassal in lord.vassal:
+			self.war += [vassal]
+		# On ajoute le Seigneur lui même
+		self.war += [lord]
+
+	def remmovewar(self, lord):
+		############
+		# Fonction appeler pour retirer un seigneur et ses vassaux de la liste des Seigneurs en Guerre
+		############
+
+		# On retire le lord
+		i = 0
+		found = False
+		while (i < len(self.war)) and (found != True):
+			# une fois le seigneur trouver On le supprime de la liste
+			if self.war[i] == lord:
+				self.war = self.war[:i] + self.war[i+1:]
+				found = True
+
+		# On retire les vassaux du lord
+		# Récursif
+		for vassal in lord.vassal:
+			self.remmovewar(vassal)
+
 	def updateinfo(self):
 		############
 		# On update les données du seigneur
@@ -150,6 +212,7 @@ class Classvillage:
 
 	def __init__(self,x,y):
 		self.name = "test"
+		# Coordonnées Map
 		self.x = x
 		self.y = y
 
@@ -164,6 +227,8 @@ class Classvillage:
 		self.influence = 0
 
 		self.church = 0
+
+		self.border = 2
 
 	#pop: Classhuman	
 	def addpopulation(self, pop):

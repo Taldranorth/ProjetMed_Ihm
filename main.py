@@ -155,7 +155,22 @@ from time import time
 # - Recalculer toute les positions d'interfaces
 #		--> Rentre dans la partie résolution dynamique
 # - améliorer interface
-#
+# - Ajouter la prise de village et le combat d'armée à l'interface de déplacement d'armée
+#	--> Si souris sur armée ennemie alors affiche icône Combat
+#	--> Si souris sur village Ennemies alors affiche icône Pillage
+# 
+
+# - Implémenter Fonction de Combat entre 2 armée √
+# - Implémenter prises de Village √
+# - Implémenter Bordure Village √
+# - Implémenter Perte de Vassal/Fief √
+# - Fix gamedata.removelord Pour prendre en compte le changement d'id des lords √
+# - Implémenter Centrage de la vue sur village de départ au lancement de la partie √
+# - Modifier coordmaptocanvas pour ajouter un Bool qui Indique si On prend en compte le décalage de la carte √
+# - Fix et Terminer State War √
+# - Fix Initialisation de ClassLord qui ne prenait pas en compte l'id envoyait √
+# - Implémenter l'attaque de village dans le déplacement d'unité √
+# - Implémenter l'attaque d'armée dans le déplacement d'unité X
 #########################################################
 
 
@@ -174,17 +189,33 @@ from time import time
 
 
 # -> Fix Affichage ShowPathfinding
-# -> Terminer Pathfinding √
-#
 # -> Fix déplacement d'unité √
 #	--> Améliorer déplacement unité
 #		--> C'est aproximatif
 #			--> Revoir Brensenham
-# Changer Interface War pour utiliser Listboxes
-
+# -> Fix Build Church
+#	--> test en permanence si on est dans l'état build
+#		--> Aucun retour quand on construit une église
+# -> Terminer State War
+#		--> Faire détruire l'interface declaration de guerre √
+#		--> Recalculer la position de l'interface
+# -> Terminer StateMovearmy
+# 	--> Permettre l'attaque d'un village
+#		--> Afficher une Icône quand on à la souris dessus
+#	--> Permettre l'attaque d'une armée
+# -> Changer la mise en mémoire des déplacements restant de l'armée pour Séquence plutôt que les mouvement individuels
+#	--> Doit être Récursif
+#	--> Permet d'adapter le déplacement de l'armée entre les tours si la cible est mobile
+# -> Revoir la destruction de village
+# -> Refactoriser le code pour réduire la réutilisation de même code pour a la place utilisr une fonction commune liée a l'objet utiliser
+#	--> Voir la récupération de village selon la position x,y via Classmap
+# -> Refactorisation de tout les calculs de Coordonnées pour utiliser les fonctions Commune
+# -> Peut être utiliser Bezier pour l'affichage du Pathfinding
+# -> Doit tester la prise de Village
+# -> Doit tester l'attaque d'armée Adverse
 
 ######## Fonctionnalité Principale à Implémenter
-# - Implémenter Fonction Bataille
+# - Implémenter Fonction Combat 
 # - Implémenter prise de Village
 # - Implémenter Class Roturier et Class Paysan
 # - Implémenter Update Fin de Tour
@@ -198,8 +229,16 @@ from time import time
 # - Implémenter Options
 # - Implémenter IA
 # - Implémenter Landforme
-# - Implémenter Bordure Village
 # - Terminer GlobalViewMenu
+# - Système de Pop-up d'événement en début de tour En bas à droite Comme Armée qui termine son déplacement ou village qui termine de se construire voir Civ
+# - Affiné la prise de Village pour prendre en compte le PIllage de ressource et la mort de Villageois
+# - Affiné le Combat entre 2 armée pour prendre en compte l'enfermement du Chevalier Ennemie
+# - Implémenter Système de Tooltip (affichage d'info-Bulle)
+# - Implémenter à la révolte des villages la révoltes de l'armée locale si le bonheur est mauvais
+# - Implémenter la création de Bandit
+# - Changer interface entête pour afficher icône boufe et money
+# - Implémenter une interface plus pousser d'attaque de village
+# - Implémenter une interface plus pousser d'attaque d'armée
 ########
 
 
@@ -599,6 +638,16 @@ def mainscreen(gamedata, classmap, option, root, pic):
 	for village in classmap.lvillages:
 		genproc.genpopvillage(option, classmap, gamedata,village, 10)
 
+	# On affiche les Bordures des villages:
+	affichage.bordervillage(gamedata, classmap, option)
+
+
+
+	village = gamedata.list_lord[gamedata.playerid].fief[0]
+	coordcanvas = moveview.coordmaptocanvas(gamedata, classmap, option, [village.x, village.y], True)
+	# On centre la vue sur le village de départ
+	moveview.centerviewcanvas(gamedata, classmap, option, coordcanvas)
+
 
 ####################################################################################################
 
@@ -864,20 +913,6 @@ def infovillage(village):
 	print("village priest: ", village.priest.name)
 	print("village global joy: ", village.global_joy)
 	print("village ressource, money: ", village.ressource, village.money)
-
-
-def bordervillage(Gamedata, Classmap, frame):
-	##################
-	# Fonction pour afficher les frontière des villages
-	##################
-	pass
-
-def fight(gamedata, classmap):
-	##################
-	# Fonction pour gérer le combat entre 2 armée
-	##################
-	pass
-
 
 ######################### Main #########################
 if __name__ == '__main__':

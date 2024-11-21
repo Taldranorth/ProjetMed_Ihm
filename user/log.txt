@@ -1,13 +1,1250 @@
-[18:17:33]Info: Initialisation log terminé
-[18:17:33]Info: 1200x1200+150+150
-[18:17:33]Info: Initialisation de l'application terminé
-[18:17:34]Info: taille écran x,y: 1440, 900
-[18:17:34]Info: Taille de la Frame du Canvas: 1, 1
-[18:17:34]Info: Taille de la Frame du top: 1, 1
-[18:17:34]Info: Taille de la Frame du bas: 1, 1
-[18:17:34]Info: Taille du Canvas:1, 1
-[18:17:36]Info: entre dans un état interface_war
-[18:17:36]Info: déplacement de x,y: , 0.0, 0.0
-[18:17:36]Info: taille Atlas: 5
-[18:17:36]Info: déplacement de x,y: , -100.0, 140.0
-[18:17:37]Info: On quitte l'état interface_war
+[18:23:41]Info: Initialisation log terminé
+[18:23:41]Info: 1200x1200+150+150
+[18:23:41]Info: Initialisation de l'application terminé
+[18:23:41]Info: taille écran x,y: 1440, 900
+[18:23:41]Info: Taille de la Frame du Canvas: 1, 1
+[18:23:41]Info: Taille de la Frame du top: 1, 1
+[18:23:41]Info: Taille de la Frame du bas: 1, 1
+[18:23:41]Info: Taille du Canvas:1, 1
+[18:23:42]Info: Pour coord map: 26, 4
+[18:23:42]Info: coordcanv: 520, 80
+[18:23:42]Info: Pour coord map: 31, 9
+[18:23:42]Info: coordcanv: 620, 180
+[18:23:42]Info: coord0: ,[520, 80]
+[18:23:42]Info: coord1: ,[620, 180]
+[18:23:42]Info: Pour coord map: 16, 63
+[18:23:42]Info: coordcanv: 320, 1260
+[18:23:42]Info: Pour coord map: 21, 68
+[18:23:42]Info: coordcanv: 420, 1360
+[18:23:42]Info: coord0: ,[320, 1260]
+[18:23:42]Info: coord1: ,[420, 1360]
+[18:23:42]Info: Pour coord map: 31, 58
+[18:23:42]Info: coordcanv: 620, 1160
+[18:23:42]Info: Pour coord map: 36, 63
+[18:23:42]Info: coordcanv: 720, 1260
+[18:23:42]Info: coord0: ,[620, 1160]
+[18:23:42]Info: coord1: ,[720, 1260]
+[18:23:42]Info: Pour coord map: 62, 77
+[18:23:42]Info: coordcanv: 1240, 1540
+[18:23:42]Info: Pour coord map: 67, 82
+[18:23:42]Info: coordcanv: 1340, 1640
+[18:23:42]Info: coord0: ,[1240, 1540]
+[18:23:42]Info: coord1: ,[1340, 1640]
+[18:23:42]Info: Pour coord map: 27, 88
+[18:23:42]Info: coordcanv: 540, 1760
+[18:23:42]Info: Pour coord map: 32, 93
+[18:23:42]Info: coordcanv: 640, 1860
+[18:23:42]Info: coord0: ,[540, 1760]
+[18:23:42]Info: coord1: ,[640, 1860]
+[18:23:42]Info: Pour coord map: 1, 82
+[18:23:42]Info: coordcanv: 20, 1640
+[18:23:42]Info: Pour coord map: 6, 87
+[18:23:42]Info: coordcanv: 120, 1740
+[18:23:42]Info: coord0: ,[20, 1640]
+[18:23:42]Info: coord1: ,[120, 1740]
+[18:23:42]Info: Pour coord map: 0, 48
+[18:23:42]Info: coordcanv: 0, 960
+[18:23:42]Info: Pour coord map: 5, 53
+[18:23:42]Info: coordcanv: 100, 1060
+[18:23:42]Info: coord0: ,[0, 960]
+[18:23:42]Info: coord1: ,[100, 1060]
+[18:23:42]Info: Pour coord map: 35, 84
+[18:23:42]Info: coordcanv: 700, 1680
+[18:23:42]Info: Pour coord map: 40, 89
+[18:23:42]Info: coordcanv: 800, 1780
+[18:23:42]Info: coord0: ,[700, 1680]
+[18:23:42]Info: coord1: ,[800, 1780]
+[18:23:42]Info: Pour coord map: 9, 14
+[18:23:42]Info: coordcanv: 180, 280
+[18:23:42]Info: Pour coord map: 14, 19
+[18:23:42]Info: coordcanv: 280, 380
+[18:23:42]Info: coord0: ,[180, 280]
+[18:23:42]Info: coord1: ,[280, 380]
+[18:23:42]Info: Pour coord map: 28, 6
+[18:23:42]Info: coordcanv: 570.0, 130.0
+[18:23:42]Info: déplacement de x,y: , -30.0, -230.0
+[18:23:43]Info: entre dans un état interface_war
+[18:23:43]Info: déplacement de x,y: , 0.0, 0.0
+[18:23:43]Info: taille Atlas: 5
+[18:23:43]Info: déplacement de x,y: , -100.0, 140.0
+[18:23:45]Info: On quitte l'état interface_war
+[18:23:47]Info: entre dans un état interface_recruit_army
+[18:23:50]Info: Le Joueur Créer une armée
+[18:23:51]Info: On se déplace vers l'armée 
+[18:23:51]Info: Pour coord map: 28, 6
+[18:23:51]Info: coordcanv: 285.0, 65.0
+[18:23:51]Info: déplacement de x,y: , -315.0, -295.0
+[18:23:58]Info: On quitte l'état interface_recruit_army
+[18:24:01]Info: coord de la tuile 0,0 Canvas: , [5.0, 5.0]
+[18:24:01]Info: coordonnées window de la souris: , 288, 78
+[18:24:01]Info: 1
+[18:24:01]Info: déplacement de x,y: , -30.0, -210.0
+[18:24:01]Info: taille Atlas: 7
+[18:24:04]Info: coord de la tuile 0,0 Canvas: , [10.0, 10.0]
+[18:24:04]Info: coordonnées window de la souris: , 571, 126
+[18:24:04]Info: 1
+[18:24:04]Info: déplacement de x,y: , 540.0, -100.0
+[18:24:04]Info: taille Atlas: 7
+[18:24:05]Info: entre dans un état interface_army
+[18:24:06]Info: dx, dy: ,3.0, 5.0
+[18:24:06]Info: coord0: ,[28, 6]
+[18:24:06]Info: coord1: ,[31.0, 11.0]
+[18:24:06]Info: C: ,[29.0, 8.0]
+[18:24:06]Info: C1: ,[27, 8]
+[18:24:06]Info: C2: ,[30, 6]
+[18:24:06]Info: liste des itinéraires: [[[28, 7], [28, 8], [29, 8], [29.0, 9.0], [30.0, 9.0], [30.0, 10.0], [30.0, 11.0], [31.0, 11.0]], [[28, 7], [28, 8], [27, 8], [28, 8], [28, 9], [29, 9], [30, 9], [30, 10], [31, 10], [31, 11]], [[29, 6], [30, 6], [30, 7], [30, 8], [30, 9], [31, 9], [31, 10], [31, 11]]]
+[18:24:06]Info: Calcul Cout itinéraire
+[18:24:06]Info: Calcul case: [28, 7]
+[18:24:06]Info: Idtuile: 728
+[18:24:06]Info: Calcul case: [28, 8]
+[18:24:06]Info: Idtuile: 828
+[18:24:06]Info: Calcul case: [29, 8]
+[18:24:06]Info: Idtuile: 829
+[18:24:06]Info: Calcul case: [29.0, 9.0]
+[18:24:06]Info: Idtuile: 929.0
+[18:24:06]Info: Calcul case: [30.0, 9.0]
+[18:24:06]Info: Idtuile: 930.0
+[18:24:06]Info: Calcul case: [30.0, 10.0]
+[18:24:06]Info: Idtuile: 1030.0
+[18:24:06]Info: Calcul case: [30.0, 11.0]
+[18:24:06]Info: Idtuile: 1130.0
+[18:24:06]Info: Calcul case: [31.0, 11.0]
+[18:24:06]Info: Idtuile: 1131.0
+[18:24:06]Info: CM: 11
+[18:24:06]Info: Calcul case: [28, 7]
+[18:24:06]Info: Idtuile: 728
+[18:24:06]Info: Calcul case: [28, 8]
+[18:24:06]Info: Idtuile: 828
+[18:24:06]Info: Calcul case: [27, 8]
+[18:24:06]Info: Idtuile: 827
+[18:24:06]Info: Calcul case: [28, 8]
+[18:24:06]Info: Idtuile: 828
+[18:24:06]Info: Calcul case: [28, 9]
+[18:24:06]Info: Idtuile: 928
+[18:24:06]Info: Calcul case: [29, 9]
+[18:24:06]Info: Idtuile: 929
+[18:24:06]Info: Calcul case: [30, 9]
+[18:24:06]Info: Idtuile: 930
+[18:24:06]Info: Calcul case: [30, 10]
+[18:24:06]Info: Idtuile: 1030
+[18:24:06]Info: Calcul case: [31, 10]
+[18:24:06]Info: Idtuile: 1031
+[18:24:06]Info: Calcul case: [31, 11]
+[18:24:06]Info: Idtuile: 1131
+[18:24:06]Info: CM: 23
+[18:24:06]Info: Calcul case: [29, 6]
+[18:24:06]Info: Idtuile: 629
+[18:24:06]Info: Calcul case: [30, 6]
+[18:24:06]Info: Idtuile: 630
+[18:24:06]Info: Calcul case: [30, 7]
+[18:24:06]Info: Idtuile: 730
+[18:24:06]Info: Calcul case: [30, 8]
+[18:24:06]Info: Idtuile: 830
+[18:24:06]Info: Calcul case: [30, 9]
+[18:24:06]Info: Idtuile: 930
+[18:24:06]Info: Calcul case: [31, 9]
+[18:24:06]Info: Idtuile: 931
+[18:24:06]Info: Calcul case: [31, 10]
+[18:24:06]Info: Idtuile: 1031
+[18:24:06]Info: Calcul case: [31, 11]
+[18:24:06]Info: Idtuile: 1131
+[18:24:06]Info: CM: 14
+[18:24:06]Info: itinéraires le moins couteux avec 11PM : [[28, 7], [28, 8], [29, 8], [29.0, 9.0], [30.0, 9.0], [30.0, 10.0], [30.0, 11.0], [31.0, 11.0]]
+[18:24:06]Info: dx, dy: ,3.0, 4.0
+[18:24:06]Info: coord0: ,[28, 6]
+[18:24:06]Info: coord1: ,[31.0, 10.0]
+[18:24:06]Info: C: ,[29.0, 8.0]
+[18:24:06]Info: C1: ,[27, 8]
+[18:24:06]Info: C2: ,[30, 6]
+[18:24:06]Info: liste des itinéraires: [[[28, 7], [28, 8], [29, 8], [30.0, 8.0], [30.0, 9.0], [31.0, 9.0], [31.0, 10.0]], [[28, 7], [28, 8], [27, 8], [28, 8], [29, 8], [29, 9], [30, 9], [31, 9], [31, 10]], [[29, 6], [30, 6], [30, 7], [30, 8], [30, 9], [31, 9], [31, 10]]]
+[18:24:06]Info: Calcul Cout itinéraire
+[18:24:06]Info: Calcul case: [28, 7]
+[18:24:06]Info: Idtuile: 728
+[18:24:06]Info: Calcul case: [28, 8]
+[18:24:06]Info: Idtuile: 828
+[18:24:06]Info: Calcul case: [29, 8]
+[18:24:06]Info: Idtuile: 829
+[18:24:06]Info: Calcul case: [30.0, 8.0]
+[18:24:06]Info: Idtuile: 830.0
+[18:24:06]Info: Calcul case: [30.0, 9.0]
+[18:24:06]Info: Idtuile: 930.0
+[18:24:06]Info: Calcul case: [31.0, 9.0]
+[18:24:06]Info: Idtuile: 931.0
+[18:24:06]Info: Calcul case: [31.0, 10.0]
+[18:24:06]Info: Idtuile: 1031.0
+[18:24:06]Info: CM: 11
+[18:24:06]Info: Calcul case: [28, 7]
+[18:24:06]Info: Idtuile: 728
+[18:24:06]Info: Calcul case: [28, 8]
+[18:24:06]Info: Idtuile: 828
+[18:24:06]Info: Calcul case: [27, 8]
+[18:24:06]Info: Idtuile: 827
+[18:24:06]Info: Calcul case: [28, 8]
+[18:24:06]Info: Idtuile: 828
+[18:24:06]Info: Calcul case: [29, 8]
+[18:24:06]Info: Idtuile: 829
+[18:24:06]Info: Calcul case: [29, 9]
+[18:24:06]Info: Idtuile: 929
+[18:24:06]Info: Calcul case: [30, 9]
+[18:24:06]Info: Idtuile: 930
+[18:24:06]Info: Calcul case: [31, 9]
+[18:24:06]Info: Idtuile: 931
+[18:24:06]Info: Calcul case: [31, 10]
+[18:24:06]Info: Idtuile: 1031
+[18:24:06]Info: CM: 21
+[18:24:06]Info: Calcul case: [29, 6]
+[18:24:06]Info: Idtuile: 629
+[18:24:06]Info: Calcul case: [30, 6]
+[18:24:06]Info: Idtuile: 630
+[18:24:06]Info: Calcul case: [30, 7]
+[18:24:06]Info: Idtuile: 730
+[18:24:06]Info: Calcul case: [30, 8]
+[18:24:06]Info: Idtuile: 830
+[18:24:06]Info: Calcul case: [30, 9]
+[18:24:06]Info: Idtuile: 930
+[18:24:06]Info: Calcul case: [31, 9]
+[18:24:06]Info: Idtuile: 931
+[18:24:06]Info: Calcul case: [31, 10]
+[18:24:06]Info: Idtuile: 1031
+[18:24:06]Info: CM: 12
+[18:24:06]Info: itinéraires le moins couteux avec 11PM : [[28, 7], [28, 8], [29, 8], [30.0, 8.0], [30.0, 9.0], [31.0, 9.0], [31.0, 10.0]]
+[18:24:06]Info: dx, dy: ,3.0, 3.0
+[18:24:06]Info: coord0: ,[28, 6]
+[18:24:06]Info: coord1: ,[31.0, 9.0]
+[18:24:06]Info: C: ,[29.0, 7.0]
+[18:24:06]Info: C1: ,[28, 7]
+[18:24:06]Info: C2: ,[29, 6]
+[18:24:06]Info: liste des itinéraires: [[[29, 6], [29, 7], [30.0, 7.0], [30.0, 8.0], [31.0, 8.0], [31.0, 9.0]], [[28, 7], [29, 7], [29, 8], [30, 8], [31, 8], [31, 9]], [[29, 6], [29, 7], [30, 7], [30, 8], [30, 9], [31, 9]]]
+[18:24:06]Info: Calcul Cout itinéraire
+[18:24:06]Info: Calcul case: [29, 6]
+[18:24:06]Info: Idtuile: 629
+[18:24:06]Info: Calcul case: [29, 7]
+[18:24:06]Info: Idtuile: 729
+[18:24:06]Info: Calcul case: [30.0, 7.0]
+[18:24:06]Info: Idtuile: 730.0
+[18:24:06]Info: Calcul case: [30.0, 8.0]
+[18:24:06]Info: Idtuile: 830.0
+[18:24:06]Info: Calcul case: [31.0, 8.0]
+[18:24:06]Info: Idtuile: 831.0
+[18:24:06]Info: Calcul case: [31.0, 9.0]
+[18:24:06]Info: Idtuile: 931.0
+[18:24:06]Info: CM: 10
+[18:24:06]Info: Calcul case: [28, 7]
+[18:24:06]Info: Idtuile: 728
+[18:24:06]Info: Calcul case: [29, 7]
+[18:24:06]Info: Idtuile: 729
+[18:24:06]Info: Calcul case: [29, 8]
+[18:24:06]Info: Idtuile: 829
+[18:24:06]Info: Calcul case: [30, 8]
+[18:24:06]Info: Idtuile: 830
+[18:24:06]Info: Calcul case: [31, 8]
+[18:24:06]Info: Idtuile: 831
+[18:24:06]Info: Calcul case: [31, 9]
+[18:24:06]Info: Idtuile: 931
+[18:24:06]Info: CM: 9
+[18:24:06]Info: Calcul case: [29, 6]
+[18:24:06]Info: Idtuile: 629
+[18:24:06]Info: Calcul case: [29, 7]
+[18:24:06]Info: Idtuile: 729
+[18:24:06]Info: Calcul case: [30, 7]
+[18:24:06]Info: Idtuile: 730
+[18:24:06]Info: Calcul case: [30, 8]
+[18:24:06]Info: Idtuile: 830
+[18:24:06]Info: Calcul case: [30, 9]
+[18:24:06]Info: Idtuile: 930
+[18:24:06]Info: Calcul case: [31, 9]
+[18:24:06]Info: Idtuile: 931
+[18:24:06]Info: CM: 10
+[18:24:06]Info: itinéraires le moins couteux avec 9PM : [[28, 7], [29, 7], [29, 8], [30, 8], [31, 8], [31, 9]]
+[18:24:06]Info: dx, dy: ,2.0, 3.0
+[18:24:06]Info: coord0: ,[28, 6]
+[18:24:06]Info: coord1: ,[30.0, 9.0]
+[18:24:06]Info: C: ,[29.0, 7.0]
+[18:24:06]Info: C1: ,[28, 7]
+[18:24:06]Info: C2: ,[29, 6]
+[18:24:06]Info: liste des itinéraires: [[[29, 6], [29, 7], [29.0, 8.0], [29.0, 9.0], [30.0, 9.0]], [[28, 7], [29, 7], [29, 8], [30, 8], [30, 9]], [[29, 6], [29, 7], [29, 8], [30, 8], [30, 9]]]
+[18:24:06]Info: Calcul Cout itinéraire
+[18:24:06]Info: Calcul case: [29, 6]
+[18:24:06]Info: Idtuile: 629
+[18:24:06]Info: Calcul case: [29, 7]
+[18:24:06]Info: Idtuile: 729
+[18:24:06]Info: Calcul case: [29.0, 8.0]
+[18:24:06]Info: Idtuile: 829.0
+[18:24:06]Info: Calcul case: [29.0, 9.0]
+[18:24:06]Info: Idtuile: 929.0
+[18:24:06]Info: Calcul case: [30.0, 9.0]
+[18:24:06]Info: Idtuile: 930.0
+[18:24:06]Info: CM: 6
+[18:24:06]Info: Calcul case: [28, 7]
+[18:24:06]Info: Idtuile: 728
+[18:24:06]Info: Calcul case: [29, 7]
+[18:24:06]Info: Idtuile: 729
+[18:24:06]Info: Calcul case: [29, 8]
+[18:24:06]Info: Idtuile: 829
+[18:24:06]Info: Calcul case: [30, 8]
+[18:24:06]Info: Idtuile: 830
+[18:24:06]Info: Calcul case: [30, 9]
+[18:24:06]Info: Idtuile: 930
+[18:24:06]Info: CM: 7
+[18:24:06]Info: Calcul case: [29, 6]
+[18:24:06]Info: Idtuile: 629
+[18:24:06]Info: Calcul case: [29, 7]
+[18:24:06]Info: Idtuile: 729
+[18:24:06]Info: Calcul case: [29, 8]
+[18:24:06]Info: Idtuile: 829
+[18:24:06]Info: Calcul case: [30, 8]
+[18:24:06]Info: Idtuile: 830
+[18:24:06]Info: Calcul case: [30, 9]
+[18:24:06]Info: Idtuile: 930
+[18:24:06]Info: CM: 7
+[18:24:06]Info: itinéraires le moins couteux avec 6PM : [[29, 6], [29, 7], [29.0, 8.0], [29.0, 9.0], [30.0, 9.0]]
+[18:24:06]Info: dx, dy: ,2.0, 3.0
+[18:24:06]Info: coord0: ,[28, 6]
+[18:24:06]Info: coord1: ,[30.0, 9.0]
+[18:24:06]Info: C: ,[29.0, 7.0]
+[18:24:06]Info: C1: ,[28, 7]
+[18:24:06]Info: C2: ,[29, 6]
+[18:24:06]Info: liste des itinéraires: [[[29, 6], [29, 7], [29.0, 8.0], [29.0, 9.0], [30.0, 9.0]], [[28, 7], [29, 7], [29, 8], [30, 8], [30, 9]], [[29, 6], [29, 7], [29, 8], [30, 8], [30, 9]]]
+[18:24:06]Info: Calcul Cout itinéraire
+[18:24:06]Info: Calcul case: [29, 6]
+[18:24:06]Info: Idtuile: 629
+[18:24:06]Info: Calcul case: [29, 7]
+[18:24:06]Info: Idtuile: 729
+[18:24:06]Info: Calcul case: [29.0, 8.0]
+[18:24:06]Info: Idtuile: 829.0
+[18:24:06]Info: Calcul case: [29.0, 9.0]
+[18:24:06]Info: Idtuile: 929.0
+[18:24:06]Info: Calcul case: [30.0, 9.0]
+[18:24:06]Info: Idtuile: 930.0
+[18:24:06]Info: CM: 6
+[18:24:06]Info: Calcul case: [28, 7]
+[18:24:06]Info: Idtuile: 728
+[18:24:06]Info: Calcul case: [29, 7]
+[18:24:06]Info: Idtuile: 729
+[18:24:06]Info: Calcul case: [29, 8]
+[18:24:06]Info: Idtuile: 829
+[18:24:06]Info: Calcul case: [30, 8]
+[18:24:06]Info: Idtuile: 830
+[18:24:06]Info: Calcul case: [30, 9]
+[18:24:06]Info: Idtuile: 930
+[18:24:06]Info: CM: 7
+[18:24:06]Info: Calcul case: [29, 6]
+[18:24:06]Info: Idtuile: 629
+[18:24:06]Info: Calcul case: [29, 7]
+[18:24:06]Info: Idtuile: 729
+[18:24:06]Info: Calcul case: [29, 8]
+[18:24:06]Info: Idtuile: 829
+[18:24:06]Info: Calcul case: [30, 8]
+[18:24:06]Info: Idtuile: 830
+[18:24:06]Info: Calcul case: [30, 9]
+[18:24:06]Info: Idtuile: 930
+[18:24:06]Info: CM: 7
+[18:24:06]Info: itinéraires le moins couteux avec 6PM : [[29, 6], [29, 7], [29.0, 8.0], [29.0, 9.0], [30.0, 9.0]]
+[18:24:06]Info: dx, dy: ,2.0, 3.0
+[18:24:06]Info: coord0: ,[28, 6]
+[18:24:06]Info: coord1: ,[30.0, 9.0]
+[18:24:06]Info: C: ,[29.0, 7.0]
+[18:24:06]Info: C1: ,[28, 7]
+[18:24:06]Info: C2: ,[29, 6]
+[18:24:06]Info: liste des itinéraires: [[[29, 6], [29, 7], [29.0, 8.0], [29.0, 9.0], [30.0, 9.0]], [[28, 7], [29, 7], [29, 8], [30, 8], [30, 9]], [[29, 6], [29, 7], [29, 8], [30, 8], [30, 9]]]
+[18:24:06]Info: Calcul Cout itinéraire
+[18:24:06]Info: Calcul case: [29, 6]
+[18:24:06]Info: Idtuile: 629
+[18:24:06]Info: Calcul case: [29, 7]
+[18:24:06]Info: Idtuile: 729
+[18:24:06]Info: Calcul case: [29.0, 8.0]
+[18:24:06]Info: Idtuile: 829.0
+[18:24:06]Info: Calcul case: [29.0, 9.0]
+[18:24:06]Info: Idtuile: 929.0
+[18:24:06]Info: Calcul case: [30.0, 9.0]
+[18:24:06]Info: Idtuile: 930.0
+[18:24:06]Info: CM: 6
+[18:24:06]Info: Calcul case: [28, 7]
+[18:24:06]Info: Idtuile: 728
+[18:24:06]Info: Calcul case: [29, 7]
+[18:24:06]Info: Idtuile: 729
+[18:24:06]Info: Calcul case: [29, 8]
+[18:24:06]Info: Idtuile: 829
+[18:24:06]Info: Calcul case: [30, 8]
+[18:24:06]Info: Idtuile: 830
+[18:24:06]Info: Calcul case: [30, 9]
+[18:24:06]Info: Idtuile: 930
+[18:24:06]Info: CM: 7
+[18:24:06]Info: Calcul case: [29, 6]
+[18:24:06]Info: Idtuile: 629
+[18:24:06]Info: Calcul case: [29, 7]
+[18:24:06]Info: Idtuile: 729
+[18:24:06]Info: Calcul case: [29, 8]
+[18:24:06]Info: Idtuile: 829
+[18:24:06]Info: Calcul case: [30, 8]
+[18:24:06]Info: Idtuile: 830
+[18:24:06]Info: Calcul case: [30, 9]
+[18:24:06]Info: Idtuile: 930
+[18:24:06]Info: CM: 7
+[18:24:06]Info: itinéraires le moins couteux avec 6PM : [[29, 6], [29, 7], [29.0, 8.0], [29.0, 9.0], [30.0, 9.0]]
+[18:24:06]Info: dx, dy: ,2.0, 3.0
+[18:24:06]Info: coord0: ,[28, 6]
+[18:24:06]Info: coord1: ,[30.0, 9.0]
+[18:24:06]Info: C: ,[29.0, 7.0]
+[18:24:06]Info: C1: ,[28, 7]
+[18:24:06]Info: C2: ,[29, 6]
+[18:24:06]Info: liste des itinéraires: [[[29, 6], [29, 7], [29.0, 8.0], [29.0, 9.0], [30.0, 9.0]], [[28, 7], [29, 7], [29, 8], [30, 8], [30, 9]], [[29, 6], [29, 7], [29, 8], [30, 8], [30, 9]]]
+[18:24:06]Info: Calcul Cout itinéraire
+[18:24:06]Info: Calcul case: [29, 6]
+[18:24:06]Info: Idtuile: 629
+[18:24:06]Info: Calcul case: [29, 7]
+[18:24:06]Info: Idtuile: 729
+[18:24:06]Info: Calcul case: [29.0, 8.0]
+[18:24:06]Info: Idtuile: 829.0
+[18:24:06]Info: Calcul case: [29.0, 9.0]
+[18:24:06]Info: Idtuile: 929.0
+[18:24:06]Info: Calcul case: [30.0, 9.0]
+[18:24:06]Info: Idtuile: 930.0
+[18:24:06]Info: CM: 6
+[18:24:06]Info: Calcul case: [28, 7]
+[18:24:06]Info: Idtuile: 728
+[18:24:06]Info: Calcul case: [29, 7]
+[18:24:06]Info: Idtuile: 729
+[18:24:06]Info: Calcul case: [29, 8]
+[18:24:06]Info: Idtuile: 829
+[18:24:06]Info: Calcul case: [30, 8]
+[18:24:06]Info: Idtuile: 830
+[18:24:06]Info: Calcul case: [30, 9]
+[18:24:06]Info: Idtuile: 930
+[18:24:06]Info: CM: 7
+[18:24:06]Info: Calcul case: [29, 6]
+[18:24:06]Info: Idtuile: 629
+[18:24:06]Info: Calcul case: [29, 7]
+[18:24:06]Info: Idtuile: 729
+[18:24:06]Info: Calcul case: [29, 8]
+[18:24:06]Info: Idtuile: 829
+[18:24:06]Info: Calcul case: [30, 8]
+[18:24:06]Info: Idtuile: 830
+[18:24:06]Info: Calcul case: [30, 9]
+[18:24:06]Info: Idtuile: 930
+[18:24:06]Info: CM: 7
+[18:24:06]Info: itinéraires le moins couteux avec 6PM : [[29, 6], [29, 7], [29.0, 8.0], [29.0, 9.0], [30.0, 9.0]]
+[18:24:06]Info: dx, dy: ,2.0, 3.0
+[18:24:06]Info: coord0: ,[28, 6]
+[18:24:06]Info: coord1: ,[30.0, 9.0]
+[18:24:06]Info: C: ,[29.0, 7.0]
+[18:24:06]Info: C1: ,[28, 7]
+[18:24:06]Info: C2: ,[29, 6]
+[18:24:06]Info: liste des itinéraires: [[[29, 6], [29, 7], [29.0, 8.0], [29.0, 9.0], [30.0, 9.0]], [[28, 7], [29, 7], [29, 8], [30, 8], [30, 9]], [[29, 6], [29, 7], [29, 8], [30, 8], [30, 9]]]
+[18:24:06]Info: Calcul Cout itinéraire
+[18:24:06]Info: Calcul case: [29, 6]
+[18:24:06]Info: Idtuile: 629
+[18:24:06]Info: Calcul case: [29, 7]
+[18:24:06]Info: Idtuile: 729
+[18:24:06]Info: Calcul case: [29.0, 8.0]
+[18:24:06]Info: Idtuile: 829.0
+[18:24:06]Info: Calcul case: [29.0, 9.0]
+[18:24:06]Info: Idtuile: 929.0
+[18:24:06]Info: Calcul case: [30.0, 9.0]
+[18:24:06]Info: Idtuile: 930.0
+[18:24:06]Info: CM: 6
+[18:24:06]Info: Calcul case: [28, 7]
+[18:24:06]Info: Idtuile: 728
+[18:24:06]Info: Calcul case: [29, 7]
+[18:24:06]Info: Idtuile: 729
+[18:24:06]Info: Calcul case: [29, 8]
+[18:24:06]Info: Idtuile: 829
+[18:24:06]Info: Calcul case: [30, 8]
+[18:24:06]Info: Idtuile: 830
+[18:24:06]Info: Calcul case: [30, 9]
+[18:24:06]Info: Idtuile: 930
+[18:24:06]Info: CM: 7
+[18:24:06]Info: Calcul case: [29, 6]
+[18:24:06]Info: Idtuile: 629
+[18:24:06]Info: Calcul case: [29, 7]
+[18:24:06]Info: Idtuile: 729
+[18:24:06]Info: Calcul case: [29, 8]
+[18:24:06]Info: Idtuile: 829
+[18:24:06]Info: Calcul case: [30, 8]
+[18:24:06]Info: Idtuile: 830
+[18:24:06]Info: Calcul case: [30, 9]
+[18:24:06]Info: Idtuile: 930
+[18:24:06]Info: CM: 7
+[18:24:06]Info: itinéraires le moins couteux avec 6PM : [[29, 6], [29, 7], [29.0, 8.0], [29.0, 9.0], [30.0, 9.0]]
+[18:24:06]Info: dx, dy: ,2.0, 3.0
+[18:24:06]Info: coord0: ,[28, 6]
+[18:24:06]Info: coord1: ,[30.0, 9.0]
+[18:24:06]Info: C: ,[29.0, 7.0]
+[18:24:06]Info: C1: ,[28, 7]
+[18:24:06]Info: C2: ,[29, 6]
+[18:24:06]Info: liste des itinéraires: [[[29, 6], [29, 7], [29.0, 8.0], [29.0, 9.0], [30.0, 9.0]], [[28, 7], [29, 7], [29, 8], [30, 8], [30, 9]], [[29, 6], [29, 7], [29, 8], [30, 8], [30, 9]]]
+[18:24:06]Info: Calcul Cout itinéraire
+[18:24:06]Info: Calcul case: [29, 6]
+[18:24:06]Info: Idtuile: 629
+[18:24:06]Info: Calcul case: [29, 7]
+[18:24:06]Info: Idtuile: 729
+[18:24:06]Info: Calcul case: [29.0, 8.0]
+[18:24:06]Info: Idtuile: 829.0
+[18:24:06]Info: Calcul case: [29.0, 9.0]
+[18:24:06]Info: Idtuile: 929.0
+[18:24:06]Info: Calcul case: [30.0, 9.0]
+[18:24:06]Info: Idtuile: 930.0
+[18:24:06]Info: CM: 6
+[18:24:06]Info: Calcul case: [28, 7]
+[18:24:06]Info: Idtuile: 728
+[18:24:06]Info: Calcul case: [29, 7]
+[18:24:06]Info: Idtuile: 729
+[18:24:06]Info: Calcul case: [29, 8]
+[18:24:06]Info: Idtuile: 829
+[18:24:06]Info: Calcul case: [30, 8]
+[18:24:06]Info: Idtuile: 830
+[18:24:06]Info: Calcul case: [30, 9]
+[18:24:06]Info: Idtuile: 930
+[18:24:06]Info: CM: 7
+[18:24:06]Info: Calcul case: [29, 6]
+[18:24:06]Info: Idtuile: 629
+[18:24:06]Info: Calcul case: [29, 7]
+[18:24:06]Info: Idtuile: 729
+[18:24:06]Info: Calcul case: [29, 8]
+[18:24:06]Info: Idtuile: 829
+[18:24:06]Info: Calcul case: [30, 8]
+[18:24:06]Info: Idtuile: 830
+[18:24:06]Info: Calcul case: [30, 9]
+[18:24:06]Info: Idtuile: 930
+[18:24:06]Info: CM: 7
+[18:24:06]Info: itinéraires le moins couteux avec 6PM : [[29, 6], [29, 7], [29.0, 8.0], [29.0, 9.0], [30.0, 9.0]]
+[18:24:06]Info: dx, dy: ,2.0, 3.0
+[18:24:06]Info: coord0: ,[28, 6]
+[18:24:06]Info: coord1: ,[30.0, 9.0]
+[18:24:06]Info: C: ,[29.0, 7.0]
+[18:24:06]Info: C1: ,[28, 7]
+[18:24:06]Info: C2: ,[29, 6]
+[18:24:06]Info: liste des itinéraires: [[[29, 6], [29, 7], [29.0, 8.0], [29.0, 9.0], [30.0, 9.0]], [[28, 7], [29, 7], [29, 8], [30, 8], [30, 9]], [[29, 6], [29, 7], [29, 8], [30, 8], [30, 9]]]
+[18:24:06]Info: Calcul Cout itinéraire
+[18:24:06]Info: Calcul case: [29, 6]
+[18:24:06]Info: Idtuile: 629
+[18:24:06]Info: Calcul case: [29, 7]
+[18:24:06]Info: Idtuile: 729
+[18:24:06]Info: Calcul case: [29.0, 8.0]
+[18:24:06]Info: Idtuile: 829.0
+[18:24:06]Info: Calcul case: [29.0, 9.0]
+[18:24:06]Info: Idtuile: 929.0
+[18:24:06]Info: Calcul case: [30.0, 9.0]
+[18:24:06]Info: Idtuile: 930.0
+[18:24:06]Info: CM: 6
+[18:24:06]Info: Calcul case: [28, 7]
+[18:24:06]Info: Idtuile: 728
+[18:24:06]Info: Calcul case: [29, 7]
+[18:24:06]Info: Idtuile: 729
+[18:24:06]Info: Calcul case: [29, 8]
+[18:24:06]Info: Idtuile: 829
+[18:24:06]Info: Calcul case: [30, 8]
+[18:24:06]Info: Idtuile: 830
+[18:24:06]Info: Calcul case: [30, 9]
+[18:24:06]Info: Idtuile: 930
+[18:24:06]Info: CM: 7
+[18:24:06]Info: Calcul case: [29, 6]
+[18:24:06]Info: Idtuile: 629
+[18:24:06]Info: Calcul case: [29, 7]
+[18:24:06]Info: Idtuile: 729
+[18:24:06]Info: Calcul case: [29, 8]
+[18:24:06]Info: Idtuile: 829
+[18:24:06]Info: Calcul case: [30, 8]
+[18:24:06]Info: Idtuile: 830
+[18:24:06]Info: Calcul case: [30, 9]
+[18:24:06]Info: Idtuile: 930
+[18:24:06]Info: CM: 7
+[18:24:06]Info: itinéraires le moins couteux avec 6PM : [[29, 6], [29, 7], [29.0, 8.0], [29.0, 9.0], [30.0, 9.0]]
+[18:24:06]Info: dx, dy: ,2.0, 4.0
+[18:24:06]Info: coord0: ,[28, 6]
+[18:24:06]Info: coord1: ,[30.0, 10.0]
+[18:24:06]Info: C: ,[29.0, 8.0]
+[18:24:06]Info: C1: ,[27, 8]
+[18:24:06]Info: C2: ,[30, 6]
+[18:24:06]Info: liste des itinéraires: [[[28, 7], [28, 8], [29, 8], [29.0, 9.0], [29.0, 10.0], [30.0, 10.0]], [[28, 7], [28, 8], [27, 8], [28, 8], [28, 9], [29, 9], [30, 9], [30, 10]], [[29, 6], [30, 6], [30, 7], [30, 8], [30, 9], [30, 10]]]
+[18:24:06]Info: Calcul Cout itinéraire
+[18:24:06]Info: Calcul case: [28, 7]
+[18:24:06]Info: Idtuile: 728
+[18:24:06]Info: Calcul case: [28, 8]
+[18:24:06]Info: Idtuile: 828
+[18:24:06]Info: Calcul case: [29, 8]
+[18:24:06]Info: Idtuile: 829
+[18:24:06]Info: Calcul case: [29.0, 9.0]
+[18:24:06]Info: Idtuile: 929.0
+[18:24:06]Info: Calcul case: [29.0, 10.0]
+[18:24:06]Info: Idtuile: 1029.0
+[18:24:06]Info: Calcul case: [30.0, 10.0]
+[18:24:06]Info: Idtuile: 1030.0
+[18:24:06]Info: CM: 7
+[18:24:06]Info: Calcul case: [28, 7]
+[18:24:06]Info: Idtuile: 728
+[18:24:06]Info: Calcul case: [28, 8]
+[18:24:06]Info: Idtuile: 828
+[18:24:06]Info: Calcul case: [27, 8]
+[18:24:06]Info: Idtuile: 827
+[18:24:06]Info: Calcul case: [28, 8]
+[18:24:06]Info: Idtuile: 828
+[18:24:06]Info: Calcul case: [28, 9]
+[18:24:06]Info: Idtuile: 928
+[18:24:06]Info: Calcul case: [29, 9]
+[18:24:06]Info: Idtuile: 929
+[18:24:06]Info: Calcul case: [30, 9]
+[18:24:06]Info: Idtuile: 930
+[18:24:06]Info: Calcul case: [30, 10]
+[18:24:06]Info: Idtuile: 1030
+[18:24:06]Info: CM: 19
+[18:24:06]Info: Calcul case: [29, 6]
+[18:24:06]Info: Idtuile: 629
+[18:24:06]Info: Calcul case: [30, 6]
+[18:24:06]Info: Idtuile: 630
+[18:24:06]Info: Calcul case: [30, 7]
+[18:24:06]Info: Idtuile: 730
+[18:24:06]Info: Calcul case: [30, 8]
+[18:24:06]Info: Idtuile: 830
+[18:24:06]Info: Calcul case: [30, 9]
+[18:24:06]Info: Idtuile: 930
+[18:24:06]Info: Calcul case: [30, 10]
+[18:24:06]Info: Idtuile: 1030
+[18:24:06]Info: CM: 10
+[18:24:06]Info: itinéraires le moins couteux avec 7PM : [[28, 7], [28, 8], [29, 8], [29.0, 9.0], [29.0, 10.0], [30.0, 10.0]]
+[18:24:08]Info: dx, dy: ,2.0, 5.0
+[18:24:08]Info: coord0: ,[28, 6]
+[18:24:08]Info: coord1: ,[30.0, 11.0]
+[18:24:08]Info: C: ,[29.0, 8.0]
+[18:24:08]Info: C1: ,[27, 8]
+[18:24:08]Info: C2: ,[30, 6]
+[18:24:08]Info: liste des itinéraires: [[[28, 7], [28, 8], [29, 8], [29.0, 9.0], [29.0, 10.0], [30.0, 10.0], [30.0, 11.0]], [[28, 7], [28, 8], [27, 8], [28, 8], [28, 9], [29, 9], [29, 10], [30, 10], [30, 11]], [[29, 6], [30, 6], [30, 7], [30, 8], [30, 9], [30, 10], [30, 11]]]
+[18:24:08]Info: Calcul Cout itinéraire
+[18:24:08]Info: Calcul case: [28, 7]
+[18:24:08]Info: Idtuile: 728
+[18:24:08]Info: Calcul case: [28, 8]
+[18:24:08]Info: Idtuile: 828
+[18:24:08]Info: Calcul case: [29, 8]
+[18:24:08]Info: Idtuile: 829
+[18:24:08]Info: Calcul case: [29.0, 9.0]
+[18:24:08]Info: Idtuile: 929.0
+[18:24:08]Info: Calcul case: [29.0, 10.0]
+[18:24:08]Info: Idtuile: 1029.0
+[18:24:08]Info: Calcul case: [30.0, 10.0]
+[18:24:08]Info: Idtuile: 1030.0
+[18:24:08]Info: Calcul case: [30.0, 11.0]
+[18:24:08]Info: Idtuile: 1130.0
+[18:24:08]Info: CM: 8
+[18:24:08]Info: Calcul case: [28, 7]
+[18:24:08]Info: Idtuile: 728
+[18:24:08]Info: Calcul case: [28, 8]
+[18:24:08]Info: Idtuile: 828
+[18:24:08]Info: Calcul case: [27, 8]
+[18:24:08]Info: Idtuile: 827
+[18:24:08]Info: Calcul case: [28, 8]
+[18:24:08]Info: Idtuile: 828
+[18:24:08]Info: Calcul case: [28, 9]
+[18:24:08]Info: Idtuile: 928
+[18:24:08]Info: Calcul case: [29, 9]
+[18:24:08]Info: Idtuile: 929
+[18:24:08]Info: Calcul case: [29, 10]
+[18:24:08]Info: Idtuile: 1029
+[18:24:08]Info: Calcul case: [30, 10]
+[18:24:08]Info: Idtuile: 1030
+[18:24:08]Info: Calcul case: [30, 11]
+[18:24:08]Info: Idtuile: 1130
+[18:24:08]Info: CM: 19
+[18:24:08]Info: Calcul case: [29, 6]
+[18:24:08]Info: Idtuile: 629
+[18:24:08]Info: Calcul case: [30, 6]
+[18:24:08]Info: Idtuile: 630
+[18:24:08]Info: Calcul case: [30, 7]
+[18:24:08]Info: Idtuile: 730
+[18:24:08]Info: Calcul case: [30, 8]
+[18:24:08]Info: Idtuile: 830
+[18:24:08]Info: Calcul case: [30, 9]
+[18:24:08]Info: Idtuile: 930
+[18:24:08]Info: Calcul case: [30, 10]
+[18:24:08]Info: Idtuile: 1030
+[18:24:08]Info: Calcul case: [30, 11]
+[18:24:08]Info: Idtuile: 1130
+[18:24:08]Info: CM: 11
+[18:24:08]Info: itinéraires le moins couteux avec 8PM : [[28, 7], [28, 8], [29, 8], [29.0, 9.0], [29.0, 10.0], [30.0, 10.0], [30.0, 11.0]]
+[18:24:08]Info: dx, dy: ,2.0, 4.0
+[18:24:08]Info: coord0: ,[28, 6]
+[18:24:08]Info: coord1: ,[30.0, 10.0]
+[18:24:08]Info: C: ,[29.0, 8.0]
+[18:24:08]Info: C1: ,[27, 8]
+[18:24:08]Info: C2: ,[30, 6]
+[18:24:08]Info: liste des itinéraires: [[[28, 7], [28, 8], [29, 8], [29.0, 9.0], [29.0, 10.0], [30.0, 10.0]], [[28, 7], [28, 8], [27, 8], [28, 8], [28, 9], [29, 9], [30, 9], [30, 10]], [[29, 6], [30, 6], [30, 7], [30, 8], [30, 9], [30, 10]]]
+[18:24:08]Info: Calcul Cout itinéraire
+[18:24:08]Info: Calcul case: [28, 7]
+[18:24:08]Info: Idtuile: 728
+[18:24:08]Info: Calcul case: [28, 8]
+[18:24:08]Info: Idtuile: 828
+[18:24:08]Info: Calcul case: [29, 8]
+[18:24:08]Info: Idtuile: 829
+[18:24:08]Info: Calcul case: [29.0, 9.0]
+[18:24:08]Info: Idtuile: 929.0
+[18:24:08]Info: Calcul case: [29.0, 10.0]
+[18:24:08]Info: Idtuile: 1029.0
+[18:24:08]Info: Calcul case: [30.0, 10.0]
+[18:24:08]Info: Idtuile: 1030.0
+[18:24:08]Info: CM: 7
+[18:24:08]Info: Calcul case: [28, 7]
+[18:24:08]Info: Idtuile: 728
+[18:24:08]Info: Calcul case: [28, 8]
+[18:24:08]Info: Idtuile: 828
+[18:24:08]Info: Calcul case: [27, 8]
+[18:24:08]Info: Idtuile: 827
+[18:24:08]Info: Calcul case: [28, 8]
+[18:24:08]Info: Idtuile: 828
+[18:24:08]Info: Calcul case: [28, 9]
+[18:24:08]Info: Idtuile: 928
+[18:24:08]Info: Calcul case: [29, 9]
+[18:24:08]Info: Idtuile: 929
+[18:24:08]Info: Calcul case: [30, 9]
+[18:24:08]Info: Idtuile: 930
+[18:24:08]Info: Calcul case: [30, 10]
+[18:24:08]Info: Idtuile: 1030
+[18:24:08]Info: CM: 19
+[18:24:08]Info: Calcul case: [29, 6]
+[18:24:08]Info: Idtuile: 629
+[18:24:08]Info: Calcul case: [30, 6]
+[18:24:08]Info: Idtuile: 630
+[18:24:08]Info: Calcul case: [30, 7]
+[18:24:08]Info: Idtuile: 730
+[18:24:08]Info: Calcul case: [30, 8]
+[18:24:08]Info: Idtuile: 830
+[18:24:08]Info: Calcul case: [30, 9]
+[18:24:08]Info: Idtuile: 930
+[18:24:08]Info: Calcul case: [30, 10]
+[18:24:08]Info: Idtuile: 1030
+[18:24:08]Info: CM: 10
+[18:24:08]Info: itinéraires le moins couteux avec 7PM : [[28, 7], [28, 8], [29, 8], [29.0, 9.0], [29.0, 10.0], [30.0, 10.0]]
+[18:24:08]Info: dx, dy: ,2.0, 4.0
+[18:24:08]Info: coord0: ,[28, 6]
+[18:24:08]Info: coord1: ,[30.0, 10.0]
+[18:24:08]Info: C: ,[29.0, 8.0]
+[18:24:08]Info: C1: ,[27, 8]
+[18:24:08]Info: C2: ,[30, 6]
+[18:24:08]Info: liste des itinéraires: [[[28, 7], [28, 8], [29, 8], [29.0, 9.0], [29.0, 10.0], [30.0, 10.0]], [[28, 7], [28, 8], [27, 8], [28, 8], [28, 9], [29, 9], [30, 9], [30, 10]], [[29, 6], [30, 6], [30, 7], [30, 8], [30, 9], [30, 10]]]
+[18:24:08]Info: Calcul Cout itinéraire
+[18:24:08]Info: Calcul case: [28, 7]
+[18:24:08]Info: Idtuile: 728
+[18:24:08]Info: Calcul case: [28, 8]
+[18:24:08]Info: Idtuile: 828
+[18:24:08]Info: Calcul case: [29, 8]
+[18:24:08]Info: Idtuile: 829
+[18:24:08]Info: Calcul case: [29.0, 9.0]
+[18:24:08]Info: Idtuile: 929.0
+[18:24:08]Info: Calcul case: [29.0, 10.0]
+[18:24:08]Info: Idtuile: 1029.0
+[18:24:08]Info: Calcul case: [30.0, 10.0]
+[18:24:08]Info: Idtuile: 1030.0
+[18:24:08]Info: CM: 7
+[18:24:08]Info: Calcul case: [28, 7]
+[18:24:08]Info: Idtuile: 728
+[18:24:08]Info: Calcul case: [28, 8]
+[18:24:08]Info: Idtuile: 828
+[18:24:08]Info: Calcul case: [27, 8]
+[18:24:08]Info: Idtuile: 827
+[18:24:08]Info: Calcul case: [28, 8]
+[18:24:08]Info: Idtuile: 828
+[18:24:08]Info: Calcul case: [28, 9]
+[18:24:08]Info: Idtuile: 928
+[18:24:08]Info: Calcul case: [29, 9]
+[18:24:08]Info: Idtuile: 929
+[18:24:08]Info: Calcul case: [30, 9]
+[18:24:08]Info: Idtuile: 930
+[18:24:08]Info: Calcul case: [30, 10]
+[18:24:08]Info: Idtuile: 1030
+[18:24:08]Info: CM: 19
+[18:24:08]Info: Calcul case: [29, 6]
+[18:24:08]Info: Idtuile: 629
+[18:24:08]Info: Calcul case: [30, 6]
+[18:24:08]Info: Idtuile: 630
+[18:24:08]Info: Calcul case: [30, 7]
+[18:24:08]Info: Idtuile: 730
+[18:24:08]Info: Calcul case: [30, 8]
+[18:24:08]Info: Idtuile: 830
+[18:24:08]Info: Calcul case: [30, 9]
+[18:24:08]Info: Idtuile: 930
+[18:24:08]Info: Calcul case: [30, 10]
+[18:24:08]Info: Idtuile: 1030
+[18:24:08]Info: CM: 10
+[18:24:08]Info: itinéraires le moins couteux avec 7PM : [[28, 7], [28, 8], [29, 8], [29.0, 9.0], [29.0, 10.0], [30.0, 10.0]]
+[18:24:08]Info: dx, dy: ,2.0, 4.0
+[18:24:08]Info: coord0: ,[28, 6]
+[18:24:08]Info: coord1: ,[30.0, 10.0]
+[18:24:08]Info: C: ,[29.0, 8.0]
+[18:24:08]Info: C1: ,[27, 8]
+[18:24:08]Info: C2: ,[30, 6]
+[18:24:08]Info: liste des itinéraires: [[[28, 7], [28, 8], [29, 8], [29.0, 9.0], [29.0, 10.0], [30.0, 10.0]], [[28, 7], [28, 8], [27, 8], [28, 8], [28, 9], [29, 9], [30, 9], [30, 10]], [[29, 6], [30, 6], [30, 7], [30, 8], [30, 9], [30, 10]]]
+[18:24:08]Info: Calcul Cout itinéraire
+[18:24:08]Info: Calcul case: [28, 7]
+[18:24:08]Info: Idtuile: 728
+[18:24:08]Info: Calcul case: [28, 8]
+[18:24:08]Info: Idtuile: 828
+[18:24:08]Info: Calcul case: [29, 8]
+[18:24:08]Info: Idtuile: 829
+[18:24:08]Info: Calcul case: [29.0, 9.0]
+[18:24:08]Info: Idtuile: 929.0
+[18:24:08]Info: Calcul case: [29.0, 10.0]
+[18:24:08]Info: Idtuile: 1029.0
+[18:24:08]Info: Calcul case: [30.0, 10.0]
+[18:24:08]Info: Idtuile: 1030.0
+[18:24:08]Info: CM: 7
+[18:24:08]Info: Calcul case: [28, 7]
+[18:24:08]Info: Idtuile: 728
+[18:24:08]Info: Calcul case: [28, 8]
+[18:24:08]Info: Idtuile: 828
+[18:24:08]Info: Calcul case: [27, 8]
+[18:24:08]Info: Idtuile: 827
+[18:24:08]Info: Calcul case: [28, 8]
+[18:24:08]Info: Idtuile: 828
+[18:24:08]Info: Calcul case: [28, 9]
+[18:24:08]Info: Idtuile: 928
+[18:24:08]Info: Calcul case: [29, 9]
+[18:24:08]Info: Idtuile: 929
+[18:24:08]Info: Calcul case: [30, 9]
+[18:24:08]Info: Idtuile: 930
+[18:24:08]Info: Calcul case: [30, 10]
+[18:24:08]Info: Idtuile: 1030
+[18:24:08]Info: CM: 19
+[18:24:08]Info: Calcul case: [29, 6]
+[18:24:08]Info: Idtuile: 629
+[18:24:08]Info: Calcul case: [30, 6]
+[18:24:08]Info: Idtuile: 630
+[18:24:08]Info: Calcul case: [30, 7]
+[18:24:08]Info: Idtuile: 730
+[18:24:08]Info: Calcul case: [30, 8]
+[18:24:08]Info: Idtuile: 830
+[18:24:08]Info: Calcul case: [30, 9]
+[18:24:08]Info: Idtuile: 930
+[18:24:08]Info: Calcul case: [30, 10]
+[18:24:08]Info: Idtuile: 1030
+[18:24:08]Info: CM: 10
+[18:24:08]Info: itinéraires le moins couteux avec 7PM : [[28, 7], [28, 8], [29, 8], [29.0, 9.0], [29.0, 10.0], [30.0, 10.0]]
+[18:24:08]Info: dx, dy: ,0.0, 4.0
+[18:24:08]Info: coord0: ,[28, 6]
+[18:24:08]Info: coord1: ,[28.0, 10.0]
+[18:24:08]Info: C: ,[28.0, 8.0]
+[18:24:08]Info: C1: ,[26, 7]
+[18:24:08]Info: C2: ,[29, 7]
+[18:24:08]Info: liste des itinéraires: [[[28, 7], [28, 8], [28.0, 9.0], [28.0, 10.0]], [[27, 6], [27, 7], [26, 7], [26, 8], [27, 8], [27, 9], [27, 10], [28, 10]], [[29, 6], [29, 7], [29, 8], [29, 9], [28, 9], [28, 10]]]
+[18:24:08]Info: Calcul Cout itinéraire
+[18:24:08]Info: Calcul case: [28, 7]
+[18:24:08]Info: Idtuile: 728
+[18:24:08]Info: Calcul case: [28, 8]
+[18:24:08]Info: Idtuile: 828
+[18:24:08]Info: Calcul case: [28.0, 9.0]
+[18:24:08]Info: Idtuile: 928.0
+[18:24:08]Info: Calcul case: [28.0, 10.0]
+[18:24:08]Info: Idtuile: 1028.0
+[18:24:08]Info: CM: 4
+[18:24:08]Info: Calcul case: [27, 6]
+[18:24:08]Info: Idtuile: 627
+[18:24:08]Info: Calcul case: [27, 7]
+[18:24:08]Info: Idtuile: 727
+[18:24:08]Info: Calcul case: [26, 7]
+[18:24:08]Info: Idtuile: 726
+[18:24:08]Info: Calcul case: [26, 8]
+[18:24:08]Info: Idtuile: 826
+[18:24:08]Info: Calcul case: [27, 8]
+[18:24:08]Info: Idtuile: 827
+[18:24:08]Info: Calcul case: [27, 9]
+[18:24:08]Info: Idtuile: 927
+[18:24:08]Info: Calcul case: [27, 10]
+[18:24:08]Info: Idtuile: 1027
+[18:24:08]Info: Calcul case: [28, 10]
+[18:24:08]Info: Idtuile: 1028
+[18:24:08]Info: CM: 62
+[18:24:08]Info: Calcul case: [29, 6]
+[18:24:08]Info: Idtuile: 629
+[18:24:08]Info: Calcul case: [29, 7]
+[18:24:08]Info: Idtuile: 729
+[18:24:08]Info: Calcul case: [29, 8]
+[18:24:08]Info: Idtuile: 829
+[18:24:08]Info: Calcul case: [29, 9]
+[18:24:08]Info: Idtuile: 929
+[18:24:08]Info: Calcul case: [28, 9]
+[18:24:08]Info: Idtuile: 928
+[18:24:08]Info: Calcul case: [28, 10]
+[18:24:08]Info: Idtuile: 1028
+[18:24:08]Info: CM: 6
+[18:24:08]Info: itinéraires le moins couteux avec 4PM : [[28, 7], [28, 8], [28.0, 9.0], [28.0, 10.0]]
+[18:24:08]Info: dx, dy: ,0.0, 4.0
+[18:24:08]Info: coord0: ,[28, 6]
+[18:24:08]Info: coord1: ,[28.0, 10.0]
+[18:24:08]Info: C: ,[28.0, 8.0]
+[18:24:08]Info: C1: ,[26, 7]
+[18:24:08]Info: C2: ,[29, 7]
+[18:24:08]Info: liste des itinéraires: [[[28, 7], [28, 8], [28.0, 9.0], [28.0, 10.0]], [[27, 6], [27, 7], [26, 7], [26, 8], [27, 8], [27, 9], [27, 10], [28, 10]], [[29, 6], [29, 7], [29, 8], [29, 9], [28, 9], [28, 10]]]
+[18:24:08]Info: Calcul Cout itinéraire
+[18:24:08]Info: Calcul case: [28, 7]
+[18:24:08]Info: Idtuile: 728
+[18:24:08]Info: Calcul case: [28, 8]
+[18:24:08]Info: Idtuile: 828
+[18:24:08]Info: Calcul case: [28.0, 9.0]
+[18:24:08]Info: Idtuile: 928.0
+[18:24:08]Info: Calcul case: [28.0, 10.0]
+[18:24:08]Info: Idtuile: 1028.0
+[18:24:08]Info: CM: 4
+[18:24:08]Info: Calcul case: [27, 6]
+[18:24:08]Info: Idtuile: 627
+[18:24:08]Info: Calcul case: [27, 7]
+[18:24:08]Info: Idtuile: 727
+[18:24:08]Info: Calcul case: [26, 7]
+[18:24:08]Info: Idtuile: 726
+[18:24:08]Info: Calcul case: [26, 8]
+[18:24:08]Info: Idtuile: 826
+[18:24:08]Info: Calcul case: [27, 8]
+[18:24:08]Info: Idtuile: 827
+[18:24:08]Info: Calcul case: [27, 9]
+[18:24:08]Info: Idtuile: 927
+[18:24:08]Info: Calcul case: [27, 10]
+[18:24:08]Info: Idtuile: 1027
+[18:24:08]Info: Calcul case: [28, 10]
+[18:24:08]Info: Idtuile: 1028
+[18:24:08]Info: CM: 62
+[18:24:08]Info: Calcul case: [29, 6]
+[18:24:08]Info: Idtuile: 629
+[18:24:08]Info: Calcul case: [29, 7]
+[18:24:08]Info: Idtuile: 729
+[18:24:08]Info: Calcul case: [29, 8]
+[18:24:08]Info: Idtuile: 829
+[18:24:08]Info: Calcul case: [29, 9]
+[18:24:08]Info: Idtuile: 929
+[18:24:08]Info: Calcul case: [28, 9]
+[18:24:08]Info: Idtuile: 928
+[18:24:08]Info: Calcul case: [28, 10]
+[18:24:08]Info: Idtuile: 1028
+[18:24:08]Info: CM: 6
+[18:24:08]Info: itinéraires le moins couteux avec 4PM : [[28, 7], [28, 8], [28.0, 9.0], [28.0, 10.0]]
+[18:24:08]Info: dx, dy: ,0.0, 4.0
+[18:24:08]Info: coord0: ,[28, 6]
+[18:24:08]Info: coord1: ,[28.0, 10.0]
+[18:24:08]Info: C: ,[28.0, 8.0]
+[18:24:08]Info: C1: ,[26, 7]
+[18:24:08]Info: C2: ,[29, 7]
+[18:24:08]Info: liste des itinéraires: [[[28, 7], [28, 8], [28.0, 9.0], [28.0, 10.0]], [[27, 6], [27, 7], [26, 7], [26, 8], [27, 8], [27, 9], [27, 10], [28, 10]], [[29, 6], [29, 7], [29, 8], [29, 9], [28, 9], [28, 10]]]
+[18:24:08]Info: Calcul Cout itinéraire
+[18:24:08]Info: Calcul case: [28, 7]
+[18:24:08]Info: Idtuile: 728
+[18:24:08]Info: Calcul case: [28, 8]
+[18:24:08]Info: Idtuile: 828
+[18:24:08]Info: Calcul case: [28.0, 9.0]
+[18:24:08]Info: Idtuile: 928.0
+[18:24:08]Info: Calcul case: [28.0, 10.0]
+[18:24:08]Info: Idtuile: 1028.0
+[18:24:08]Info: CM: 4
+[18:24:08]Info: Calcul case: [27, 6]
+[18:24:08]Info: Idtuile: 627
+[18:24:08]Info: Calcul case: [27, 7]
+[18:24:08]Info: Idtuile: 727
+[18:24:08]Info: Calcul case: [26, 7]
+[18:24:08]Info: Idtuile: 726
+[18:24:08]Info: Calcul case: [26, 8]
+[18:24:08]Info: Idtuile: 826
+[18:24:08]Info: Calcul case: [27, 8]
+[18:24:08]Info: Idtuile: 827
+[18:24:08]Info: Calcul case: [27, 9]
+[18:24:08]Info: Idtuile: 927
+[18:24:08]Info: Calcul case: [27, 10]
+[18:24:08]Info: Idtuile: 1027
+[18:24:08]Info: Calcul case: [28, 10]
+[18:24:08]Info: Idtuile: 1028
+[18:24:08]Info: CM: 62
+[18:24:08]Info: Calcul case: [29, 6]
+[18:24:08]Info: Idtuile: 629
+[18:24:08]Info: Calcul case: [29, 7]
+[18:24:08]Info: Idtuile: 729
+[18:24:08]Info: Calcul case: [29, 8]
+[18:24:08]Info: Idtuile: 829
+[18:24:08]Info: Calcul case: [29, 9]
+[18:24:08]Info: Idtuile: 929
+[18:24:08]Info: Calcul case: [28, 9]
+[18:24:08]Info: Idtuile: 928
+[18:24:08]Info: Calcul case: [28, 10]
+[18:24:08]Info: Idtuile: 1028
+[18:24:08]Info: CM: 6
+[18:24:08]Info: itinéraires le moins couteux avec 4PM : [[28, 7], [28, 8], [28.0, 9.0], [28.0, 10.0]]
+[18:24:08]Info: dx, dy: ,0.0, 4.0
+[18:24:08]Info: coord0: ,[28, 6]
+[18:24:08]Info: coord1: ,[28.0, 10.0]
+[18:24:08]Info: C: ,[28.0, 8.0]
+[18:24:08]Info: C1: ,[26, 7]
+[18:24:08]Info: C2: ,[29, 7]
+[18:24:08]Info: liste des itinéraires: [[[28, 7], [28, 8], [28.0, 9.0], [28.0, 10.0]], [[27, 6], [27, 7], [26, 7], [26, 8], [27, 8], [27, 9], [27, 10], [28, 10]], [[29, 6], [29, 7], [29, 8], [29, 9], [28, 9], [28, 10]]]
+[18:24:08]Info: Calcul Cout itinéraire
+[18:24:08]Info: Calcul case: [28, 7]
+[18:24:08]Info: Idtuile: 728
+[18:24:08]Info: Calcul case: [28, 8]
+[18:24:08]Info: Idtuile: 828
+[18:24:08]Info: Calcul case: [28.0, 9.0]
+[18:24:08]Info: Idtuile: 928.0
+[18:24:08]Info: Calcul case: [28.0, 10.0]
+[18:24:08]Info: Idtuile: 1028.0
+[18:24:08]Info: CM: 4
+[18:24:08]Info: Calcul case: [27, 6]
+[18:24:08]Info: Idtuile: 627
+[18:24:08]Info: Calcul case: [27, 7]
+[18:24:08]Info: Idtuile: 727
+[18:24:08]Info: Calcul case: [26, 7]
+[18:24:08]Info: Idtuile: 726
+[18:24:08]Info: Calcul case: [26, 8]
+[18:24:08]Info: Idtuile: 826
+[18:24:08]Info: Calcul case: [27, 8]
+[18:24:08]Info: Idtuile: 827
+[18:24:08]Info: Calcul case: [27, 9]
+[18:24:08]Info: Idtuile: 927
+[18:24:08]Info: Calcul case: [27, 10]
+[18:24:08]Info: Idtuile: 1027
+[18:24:08]Info: Calcul case: [28, 10]
+[18:24:08]Info: Idtuile: 1028
+[18:24:08]Info: CM: 62
+[18:24:08]Info: Calcul case: [29, 6]
+[18:24:08]Info: Idtuile: 629
+[18:24:08]Info: Calcul case: [29, 7]
+[18:24:08]Info: Idtuile: 729
+[18:24:08]Info: Calcul case: [29, 8]
+[18:24:08]Info: Idtuile: 829
+[18:24:08]Info: Calcul case: [29, 9]
+[18:24:08]Info: Idtuile: 929
+[18:24:08]Info: Calcul case: [28, 9]
+[18:24:08]Info: Idtuile: 928
+[18:24:08]Info: Calcul case: [28, 10]
+[18:24:08]Info: Idtuile: 1028
+[18:24:08]Info: CM: 6
+[18:24:08]Info: itinéraires le moins couteux avec 4PM : [[28, 7], [28, 8], [28.0, 9.0], [28.0, 10.0]]
+[18:24:08]Info: dx, dy: ,0.0, 4.0
+[18:24:08]Info: coord0: ,[28, 6]
+[18:24:08]Info: coord1: ,[28.0, 10.0]
+[18:24:08]Info: C: ,[28.0, 8.0]
+[18:24:08]Info: C1: ,[26, 7]
+[18:24:08]Info: C2: ,[29, 7]
+[18:24:08]Info: liste des itinéraires: [[[28, 7], [28, 8], [28.0, 9.0], [28.0, 10.0]], [[27, 6], [27, 7], [26, 7], [26, 8], [27, 8], [27, 9], [27, 10], [28, 10]], [[29, 6], [29, 7], [29, 8], [29, 9], [28, 9], [28, 10]]]
+[18:24:08]Info: Calcul Cout itinéraire
+[18:24:08]Info: Calcul case: [28, 7]
+[18:24:08]Info: Idtuile: 728
+[18:24:08]Info: Calcul case: [28, 8]
+[18:24:08]Info: Idtuile: 828
+[18:24:08]Info: Calcul case: [28.0, 9.0]
+[18:24:08]Info: Idtuile: 928.0
+[18:24:08]Info: Calcul case: [28.0, 10.0]
+[18:24:08]Info: Idtuile: 1028.0
+[18:24:08]Info: CM: 4
+[18:24:08]Info: Calcul case: [27, 6]
+[18:24:08]Info: Idtuile: 627
+[18:24:08]Info: Calcul case: [27, 7]
+[18:24:08]Info: Idtuile: 727
+[18:24:08]Info: Calcul case: [26, 7]
+[18:24:08]Info: Idtuile: 726
+[18:24:08]Info: Calcul case: [26, 8]
+[18:24:08]Info: Idtuile: 826
+[18:24:08]Info: Calcul case: [27, 8]
+[18:24:08]Info: Idtuile: 827
+[18:24:08]Info: Calcul case: [27, 9]
+[18:24:08]Info: Idtuile: 927
+[18:24:08]Info: Calcul case: [27, 10]
+[18:24:08]Info: Idtuile: 1027
+[18:24:08]Info: Calcul case: [28, 10]
+[18:24:08]Info: Idtuile: 1028
+[18:24:08]Info: CM: 62
+[18:24:08]Info: Calcul case: [29, 6]
+[18:24:08]Info: Idtuile: 629
+[18:24:08]Info: Calcul case: [29, 7]
+[18:24:08]Info: Idtuile: 729
+[18:24:08]Info: Calcul case: [29, 8]
+[18:24:08]Info: Idtuile: 829
+[18:24:08]Info: Calcul case: [29, 9]
+[18:24:08]Info: Idtuile: 929
+[18:24:08]Info: Calcul case: [28, 9]
+[18:24:08]Info: Idtuile: 928
+[18:24:08]Info: Calcul case: [28, 10]
+[18:24:08]Info: Idtuile: 1028
+[18:24:08]Info: CM: 6
+[18:24:08]Info: itinéraires le moins couteux avec 4PM : [[28, 7], [28, 8], [28.0, 9.0], [28.0, 10.0]]
+[18:24:08]Info: dx, dy: ,0.0, 4.0
+[18:24:08]Info: coord0: ,[28, 6]
+[18:24:08]Info: coord1: ,[28.0, 10.0]
+[18:24:08]Info: C: ,[28.0, 8.0]
+[18:24:08]Info: C1: ,[26, 7]
+[18:24:08]Info: C2: ,[29, 7]
+[18:24:08]Info: liste des itinéraires: [[[28, 7], [28, 8], [28.0, 9.0], [28.0, 10.0]], [[27, 6], [27, 7], [26, 7], [26, 8], [27, 8], [27, 9], [27, 10], [28, 10]], [[29, 6], [29, 7], [29, 8], [29, 9], [28, 9], [28, 10]]]
+[18:24:08]Info: Calcul Cout itinéraire
+[18:24:08]Info: Calcul case: [28, 7]
+[18:24:08]Info: Idtuile: 728
+[18:24:08]Info: Calcul case: [28, 8]
+[18:24:08]Info: Idtuile: 828
+[18:24:08]Info: Calcul case: [28.0, 9.0]
+[18:24:08]Info: Idtuile: 928.0
+[18:24:08]Info: Calcul case: [28.0, 10.0]
+[18:24:08]Info: Idtuile: 1028.0
+[18:24:08]Info: CM: 4
+[18:24:08]Info: Calcul case: [27, 6]
+[18:24:08]Info: Idtuile: 627
+[18:24:08]Info: Calcul case: [27, 7]
+[18:24:08]Info: Idtuile: 727
+[18:24:08]Info: Calcul case: [26, 7]
+[18:24:08]Info: Idtuile: 726
+[18:24:08]Info: Calcul case: [26, 8]
+[18:24:08]Info: Idtuile: 826
+[18:24:08]Info: Calcul case: [27, 8]
+[18:24:08]Info: Idtuile: 827
+[18:24:08]Info: Calcul case: [27, 9]
+[18:24:08]Info: Idtuile: 927
+[18:24:08]Info: Calcul case: [27, 10]
+[18:24:08]Info: Idtuile: 1027
+[18:24:08]Info: Calcul case: [28, 10]
+[18:24:08]Info: Idtuile: 1028
+[18:24:08]Info: CM: 62
+[18:24:08]Info: Calcul case: [29, 6]
+[18:24:08]Info: Idtuile: 629
+[18:24:08]Info: Calcul case: [29, 7]
+[18:24:08]Info: Idtuile: 729
+[18:24:08]Info: Calcul case: [29, 8]
+[18:24:08]Info: Idtuile: 829
+[18:24:08]Info: Calcul case: [29, 9]
+[18:24:08]Info: Idtuile: 929
+[18:24:08]Info: Calcul case: [28, 9]
+[18:24:08]Info: Idtuile: 928
+[18:24:08]Info: Calcul case: [28, 10]
+[18:24:08]Info: Idtuile: 1028
+[18:24:08]Info: CM: 6
+[18:24:08]Info: itinéraires le moins couteux avec 4PM : [[28, 7], [28, 8], [28.0, 9.0], [28.0, 10.0]]
+[18:24:08]Info: dx, dy: ,0.0, 4.0
+[18:24:08]Info: coord0: ,[28, 6]
+[18:24:08]Info: coord1: ,[28.0, 10.0]
+[18:24:08]Info: C: ,[28.0, 8.0]
+[18:24:08]Info: C1: ,[26, 7]
+[18:24:08]Info: C2: ,[29, 7]
+[18:24:08]Info: liste des itinéraires: [[[28, 7], [28, 8], [28.0, 9.0], [28.0, 10.0]], [[27, 6], [27, 7], [26, 7], [26, 8], [27, 8], [27, 9], [27, 10], [28, 10]], [[29, 6], [29, 7], [29, 8], [29, 9], [28, 9], [28, 10]]]
+[18:24:08]Info: Calcul Cout itinéraire
+[18:24:08]Info: Calcul case: [28, 7]
+[18:24:08]Info: Idtuile: 728
+[18:24:08]Info: Calcul case: [28, 8]
+[18:24:08]Info: Idtuile: 828
+[18:24:08]Info: Calcul case: [28.0, 9.0]
+[18:24:08]Info: Idtuile: 928.0
+[18:24:08]Info: Calcul case: [28.0, 10.0]
+[18:24:08]Info: Idtuile: 1028.0
+[18:24:08]Info: CM: 4
+[18:24:08]Info: Calcul case: [27, 6]
+[18:24:08]Info: Idtuile: 627
+[18:24:08]Info: Calcul case: [27, 7]
+[18:24:08]Info: Idtuile: 727
+[18:24:08]Info: Calcul case: [26, 7]
+[18:24:08]Info: Idtuile: 726
+[18:24:08]Info: Calcul case: [26, 8]
+[18:24:08]Info: Idtuile: 826
+[18:24:08]Info: Calcul case: [27, 8]
+[18:24:08]Info: Idtuile: 827
+[18:24:08]Info: Calcul case: [27, 9]
+[18:24:08]Info: Idtuile: 927
+[18:24:08]Info: Calcul case: [27, 10]
+[18:24:08]Info: Idtuile: 1027
+[18:24:08]Info: Calcul case: [28, 10]
+[18:24:08]Info: Idtuile: 1028
+[18:24:08]Info: CM: 62
+[18:24:08]Info: Calcul case: [29, 6]
+[18:24:08]Info: Idtuile: 629
+[18:24:08]Info: Calcul case: [29, 7]
+[18:24:08]Info: Idtuile: 729
+[18:24:08]Info: Calcul case: [29, 8]
+[18:24:08]Info: Idtuile: 829
+[18:24:08]Info: Calcul case: [29, 9]
+[18:24:08]Info: Idtuile: 929
+[18:24:08]Info: Calcul case: [28, 9]
+[18:24:08]Info: Idtuile: 928
+[18:24:08]Info: Calcul case: [28, 10]
+[18:24:08]Info: Idtuile: 1028
+[18:24:08]Info: CM: 6
+[18:24:08]Info: itinéraires le moins couteux avec 4PM : [[28, 7], [28, 8], [28.0, 9.0], [28.0, 10.0]]
+[18:24:08]Info: dx, dy: ,0.0, 4.0
+[18:24:08]Info: coord0: ,[28, 6]
+[18:24:08]Info: coord1: ,[28.0, 10.0]
+[18:24:08]Info: C: ,[28.0, 8.0]
+[18:24:08]Info: C1: ,[26, 7]
+[18:24:08]Info: C2: ,[29, 7]
+[18:24:08]Info: liste des itinéraires: [[[28, 7], [28, 8], [28.0, 9.0], [28.0, 10.0]], [[27, 6], [27, 7], [26, 7], [26, 8], [27, 8], [27, 9], [27, 10], [28, 10]], [[29, 6], [29, 7], [29, 8], [29, 9], [28, 9], [28, 10]]]
+[18:24:08]Info: Calcul Cout itinéraire
+[18:24:08]Info: Calcul case: [28, 7]
+[18:24:08]Info: Idtuile: 728
+[18:24:08]Info: Calcul case: [28, 8]
+[18:24:08]Info: Idtuile: 828
+[18:24:08]Info: Calcul case: [28.0, 9.0]
+[18:24:08]Info: Idtuile: 928.0
+[18:24:08]Info: Calcul case: [28.0, 10.0]
+[18:24:08]Info: Idtuile: 1028.0
+[18:24:08]Info: CM: 4
+[18:24:08]Info: Calcul case: [27, 6]
+[18:24:08]Info: Idtuile: 627
+[18:24:08]Info: Calcul case: [27, 7]
+[18:24:08]Info: Idtuile: 727
+[18:24:08]Info: Calcul case: [26, 7]
+[18:24:08]Info: Idtuile: 726
+[18:24:08]Info: Calcul case: [26, 8]
+[18:24:08]Info: Idtuile: 826
+[18:24:08]Info: Calcul case: [27, 8]
+[18:24:08]Info: Idtuile: 827
+[18:24:08]Info: Calcul case: [27, 9]
+[18:24:08]Info: Idtuile: 927
+[18:24:08]Info: Calcul case: [27, 10]
+[18:24:08]Info: Idtuile: 1027
+[18:24:08]Info: Calcul case: [28, 10]
+[18:24:08]Info: Idtuile: 1028
+[18:24:08]Info: CM: 62
+[18:24:08]Info: Calcul case: [29, 6]
+[18:24:08]Info: Idtuile: 629
+[18:24:08]Info: Calcul case: [29, 7]
+[18:24:08]Info: Idtuile: 729
+[18:24:08]Info: Calcul case: [29, 8]
+[18:24:08]Info: Idtuile: 829
+[18:24:08]Info: Calcul case: [29, 9]
+[18:24:08]Info: Idtuile: 929
+[18:24:08]Info: Calcul case: [28, 9]
+[18:24:08]Info: Idtuile: 928
+[18:24:08]Info: Calcul case: [28, 10]
+[18:24:08]Info: Idtuile: 1028
+[18:24:08]Info: CM: 6
+[18:24:08]Info: itinéraires le moins couteux avec 4PM : [[28, 7], [28, 8], [28.0, 9.0], [28.0, 10.0]]
+[18:24:08]Info: dx, dy: ,0.0, 4.0
+[18:24:08]Info: coord0: ,[28, 6]
+[18:24:08]Info: coord1: ,[28.0, 10.0]
+[18:24:08]Info: C: ,[28.0, 8.0]
+[18:24:08]Info: C1: ,[26, 7]
+[18:24:08]Info: C2: ,[29, 7]
+[18:24:08]Info: liste des itinéraires: [[[28, 7], [28, 8], [28.0, 9.0], [28.0, 10.0]], [[27, 6], [27, 7], [26, 7], [26, 8], [27, 8], [27, 9], [27, 10], [28, 10]], [[29, 6], [29, 7], [29, 8], [29, 9], [28, 9], [28, 10]]]
+[18:24:08]Info: Calcul Cout itinéraire
+[18:24:08]Info: Calcul case: [28, 7]
+[18:24:08]Info: Idtuile: 728
+[18:24:08]Info: Calcul case: [28, 8]
+[18:24:08]Info: Idtuile: 828
+[18:24:08]Info: Calcul case: [28.0, 9.0]
+[18:24:08]Info: Idtuile: 928.0
+[18:24:08]Info: Calcul case: [28.0, 10.0]
+[18:24:08]Info: Idtuile: 1028.0
+[18:24:08]Info: CM: 4
+[18:24:08]Info: Calcul case: [27, 6]
+[18:24:08]Info: Idtuile: 627
+[18:24:08]Info: Calcul case: [27, 7]
+[18:24:08]Info: Idtuile: 727
+[18:24:08]Info: Calcul case: [26, 7]
+[18:24:08]Info: Idtuile: 726
+[18:24:08]Info: Calcul case: [26, 8]
+[18:24:08]Info: Idtuile: 826
+[18:24:08]Info: Calcul case: [27, 8]
+[18:24:08]Info: Idtuile: 827
+[18:24:08]Info: Calcul case: [27, 9]
+[18:24:08]Info: Idtuile: 927
+[18:24:08]Info: Calcul case: [27, 10]
+[18:24:08]Info: Idtuile: 1027
+[18:24:08]Info: Calcul case: [28, 10]
+[18:24:08]Info: Idtuile: 1028
+[18:24:08]Info: CM: 62
+[18:24:08]Info: Calcul case: [29, 6]
+[18:24:08]Info: Idtuile: 629
+[18:24:08]Info: Calcul case: [29, 7]
+[18:24:08]Info: Idtuile: 729
+[18:24:08]Info: Calcul case: [29, 8]
+[18:24:08]Info: Idtuile: 829
+[18:24:08]Info: Calcul case: [29, 9]
+[18:24:08]Info: Idtuile: 929
+[18:24:08]Info: Calcul case: [28, 9]
+[18:24:08]Info: Idtuile: 928
+[18:24:08]Info: Calcul case: [28, 10]
+[18:24:08]Info: Idtuile: 1028
+[18:24:08]Info: CM: 6
+[18:24:08]Info: itinéraires le moins couteux avec 4PM : [[28, 7], [28, 8], [28.0, 9.0], [28.0, 10.0]]

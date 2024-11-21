@@ -53,6 +53,125 @@ def printvillageunit(gamedata, classmap, option, coordmap):
 	# On ajoute lie au village la fonction pour ouvrir l'interface
 	classmap.mapcanv.tag_bind("village","<Button-1>", lambda event, opt = option, gd = gamedata, cm = classmap: interface.villageinterface(event, gd, cm, opt))
 
+def bordervillage(gamedata, classmap, option):
+	##################
+	# Fonction pour afficher les bordures des villages
+	##################
+	# 1er Version affiche un Carrer Tkinter avec:
+	# - En Blanc le Neutre
+	# - En Rouge l'ennemie
+	# - En Vert l'allier
+	# - En Bleu Le Territoire du Joueur
+
+
+
+	player = gamedata.list_lord[gamedata.playerid]
+
+	# On se balade dans la liste des villages
+	for idvillage in classmap.lvillages:
+		# On Vérifier à qui appartient le village est décide de la couleur à afficher en Conséquence
+		village = classmap.listmap[idvillage].village
+		lordname = 0
+		if village.lord != 0:
+			lordname = village.lord.lordname
+			if village.lord == player:
+				color = "blue"
+			elif village.lord in player.vassal:
+				color = "green"
+			elif village.lord in player.war:
+				color = "red"
+			else:
+				color = "white"
+		else:
+			color = "white"
+		# On calcule la Bordure
+		border = village.border
+		# On s'assure de ne pas donner des coordonnées hors de la map
+		# Pour X
+		if village.x-border < 0 :
+			posx = 0
+		else:
+			posx = village.x - border
+
+		if (village.x + border) >= option.mapx:
+			posx2 = option.mapx-1
+		else:
+			posx2 = village.x + border + 1 
+
+		# Pour Y
+		if village.y-border < 0 :
+			posy = 0
+		else:
+			posy = village.y - border
+
+		if (village.y + border) >= option.mapy:
+			posy2 = option.mapy-1
+		else:
+			posy2 = village.y + border + 1 
+
+
+
+		# On convertit les Coordonnées Map en Coordonnées Canvas
+		coord0 = moveview.coordmaptocanvas(gamedata, classmap, option, [posx, posy], False)
+		coord1 = moveview.coordmaptocanvas(gamedata, classmap, option, [posx2, posy2], False)
+		gamedata.log.printinfo(f"coord0: ,{coord0}")
+		gamedata.log.printinfo(f"coord1: ,{coord1}")
+		classmap.mapcanv.create_rectangle( coord0[0], coord0[1], coord1[0], coord1[1], tags = ["tuile", "border", lordname], outline = color)
+
+def bordervillageunit(gamedata, classmap, option, village):
+	##################
+	# Fonction pour afficher les bordures d'un unique village
+	##################	
+
+	player = gamedata.list_lord[gamedata.playerid]
+
+	# On calcule la couleur
+	if village.lord != 0:
+		if village.lord == player:
+			color = "blue"
+		elif village.lord in player.vassal:
+			color = "green"
+		elif village.lord in player.war:
+			color = "red"
+		else:
+			color = "white"
+	else:
+		color = "white"
+
+	# On calcule les coordonnées de la Bordure
+
+	# On calcule la Bordure
+	border = village.border
+	# On s'assure de ne pas donner des coordonnées hors de la map
+	# Pour X
+	if village.x-border < 0 :
+		posx = 0
+	else:
+		posx = village.x - border
+
+	if (village.x + border) >= option.mapx:
+		posx2 = option.mapx-1
+	else:
+		posx2 = village.x + border + 1 
+
+	# Pour Y
+	if village.y-border < 0 :
+		posy = 0
+	else:
+		posy = village.y - border
+
+	if (village.y + border) >= option.mapy:
+		posy2 = option.mapy-1
+	else:
+		posy2 = village.y + border + 1 
+
+	# On convertit les Coordonnées Map en Coordonnées Canvas
+	coord0 = moveview.coordmaptocanvas(gamedata, classmap, option, [posx, posy], False)
+	coord1 = moveview.coordmaptocanvas(gamedata, classmap, option, [posx2, posy2], False)
+	# MonkeyPatch
+	classmap.mapcanv.create_rectangle( coord0[0], coord0[1], coord1[0], coord1[1], tags = ["tuile", "border"], outline = color)
+
+
 def printarmy(gamedata, classmap, option, army):
 	##################
 	# Fonction pour afficher une armée 
@@ -110,7 +229,7 @@ def sequencemoveunit(event, gamedata, classmap, option, army):
 	posfinaly = classmap.mapcanv.canvasy(event.y)
 	# On les transforme en coord map
 	coordmap = moveview.coordcanvastomap(gamedata, classmap, option, [posfinalx, posfinaly])
-	print("coordmap: ",coordmap)
+	gamedata.log.printinfo(f"coordmap: ,{coordmap}")
 	# On calcul les cases par lequel l'armée doit passer
 	# Liste dans laquelle on va enregistrer les déplacement nécessaires
 	# Algo de Bresenham
@@ -134,7 +253,7 @@ def sequencemoveunit(event, gamedata, classmap, option, army):
 		move = army.movecapacity
 		idtuile = lmovement[i][0]+(option.mapx*lmovement[i][1])
 		while i< len(lmovement):
-			print("i,t,len(lmovement): ",i, t, len(lmovement))
+			gamedata.log.printinfo(f"i,t,len(lmovement): ,{i}, {t}, {len(lmovement)}")
 			gamedata.addactionlist(f"moveunit({gamedata}, {classmap}, {option}, {army}, {lmovement[i]})", t)
 			move -= classmap.listmap[idtuile].movementcost
 			idtuile = lmovement[i][0]+(option.mapx*lmovement[i][1])
@@ -157,8 +276,8 @@ def moveunit(gamedata, classmap, option, army, coord):
 	# On calcul les nouvelles coord
 	x = coord[0] - army.x
 	y = coord[1] - army.y
-	coord = moveview.coordmaptocanvas(gamedata, classmap, option, [x, y])
-	print(coord)
+	coord = moveview.coordmaptocanvas(gamedata, classmap, option, [x, y], True)
+	gamedata.log.printinfo(f"Unité déplacement vers coord Canvas : {coord}")
 	gamedata.log.printinfo(f"On déplace l'armée {army.name} avec l'id Canvas: {army.idCanv} de: {x}x,{y}y ")
 	# On déplace l'objet
 	classmap.mapcanv.move(army.idCanv, coord[0]- (gamedata.tuilesize/2), coord[1]-(gamedata.tuilesize/2))
@@ -353,7 +472,7 @@ def pathfinding(gamedata, classmap, option, coord0, coord1, degr):
 	# On calcul la distance en C0 et C1
 	dx = coord1[0] - coord0[0]
 	dy = coord1[1] - coord0[1]
-	print("dx, dy: ",dx, dy)
+	gamedata.log.printinfo(f"dx, dy: ,{dx}, {dy}")
 
 	# Point Central 
 	C = [coord0[0] + dx//2, coord0[1] + dy//2]
@@ -372,12 +491,12 @@ def pathfinding(gamedata, classmap, option, coord0, coord1, degr):
 	# C2y:
 	C2[1] = int(((C[0] - coord0[0])*(-sindegr)) + ((C[1] - coord0[1])*cosdegr) + coord0[1])
 
-	print("coord0: ",coord0)
-	print("coord1: ",coord1)
+	gamedata.log.printinfo(f"coord0: ,{coord0}")
+	gamedata.log.printinfo(f"coord1: ,{coord1}")
 
-	print("C: ",C)
-	print("C1: ",C1)
-	print("C2: ",C2)
+	gamedata.log.printinfo(f"C: ,{C}")
+	gamedata.log.printinfo(f"C1: ,{C1}")
+	gamedata.log.printinfo(f"C2: ,{C2}")
 
 	# On calcul les 3 itinéraires
 	iti1 = brensenham(coord0, C)
