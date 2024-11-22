@@ -61,9 +61,9 @@ class Classlord:
 	# Class Seigneur 
 	####################
 
-	def __init__(self, lordname: str, player: bool, id: int):
+	def __init__(self, lordname: str, player: bool, idlord: int):
 
-		self.idlord = 0
+		self.idlord = idlord
 
 		self.personnal_ressource = 10
 		self.personnal_money = 10
@@ -111,6 +111,68 @@ class Classlord:
 		village.setlord(self)
 		self.updateinfo()
 
+	def removevassal(self, vassal):
+		# On retire le vassal de la liste des vassaux
+		if len(self.vassal)>1:
+			i = 0
+			while i< len(self.vassal):
+				if self.vassal[i] == vassal:
+					self.vassal = self.vassal[:i] + self.vassal[i+1:]
+					return True
+		elif len(self.vassal) == 1:
+			if self.vassal[0] == vassal:
+				self.vassal = []
+				return True
+
+		return False
+
+
+	def removefief(self, village):
+		# On Unbind le seigneur de l'objet village
+		village.lord = 0
+		# On retire le village de la liste des fief
+		if len(self.fief) > 1:
+			i = 0
+			while i < len(self.fief):
+				if self.fief[i] == village:
+					self.fief = self.fief[:i] + self.fief[i+1:]
+					# On renvoit True pour indiquer que l'éxécution est correcte
+					return True
+		elif len(self.fief) == 1:
+			if self.fief[0] == village:
+				self.fief = []
+				return True
+		return False
+
+	def addwar(self, lord):
+		############
+		# Fonction appeler pour ajouter un seigneur et ses vassaux à la liste des Seigneurs en Guerre
+		############
+		# On ajoute les Vassaux
+		for vassal in lord.vassal:
+			self.war += [vassal]
+		# On ajoute le Seigneur lui même
+		self.war += [lord]
+
+	def remmovewar(self, lord):
+		############
+		# Fonction appeler pour retirer un seigneur et ses vassaux de la liste des Seigneurs en Guerre
+		############
+
+		# On retire le lord
+		i = 0
+		found = False
+		while (i < len(self.war)) and (found != True):
+			# une fois le seigneur trouver On le supprime de la liste
+			if self.war[i] == lord:
+				self.war = self.war[:i] + self.war[i+1:]
+				found = True
+
+		# On retire les vassaux du lord
+		# Récursif
+		for vassal in lord.vassal:
+			self.remmovewar(vassal)
+
 	def updateinfo(self):
 		############
 		# On update les données du seigneur
@@ -150,6 +212,7 @@ class Classvillage:
 
 	def __init__(self,x,y):
 		self.name = "test"
+		# Coordonnées Map
 		self.x = x
 		self.y = y
 
@@ -164,6 +227,8 @@ class Classvillage:
 		self.influence = 0
 
 		self.church = 0
+
+		self.border = 2
 
 	#pop: Classhuman	
 	def addpopulation(self, pop):
@@ -342,4 +407,61 @@ class ClassSoldier:
 		self.age = random.randrange(15,30)
 		self.power = 1
 		self.movecapacity = 4
+		
+		
+"""
+Classe Roturier pour représenter les paysans ou artisans avec des caractéristiques spécifiques 
+et des actions comme la production et le paiement des impôts.
+"""
+class Roturier:
+	#starting_money= pécule initial des artisans (modifiable selon les besoins)
+	#role = paysans ou artisans
+	def __init__(self, name, role="Artisan", starting_money=5):
+		self.name = name
+		#Par défaut, chaque roturier commence avec 1 unité de ressource.
+		#Un artisan commence avec une pécule de départ alors que le paysans non
+		self.ressource = 1  
+		if role == "Artisan":
+			self.money = starting_money
+		else:
+			self.money = 0
+
+		self.role = role          
+		self.joy = 50
+		self.cp = random.randrange(2,10)   #La capacité de prod varie de 2 à 10 (modifiable si besoin)
+		self.age = random.randrange(15, 30)
+
+	#Méthode pour calculer et soustraire les impôts en fonction du rôle.
+	def pay_taxes(self):
+		if self.role == "Paysans":
+		    	#Impôts plus élevés pour les paysans (20% de leurs revenus).
+		    	tax = int(self.money * 0.2)
+		elif self.role == "Artisan":
+		    	#Impôts réduits pour les artisans (10% de leurs revenus).
+		    	tax = int(self.money * 0.1)
+		else:
+ 			tax= 0
+ 			
+		#Calcul du paiement des impôts
+		if self.money >= tax:
+		    	self.money -= tax
+		    	return {"type": "argent", "amount_paid": tax}
+		else:
+			#Si le roturier ne peut pas payer en argent, payer une partie en ressources
+			tax_due = tax - self.money
+			self.money = 0
+			return {"type": "ressources", "amount_due": tax_due}
+
+	#Méthode pour produire des ressources. La quantité produite dépend de la capacité de production (cp).
+	def produce(self):
+		production = self.cp
+		self.ressource += production
+		return production
+
+	#Méthode pour gérer la fin du tour et renvoyé les informations de prod et d'impots
+	def endofturn(self):
+		production = self.produce()  
+		taxes = self.pay_taxes()  
+		return {"production": production,"taxes": taxes}
+
 
