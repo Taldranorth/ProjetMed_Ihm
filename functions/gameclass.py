@@ -65,11 +65,8 @@ class Classlord:
 
 		self.idlord = idlord
 
-		self.personnal_ressource = 10
-		self.personnal_money = 10
-
-		self.nb_ressource = 0
-		self.nb_money = 0
+		self.nb_ressource = 10
+		self.nb_money = 10
 		self.power = 0
 
 		self.nb_population = 0
@@ -175,6 +172,76 @@ class Classlord:
 		for vassal in lord.vassal:
 			self.removewar(vassal)
 
+	def verifcost(self, nb_m, nb_r):
+		######
+		# Method qui vérifie si il y a suffisament en stock
+		# Return True si il y a suffisament
+		# Return False Sinon
+		######
+		if self.nb_money < nb_m:
+			return False
+		if self.nb_ressource < nb_r:
+			return False
+
+		return True
+
+	def sub_ressource(self, nb_r: int):
+		#####
+		# Methode pour retirer au Seigneurs nb_r Ressource
+		#####
+		self.nb_ressource -= nb_r
+
+	def sub_money(self, nb_m: int):
+		#####
+		# Methode pour retirer au Seigneurs nb_m Argent
+		#####
+		self.nb_money -= nb_m	
+
+
+
+
+	def tax(self, lord):
+		#########
+		# Methode Pour payer la taxe envers le Seigneur Régent
+		# Doit payer 1/4 des Ressources et Argent
+		# Si il ne peut pas payer va levé une tax d'urgence afin de payer au seigneur
+		#########
+
+		# On calcul la somme que peut payer le Noble en Ressource et Argent
+		tax_money = int(self.nb_money*(1/4))
+		tax_ressource = int(self.nb_ressource*(1/4))
+
+		# Si l'une des 2 ressources est null le Noble toit lever une Tax Exceptionnelle pour pouvoir payer Son Seigneur
+		if (tax_ressource == 0) and (tax_money == 0):
+			for village in self.fief:
+				for pop in village.population:
+					pop.pay_tax_money(self)
+					pop.pay_tax_ressource(self)
+			# On recalcul la somme que doit payer le Noble
+			tax_money = int(self.nb_money*(1/4))
+			tax_ressource = int(self.nb_ressource*(1/4))
+		elif (tax_ressource == 0):
+			for village in self.fief:
+				for pop in village.population:
+					pop.pay_tax_ressource(self)
+			# On recalcul la somme que doit payer le Noble
+			tax_ressource = int(self.nb_ressource*(1/4))
+		elif (tax_money == 0):
+			for village in self.fief:
+				for pop in village.population:
+					pop.pay_tax_money(self)
+			# On recalcul la somme que doit payer le Noble
+			tax_money = int(self.nb_money*(1/4))
+
+
+		print(f"Moi {self.lordname}: Paye {tax_money} écu à Mon Liege: {lord.lordname}")
+		print(f"Moi {self.lordname}: Paye {tax_ressource} ressource à Mon Liege: {lord.lordname}")
+		# Le Noble paye la tax
+		lord.nb_money += tax_money
+		self.nb_money -= tax_money
+		lord.nb_ressource += tax_ressource
+		self.nb_ressource -= tax_ressource
+
 	def updateinfo(self):
 		############
 		# On update les données du seigneur
@@ -184,18 +251,12 @@ class Classlord:
 		############
 
 		temp_joy = 0
-		self.nb_ressource = self.personnal_ressource
-		self.nb_money = self.personnal_money
 		# On calcul pour les vassaux
 		for vassal in self.vassal:
-			self.nb_ressource += vassal.nb_ressource
-			self.nb_money += nb_money
 			temp_joy += vassal.global_joy
 
 		# On calcul pour le fief
 		for village in self.fief:
-			self.nb_ressource += village.ressource
-			self.nb_money += village.money
 			temp_joy += village.global_joy
 
 		self.global_joy = temp_joy/(len(self.vassal)+len(self.fief))
@@ -211,11 +272,19 @@ class Classlord:
 
 		# On appels la fin de tour pour les armées
 		for army in self.army:
-			army.endofturn()
+			army.endofturn(self)
 
 		# On appels la fin de tour pour les villages
 		for village in self.fief:
 			village.endofturn()
+
+		# On demande au vassaux de payer la tax annuelle
+		for vassal in self.vassal:
+			print("On tax le vassal: ",vassal.lordname)
+			vassal.tax(self)
+
+		# On update les infos du Seigneurs
+		self.updateinfo()
 
 
 
@@ -360,17 +429,18 @@ class Classarmy:
 			self.movecapacity = 4
 		self.moveturn = self.movecapacity
 
-	def endofturn(self):
+	def endofturn(self, lord):
 		#######
 		# Méthode fin de tour
 		#######
 
-		# On appel la Methode Fin de tour pour le Chevalier
-		self.knight.endofturn()
+		# On appel la Methode Fin de tour pour le Chevalier Si on en a un
+		if self.knight != 0:
+			self.knight.endofturn(lord)
 
 		#On appel la Methode Fin de tour pour les Soldats
 		for soldier in self.unit:
-			soldier.endofturn()
+			soldier.endofturn(lord)
 
 		# On update l'armée
 		self.updatearmy()
@@ -401,7 +471,7 @@ class Classpriest:
 
 		pass
 
-	def endofturn(self):
+	def endofturn(self, lord):
 		#######
 		# Méthode fin de tour
 		#######
@@ -441,29 +511,69 @@ class ClassKnight:
 		self.power = 10
 		self.movecapacity = 10
 
-	def endofturn(self):
+	def endofturn(self, lord):
 		#######
 		# Méthode fin de tour
 		#######
-		pass
+		# Tax au Seigneur Son Salaire Si possible
+		if lord.verifcost(4,4) == True:
+			lord.sub_money(4)
+			lord.sub_ressource(4)
+		# Sinon réduit son bonheur
+		else:
+			self.joy -= 10
+
+
+		# Consomme Si possède les ressources
+		if self.ressource > 0:
+			self.ressource -= 1
+		# Sinon achète Si possède l'argent
+		elif self.money > 0:
+			self.money -= 1
+		# Sinon réduit son bonheur
+		else:
+			self.joy -= 10
+			
+		self.age += 1
 
 
 class ClassSoldier:
 
 	def __init__(self, name:chr):
 		self.name = name
-		self.ressource = 1
-		self.money = 0
+		self.ressource = 2
+		self.money = 2
 		self.joy = 50
 		self.age = random.randrange(15,30)
 		self.power = 1
 		self.movecapacity = 4
 
-	def endofturn(self):
+	def endofturn(self, lord):
 		#######
 		# Méthode fin de tour
 		#######
-		pass
+		# Tax au Seigneur Son Salaire Si possible
+		if lord.verifcost(1,1) == True:
+			lord.sub_money(1)
+			lord.sub_ressource(1)
+		# Sinon réduit son bonheur
+		else:
+			self.joy -= 10
+
+
+		# Consomme Si possède les ressources
+		if self.ressource > 0:
+			self.ressource -= 1
+		# Sinon achète Si possède l'argent
+		elif self.money > 0:
+			self.money -= 1
+		# Sinon réduit son bonheur
+		else:
+			self.joy -= 10
+
+		self.age += 1
+
+
 
 
 """
@@ -471,8 +581,6 @@ Classe Roturier pour représenter les paysans ou artisans avec des caractéristi
 et des actions comme la production et le paiement des impôts.
 """
 class ClassRoturier:
-	#starting_money= pécule initial des artisans (modifiable selon les besoins)
-	#role = paysans ou artisans
 
 	def __init__(self, name, role:str):
 		# On commence par définir les données de base

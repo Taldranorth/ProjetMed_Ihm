@@ -15,7 +15,7 @@
 #		--> Un artisans, un Roturier:
 #			--> Qui dispose d'une Bourse de 4 pièce au départ
 #			--> A une valeur de Production de 4 minimum
-#			--> Demande bien plus de ressource pour faire Immigrer
+#			--> Demande bien plus de ressource pour faire Immigrer (4R, 4M)
 #		--> Si un Roturier Peut payer un Impôt en Argent alors il payera en Argent, Sinon en Ressource
 # - Un Noble est un Seigneur qui règne uniquement sur des Roturiers
 #	--> Il peut soummetre à un Impot c'est sujets
@@ -33,15 +33,18 @@
 # - Un Prêtre est une entité relier à une église
 #	--> Il ne produit ni Ressource ni Argent
 #	--> Il n'est pas soumis aux tax
-#	--> 
+#	--> N'est présent que si il y a une Église
+#	--> l'église coute (10R, 10M) pour être Construite
 #
-# - Un Chevalier est un 
+# - Un Chevalier est une entité uniquement reliée à une unique Armée
+#	--> Un unique Individu peut être présent dans une Armée
+#	--> Il coute (10R, 10M) pour être recruter
+#	--> Il coute (4R, 4M) par tour pour être entretenue
 #
-#
-#
-# - Un Soldat est un 
-#
-#
+# - Un Soldat est un une entité uniquement reliée à une unique Armée
+#	--> De Multiple Soldat peuvent être présent dans une Armée
+#	--> Il coute (2R, 2M) pour être recruter
+#	--> Il coute (1R, 1M) par tour pour être entretenue
 #
 # - CP = capacité de production >=2
 #########################

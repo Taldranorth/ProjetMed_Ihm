@@ -129,6 +129,10 @@ class ClassGameData:
 		# Label Frame Atlas
 		self.lframe = 0
 
+		# Dico contenant les effets des capacité des prêtres
+		self.dico_priest_ability = {}
+
+
 		# Variable qui vient contenir la file des actions
 		# liste de Piles
 		self.actionlist = []
@@ -370,9 +374,10 @@ class ClassGameData:
 		# On vide la file des actions pour le tour 0:
 		self.eotactionfile()
 
-		#On appelle les méthode des instances des sous class lord
+		# On appelle les méthode des instances des sous-classes lord
 		for lord in self.list_lord:
 			lord.endofturn()
+
 		self.Nb_tour += 1
 
 	def exit(self):
@@ -435,7 +440,7 @@ class ClassGameData:
 			for action in self.actionlist[0]:
 				self.log.printinfo(f"action: {action}")
 				self.actionfileeval(action)
-		self.log.printinfo("Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 1->0, 2->1")
+		self.log.printinfo("Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2")
 		# Si la pile est supérieur à 1 il n'y a pas que la pile 0
 		if len(self.actionlist) > 1:
 			i = 0

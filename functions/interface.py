@@ -1,4 +1,5 @@
 import tkinter
+import random
 
 import functions.genproc as genproc
 import functions.affichage as affichage
@@ -109,7 +110,7 @@ def gameinterface(gamedata, classmap, option, win):
 	Menu_Button_gestion["menu"] = menu_gestion
 
 	# On associe les Commandes Militaires
-	menu_military.add_command(label = "Vassaliser")
+	menu_military.add_command(label = "Vassaliser", command = lambda: statesubjugate(gamedata, classmap, option))
 	menu_military.add_command(label = "Soldat", command = lambda: staterecruitarmy(gamedata, classmap, option))
 	menu_military.add_command(label = "Déclarer Guerre", command = lambda: statewar(gamedata, classmap, option))
 
@@ -239,7 +240,168 @@ def destroyglobalviewmenu(canvas, canvaswindow):
 ##############################################################\ Militaire  \###########################################################################
 
 def statesubjugate(gamedata, classmap, option):
-	pass
+	#######
+	# Fonction pour ouvrir l'interface de vassalisations
+	#######
+	# On affiche la liste des Seigneurs Indépendents dans une fenêtre
+	# 
+	#######
+	if gamedata.changenewstate("interface_sujugate") == True:
+		player = gamedata.list_lord[gamedata.playerid]
+
+		# On créer l'interface qui va contenir la frame
+		window_interface_subjugate = tkinter.Frame(classmap.framecanvas)
+		window_interface_subjugate.place(x = (option.widthWindow/20), y = (option.heightWindow/20))
+
+		frame_interface_subjugate = tkinter.Frame(window_interface_subjugate)
+		frame_interface_subjugate.grid()
+
+		tkinter.Label(frame_interface_subjugate, text = "Choisissez un Seigneur:").grid(row = 0, column = 0)
+		# On affiche une liste de tout les Seigneurs qui ne sont pas Vassaux:
+		lc_subjugate = tkinter.Listbox(frame_interface_subjugate)
+		lc_subjugate.grid(row = 1, column = 0)
+		for lord in gamedata.list_lord:
+			if lord.player == False:
+				if lord not in (player.vassal):
+					lc_subjugate.insert(tkinter.END, lord.lordname)
+		# On bind double click
+		lc_subjugate.bind("<Double-Button-1>", lambda event: vassal_offer(event, gamedata, classmap, option, window_interface_subjugate, lc_subjugate))
+
+
+		# On bind l'exit
+		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], [window_interface_subjugate]))
+
+def vassal_offer(event, gamedata, classmap, option, wis, lc):
+	################
+	# Fonction pour affiche interface pour Afficher les Infos sur le Seigneur est confirmer la proposition de Vassalisation
+	################
+	# On recup le Seigneur
+	lordname = event.widget.get(event.widget.curselection()[0])
+	lordid = gamedata.lordnametoid(lordname)
+	lord = gamedata.list_lord[lordid]
+	player = gamedata.list_lord[gamedata.playerid]
+
+
+	frame_interface_offer = tkinter.Frame(wis)
+	frame_interface_offer.grid(row = 0, column = 1)
+
+	succes = vassal_try(gamedata, player, lord)
+
+	#On affiche les Infos du Seigneur
+	# Sa puissance
+	tkvar_power = tkinter.StringVar()
+	tkvar_power.set(f"Puissance Militaire: {lord.power}")
+	tkinter.Label(frame_interface_offer, textvariable = tkvar_power).grid(row = 1,column = 1)
+
+	# Le Nombre de Village qu'il possède
+	tkvar_nb_village = tkinter.StringVar()
+	tkvar_nb_village.set(f"Nb Village: {len(lord.fief)}")
+	tkinter.Label(frame_interface_offer, textvariable = tkvar_nb_village).grid(row = 2,column = 1)
+
+	# Le Nombre de Vassaux qu'il possède
+	tkvar_nb_vassal = tkinter.StringVar()
+	tkvar_nb_vassal.set(f"Nb Vassal: {len(lord.vassal)}")
+	tkinter.Label(frame_interface_offer, textvariable = tkvar_nb_vassal).grid(row = 3,column = 1)
+
+	# Le % de chance qu'il accepte sa vassalisation
+	tkvar_succes = tkinter.StringVar()
+	tkvar_succes.set(f"Proba de Réussite: {succes}%")
+	tkinter.Label(frame_interface_offer, textvariable = tkvar_succes).grid(row = 4,column = 1)
+
+	# Le Boutton pour envoyer la proposition de Vassalisation
+	button_vassalage_offer = tkinter.Button(frame_interface_offer, command = lambda: b_vassal_offer(gamedata, classmap, option, lc, lord, frame_interface_offer, succes), text = "Envoyer Proposition")
+	button_vassalage_offer.grid(row = 5, column = 1)
+
+def b_vassal_offer(gamedata, classmap, option, lc, lord, frame, succes):
+	################
+	# Fonction pour gérer l'envoit d'une demande de Vassalisation
+	################
+
+	player = gamedata.list_lord[gamedata.playerid]
+
+	# On teste la probabilité
+	# On genère un chiffre entre 1 et 100
+	r = random.randrange(0,100)
+	# On addition le succes
+	r += succes
+	gamedata.log.printinfo(f"Valeur obtenu après lancer de dé: {r}")
+	# On vérifie si c'est >= 100
+	# Si c'est réussi on ajoute à la liste des Vassaux
+	if r >= 100:
+		gamedata.log.printinfo("Succès")
+		# On ajoute le Seigneur à la liste des Vassaux
+		player.addvassal(lord)
+		# On ajoute les vassaux du Seigneur à la liste des Vassaux
+		for vassal in lord.vassal:
+			# On retire de la liste des Vassaux du Seigneur les vassaux qu'il possède
+			lord.removevassal(vassallord)
+			player.addvassal(vassal)
+		print("Liste des vassaux du Joueurs: ",player.vassal)
+	# Sinon on déclare la guerre
+	else:
+		gamedata.log.printinfo("Echecs")
+		player.addwar(lord)
+		lord.addwar(player)
+
+	# On update la Listbox
+	lc.delete(lc.curselection()[0])
+
+	# On update l'affichage de la carte
+	affichage.bordervillage(gamedata, classmap, option)
+
+	# On update l'entête
+	updateinterface(gamedata, classmap)
+
+	# On détruit la fenêtre Une fois la demande faite
+	frame.destroy()
+
+def vassal_try(gamedata, lord, lord2):
+	################
+	# Fonction qui calcul le % de chance de réussite que le Seigneur1 vassalise le Seigneur2 par une tentative
+	################
+	# On calcul selon plusieurs facteurs:
+	# - La puissance Militaire de Chacun
+	# - Le Nombre de (Village * Nb_pop) de Chacun
+	# - Le Nombre de (Vassaux*(power+Village * Nb_pop)) de Chacun
+	# L'ensemble permet d'obtenir un Score qui va être comparer
+	################
+
+	# On ajoute la puissance Militaire
+	lord_score1 = lord.power
+	lord_score2 = lord2.power
+	# On ajoute la puissance Démographique
+
+	for village in lord.fief:
+		lord_score1 += len(village.population)
+
+	for village in lord2.fief:
+		lord_score2 += len(village.population)
+
+	# On ajoute la puissance Diplomatique
+	diplo_power = 0
+	for vassal in lord.vassal:
+		diplo_power += lord.power
+		for village in vassal.fief:
+			diplo_power += len(village.population)
+
+	lord_score1 += diplo_power
+
+	diplo_power = 0
+	for vassal in lord2.vassal:
+		diplo_power += lord2.power
+		for village in vassal.fief:
+			diplo_power += len(village.population)
+
+	lord_score2 += diplo_power	
+
+
+	# On compare les 2 Scores
+	rs = ((lord_score1 - lord_score2)/100)*100
+
+	# On retourne le résultat
+	return rs
+
+
 ############################################# Recrut Army #############################################
 
 def staterecruitarmy(gamedata, classmap, option):
@@ -252,8 +414,6 @@ def staterecruitarmy(gamedata, classmap, option):
 
 	if gamedata.changenewstate("interface_recruit_army") == True:
 		player = gamedata.list_lord[gamedata.playerid]
-		xorigine = classmap.mapcanv.canvasx(0)
-		yorigine = classmap.mapcanv.canvasy(0)
 
 		# On créer l'interface qui va contenir le frame
 		window_interface_army = tkinter.Frame(classmap.framecanvas, height = 200, width = 300)
@@ -272,26 +432,33 @@ def staterecruitarmy(gamedata, classmap, option):
 		# On bind l'objet à une fonction pour center sur l'armée selectionner
 		lc_interface_army.bind("<Double-Button-1>", lambda event: interfacerecruit(event, gamedata, classmap, option, frame_interface_army))
 		# On créer un boutton pour créer une nouvelle armée
-		button_createarmy = tkinter.Button(frame_interface_army, text= "Nouvelle Armée", command = lambda: interfacecreatearmy(gamedata, classmap, option, lc_interface_army))
+		button_createarmy = tkinter.Button(frame_interface_army, text= "Nouvelle Armée", command = lambda: buttoncreatearmy(gamedata, classmap, option, lc_interface_army))
 		button_createarmy.grid(row = 1, column = 0)
 
 		# On bind 
 		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], [window_interface_army]))
 
-def interfacecreatearmy(gamedata, classmap, option, lc_interface_army):
+def buttoncreatearmy(gamedata, classmap, option, lc_interface_army):
 
 
 	player = gamedata.list_lord[gamedata.playerid]
 	lastarmy = len(player.army)
 
-	gamedata.log.printinfo("Le Joueur Créer une armée")
-	# On créer la nouvelle armée
-	player.createarmy(player.fief[0])
-
-	# On affiche la nouvelle armée
-	affichage.printarmy(gamedata, classmap, option, player.army[lastarmy])
-	# On update l'interface de la listbox
-	lc_interface_army.insert(tkinter.END, player.army[lastarmy].name)
+	# On vérifie que le joueur possède les ressource nécessaire pour recruter 1 Soldata
+	if player.verifcost(2,2) == True:
+		gamedata.log.printinfo("Le Joueur Créer une armée")
+		# On créer la nouvelle armée
+		player.createarmy(player.fief[0])
+		# On ajoute 1 Soldat
+		player.sub_money(2)
+		player.sub_ressource(2)
+		player.army[lastarmy].recruitsoldier(gamedata.randomnametype("Nom"))
+		# On affiche la nouvelle armée
+		affichage.printarmy(gamedata, classmap, option, player.army[lastarmy])
+		# On update l'interface de la listbox
+		lc_interface_army.insert(tkinter.END, player.army[lastarmy].name)
+		# On update l'interface entête
+		updateinterface(gamedata, classmap)
 
 def interfacerecruit(event, gamedata, classmap, option, frame_interface_army):
 	################
@@ -373,20 +540,32 @@ def button_recruit(gamedata, classmap, tkvar_list, army, unit):
 	################
 	# Fonction appeler pour recruter
 	################
+	player = gamedata.list_lord[gamedata.playerid]
 
 	# On recrute l'unité
 	if (unit == "knight") and (type(tkvar_list[1].get()) != str):
-		army.recruitknight(gamedata.randomnametype("Surnom"))
-		tkvar_list[1].set(army.knight.name)
+		# On verif que le joueur possède les ressources
+		if player.verifcost(10,10) == True:
+			army.recruitknight(gamedata.randomnametype("Surnom"))
+			tkvar_list[1].set(army.knight.name)
+			player.sub_money(10)
+			player.sub_ressource(10)
+
 	elif unit == "soldier":
-		army.recruitsoldier(gamedata.randomnametype("Nom"))
-		tkvar_list[2].set(len(army.unit))
+		if player.verifcost(2,2) == True:
+			army.recruitsoldier(gamedata.randomnametype("Nom"))
+			tkvar_list[2].set(len(army.unit))
+			player.sub_money(2)
+			player.sub_ressource(2)			
+
 	# On update l'armée
 	if gamedata.searchtexturetypeindico(army.texture) != "knight":
 		affichage.printupdatearmy(gamedata, classmap, army)
 
-	# On update l'interface
+	# On update l'interface de l'armée
 	tkvar_list[0].set(army.power)
+	# On update l'interface de l'entête
+	updateinterface(gamedata, classmap)
 
 
 ############################################# War #############################################
@@ -775,10 +954,15 @@ def triggerbuildchurch(event, gamedata, classmap, option):
 
 	idvillage = x + (option.mapx * y)
 	village = classmap.listmap[idvillage].village
+	player = gamedata.list_lord[gamedata.playerid]
 
 	# On vérife que le village appartient au joueur
-	if village in gamedata.list_lord[gamedata.playerid].fief:
-		village.buildchurch(gamedata.randomnametype("Nom"))
+	if village in player.fief:
+		# On Verfie que le joueur possède l'argent nécessaire
+		if player.verifcost(10,10):
+			village.buildchurch(gamedata.randomnametype("Nom"))
+			player.sub_money(10)
+			player.sub_ressource(10)
 		# On retire le carrer 
 ################################################  Tax  #################################################
 
@@ -806,27 +990,23 @@ def statetax(gamedata, classmap, option):
 		lc_vassal_tax = tkinter.Listbox(frame_interface_tax)
 		lc_vassal_tax.grid(row = 3)
 
-
 		# On affiche les taxes des villages du joueur
 		for village in player.fief:
-			# On utilise la fonction calculer_taxes() pour chaque village
-			tax = calculate_tax(village)
 			lc_village_tax.insert(tkinter.END, village.name)
 
 		# On affiche pour les vassaux:
 		for vassal in player.vassal:
-			tax = 0
-			for village in vassal.fief:
-				tax += calculate_tax(village)
 			lc_vassal_tax.insert(tkinter.END, vassal.lordname)
 
-
-		lc_village_tax.bind("<Button-1>", lambda event, wit = window_interface_tax: taxcentervillage(event, gamedata, classmap, option, wit))
+		# On bind pour les villages
+		lc_village_tax.bind("<Double-Button-1>", lambda event, wit = window_interface_tax: taxcentervillage(event, gamedata, classmap, option, wit))
+		# On bind pour les vassaux
+		lc_vassal_tax.bind("<Double-Button-1>", lambda event, wit = window_interface_tax: taxcentervassal(event, gamedata, classmap, option, wit))
 		# Exit la fonction si l'utilisateur clique ailleurs (sur la carte)
 		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], [window_interface_tax]))
 
 
-def calculate_tax(village):
+def calculate_tax_village(village):
 	#####
 	# Fonctions qui renvoit une liste contenant en position 0 l'Argent total et en position 1 les Ressources total que peut récolter le seigneurs dans le village donner
 	#####
@@ -838,6 +1018,24 @@ def calculate_tax(village):
 		tax_r += roturier.tax_ressource()
 
 	return [tax_m, tax_r]
+
+def calculate_tax_vassal(vassal):
+	#####
+	# Fonctions qui renvoit une liste contenant en position 0 l'Argent total et en position 1 les Ressources total que peut récolter le seigneurs pour la vassal donner
+	#####
+	tax = [ int(vassal.nb_money*(1/4)), int(vassal.nb_ressource*(1/4))]
+	if (tax[0] == 0) or (tax[1] == 0):
+		taxtemp = [0,0]
+		for village in vassal.fief:
+			taxtemp2 = calculate_tax(village)
+			taxtemp[0] += taxtemp2[0]
+			taxtemp[1] += taxtemp2[1]
+		if tax[0] == 0:
+			tax[0] = taxtemp[0]
+		if tax[1] == 0:
+			tax[1] = taxtemp[1]
+	return tax
+
 
 
 def taxcentervillage(event, gamedata, classmap, option, wit):
@@ -871,13 +1069,13 @@ def taxcentervillage(event, gamedata, classmap, option, wit):
 	tkvar_ressource.set(f"Collecter {tax[1]} ressource")
 
 	tkvar_list = [tkvar_money, tkvar_ressource]
-	button_collect_tax_money = tkinter.Button(frame_tax_collect, textvariable = tkvar_list[0], command=lambda: collect_taxes(gamedata, classmap, village, "money", tax[0], frame_tax_collect, tkvar_list))
+	button_collect_tax_money = tkinter.Button(frame_tax_collect, textvariable = tkvar_list[0], command=lambda: collect_taxes_village(gamedata, classmap, village, "money", frame_tax_collect, tkvar_list))
 	button_collect_tax_money.grid(row = 3, column = 1)
 
-	button_collect_tax_ressource = tkinter.Button(frame_tax_collect, textvariable = tkvar_list[1], command=lambda: collect_taxes(gamedata, classmap, village, "ressource", tax[1], frame_tax_collect, tkvar_list))
+	button_collect_tax_ressource = tkinter.Button(frame_tax_collect, textvariable = tkvar_list[1], command=lambda: collect_taxes_village(gamedata, classmap, village, "ressource", frame_tax_collect, tkvar_list))
 	button_collect_tax_ressource.grid(row = 4, column = 1)
 
-def collect_taxes(gamedata, classmap, village, type_tax, Nb_tax, frame, tkvar_list):
+def collect_taxes_village(gamedata, classmap, village, type_tax, frame, tkvar_list):
 	#####
 	# Fonction associer au Bouton pour collecter taxes 
 	#####
@@ -903,6 +1101,58 @@ def collect_taxes(gamedata, classmap, village, type_tax, Nb_tax, frame, tkvar_li
 		tax = calculate_tax(village)
 		# On update l'interface
 		tkvar_list[1].set(f"Collecter {tax[1]} écus")
+	# On update l'entête
+	updateinterface(gamedata, classmap)
+
+def taxcentervassal(event, gamedata, classmap, option, wit):
+	##########
+	# Fonction qui place le village selectioner dans la listbox au centre de l'écran est affiche une interface pour taxer soit l'argent soit les ressources
+	##########
+
+	# On recup le nom du vassal
+	vassal_selected = event.widget.get(event.widget.curselection()[0])
+	# On calcul son id
+	idvassal = gamedata.lordnametoid(vassal_selected)
+	# On recup l'objet vassal
+	vassal = gamedata.list_lord[idvassal]
+	# On récupère les coordonnées du village principal du vassal
+	x = vassal.fief[0].x
+	y = vassal.fief[0].y
+	# On déplace la vue de la carte sur ce village
+	coord = moveview.coordmaptocanvas(gamedata, classmap, option, [x, y], True)
+	moveview.centerviewcanvas(gamedata, classmap, option, coord)
+
+
+	# On met en places l'interfaces
+	frame_tax_collect = tkinter.Frame(wit)
+	frame_tax_collect.grid(row = 0, column = 1)
+	# On affiche plus d'info sur la populations
+
+	tax = calculate_tax_vassal(vassal)
+
+
+	tkvar_tax = tkinter.StringVar()
+	tkvar_tax.set(f"Collecter {tax[0]} écus et {tax[1]} ressource")
+
+	button_collect_tax_money = tkinter.Button(frame_tax_collect, textvariable = tkvar_tax, command=lambda: collect_taxes_vassal(gamedata, classmap, vassal, frame_tax_collect, tkvar_tax))
+	button_collect_tax_money.grid(row = 3, column = 1)
+
+def collect_taxes_vassal(gamedata, classmap, vassal, frame, tkvar_tax):
+	#####
+	# Fonction associer au Bouton pour collecter taxes 
+	#####
+
+	# On recup le joueur
+	player = gamedata.list_lord[gamedata.playerid]
+
+	# Le vassal paye la tax
+	vassal.tax(player)
+
+	# On recalcul ce qu'il peut payer
+	tax = calculate_tax_vassal(vassal)
+
+	# On update l'interface
+	tkvar_tax.set(f"Collecter {tax[0]} écus et {tax[1]} ressource")
 	# On update l'entête
 	updateinterface(gamedata, classmap)
 
@@ -985,13 +1235,22 @@ def button_add_population(gamedata, classmap, option, village, role, tkvar_list)
 	################
 	player = gamedata.list_lord[gamedata.playerid]
 
-	if (role == "paysan") and ((player.nb_money > 1) and (player.nb_ressource > 1)):
-		genproc.genpopvillage(gamedata, classmap, option, village, 1, 0)
-		tkvar_list[1].set(f"Nb Paysan: {village.nb_paysan}")
+	if (role == "paysan"):
+		# On verifie que le joueuer à suffisament en stock
+		if player.verifcost(1, 1) == True:
+			# On ajoute la pop
+			genproc.genpopvillage(gamedata, classmap, option, village, 1, 0)
+			tkvar_list[1].set(f"Nb Paysan: {village.nb_paysan}")
+			# On retire au joueur
+			player.sub_ressource(1)
+			player.sub_money(1)
 
 	elif role == "artisan":
-		genproc.genpopvillage(gamedata, classmap, option, village, 0, 1)
-		tkvar_list[2].set(f"Nb artisan: {village.nb_artisan}")
+		if player.verifcost(4, 4) == True:
+			genproc.genpopvillage(gamedata, classmap, option, village, 0, 1)
+			tkvar_list[2].set(f"Nb artisan: {village.nb_artisan}")
+			player.sub_ressource(4)
+			player.sub_money(4)
 
 	# On update l'interface Immigration
 	tkvar_list[0].set(f"Nb Pop: {len(village.population)}")
@@ -1303,47 +1562,50 @@ def TakeVillage(gamedata, classmap, option, army, village, subjugate):
 	# Si le Seigneur Ennemie possède des Vassaux ils sont soit libérer soit ajouté a c'est vassaux
 	#	- On prend comme cas de figure standars la prise de contrôle immédiate des Vassaux
 
-	Ennemielord = village.lord
-	print(village.lord.lordname)
 	player = gamedata.list_lord[gamedata.playerid]
-
 	gamedata.log.printinfo(f"prise de {village.name} par {player.lordname}")
 
-	# Si le Seigneur Ennemies possède Encore plus d'1 Village
-	if len(Ennemielord.fief) > 1:
-		gamedata.log.printinfo(f"Le Seigneur {Ennemielord.lordname} possède plus de 1 village")
-		# On debind le Village du Seigneur Ennemie
-		Ennemielord.removefief(village)
-		# ON Prend le contrôle du village
-		player.addfief(village)
-	# Sinon On Vassalise le Seigneur ou on le détruit et récupère le village
-	else:
-		gamedata.log.printinfo(f"C'est le dernier village de: {Ennemielord.lordname}")
-		# on retire le seigneur et c'est vassaux de la liste War
-		player.removewar(Ennemielord)
-		# On retire le joueur de la liste war du Seigneurs Ennemie et de c'est vassaux
-		Ennemielord.removewar(player)
-		# On transfert le controle des Vassaux du Seigneurs Ennemie aux joueur
-		for vassallord in Ennemielord.vassal:
-			# On retire le vassal de la liste du seigneurs Ennemie
-			Ennemielord.removevassal(vassallord)
-			# On l'ajoute à la liste du Joueur
-			player.addvassal(vassal)
-			gamedata.log.printinfo(f"{vassal.lordname} subjuger")
-		gamedata.log.printinfo(f"{player.lordname} à pris le contrôle de tout les Vassaux Ennemie")
-		# On Vassalise le Seigneur
-		if subjugate == True:
-			# On Vassalise le Seigneurs Ennemie
-			player.addvassal(Ennemielord)
-			gamedata.log.printinfo(f"{Ennemielord.lordname} subjuger")
-		# On détruit le Seigneur
-		else:
-			# On transfert le contrôle du Village du Seigneur Ennemies
+	# Si le village n'est pas indépendant
+	if village.lord != 0:
+		Ennemielord = village.lord
+
+		# Si le Seigneur Ennemies possède Encore plus d'1 Village
+		if len(Ennemielord.fief) > 1:
+			gamedata.log.printinfo(f"Le Seigneur {Ennemielord.lordname} possède plus de 1 village")
+			# On debind le Village du Seigneur Ennemie
 			Ennemielord.removefief(village)
+			# ON Prend le contrôle du village
 			player.addfief(village)
-			gamedata.log.printinfo(f"{Ennemielord.lordname} ANÉHANTIE")
-			# ON LE DELETE NIARK NIARK NIARK NIARK
-			gamedata.deletelord(Ennemielord.idlord)
+		# Sinon On Vassalise le Seigneur ou on le détruit et récupère le village
+		else:
+			gamedata.log.printinfo(f"C'est le dernier village de: {Ennemielord.lordname}")
+			# on retire le seigneur et c'est vassaux de la liste War
+			player.removewar(Ennemielord)
+			# On retire le joueur de la liste war du Seigneurs Ennemie et de c'est vassaux
+			Ennemielord.removewar(player)
+			# On transfert le controle des Vassaux du Seigneurs Ennemie aux joueur
+			for vassallord in Ennemielord.vassal:
+				# On retire le vassal de la liste du seigneurs Ennemie
+				Ennemielord.removevassal(vassallord)
+				# On l'ajoute à la liste du Joueur
+				player.addvassal(vassal)
+				gamedata.log.printinfo(f"{vassal.lordname} subjuger")
+			gamedata.log.printinfo(f"{player.lordname} à pris le contrôle de tout les Vassaux Ennemie")
+			# On Vassalise le Seigneur
+			if subjugate == True:
+				# On Vassalise le Seigneurs Ennemie
+				player.addvassal(Ennemielord)
+				gamedata.log.printinfo(f"{Ennemielord.lordname} subjuger")
+			# On détruit le Seigneur
+			else:
+				# On transfert le contrôle du Village du Seigneur Ennemies
+				Ennemielord.removefief(village)
+				player.addfief(village)
+				gamedata.log.printinfo(f"{Ennemielord.lordname} ANÉHANTIE")
+				# ON LE DELETE NIARK NIARK NIARK NIARK
+				gamedata.deletelord(Ennemielord.idlord)
+	else:
+		player.addfief(village)
 
 	# On update l'affichage du territoire
 	# On supp

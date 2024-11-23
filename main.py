@@ -165,6 +165,18 @@ from time import time
 #	--> Si souris sur village Ennemies alors affiche icône Pillage
 # 
 
+# - Changer TakeVillage pour gérer les villages Indépendants √
+# - Ajouter Tax au Vassaux √
+# - Ajouter Tax spécial aux Vassaux √
+# - Terminer Interface Vassalisation √
+
+# - Ajouter Cout de Recrutement √
+# - Ajouter Cout Immigration √
+# - Ajouter Cout Construction Église √
+# - Ajouter Entretien de l'armée √
+
+
+
 # - Implémenter l'attaque d'armée dans le déplacement d'unité X
 #########################################################
 
@@ -212,8 +224,6 @@ from time import time
 #	--> Build Church √
 #	--> Tax √
 #
-# -> Faire le point sur les ressources de Village
-# -> Faire le point sur les Ressource personnel/Non Personnels du Seigneurs
 # -> Implémenter l'impôt des Vassaux
 # -> Implémenter Conditions de fin
 # -> Implémenter l'écran de fin
@@ -225,26 +235,36 @@ from time import time
 # -> Pathfinding calcul des trajectoires hors de la map se qui fait crash le calcul de l'id de la tuile
 
 # -> Changer la gestion de la population d'un village pour un dico qui vient contenir pour le role la pop
+# -> Mettre en place fin de tour pour les Villages Indépendants
 
+# -> Faire le point sur les ressources de Village
+
+# - Ajouter Update de la trésorerie des Villages à la fin des tours et après Impôts
+# - Ajouter 
+# - Ajouter Cout de Construction de Village
+#	--> Un village doit avoir 10 de pop à la création
+#	--> 8 Paysan et 2 artisan
 
 ######## Fonctionnalité Principale à Implémenter
 # - Implémenter Fonction Combat 
-# - Implémenter prise de Village √
-# - Implémenter Class Roturier √
-# - Implémenter Update Fin de Tour √
-# - Implémenter Interface Tax √
-# - Implémenter Interface Immigration √
 # - Implémenter Interface Vassalisation
-# - Implémenter marché 
 # - Implémenter Event
 ########
 
-######## Fonctionnalité Secondaire
+######## Fonctionnalité Majeur Secondaire
 # - Implémenter IA
 # - Implémenter Sauvegarde et Chargement de Données
 # - Implémenter Options
+# - Implémenter Résolutions Dynamique
+# - Implémenter marché
 # - Implémenter Landforme
 # - Terminer GlobalViewMenu
+########
+
+
+
+
+######## Fonctionnalité Secondaire
 # - Système de Pop-up d'événement en début de tour En bas à droite Comme Armée qui termine son déplacement ou village qui termine de se construire voir Civ
 # - Affiné la prise de Village pour prendre en compte le PIllage de ressource et la mort de Villageois
 # - Affiné le Combat entre 2 armée pour prendre en compte l'enfermement du Chevalier Ennemie

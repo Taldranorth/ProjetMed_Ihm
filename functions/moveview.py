@@ -304,8 +304,8 @@ def coordcanvastomap(gamedata, classmap, option, coord):
 	##################
 	ts = gamedata.tuilesize
 
-	xmap = ((int(coord[0]) - ts/2)//ts)
-	ymap = ((int(coord[1]) - ts/2)//ts)
+	xmap = (((coord[0]) - ts/2)//ts)
+	ymap = (((coord[1]) - ts/2)//ts)
 
 
 	return [xmap, ymap]
@@ -315,7 +315,7 @@ def coordmaptocanvas(gamedata, classmap, option, coord, decalage:bool):
 	# Fonction pour traduire les coordonnées map en coordonnées du canvas centrer ou non √
 	##################
 
-	gamedata.log.printinfo(f"Pour coord map: {coord[0]}, {coord[1]}")
+	#gamedata.log.printinfo(f"Pour coord map: {coord[0]}, {coord[1]}")
 
 	ts = gamedata.tuilesize
 
@@ -326,7 +326,7 @@ def coordmaptocanvas(gamedata, classmap, option, coord, decalage:bool):
 	else:
 		xcanvas = (coord[0]*ts)
 		ycanvas = (coord[1]*ts)		
-	gamedata.log.printinfo(f"coordcanv: {xcanvas}, {ycanvas}")
+	#gamedata.log.printinfo(f"coordcanv: {xcanvas}, {ycanvas}")
 
 	return [xcanvas, ycanvas]
 
