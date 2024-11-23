@@ -93,8 +93,6 @@ def moveviewz(event, gamedata, classmap, option):
 
 	gamedata.log.printinfo(f"coord de la tuile 0,0 Canvas: , {classmap.mapcanv.coords(classmap.listmap[0].canvastuiles)}")
 
-
-
 	####################\ 1°) \####################
 
 	mousex = int(event.widget.canvasx(event.x))
@@ -162,16 +160,20 @@ def moveviewz(event, gamedata, classmap, option):
 			texture = "settlement.png"
 		# Si c'est une armée
 		elif "army" in event.widget.gettags(imgid):
-			coord = [int(event.widget.gettags(imgid)[3]), int(event.widget.gettags(imgid)[4])]
+			# On recup les coordonnées canvas
+			coord = classmap.mapcanv.coords(imgid)
+			# On transforme en coordonnées Map
+			coord = coordcanvastomap(gamedata, classmap, option, coord)
+			# On cherche l'objet armée
+			# On se balade parmi les Seigneurs
 			for lord in range(gamedata.Nb_lord):
 				army = gamedata.coordtoarmy(lord, coord)
-				if army != 0:
-					print(texture)
+				# Si la fonction n'a pas renvoyé False on a trouvé l'armée
+				if army != False:
 					texture = army.texture
 		else:
 			# Sinon On vient recup la texture stocker dans la Classtuile
 			texture = classmap.listmap[imgid-1].texture_name
-
 
 		# On change la texture lié
 		event.widget.itemconfigure(imgid, image = gamedata.atlas[texture].image)
@@ -221,11 +223,20 @@ def moveviewzcenter(gamedata, classmap, option, delta):
 			texture = "settlement.png"
 		# Si c'est une armée
 		elif "army" in classmap.mapcanv.gettags(imgid):
-			coord = [int(classmap.mapcanv.gettags(imgid)[3]), int(classmap.mapcanv.gettags(imgid)[4])]
+			# On recup les coordonnées canvas
+			coord = classmap.mapcanv.coords(imgid)
+			# On transforme en coordonnées Map
+			coord = coordcanvastomap(gamedata, classmap, option, coord)
+			# On cherche l'objet armée
+			# On se balade parmi les Seigneurs
 			for lord in range(gamedata.Nb_lord):
 				army = gamedata.coordtoarmy(lord, coord)
-				if army != 0:
+				# Si la fonction n'a pas renvoyé False on a trouvé l'armée
+				if army != False:
 					texture = army.texture
+
+
+
 		else:
 			# Sinon On vient recup la texture stocker dans la Classtuile
 			texture = classmap.listmap[imgid-1].texture_name
@@ -293,8 +304,8 @@ def coordcanvastomap(gamedata, classmap, option, coord):
 	##################
 	ts = gamedata.tuilesize
 
-	xmap = (((coord[0]) - ts/2)//ts)
-	ymap = (((coord[1]) - ts/2)//ts)
+	xmap = ((int(coord[0]) - ts/2)//ts)
+	ymap = ((int(coord[1]) - ts/2)//ts)
 
 
 	return [xmap, ymap]

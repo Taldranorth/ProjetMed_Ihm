@@ -290,8 +290,10 @@ class ClassGameData:
 		# On reconstruit la liste de Seigneur
 		# On ne peut avoir au minimum que 2 seigneurs avec le Joueur en position 0:
 		if len(self.list_lord) > 2:
-			self.list_lord = self.list_lord[:i] + self.list_lord[i+1:]
 			i = idlord
+			# On reconstruit la liste sans le seigneurs
+			self.list_lord = self.list_lord[:i] + self.list_lord[i+1:]
+			# On change les id des seigneurs qui était après lui
 			while i<len(self.list_lord):
 				self.list_lord[i].idlord = i
 				i += 1
@@ -314,14 +316,14 @@ class ClassGameData:
 		#######
 		# Fonction qui pour les coord map données et l'idlord renvoit l'objet army du lord
 		# Return l'objet army si il trouve
-		# Sinon 0
+		# Sinon False
 		#######
 		for army in self.list_lord[idlord].army:
 			if (army.x == coord[0]) and (army.y == coord[1]):
 				#self.log.printinfo(f"armée trouvé pour x: {army.x} et y: {army.y}")
 				return army
 		#self.log.printerror(f"armée non trouvé pour coord x: {coord[0]} et y: {coord[1]}")
-		return 0
+		return False
 
 
 
@@ -365,10 +367,13 @@ class ClassGameData:
 		# Méthode appeler pour mettre fin au tour
 		################
 
-		self.Nb_tour += 1
-		#On appele les méthode des instances des sous class lord
+		# On vide la file des actions pour le tour 0:
+		self.eotactionfile()
+
+		#On appelle les méthode des instances des sous class lord
 		for lord in self.list_lord:
 			lord.endofturn()
+		self.Nb_tour += 1
 
 	def exit(self):
 		################
@@ -378,7 +383,7 @@ class ClassGameData:
 
 		######################## Methode Queue des Actions	########################
 
-	def addactionlist(self, action, turn):
+	def addactionfile(self, action, turn):
 		################
 		# Méthode appeler quand ont veut ajouter une action qui se produira dans x tour
 		# Définit les variables stocker dans action
@@ -395,34 +400,53 @@ class ClassGameData:
 			for x in range((turn - len(self.actionlist))+1):
 				#print("file action :",self.actionlist)
 				self.actionlist += [[]]
-		#print("file action tour 0:", self.actionlist[0])
-		#print("file action tour 1:", self.actionlist[1])
 		# On ajoute l'action dans la turn pile à la dernière place
 		self.actionlist[turn] += [action]
-		#print("file action après ajout:",self.actionlist)
+		self.log.printinfo(f"file action après ajout: {self.actionlist}")
 
-	def removeactionlist(self, action, turn):
+	def actionfileeval(self, action):
+		################
+		# Méthode appeler par eotactionfile pour évaluer l'action selon une liste de fonction connu
+		################
+
+		if action[0] == "sequencemoveunit":
+			affichage.sequencemoveunit(action[1], action[2], action[3], action[4], action[5])
+
+
+
+	def removeactionfile(self, action, turn):
 		################
 		# Méthode appeler quand ont veut retirer une action
 		################
 		pass
 
-	def eotactionlist(self):
+	def eotactionfile(self):
 		################
 		# Méthode appeler à la fin du tour
 		################
 		# - Doit fix le comportement pour que les actions soit accompli si elles peuvent être accompli
 		#	--> On éxécute donc autant d'actions que l'on peut 
-		#		--> C'elle qui ne sont pas éxécuter sont garder dans la pile 0
+		#		--> Les actions qui correspondent à des sequences se réapelle elle même et se réajoute eux même dans la file
+		#			Si elles ne peuvent s'effectuer entierement
 
-		# On éxécute toute les actions en 0
-		for action in self.actionlist[0]:
-			eval(action)
 
-		# On déplace les piles vers la gauche 1->0, 2->1
-		i = 0
-		while i < len(self.actionlist):
-			self.actionlist[i] = self.actionlist[i+1]
+		self.log.printinfo("On éxécute toute les actions qui reste en 0")
+		if len(self.actionlist) > 1:
+			for action in self.actionlist[0]:
+				self.log.printinfo(f"action: {action}")
+				self.actionfileeval(action)
+		self.log.printinfo("Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 1->0, 2->1")
+		# Si la pile est supérieur à 1 il n'y a pas que la pile 0
+		if len(self.actionlist) > 1:
+			i = 0
+			while i < (len(self.actionlist)-1):
+				self.actionlist[i] = self.actionlist[i+1]
+				i += 1
+			self.actionlist[i] = []
+
+
+		self.log.printinfo("Toute les piles actions ont était déplacer fin de eotactionfile")
+		self.log.printinfo(f"file action après fin de tour: {self.actionlist}")
 
 	####################################################################################
 
@@ -512,6 +536,8 @@ class Classmap:
 		self.framecanvas = 0
 		# Variable qui vient contenir le canvas de la map
 		self.mapcanv = 0
+		# Variable qui vient contenir les TK variable de l'entête
+		self.tkvar_list = []
 
 		#dico qui vient contenir les Classtuiles 
 		self.listmap = {}

@@ -154,7 +154,7 @@ class Classlord:
 		# On ajoute le Seigneur lui même
 		self.war += [lord]
 
-	def remmovewar(self, lord):
+	def removewar(self, lord):
 		############
 		# Fonction appeler pour retirer un seigneur et ses vassaux de la liste des Seigneurs en Guerre
 		############
@@ -162,16 +162,18 @@ class Classlord:
 		# On retire le lord
 		i = 0
 		found = False
+		print(f"On cherche {lord,lord.lordname} dans la liste war{self.war}")
 		while (i < len(self.war)) and (found != True):
 			# une fois le seigneur trouver On le supprime de la liste
 			if self.war[i] == lord:
 				self.war = self.war[:i] + self.war[i+1:]
+				print(f"On à trouver, liste war changer: {self.war}")
 				found = True
 
 		# On retire les vassaux du lord
 		# Récursif
 		for vassal in lord.vassal:
-			self.remmovewar(vassal)
+			self.removewar(vassal)
 
 	def updateinfo(self):
 		############
@@ -200,9 +202,18 @@ class Classlord:
 
 		# On calcule les troupes
 		for army in self.army:
-			power += army.power
+			self.power += army.power
 
 	def endofturn(self):
+		#######
+		# Méthode fin de tour
+		#######
+
+		# On appels la fin de tour pour les armées
+		for army in self.army:
+			army.endofturn()
+
+		# On appels la fin de tour pour les villages
 		for village in self.fief:
 			village.endofturn()
 
@@ -219,6 +230,8 @@ class Classvillage:
 		self.population = []
 		self.priest = 0
 		self.lord = 0
+		self.nb_artisan = 0
+		self.nb_paysan = 0
 
 		self.money = 0
 		self.ressource = 0
@@ -233,6 +246,11 @@ class Classvillage:
 	#pop: Classhuman	
 	def addpopulation(self, pop):
 		self.population += [pop]
+		# On incrémente le compteur de pop
+		if pop.role == "artisan":
+			self.nb_artisan += 1
+		elif pop.role == "paysan":
+			self.nb_paysan += 1
 
 		# Calcul de la joie global du village
 		temp_joy = 0
@@ -267,8 +285,11 @@ class Classvillage:
 		self.name = name
 
 	def endofturn(self):
+		#######
+		# Méthode fin de tour
+		#######		
 		for pop in self.population:
-			pop.endofturn()
+			pop.endofturn(self.lord)
 
 
 # Classe qui vient définir une armée
@@ -283,7 +304,6 @@ class Classarmy:
 		self.y = y
 		# objet tuile
 		self.idCanv = 0
-
 
 		# Chevalier qui mène la troupe
 		self.knight = 0
@@ -340,19 +360,23 @@ class Classarmy:
 			self.movecapacity = 4
 		self.moveturn = self.movecapacity
 
+	def endofturn(self):
+		#######
+		# Méthode fin de tour
+		#######
+
+		# On appel la Methode Fin de tour pour le Chevalier
+		self.knight.endofturn()
+
+		#On appel la Methode Fin de tour pour les Soldats
+		for soldier in self.unit:
+			soldier.endofturn()
+
+		# On update l'armée
+		self.updatearmy()
 
 
-	def updatemovementcapacity(self):
-		#######
-		# Méthode pour update la capacité de mouvement
-		#######
-		pass
 
-	def movearmy(self):
-		#######
-		# Méthode pour déplacer l'armée
-		#######
-		pass
 
 
 class Classpriest:
@@ -362,9 +386,27 @@ class Classpriest:
 		self.ressource = 0
 		self.money = 0
 		self.joy = 50
+		self.aptitude = 0
+		self.getaptitude()
 
 	def setname(self, name):
 		self.name = name
+
+
+	def getaptitude():
+		######
+		# Methode qui fournit aux Prêtre une Capacité Aléatoire Passive 
+		######
+		#self.aptitude = 
+
+		pass
+
+	def endofturn(self):
+		#######
+		# Méthode fin de tour
+		#######
+		pass
+
 
 
 
@@ -381,6 +423,9 @@ class ClassHuman:
 		self.age = random.randrange(15,30)
 
 	def endofturn(self):
+		#######
+		# Méthode fin de tour
+		#######
 		pass
 
 
@@ -396,6 +441,12 @@ class ClassKnight:
 		self.power = 10
 		self.movecapacity = 10
 
+	def endofturn(self):
+		#######
+		# Méthode fin de tour
+		#######
+		pass
+
 
 class ClassSoldier:
 
@@ -407,4 +458,177 @@ class ClassSoldier:
 		self.age = random.randrange(15,30)
 		self.power = 1
 		self.movecapacity = 4
+
+	def endofturn(self):
+		#######
+		# Méthode fin de tour
+		#######
+		pass
+
+
+"""
+Classe Roturier pour représenter les paysans ou artisans avec des caractéristiques spécifiques 
+et des actions comme la production et le paiement des impôts.
+"""
+class ClassRoturier:
+	#starting_money= pécule initial des artisans (modifiable selon les besoins)
+	#role = paysans ou artisans
+
+	def __init__(self, name, role:str):
+		# On commence par définir les données de base
+		self.name = name
+		self.ressource = 1
+		self.money = 0
+		self.joy = 50
+		# capacité de production
+		self.cp = 2
+		self.age = random.randrange(15,30)
+		# On change selon le rôle données
+		self.role = role
+		if role == "artisan":
+			self.cp = 4
+			self.money = 5
+
+	def pay_tax(self, lord):
+		#####
+		# Method pour payer la taxe du Seigneur
+		#####
+		tax = 0
+
+		# Selon le rôle du Roturier l'impôt est différent en Ressource et Argent
+		if self.role == "paysans":
+			tax = 1/2
+		elif self.role == "artisan":
+			tax = 1/4
+
+		# Si le roturier peut payer en Argent il paye en argent
+		if self.money > (10 * tax):
+			m = self.tax_money()
+			print(f"{self.name} un {self.role} à payer: {m} écu")
+			lord.nb_money += m
+			self.money -= m
+		else:
+			r = self.tax_ressource()
+			print(f"{self.name} un {self.role} à payer: {r} Ressource")
+			lord.nb_ressource += r
+			self.ressource -= r
+
+	def pay_tax_money(self, lord):
+		#####
+		# Method pour payer Une taxe Argent Spéciale au Seigneur
+		#####
+		money = self.tax_money()
+		lord.nb_money += money
+		self.money -= money
+
+
+	def pay_tax_ressource(self, lord):
+		#####
+		# Method pour payer Une taxe Ressource Spéciale au Seigneur
+		#####
+		ressource = self.tax_ressource()	
+		lord.nb_ressource += ressource
+		self.ressource -= ressource
+
+
+	def tax_money(self):
+		#####
+		# Fonction qui renvoit la tax Argent que peut payer le Roturier
+		####
+		money = 0
+
+		if self.role == "paysan":
+			money = int(self.money*(1/2))
+		elif self.role == "artisan":
+			money = int(self.money*(1/4))
+		#print(money)
+		return money
+
+	def tax_ressource(self):
+		#####
+		# Fonction qui renvoit la tax Ressource que peut payer le Roturier
+		####
+		ressource = 0
+		if self.role == "paysan":
+			ressource = int(self.ressource*(1/2))
+		elif self.role == "artisan":
+			ressource = int(self.ressource*(1/4))
+		# int() arrondi à l'inférieur hors on veut le supérieur
+		# Spécialement quand le Roturier possède 1 de ressource en réserve
+		if (ressource == 0) and (self.ressource > 0):
+			ressource = 1
+		#print(ressource)
+		return ressource
+
+	def produce(self):
+		####
+		# Methode pour produire la capacité de production en ressource
+		####
+		print(f"{self.name} un {self.role} à produit: {self.cp} ressource")
+		self.ressource += self.cp
+
+	def sell(self):
+		####
+		# Methode pour incrémenter l'argent du montant de ressource qu'il va vendre
+		####
+		# Si possède un nombre de Ressource > 10
+		if self.ressource > 10:
+			# On calcule le montant
+			i = self.ressource - 10
+			# On retire à ressource
+			self.ressource -= i
+			# On ajoute à argent
+			self.money += i
+			print(f"{self.name} un {self.role}: gagne {i} argent")
+
+	def buy(self):
+		####
+		# Methode pour acheter une ressource si il en a plus
+		####
+		if self.ressource == 0:
+			self.money -= 1
+			self.ressource += 1
+
+	def death(self):
+		####
+		# Methode qui tue le Roturier
+		####
+		pass
+
+
+	def endofturn(self, lord):
+		#######
+		# Méthode de fin de tour
+		# 1°) Le roturier produit sa capacité de production
+		# 2°) il paye la taxe du Seigneur local
+		# 3°) Si il n'a plus de ressource il en achète 1
+		# 4°) Il consomme 1 de ressource
+		# 5°) Si il atteint la capacité limite de Ressource il vend sont éxédent
+		# 6°) On calcul son bonheur selon ses besoins
+		# 7°)
+		#######
+		print(f"{self.name} un {self.role} Possède aux début du tour: {self.money} écu et {self.ressource} Ressource")
+		# 1°) Produit la CP
+		self.produce()
+
+		# 2°) Si le Roturier possède un Seigneurs il paye la tax
+		if lord != 0:
+			self.pay_tax(lord)
+
+		# 3°) Achete si il n'a plus de ressource
+		self.buy()
+
+		# 4°) Le Roturier se Nourrit
+		self.ressource -= 1
+
+		# 5°) Si le roturier possède de l'excedant il le vend contre de l'argent
+		self.sell()
+		print(f"{self.name} un {self.role} Possède à la fin du tour: {self.money} écu et {self.ressource} Ressource")
+
+		# 6°) On update son humeur selon ses besoins
+
+		# 7°) On Augmente son Age
+		self.age += 1
+
+
 

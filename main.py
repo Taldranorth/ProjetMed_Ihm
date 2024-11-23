@@ -33,6 +33,11 @@ from time import time
 # J'ai tester avec une valeur incrémenter à chaque fois que la fonction motion est appelé, l'appel à la fonction est relativement léger
 # pour une carte de 250*250 on y fait appel que 16* pour aller d'un bout à l'autre de la map
 
+# The canvas has known performance problems when you create lots of canvas items, even if you delete the canvas items.
+# Canvas item ids are not recycled, so the list of item ids that the canvas must maintain grows without bounds and makes the canvas slower on each iteration.
+#	--> Définir des marges d'id pour les différents objets du canvas
+#
+
 # Objectif:
 #	Correctif:
 #	- Faire la doc de ce qui a était fait
@@ -160,16 +165,6 @@ from time import time
 #	--> Si souris sur village Ennemies alors affiche icône Pillage
 # 
 
-# - Implémenter Fonction de Combat entre 2 armée √
-# - Implémenter prises de Village √
-# - Implémenter Bordure Village √
-# - Implémenter Perte de Vassal/Fief √
-# - Fix gamedata.removelord Pour prendre en compte le changement d'id des lords √
-# - Implémenter Centrage de la vue sur village de départ au lancement de la partie √
-# - Modifier coordmaptocanvas pour ajouter un Bool qui Indique si On prend en compte le décalage de la carte √
-# - Fix et Terminer State War √
-# - Fix Initialisation de ClassLord qui ne prenait pas en compte l'id envoyait √
-# - Implémenter l'attaque de village dans le déplacement d'unité √
 # - Implémenter l'attaque d'armée dans le déplacement d'unité X
 #########################################################
 
@@ -185,10 +180,9 @@ from time import time
 # Décider d'adapter moveviewxy pour utiliser scan_dragto
 #	--> Plus performant car liés à l'afichage des coord et non le changement des coord de tout les objets du canvas comme move()
 
-# Pour le pathfinding Utiliser l'algo de Nguyen qui calcul les pixel à allumer
-
-
 # -> Fix Affichage ShowPathfinding
+#	--> L'affichage est sommaire, doit être remplacé par une fléche verte et rouge
+# 	--> Quand l'armée c'est déplacer l'affichage doit être update 
 # -> Fix déplacement d'unité √
 #	--> Améliorer déplacement unité
 #		--> C'est aproximatif
@@ -200,12 +194,9 @@ from time import time
 #		--> Faire détruire l'interface declaration de guerre √
 #		--> Recalculer la position de l'interface
 # -> Terminer StateMovearmy
-# 	--> Permettre l'attaque d'un village
+# 	--> Permettre l'attaque d'un village √
 #		--> Afficher une Icône quand on à la souris dessus
 #	--> Permettre l'attaque d'une armée
-# -> Changer la mise en mémoire des déplacements restant de l'armée pour Séquence plutôt que les mouvement individuels
-#	--> Doit être Récursif
-#	--> Permet d'adapter le déplacement de l'armée entre les tours si la cible est mobile
 # -> Revoir la destruction de village
 # -> Refactoriser le code pour réduire la réutilisation de même code pour a la place utilisr une fonction commune liée a l'objet utiliser
 #	--> Voir la récupération de village selon la position x,y via Classmap
@@ -213,21 +204,45 @@ from time import time
 # -> Peut être utiliser Bezier pour l'affichage du Pathfinding
 # -> Doit tester la prise de Village
 # -> Doit tester l'attaque d'armée Adverse
+# -> Fix la possetion de multiple armé
+#	-->Fait pop aux alentour de la ville la nouvelle armée si la case de la ville est déjà occupé par une armée
+# -> Ajouter Bouton Pour annuler Si on déplace une armée mais que l'on veut annuler son déplacement au tour prochain
+# -> Rework Interface avec Grid
+#	--> Recruit Army √
+#	--> Build Church √
+#	--> Tax √
+#
+# -> Faire le point sur les ressources de Village
+# -> Faire le point sur les Ressource personnel/Non Personnels du Seigneurs
+# -> Implémenter l'impôt des Vassaux
+# -> Implémenter Conditions de fin
+# -> Implémenter l'écran de fin
+
+# -> Améliorer le calcul pour récuperer le village dans prises de village
+
+# -> Après Prise d'un village doit changer la couleur du territoires du nouveau village
+
+# -> Pathfinding calcul des trajectoires hors de la map se qui fait crash le calcul de l'id de la tuile
+
+# -> Changer la gestion de la population d'un village pour un dico qui vient contenir pour le role la pop
+
 
 ######## Fonctionnalité Principale à Implémenter
 # - Implémenter Fonction Combat 
-# - Implémenter prise de Village
-# - Implémenter Class Roturier et Class Paysan
-# - Implémenter Update Fin de Tour
-# - Implémenter Interface Tax, Vassalisation et Immigration avec Fonction qui suivent
-# - Implémenter Event
+# - Implémenter prise de Village √
+# - Implémenter Class Roturier √
+# - Implémenter Update Fin de Tour √
+# - Implémenter Interface Tax √
+# - Implémenter Interface Immigration √
+# - Implémenter Interface Vassalisation
 # - Implémenter marché 
+# - Implémenter Event
 ########
 
 ######## Fonctionnalité Secondaire
+# - Implémenter IA
 # - Implémenter Sauvegarde et Chargement de Données
 # - Implémenter Options
-# - Implémenter IA
 # - Implémenter Landforme
 # - Terminer GlobalViewMenu
 # - Système de Pop-up d'événement en début de tour En bas à droite Comme Armée qui termine son déplacement ou village qui termine de se construire voir Civ
@@ -239,7 +254,16 @@ from time import time
 # - Changer interface entête pour afficher icône boufe et money
 # - Implémenter une interface plus pousser d'attaque de village
 # - Implémenter une interface plus pousser d'attaque d'armée
+# - lors du déplacement d'une armée avec ShowPathfinding afficher sur les tuiles en combien de tour l'armée fait le déplacement (voir Civ)
+# - Ajouter les Entrelac
+# - Améliorer la réaffichage d'un bordure
 ########
+
+#### Landforme ####
+# --> Utiliser Octaves Pour générer groupe de Terrain
+# --> Repasser un coup de Noise map dans le groupe de Terrain
+#
+#
 
 
 
@@ -635,8 +659,11 @@ def mainscreen(gamedata, classmap, option, root, pic):
 	affichage.printvillage(gamedata, classmap, option,fcanvas)
 
 	# On rempli les villages de pop
+	# En début de Game Chaque Village est composé de 10 Pop:
+	#	- 8 Paysan
+	#	- 2 Artisan
 	for village in classmap.lvillages:
-		genproc.genpopvillage(option, classmap, gamedata,village, 10)
+		genproc.genpopidvillage(gamedata, classmap, option, village, 8, 2)
 
 	# On affiche les Bordures des villages:
 	affichage.bordervillage(gamedata, classmap, option)
@@ -647,6 +674,10 @@ def mainscreen(gamedata, classmap, option, root, pic):
 	coordcanvas = moveview.coordmaptocanvas(gamedata, classmap, option, [village.x, village.y], True)
 	# On centre la vue sur le village de départ
 	moveview.centerviewcanvas(gamedata, classmap, option, coordcanvas)
+
+
+	for village in classmap.lvillages:
+		infovillage(classmap.listmap[village].village)
 
 
 ####################################################################################################
@@ -853,7 +884,7 @@ def gameloop(gamedata, classmap, option, root):
 	if gamedata.semaphore == False:
 		# si on a fait le tour des joueurs
 		if gamedata.Nb_toplay == gamedata.Nb_lord:
-			endofturn(gamedata)
+			endofturn(gamedata, classmap, option)
 
 		# Si c'est au joueurs de jouer
 		if gamedata.Nb_toplay == gamedata.playerid:
@@ -883,14 +914,18 @@ def playerturn(gamedata, classmap, option):
 def notplayerturn(gamedata, classmap, option):
 	# On affiche la banderole
 	gamedata.semaphore = True
-	gamedata.log.printinfo(f"tour de: , {gamedata.list_lord[gamedata.Nb_toplay].lordname}, {gamedata.Nb_toplay}")
+	gamedata.log.printinfo(f"tour de: {gamedata.list_lord[gamedata.Nb_toplay].lordname}, {gamedata.Nb_toplay}")
 	# L'ia Joue
 	ailord.mainai(gamedata, classmap, option)
 
-def endofturn(gamedata):
+def endofturn(gamedata, classmap, option):
 	gamedata.semaphore = True
+	gamedata.log.printinfo("Il ne reste plus de Seigneur qui doit Jouer, Fin du tour")
 	gamedata.Nb_toplay = 0
+	# On fait appel à la fonction de fin de tour
 	gamedata.endofturn()
+	# Une fois que tout les objets se sont update ont update l'interface d'entête
+	interface.updateinterface(gamedata, classmap)
 	gamedata.endturn = False
 	gamedata.semaphore = False
 
@@ -909,8 +944,14 @@ def endofgame():
 ######################### Autre Fonction #########################
 def infovillage(village):
 	print("village name", village.name)
-	print("village lord: ", village.lord.name)
-	print("village priest: ", village.priest.name)
+	if village.lord != 0:
+		print("village lord: ", village.lord.lordname)
+	else:
+		print("village lord: ", 0)
+	if village.priest != 0:
+		print("village priest: ", village.priest.name)
+	else:
+		print("village priest: ", 0)
 	print("village global joy: ", village.global_joy)
 	print("village ressource, money: ", village.ressource, village.money)
 

@@ -208,7 +208,7 @@ def printupdatearmy(gamedata, classmap, army):
 	if army.knight != 0:
 		unit = "knight"
 	else:
-		unit = "solider"
+		unit = "soldier"
 	# On recup la texture
 	texture_name = data.randomtexturefromdico(gamedata.dico_file, unit)
 	# On la stocke dans la class
@@ -220,22 +220,20 @@ def printupdatearmy(gamedata, classmap, army):
 	# On update l'image
 	classmap.mapcanv.itemconfigure(armyId, image = gamedata.atlas[texture_name].image)
 
-def sequencemoveunit(event, gamedata, classmap, option, army):
+def sequencemoveunit(gamedata, classmap, option, army, coordObjectif):
 	##################
-	# Fonction pour entamer une séquence de déplacement d'unité
+	# Fonction pour entamer une séquence de déplacement d'unité vers les CoordMapViser
 	##################
-	# On recup les coord canvas
-	posfinalx = classmap.mapcanv.canvasx(event.x)
-	posfinaly = classmap.mapcanv.canvasy(event.y)
-	# On les transforme en coord map
-	coordmap = moveview.coordcanvastomap(gamedata, classmap, option, [posfinalx, posfinaly])
-	gamedata.log.printinfo(f"coordmap: ,{coordmap}")
+
 	# On calcul les cases par lequel l'armée doit passer
 	# Liste dans laquelle on va enregistrer les déplacement nécessaires
 	# Algo de Bresenham
 	gamedata.log.printinfo("On calcul les déplacement nécessaire")
-	gamedata.log.printinfo(f"coord0, coord1: {army.x, army.y}, {coordmap}")
-	lmovement = brensenham([army.x, army.y], coordmap)
+	gamedata.log.printinfo(f"coord0, coord1: {army.x, army.y}, {coordObjectif}")
+	# Brensenham
+	lmovement = brensenham([army.x, army.y], coordObjectif)
+	# Pathfinding
+	lmovement = pathfinding(gamedata, classmap, option, [army.x, army.y], coordObjectif, 45)
 	gamedata.log.printinfo(f"lmovement: {lmovement}")
 
 	# Une fois la liste rempli ont éxécute autant que l'on peut
@@ -246,24 +244,11 @@ def sequencemoveunit(event, gamedata, classmap, option, army):
 		moveunit(gamedata, classmap, option, army, lmovement[i])
 		i += 1
 
-	# Si la liste n'est pas vide on ajoute dans la liste des séquence à appliquer
+	# Si la liste n'est pas vide on ajoute dans la file des actions la Sequence de movement 
 	if i != len(lmovement):
-		# On cacul les mouvement qu'il peut faire par tour 
-		t = 1
-		move = army.movecapacity
-		idtuile = lmovement[i][0]+(option.mapx*lmovement[i][1])
-		while i< len(lmovement):
-			gamedata.log.printinfo(f"i,t,len(lmovement): ,{i}, {t}, {len(lmovement)}")
-			gamedata.addactionlist(f"moveunit({gamedata}, {classmap}, {option}, {army}, {lmovement[i]})", t)
-			move -= classmap.listmap[idtuile].movementcost
-			idtuile = lmovement[i][0]+(option.mapx*lmovement[i][1])
-			# Si le prochain mouvement coute plus qu'il ne reste de déplacement possible on incrémente le tour
-			if move - classmap.listmap[idtuile].movementcost <= 0:
-				t += 1
-				move = army.movecapacity
-			i += 1
-
-
+		gamedata.log.printinfo(f"Il reste des mouvement à effectuer mais il y n'a plus de PM")
+		gamedata.log.printinfo(f"On ajoute dans la file des actions")
+		gamedata.addactionfile(["sequencemoveunit", gamedata, classmap, option, army, coordObjectif], 1)
 
 def moveunit(gamedata, classmap, option, army, coord):
 	##################
@@ -491,12 +476,12 @@ def pathfinding(gamedata, classmap, option, coord0, coord1, degr):
 	# C2y:
 	C2[1] = int(((C[0] - coord0[0])*(-sindegr)) + ((C[1] - coord0[1])*cosdegr) + coord0[1])
 
-	gamedata.log.printinfo(f"coord0: ,{coord0}")
-	gamedata.log.printinfo(f"coord1: ,{coord1}")
+	#gamedata.log.printinfo(f"coord0: ,{coord0}")
+	#gamedata.log.printinfo(f"coord1: ,{coord1}")
 
-	gamedata.log.printinfo(f"C: ,{C}")
-	gamedata.log.printinfo(f"C1: ,{C1}")
-	gamedata.log.printinfo(f"C2: ,{C2}")
+	#gamedata.log.printinfo(f"C: ,{C}")
+	#gamedata.log.printinfo(f"C1: ,{C1}")
+	#gamedata.log.printinfo(f"C2: ,{C2}")
 
 	# On calcul les 3 itinéraires
 	iti1 = brensenham(coord0, C)
@@ -508,21 +493,21 @@ def pathfinding(gamedata, classmap, option, coord0, coord1, degr):
 	iti3 += brensenham(C2, coord1)
 
 	lsnapshot = [iti1, iti2, iti3]
-	gamedata.log.printinfo(f"liste des itinéraires: {lsnapshot}")
+	#gamedata.log.printinfo(f"liste des itinéraires: {lsnapshot}")
 	lcostiti = []
 
 	# On vérifie qu'un itinéraires ne passe pas par une cases interdites
 
 	# compare le cout en déplacement de chaque itinéraires
-	gamedata.log.printinfo(f"Calcul Cout itinéraire")
+	#gamedata.log.printinfo(f"Calcul Cout itinéraire")
 	for itinéraire in lsnapshot:
 		cost = 0
 		# On se balade dans l'itinéraire
 		for cases in itinéraire:
-			gamedata.log.printinfo(f"Calcul case: {cases}")
+			#gamedata.log.printinfo(f"Calcul case: {cases}")
 			# On calcule l'id de la tuile 
 			idtuile = moveview.coordmaptoidtuile(option, cases)
-			gamedata.log.printinfo(f"Idtuile: {idtuile}")
+			#gamedata.log.printinfo(f"Idtuile: {idtuile}")
 			# On additione le cout de la tuile
 			cost += classmap.listmap[idtuile].movementcost
 		# Une fois que l'on à le cout total du déplacement on l'ajoute dans la liste
