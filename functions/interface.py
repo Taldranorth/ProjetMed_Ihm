@@ -47,50 +47,44 @@ def gameinterface(gamedata, classmap, option, win):
 	# on Créer les tkinter variables que l'on va utiliser
 	tkvar_list = []
 	#Nb_rssource
-	tkvar_nb_ressource = tkinter.IntVar()
+	tkvar_nb_ressource = tkinter.StringVar()
 
 	#Nb_money
-	tkvar_nb_money = tkinter.IntVar()
+	tkvar_nb_money = tkinter.StringVar()
 
 	#global_joy
-	tkvar_global_joy = tkinter.IntVar()
+	tkvar_global_joy = tkinter.StringVar()
 
 	#Nb_tour
-	tkvar_nb_turn = tkinter.IntVar()
+	tkvar_nb_turn = tkinter.StringVar()
 
 	classmap.tkvar_list +=[tkvar_nb_ressource, tkvar_nb_money, tkvar_global_joy, tkvar_nb_turn]	
 
+	player = gamedata.list_lord[gamedata.playerid]
+	prod_g = player.prod_global()
 
 	# On les set
 	# Merde c'est pas dynamique
-	classmap.tkvar_list[0].set(gamedata.list_lord[0].nb_ressource)
-	classmap.tkvar_list[1].set(gamedata.list_lord[0].nb_money)
-	classmap.tkvar_list[2].set(gamedata.list_lord[0].global_joy)
-	classmap.tkvar_list[3].set(gamedata.Nb_tour)
+	classmap.tkvar_list[0].set(f"Ressource : {player.nb_ressource}+{prod_g[1]}")
+	classmap.tkvar_list[1].set(f"Argent : {player.nb_money}+{prod_g[1]}")
+	classmap.tkvar_list[2].set(f"Bonheur: {player.global_joy}")
+	classmap.tkvar_list[3].set(f"Tour N°: {gamedata.Nb_tour}")
 
 	# Info Entête
 	# Nb Total Ressource
-	ressource_labelt = tkinter.Label(topframe, text = "Ressource Total: ")
 	ressource_label = tkinter.Label(topframe, textvariable = classmap.tkvar_list[0])
-	ressource_labelt.pack(side = "left")
 	ressource_label.pack(side = 'left')
 
 	# Nb Total Argent
-	money_labelt = tkinter.Label(topframe, text = "Argent Total: ")
 	money_label = tkinter.Label(topframe, textvariable = classmap.tkvar_list[1])
-	money_labelt.pack(side = "left")
 	money_label.pack(side = 'left')
 
 	# Humeur Globale de la Population
-	global_joy_labelt = tkinter.Label(topframe, text = "Taux de Bonheur: ")
 	global_joy_label = tkinter.Label(topframe, textvariable = classmap.tkvar_list[2])
-	global_joy_labelt.pack(side = "left")
 	global_joy_label.pack(side = 'left')
 
 	# N°Tour
-	nb_turn_labelt = tkinter.Label(topframe, text = "Tour N°: ")	
 	nb_turn_label = tkinter.Label(topframe, textvariable = classmap.tkvar_list[3])
-	nb_turn_labelt.pack(side = "left")
 	nb_turn_label.pack(side = 'left')
 
 
@@ -149,10 +143,12 @@ def turnend(gamedata, classmap):
 	gamedata.endturn = True
 
 def updateinterface(gamedata, classmap):
-	classmap.tkvar_list[0].set(gamedata.list_lord[0].nb_ressource) 
-	classmap.tkvar_list[1].set(gamedata.list_lord[0].nb_money) 
-	classmap.tkvar_list[2].set(gamedata.list_lord[0].global_joy)
-	classmap.tkvar_list[3].set(gamedata.Nb_tour)
+	player = gamedata.list_lord[gamedata.playerid]
+	prod_g = player.prod_global()
+	classmap.tkvar_list[0].set(f"Ressource : {player.nb_ressource}+{prod_g[1]}")
+	classmap.tkvar_list[1].set(f"Argent : {player.nb_money}+{prod_g[1]}")
+	classmap.tkvar_list[2].set(f"Bonheur: {player.global_joy}")
+	classmap.tkvar_list[3].set(f"Tour N°: {gamedata.Nb_tour}")
 
 ######################### Menu Vue Globale #########################
 
@@ -183,59 +179,92 @@ def globalviewmenu(gamedata, classmap, option):
 	#	Armée
 	# ------------------
 
-	xpos = classmap.mapcanv.canvasx(0)
-	ypos = classmap.mapcanv.canvasy(0)
+	# Window de la fenêtre
+	window_global_view = tkinter.Frame(classmap.framecanvas, height = option.heightWindow, width = option.widthWindow)
+	window_global_view.place(x = (option.widthWindow/5), y = (option.heightWindow/10))
+	player = gamedata.list_lord[gamedata.playerid]
 
-	##############################\ À changer\##############################
-	# Frame de la fenêtre
-	frame_global_view = tkinter.Frame(classmap.framecanvas, height = option.heightWindow, width = option.widthWindow)
-	frame_global_view.pack()
-	canvaswindow = classmap.mapcanv.create_window(xpos +option.widthWindow/2, ypos + option.heightWindow/4, window = frame_global_view, tags = "interface")
-	###########################################################################
-	playerdata = gamedata.list_lord[gamedata.playerid]
+	frame_global_view = tkinter.Frame(window_global_view)
+	frame_global_view.grid()
 
 
+	# Affichage des Village
+	# legend
+	j = 0
+	for legend in ("Village","Population","Production de Ressource","Production d'argent","Prêtre","Bonheur"):
+		tkinter.Label(frame_global_view, text = legend).grid(row = 0,column = j)
+		j += 1
 
-	# On créer la légende au dessus
-	# Frame qui va contenir la légende
-	frame_global_view_legend = tkinter.Frame(frame_global_view)
-	frame_global_view_legend.pack(side="top")
-
-	for legend in ("Village","Population","Seigneur","Production de Ressource","Production d'argent","Prêtre","Bonheur"):
-		tkinter.Label(frame_global_view_legend, text = legend).pack(side="left")
-
-	# Frame qui va contenir les Infos Centraux
-	frame_global_view_info = tkinter.Frame(frame_global_view)
-	frame_global_view_info.pack()
-	# affichage des Villages directement gérer le joueur
-	i = 0
-	frame_global_view_info_list = []
-	for village in playerdata.fief:
-		# Pour chaque village on va créer un sous frame
-		frame_global_view_info_list += [tkinter.Frame(frame_global_view_info)]
-		for ele in (village.name, len(village.population), village.lord.lordname, village.ressource, village.money, village.priest, village.global_joy):
+	i = 1
+	for village in player.fief:
+		j = 0
+		for ele in (village.name, len(village.population), village.prod_ressource, village.prod_money, village.priest, village.global_joy):
 			if ele == village.priest:
 				if ele != 0:
-					tkinter.Label(frame_global_view_info_list[i], text = ele.name).pack(side="left")
+					tkinter.Label(frame_global_view, text = ele.name).grid(row = i, column = j)
 				else:
-					tkinter.Label(frame_global_view_info_list[i], text = ele).pack(side="left")
+					tkinter.Label(frame_global_view, text = ele).grid(row = i, column = j)
 			else:
-				tkinter.Label(frame_global_view_info_list[i], text = ele).pack(side="left")
-		frame_global_view_info_list[i].pack(side = "top")
+				tkinter.Label(frame_global_view, text = ele).grid(row = i, column = j)
+			j += 1
 		i += 1
 
-	# affichage des Armées
+	# Séparateur
+	i += 1
+	tkinter.Label(frame_global_view, text = "-----------------").grid(row = i, column = 0)
+	i += 1
+	#########
 
-	# Frame qui va contenir le boutton pour quitter
-	frame_global_view_exit = tkinter.Frame(frame_global_view)
-	frame_global_view_exit.pack(side ="bottom")
+	# affichage des Armées
+	# legend
+	j = 0
+	for legend in ("Armée", "Puissance", "Chevalier", "Nombre de Soldat"):
+		tkinter.Label(frame_global_view, text = legend).grid(row = i, column = j)
+		j += 1
+	i += 1
+	for army in player.army:
+		j = 0
+		for ele in (army.name, army.power, army.knight, len(army.unit)):
+			if ele == army.knight:
+				if ele != 0:
+					tkinter.Label(frame_global_view, text = ele.name).grid(row = i, column = j)
+				else:
+					tkinter.Label(frame_global_view, text = ele).grid(row = i, column = j)
+			else:
+				tkinter.Label(frame_global_view, text = ele).grid(row = i, column = j)
+			j += 1
+		i += 1
+
+	# Séparateur
+	i += 1
+	tkinter.Label(frame_global_view, text = "-----------------").grid(row = i, column = 0)
+	i += 1
+	#########
+
+	# Affichage des Vassaux
+	# legend
+	j = 0
+	for legend in ("Vassaux", "Puissance", "Nombre de Village", "Nombre de Pop", "Production de Ressource", "Production d'argent"):
+		tkinter.Label(frame_global_view, text = legend).grid(row = i, column = j)
+		j += 1
+
+	i += 1
+	for vassal in player.vassal:
+		j = 0
+		for ele in (vassal.lordname, vassal.power, len(vassal.fief), vassal.prod_global()[1],vassal.prod_global()[0]):
+			tkinter.Label(frame_global_view, text = ele).grid(row = i, column = j)
+			j += 1
+		i += 1
+
+	i += 1
+	print(".winfo_depth:",window_global_view.winfo_depth())
 
 	# Bouton pour quitter le menu
-	Button_exit = tkinter.Button(frame_global_view_exit, text= "Quitter", command = lambda: destroyglobalviewmenu(classmap.mapcanv, canvaswindow))
-	Button_exit.pack()
+	Button_exit = tkinter.Button(frame_global_view, text= "Quitter", command = lambda: destroyglobalviewmenu(window_global_view))
+	Button_exit.grid(row = i, column = 3)
 
-def destroyglobalviewmenu(canvas, canvaswindow):
-	canvas.delete(canvaswindow)
+def destroyglobalviewmenu(window_global_view):
+	 window_global_view.destroy()
 
 ##############################################################\ Militaire  \###########################################################################
 
@@ -819,33 +848,39 @@ def buildvillage(event, gamedata, classmap, option):
 	# Fonction pour créer un village selon la tuile sélectionner en état de construction
 	############
 
+	player = gamedata.list_lord[gamedata.playerid]
 	print("On construit le village")
 	# On calcul l'id de la tuile
 	xpos = int(event.widget.gettags("current")[2])
 	ypos = int(event.widget.gettags("current")[3])
 	idtuile = xpos + (option.mapx*ypos)
 
-	# On créer
-	# On ajoute l'id de la tuile à la liste des villages
-	classmap.lvillages += [idtuile]
-	# On créer le village
-	classmap.listmap[idtuile].createvillage(gamedata)
-	classmap.listmap[idtuile].setpossesor("player")
-	# On ajoute l'instance de vilalge à la liste de fief du lord
-	gamedata.list_lord[gamedata.playerid].addfief(classmap.listmap[idtuile].village)
-	# On rempli le village de pop
-	#classmap.listmap[idtuile].village
+	if player.verifcost(15,15) == True:
+		# On retire
+		player.sub_money(15)
+		player.sub_ressource(15)
 
-	# On retire les ressource 
+		# On créer
+		# On ajoute l'id de la tuile à la liste des villages
+		classmap.lvillages += [idtuile]
+		# On créer le village
+		classmap.listmap[idtuile].createvillage(gamedata)
+		classmap.listmap[idtuile].setpossesor("player")
+		# On ajoute l'instance de vilalge à la liste de fief du lord
+		player.addfief(classmap.listmap[idtuile].village)
+		# On rempli le village de pop
+		genproc.genpopvillage(gamedata, classmap, option, classmap.listmap[idtuile].village, 2, 2)
 
-	# On affiche le nouveau village
-	affichage.printvillageunit(gamedata, classmap, option, [xpos,ypos])
+		# On retire les ressource 
 
-	# On affiche la bordure du nouveau village
-	affichage.bordervillageunit(gamedata, classmap, option, classmap.listmap[idtuile].village)
+		# On affiche le nouveau village
+		affichage.printvillageunit(gamedata, classmap, option, [xpos,ypos])
 
-	# On update la carte des villages possible
-	updatestatbuildvillage(classmap, option)
+		# On affiche la bordure du nouveau village
+		affichage.bordervillageunit(gamedata, classmap, option, classmap.listmap[idtuile].village)
+
+		# On update la carte des villages possible
+		updatestatbuildvillage(classmap, option)
 
 def updatestatbuildvillage(classmap, option):
 	############
@@ -1027,7 +1062,7 @@ def calculate_tax_vassal(vassal):
 	if (tax[0] == 0) or (tax[1] == 0):
 		taxtemp = [0,0]
 		for village in vassal.fief:
-			taxtemp2 = calculate_tax(village)
+			taxtemp2 = calculate_tax_village(village)
 			taxtemp[0] += taxtemp2[0]
 			taxtemp[1] += taxtemp2[1]
 		if tax[0] == 0:
@@ -1062,7 +1097,7 @@ def taxcentervillage(event, gamedata, classmap, option, wit):
 	frame_tax_collect.grid(row = 0, column = 1)
 	# On affiche plus d'info sur la populations
 
-	tax = calculate_tax(village)
+	tax = calculate_tax_village(village)
 	tkvar_money = tkinter.StringVar()
 	tkvar_money.set(f"Collecter {tax[0]} écus")
 	tkvar_ressource = tkinter.StringVar()
@@ -1089,7 +1124,7 @@ def collect_taxes_village(gamedata, classmap, village, type_tax, frame, tkvar_li
 		for roturier in village.population:
 			# ON les faits payer leur taxes
 			roturier.pay_tax_money(player)
-		tax = calculate_tax(village)
+		tax = calculate_tax_village(village)
 		# On update l'interface
 		tkvar_list[0].set(f"Collecter {tax[0]} écus")
 	# Si ressource on tax les ressources
@@ -1098,7 +1133,7 @@ def collect_taxes_village(gamedata, classmap, village, type_tax, frame, tkvar_li
 		for roturier in village.population:
 			# ON les faits payer leur taxes
 			roturier.pay_tax_ressource(player)
-		tax = calculate_tax(village)
+		tax = calculate_tax_village(village)
 		# On update l'interface
 		tkvar_list[1].set(f"Collecter {tax[1]} écus")
 	# On update l'entête
@@ -1345,9 +1380,9 @@ def villageinterface(event, gamedata, classmap, option):
 		# Le bonheur global
 		tkinter.Label(frame_info, textv = classmap.listmap[idmapvillage].village.global_joy).pack(side = "top")
 		# les ressources du village
-		tkinter.Label(frame_info, text = classmap.listmap[idmapvillage].village.ressource).pack(side = "top")
+		tkinter.Label(frame_info, text = classmap.listmap[idmapvillage].village.prod_ressource).pack(side = "top")
 		# l'argent du village
-		tkinter.Label(frame_info, text = classmap.listmap[idmapvillage].village.money).pack(side = "top")
+		tkinter.Label(frame_info, text = classmap.listmap[idmapvillage].village.prod_money).pack(side = "top")
 
 		######################################################################
 
@@ -1452,16 +1487,20 @@ def showpathfinding(event, gamedata, classmap, option, army):
 	ts = gamedata.tuilesize
 	# On affiche la trajectoire
 	move = army.moveturn
+	turn = 0
+	color = "green"
 	for cases in sequ:
 		#On calcule la tuile à partir des coord Map
 		idtuile = cases[0]+(option.mapx*cases[1])
 		if (move - classmap.listmap[idtuile].movementcost) >= 0:
-			color = "green"
 			move -= classmap.listmap[idtuile].movementcost
+			classmap.mapcanv.create_line((cases[0]*ts), (cases[1]*ts), (cases[0]*ts)+ts, (cases[1]*ts)+ts, width = 2, tags = "path", fill = color)
 		else:
+			turn += 1
+			move = army.moveturn
 			color = "red"
-		classmap.mapcanv.create_line( (cases[0]*ts), (cases[1]*ts), (cases[0]*ts)+ts, (cases[1]*ts)+ts, width = 2, tags = "path", fill = color)
-
+			classmap.mapcanv.create_oval((cases[0]*ts), (cases[1]*ts), (cases[0]*ts)+ts, (cases[1]*ts)+ts, width = 2, tags = "path", outline = color)
+			classmap.mapcanv.create_text((cases[0]*ts)+ts/2, (cases[1]*ts)+ts/2, tags = "path", text = turn, fill = color)
 
 def startsequencemoveunit(event, gamedata, classmap, option, army):
 	##################

@@ -16,6 +16,37 @@ import functions.interface as interface
 #
 #
 #########################
+# Calcul la Menace Des Autres Seigneurs
+# - Puissance * Distance avec territoires
+# Si La Menace est Importante est que la Puissance est Égal alors déclare la guerre
+#
+#
+######
+# Plusieurs Caractères:
+# - Expantioniste, Privilège l'expansion par Construction de Village
+# - Militariste, Privilège l'expansion par Conquête
+# - Économiste, Privilège une aproche plus économiste
+#
+######
+# Construction de Village:
+# - Si Expantioniste Construit dés qu'il peut
+# - Sinon Construit Si il a le triple des Ressources Nécessaires
+#
+######
+# Vassalisation:
+# - Si la possibilité de Vassaliser un Seigneurs atteint 75%, tente de le Vassaliser
+#
+#
+######
+# Immigration:
+# - 
+# - 
+######
+# Armé:
+# - Si possède 4*Cout de prode
+# - Si possède 4*Entretien
+######
+
 
 def mainai(gamedata, classmap, option):
 	

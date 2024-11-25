@@ -112,9 +112,10 @@ class ClassGameData:
 		self.endturn = False
 		# Variable bool qui vient représenter un sémaphore qui vient bloquer le process quand un ia ou la fin du tour est actuellement lancé
 		self.semaphore = False
-
 		# Variable bool pour indiquer que la partie est terminé
 		self.is_finished = False
+		# Variable qui vient contenir en Fin de jeu si c'est une Victoire ou une défaite
+		self.victory = ""
 
 		# Variable qui vient contenir l'id du lord qui représente le seigneur
 		self.playerid = 0
@@ -421,9 +422,17 @@ class ClassGameData:
 
 	def removeactionfile(self, action, turn):
 		################
-		# Méthode appeler quand ont veut retirer une action
+		# Méthode appeler quand ont veut retirer une action dans la turn file
 		################
-		pass
+
+		# On cherche la pos de l'action dans la file
+		i = 0
+		while(i < len(self.actionlist[turn])):
+			if self.actionlist[turn][i] == action:
+				#Une fois que l'on à la position on change la list pour retirer l'action
+				actionlist[turn] = actionlist[turn][:i] + actionlist[turn][i+1:]
+				# On s'ejecte
+				return
 
 	def eotactionfile(self):
 		################

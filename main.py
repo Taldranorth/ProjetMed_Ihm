@@ -125,33 +125,23 @@ from time import time
 # - Normaliser les Tags
 #
 # Interface:
-# - commencer statesubjugate
-# - commencer stateimmigration
-# - commencer statetax
 # - ajouter la création de pop à buildvillage
 # - définir les régles de création de village, création d'église
 # - Améliorer l'interface
-# - Faire une classe qui Combine un label avec un label(textvariable) afin des les afficher côte a côte
-# - Définire les régles de création d'armée qui doive avoir au moins 1 unités et donc avec les cout en ressource
 # - Suprimmer le carrer du village ou l'église a était construite
 # - Léger décalage sur la droite lorsque l'on centre la vue
-# - Fix affichage de l'entête 1er tour
-#		--> Actuellement il n'affiche pas les données
 #
 # GameClass:
 # 	- définir les particularités des prêtre
 #
 # affichage:
 #	- Régler les labels des noms
-#		--> Actuellement ils ont tendance à ce couper
+#		--> Actuellement ils ont tendance à ce couper quand ils sont trop long
 #
 # Data:
 #	- Sauvegarde des données
 #	- Faire Résolution Dynamique
 #	- Faire Placement Fenêtre Dynamique
-#	- Faire Actionliste
-#		--> Terminer de définir la variable Action envoyer
-#		--> Terminer de définir removeactionqueu
 #
 # Moveview: 
 #	- Implémenter une limite sur le déplacement de la vue pour ne pas aller plus loin que nécessaires
@@ -165,17 +155,13 @@ from time import time
 #	--> Si souris sur village Ennemies alors affiche icône Pillage
 # 
 
-# - Changer TakeVillage pour gérer les villages Indépendants √
-# - Ajouter Tax au Vassaux √
-# - Ajouter Tax spécial aux Vassaux √
-# - Terminer Interface Vassalisation √
-
-# - Ajouter Cout de Recrutement √
-# - Ajouter Cout Immigration √
-# - Ajouter Cout Construction Église √
-# - Ajouter Entretien de l'armée √
-
-
+# - Implémenter Conditions de fin √
+# - Implémenter l'écran de fin √
+# - Terminer de définir removeactionqueu √
+# - Ajouter Update de la trésorerie des Villages à la fin des tours et après Impôts √
+# - Retravailler Global-Menu pour Plus d'info, Plus précis, et utiliser .grid() √
+# - Ajouter Cout de Construction aux Villages √
+# - Retravailler Entête pour Plus d'info √
 
 # - Implémenter l'attaque d'armée dans le déplacement d'unité X
 #########################################################
@@ -223,12 +209,11 @@ from time import time
 #	--> Recruit Army √
 #	--> Build Church √
 #	--> Tax √
-#
-# -> Implémenter l'impôt des Vassaux
-# -> Implémenter Conditions de fin
-# -> Implémenter l'écran de fin
+
+#####
 
 # -> Améliorer le calcul pour récuperer le village dans prises de village
+# - Gérer le Déplacement nécessaire
 
 # -> Après Prise d'un village doit changer la couleur du territoires du nouveau village
 
@@ -238,16 +223,24 @@ from time import time
 # -> Mettre en place fin de tour pour les Villages Indépendants
 
 # -> Faire le point sur les ressources de Village
+#####
 
-# - Ajouter Update de la trésorerie des Villages à la fin des tours et après Impôts
-# - Ajouter 
+
+
+#####
 # - Ajouter Cout de Construction de Village
 #	--> Un village doit avoir 10 de pop à la création
 #	--> 8 Paysan et 2 artisan
 
+# - Mettre en Place le Combat entre 2 armée
+# - Fix movetakevillage qui ne récupère pas à tout les coup le village voulu
+# - Fix Show pathfinding pour ne pas afficher les flèches sur la cases final mais un truc différent
+
+# - Refactoriser le Code
+# - Réorganiser le projet
+#####
+
 ######## Fonctionnalité Principale à Implémenter
-# - Implémenter Fonction Combat 
-# - Implémenter Interface Vassalisation
 # - Implémenter Event
 ########
 
@@ -265,6 +258,7 @@ from time import time
 
 
 ######## Fonctionnalité Secondaire
+# - Faire petite animations qui montre le gain et la perte de Ressource
 # - Système de Pop-up d'événement en début de tour En bas à droite Comme Armée qui termine son déplacement ou village qui termine de se construire voir Civ
 # - Affiné la prise de Village pour prendre en compte le PIllage de ressource et la mort de Villageois
 # - Affiné le Combat entre 2 armée pour prendre en compte l'enfermement du Chevalier Ennemie
@@ -575,17 +569,6 @@ def loadmenu():
 
 ###########################################################################
 
-
-
-
-
-
-
-
-
-
-
-
 ######################### Menu Option #########################
 
 ###############
@@ -608,6 +591,76 @@ def optionmenu():
 
 
 	pass
+
+
+###########################################################################
+
+
+######################### Écran de Fin de Jeu #########################
+
+def eofgamescreen(gamedata, classmap, option):
+	###############
+	# Fonction appeler pour afficher l'écran de fin de Jeu
+	###############
+	# 
+	#
+	#
+	###############
+
+	# Frame-Window
+	window_eof_screen = tkinter.Frame(classmap.framecanvas)
+	window_eof_screen.place(x = (option.widthWindow//20), y = (option.heightWindow//20))
+
+	# Frame Principale
+	frame_eof_screen = tkinter.Frame(window_eof_screen)
+	frame_eof_screen.grid()
+
+	player = gamedata.list_lord[gamedata.playerid]
+
+	# Titre
+	# Victoire OU défaite
+	tkinter.Label(frame_eof_screen, text = f"{gamedata.victory} du Seigneur {player.lordname}").grid(row = 0,column = 3)
+
+	# Info de base Principale
+	# Nb Tour
+	tkinter.Label(frame_eof_screen, text = f"Nombre de tour: {gamedata.Nb_tour}").grid(row = 1, column = 2)
+	# Nb Vassaux possèder
+	tkinter.Label(frame_eof_screen, text = f"Nombre de Vassaux: {len(player.vassal)}").grid(row = 2, column = 2)
+	# Puissance Militaire
+	tkinter.Label(frame_eof_screen, text = f"Puissance Militaire: {player.power}").grid(row = 3, column = 2)
+	# Score
+	tkinter.Label(frame_eof_screen, text = f"Score: ").grid(row = 1, column = 4)
+	# Nb Village possèder
+	tkinter.Label(frame_eof_screen, text = f"Nombre de Village: {len(player.fief)}").grid(row = 2, column = 4)
+	# Nb Pop
+	# On recup la taille totale
+	nb_total= 0
+	for village in player.fief:
+		nb_total += len(village.population)
+	tkinter.Label(frame_eof_screen, text = f"Taille de la Population: {nb_total}").grid(row = 3, column = 4)
+
+
+	# Boutton pour Changer pour un Graphique
+	# Graphe Croissance Militaire
+	button_military_graph = tkinter.Button(frame_eof_screen ,text = "Croissance Militaire").grid(row = 4, column = 1)
+
+	# Graphe Croissance Démographique
+	button_demography_graph = tkinter.Button(frame_eof_screen ,text = "Croissance Démographique").grid(row = 4, column = 2)
+
+	# Graphe Croissance économique
+	button_economy_graph = tkinter.Button(frame_eof_screen ,text = "Croissance Économique").grid(row = 4, column = 3)
+
+	# Graphe Score
+	button_score_graph = tkinter.Button(frame_eof_screen ,text = "Score").grid(row = 4, column = 4)
+
+	# Graphe des Mort
+	button_death_graph = tkinter.Button(frame_eof_screen ,text = "Mort").grid(row = 4, column = 5)
+
+	# Boutton pour retourner sur le Menu Principale
+	button_return_mainmenu = tkinter.Button(frame_eof_screen ,text = "Menu Principale").grid(row = 5, column = 1, columnspan = 2)
+
+	# Boutton pour charger une Save précédente
+	button_loadsave = tkinter.Button(frame_eof_screen ,text = "Charger une Sauvegarde").grid(row = 5, column = 3, columnspan = 2)
 
 
 ###########################################################################
@@ -942,20 +995,48 @@ def endofturn(gamedata, classmap, option):
 	gamedata.semaphore = True
 	gamedata.log.printinfo("Il ne reste plus de Seigneur qui doit Jouer, Fin du tour")
 	gamedata.Nb_toplay = 0
-	# On fait appel à la fonction de fin de tour
-	gamedata.endofturn()
-	# Une fois que tout les objets se sont update ont update l'interface d'entête
-	interface.updateinterface(gamedata, classmap)
-	gamedata.endturn = False
-	gamedata.semaphore = False
+	# On vérifie que l'on ne soit pas en état de mettre fin aux jeu:
+	if victoryordefeat(gamedata, classmap, option) == False:
+		# On fait appel à la fonction de fin de tour
+		gamedata.endofturn()
+		# Une fois que tout les objets se sont update ont update l'interface d'entête
+		interface.updateinterface(gamedata, classmap)
+		gamedata.endturn = False
+		gamedata.semaphore = False
+	else:
+		endofgame(gamedata, classmap, option)
 
 
 
 # after(time, function)
 
-# Fonction qui gère la fin de partie
-def endofgame():
-	pass
+def victoryordefeat(gamedata, classmap, option):
+	#######
+	# Fonction pour vérifier si le Joueur est en Victoire ou défaite
+	#######
+	# Return un Bool et modifie une variable dans gamedata
+
+	player = gamedata.list_lord[gamedata.playerid]
+
+	# Si le joueur ne Possède plus de village Alors Défaite
+	if len(player.fief) == 0:
+		gamedata.victory = "Défaite"
+		return True
+	# Sinon si le joueur possède un Nombre de Vassaux = Nombre de Seigneur-1
+	# Alors Victoire
+	elif len(player.vassal) == (gamedata.Nb_lord - 1):
+		gamedata.victory = "Victoire"
+		return True
+	else:
+		return False
+
+
+def endofgame(gamedata, classmap, option):
+	#####
+	# Fonction qui gère la fin de partie
+	#####
+	eofgamescreen(gamedata, classmap, option)
+
 
 
 ###########################################################################
@@ -973,7 +1054,7 @@ def infovillage(village):
 	else:
 		print("village priest: ", 0)
 	print("village global joy: ", village.global_joy)
-	print("village ressource, money: ", village.ressource, village.money)
+	print("village ressource, money: ", village.prod_ressource, village.prod_money)
 
 ######################### Main #########################
 if __name__ == '__main__':

@@ -17,6 +17,9 @@
 #			--> A une valeur de Production de 4 minimum
 #			--> Demande bien plus de ressource pour faire Immigrer (4R, 4M)
 #		--> Si un Roturier Peut payer un Impôt en Argent alors il payera en Argent, Sinon en Ressource
+#		--> Un Roturier Vit dans un village
+#		--> Un village est un lieu qui possède a sa création 10 Roturiers, 8 paysan et 2 artisan
+#		--> Un village Coute un total de (15R, 15M)
 # - Un Noble est un Seigneur qui règne uniquement sur des Roturiers
 #	--> Il peut soummetre à un Impot c'est sujets
 #	--> Il peut être Taxer par son Seigneur

@@ -197,7 +197,18 @@ class Classlord:
 		#####
 		self.nb_money -= nb_m	
 
+	def prod_global(self):
+		####
+		# Methode qui retourne un tuple qui repèsente la production global de son fief
+		####
+		prod_money = 0
+		prod_ressource = 0
+		for village in self.fief:
+			prod_money += village.prod_money
+			prod_ressource += village.prod_ressource
 
+
+		return [prod_money, prod_ressource]
 
 
 	def tax(self, lord):
@@ -302,8 +313,8 @@ class Classvillage:
 		self.nb_artisan = 0
 		self.nb_paysan = 0
 
-		self.money = 0
-		self.ressource = 0
+		self.prod_money = 0
+		self.prod_ressource = 0
 		self.global_joy = 100
 
 		self.influence = 0
@@ -321,14 +332,8 @@ class Classvillage:
 		elif pop.role == "paysan":
 			self.nb_paysan += 1
 
-		# Calcul de la joie global du village
-		temp_joy = 0
-		for pop in self.population:
-			temp_joy += pop.joy
-		self.global_joy = temp_joy/len(self.population)
+		self.updateinfo()
 
-		self.money += pop.money
-		self.ressource += pop.ressource
 		#print("lord: ",self.lord)
 		# Une fois mis à jour on mets à jour pour le seigneur du village
 		# 'list' object has no attribute 'updateinfo'
@@ -353,12 +358,30 @@ class Classvillage:
 	def setnamevillage(self, name):
 		self.name = name
 
+	def updateinfo(self):
+		#######
+		# Method pour mettre à jour automatiquement les données du village
+		#######
+
+		self.prod_money = 0
+		self.prod_ressource = 0
+		temp_joy = 0
+		for pop in self.population:
+			temp_joy += pop.joy
+			self.prod_money += pop.tax_money()
+			self.prod_ressource += pop.tax_ressource()
+
+		# Calcul de la joie global du village
+		self.global_joy = temp_joy/len(self.population)
+
+
 	def endofturn(self):
 		#######
 		# Méthode fin de tour
 		#######		
 		for pop in self.population:
 			pop.endofturn(self.lord)
+		self.updateinfo()
 
 
 # Classe qui vient définir une armée
