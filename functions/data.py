@@ -484,6 +484,10 @@ class ClassOptions:
 		#Défintion de la fenêtre
 		self.widthWindow = 1200
 		self.heightWindow = 1200
+
+
+		#self.listResolutionWindow = []
+		#self.listResolutionWindow += 
 		# Définition de la carte
 		self.mapx = 100
 		self.mapy = 100
@@ -728,7 +732,7 @@ def assetLoad():
 	####################
 
 	#On se place dans le dossier Asset puis dans texture
-	pf = c_d+"/Asset/texture"
+	pf = c_d+"/asset/texture"
 	#print(pf)
 	#print(len(os.listdir()))
 	# On créer le Dico que l'on va renvoyer:

@@ -95,9 +95,10 @@ class Classlord:
 		# Pour plus tard
 		self.type = 0
 
-	def createarmy(self, village):
-		print("On créer une armée dans le village: ", village.name)
-		self.army += [Classarmy(village.x, village.y, ("unit_" + village.name))]
+	def createarmy(self, name, x, y):
+		# On vérifie qu'il n'y a pas déjà une armée à cette position
+		print("On créer une armée dans le village: ", name)
+		self.army += [Classarmy(x, y, ("unit " + name))]
 
 	def addvassal(self, vassal):
 		self.vassal += [vassal]
@@ -209,6 +210,16 @@ class Classlord:
 
 
 		return [prod_money, prod_ressource]
+
+	def total_salaryarmy(self):
+		r = 0
+		m = 0
+		for army in self.army:
+			salary = army.salarycount()
+			r += salary[1]
+			m += salary[0]
+
+		return [m, r]
 
 
 	def tax(self, lord):
@@ -358,6 +369,45 @@ class Classvillage:
 	def setnamevillage(self, name):
 		self.name = name
 
+	def birthpop(self):
+		#######
+		# Method Pour Faire une Pop selon le niveau de bonheur 
+		#######
+		# Fait le tour de la population:
+		# 1°) Prend 2 Pop avec un Age entre 15 et 30 et fait une moyenne de leur Bonheur
+		# 2°) Utilise 
+		# 3°) 
+		#######
+
+
+		pass
+
+	def killpop(self, pop):
+		#######
+		# Method pour tuer un Roturier
+		#######
+
+		# Les Ressources qu'il possédait sont Récupérer par le Seigneur
+		# Si le Village est dirigé par une Seigneur
+		if lord != 0:
+			self.lord.nb_money += pop.money
+			self.lord.nb_ressource += pop.ressource
+
+		# On le retire des liste du villages
+		if pop.role == "artisan":
+			self.nb_artisan -= 1
+		elif pop.role == "paysan":
+			self.nb_paysan -= 1
+
+		i = 0
+		for population in self.population:
+			if population == pop:
+				self.population = self.population[:i] + self.population[i+1:]
+			i += 1
+
+		# On détruit l'objet
+		del pop
+
 	def updateinfo(self):
 		#######
 		# Method pour mettre à jour automatiquement les données du village
@@ -381,6 +431,9 @@ class Classvillage:
 		#######		
 		for pop in self.population:
 			pop.endofturn(self.lord)
+			if pop.deathiscoming() == True:
+				self.killpop(pop)
+
 		self.updateinfo()
 
 
@@ -427,6 +480,23 @@ class Classarmy:
 		self.unit += [ClassSoldier(name)]
 		self.updatearmy()
 
+	def salarycount(self):
+		#######
+		# Methode pour renvoyer le salaire total de l'armée [Money,Ressource]
+		#######
+
+		count_r = 0
+		count_m = 0
+		lenpop = len(self.unit)
+
+		if self.knight != 0:
+			count_r += 4
+			count_m += 4
+		count_r += lenpop
+		count_m += lenpop
+
+		return [count_m, count_r]
+
 	def updatearmy(self):
 		#######
 		# Méthode pour Update les infos de l'armée
@@ -467,10 +537,6 @@ class Classarmy:
 
 		# On update l'armée
 		self.updatearmy()
-
-
-
-
 
 class Classpriest:
 
@@ -620,6 +686,8 @@ class ClassRoturier:
 			self.cp = 4
 			self.money = 5
 
+
+
 	def pay_tax(self, lord):
 		#####
 		# Method pour payer la taxe du Seigneur
@@ -695,8 +763,12 @@ class ClassRoturier:
 		####
 		# Methode pour produire la capacité de production en ressource
 		####
-		print(f"{self.name} un {self.role} à produit: {self.cp} ressource")
-		self.ressource += self.cp
+		if self.age > 8:
+			print(f"{self.name} un {self.role} à produit: {self.cp} ressource")
+			self.ressource += self.cp
+		else:
+			print(f"{self.name} un {self.role} à produit: {1} ressource")
+			self.ressource += 1			
 
 	def sell(self):
 		####
@@ -720,12 +792,34 @@ class ClassRoturier:
 			self.money -= 1
 			self.ressource += 1
 
-	def death(self):
-		####
-		# Methode qui tue le Roturier
-		####
-		pass
+	def deathiscoming(self):
+		#######
+		# Methode qui vérifie si le Roturier Meurt
+		#######
+		# On tire un Chiffre entre 0 et 100
+		# On à un Seuil de 150
+		# Le Seuil baisse selon l'age et le Bonheur
+		# Ex:
+		# Jean à 50an, il a 50 de Bonheur
+		# Le Seuil baisse de 50, et augmente de (50-50) = 0
+		# Pour que Jean meurt il doit tirer entre 0 et 100
+		######
+		# Return True Si il meurt
+		# Return False Si il Survit
+		######
 
+		# Seuil de Base sans les Bonus/Malus
+		s = 150
+		# On ajoute l'age dans la balance
+		s -= self.age
+		# On ajoute le Bonheur dans la balance
+		s += (self.joy - 50)
+
+		r = random.randrange(100)
+		if r >= s:
+			return True
+		else:
+			return False
 
 	def endofturn(self, lord):
 		#######
@@ -736,15 +830,20 @@ class ClassRoturier:
 		# 4°) Il consomme 1 de ressource
 		# 5°) Si il atteint la capacité limite de Ressource il vend sont éxédent
 		# 6°) On calcul son bonheur selon ses besoins
-		# 7°)
+		# 7°) On augmente l'age
+		# 8°) Il peut Mourir
 		#######
 		print(f"{self.name} un {self.role} Possède aux début du tour: {self.money} écu et {self.ressource} Ressource")
+
+
 		# 1°) Produit la CP
 		self.produce()
 
-		# 2°) Si le Roturier possède un Seigneurs il paye la tax
-		if lord != 0:
-			self.pay_tax(lord)
+		# On vérifie que le Roturier est en âge de payer la tax
+		if self.age > 8:
+			# 2°) Si le Roturier possède un Seigneurs il paye la tax
+			if lord != 0:
+				self.pay_tax(lord)
 
 		# 3°) Achete si il n'a plus de ressource
 		self.buy()
@@ -754,12 +853,23 @@ class ClassRoturier:
 
 		# 5°) Si le roturier possède de l'excedant il le vend contre de l'argent
 		self.sell()
-		print(f"{self.name} un {self.role} Possède à la fin du tour: {self.money} écu et {self.ressource} Ressource")
 
 		# 6°) On update son humeur selon ses besoins
+		# Si il n'a pas put se nourrir, le bonheur baisse
+		if self.ressource < 0:
+			self.joy -= 10
+		# Sinon Si il à put se nourrir et qu'il à de la bouffe en réserve il est optimiste
+		elif self.ressource > 1:
+			self.joy += 5
+		# Sinon rien ne change
 
 		# 7°) On Augmente son Age
 		self.age += 1
 
+		# 8°) Mort Possible Du Roturier
+
+
+		print(f"{self.name} un {self.role} Possède à la fin du tour: {self.money} écu et {self.ressource} Ressource")
+		print(f"{self.name} un {self.role} à {self.age} ans et est {self.joy}% heureux")
 
 

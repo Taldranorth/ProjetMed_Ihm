@@ -1,81 +1,93 @@
-[15:20:48]Info: Initialisation log terminé
-[15:20:48]Info: 1200x1200+150+150
-[15:20:48]Info: Initialisation de l'application terminé
-[15:20:48]Info: taille écran x,y: 1440, 900
-[15:20:48]Info: Taille de la Frame du Canvas: 1, 1
-[15:20:48]Info: Taille de la Frame du top: 1, 1
-[15:20:48]Info: Taille de la Frame du bas: 1, 1
-[15:20:48]Info: Taille du Canvas:1, 1
-[15:20:49]Info: coord0: ,[1140, 1820]
-[15:20:49]Info: coord1: ,[1240, 1920]
-[15:20:49]Info: coord0: ,[380, 340]
-[15:20:49]Info: coord1: ,[480, 440]
-[15:20:49]Info: coord0: ,[0, 680]
-[15:20:49]Info: coord1: ,[100, 780]
-[15:20:49]Info: coord0: ,[1520, 1000]
-[15:20:49]Info: coord1: ,[1620, 1100]
-[15:20:49]Info: coord0: ,[1140, 360]
-[15:20:49]Info: coord1: ,[1240, 460]
-[15:20:49]Info: coord0: ,[400, 1260]
-[15:20:49]Info: coord1: ,[500, 1360]
-[15:20:49]Info: coord0: ,[520, 1160]
-[15:20:49]Info: coord1: ,[620, 1260]
-[15:20:49]Info: coord0: ,[800, 1020]
-[15:20:49]Info: coord1: ,[900, 1120]
-[15:20:49]Info: coord0: ,[1040, 0]
-[15:20:49]Info: coord1: ,[1140, 80]
-[15:20:49]Info: déplacement de x,y: , 590.0, 1510.0
-[15:20:52]Info: Player hit end of turn button
-[15:20:52]Info: tour de: lord Wyn, 1
-[15:20:52]Info: tour de: lord Ó Seanáin, 2
-[15:20:52]Info: tour de: lord Tin, 3
-[15:20:52]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
-[15:20:52]Info: On éxécute toute les actions qui reste en 0
-[15:20:52]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
-[15:20:52]Info: Toute les piles actions ont était déplacer fin de eotactionfile
-[15:20:52]Info: file action après fin de tour: []
-[15:20:54]Info: Player hit end of turn button
-[15:20:54]Info: tour de: lord Wyn, 1
-[15:20:54]Info: tour de: lord Ó Seanáin, 2
-[15:20:54]Info: tour de: lord Tin, 3
-[15:20:54]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
-[15:20:54]Info: On éxécute toute les actions qui reste en 0
-[15:20:54]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
-[15:20:54]Info: Toute les piles actions ont était déplacer fin de eotactionfile
-[15:20:54]Info: file action après fin de tour: []
-[15:20:55]Info: Player hit end of turn button
-[15:20:55]Info: tour de: lord Wyn, 1
-[15:20:55]Info: tour de: lord Ó Seanáin, 2
-[15:20:55]Info: tour de: lord Tin, 3
-[15:20:55]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
-[15:20:55]Info: On éxécute toute les actions qui reste en 0
-[15:20:55]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
-[15:20:55]Info: Toute les piles actions ont était déplacer fin de eotactionfile
-[15:20:55]Info: file action après fin de tour: []
-[15:20:59]Info: Player hit end of turn button
-[15:20:59]Info: tour de: lord Wyn, 1
-[15:20:59]Info: tour de: lord Ó Seanáin, 2
-[15:20:59]Info: tour de: lord Tin, 3
-[15:20:59]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
-[15:20:59]Info: On éxécute toute les actions qui reste en 0
-[15:20:59]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
-[15:20:59]Info: Toute les piles actions ont était déplacer fin de eotactionfile
-[15:20:59]Info: file action après fin de tour: []
-[15:21:00]Info: Player hit end of turn button
-[15:21:01]Info: tour de: lord Wyn, 1
-[15:21:01]Info: tour de: lord Ó Seanáin, 2
-[15:21:01]Info: tour de: lord Tin, 3
-[15:21:01]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
-[15:21:01]Info: On éxécute toute les actions qui reste en 0
-[15:21:01]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
-[15:21:01]Info: Toute les piles actions ont était déplacer fin de eotactionfile
-[15:21:01]Info: file action après fin de tour: []
-[15:21:02]Info: Player hit end of turn button
-[15:21:02]Info: tour de: lord Wyn, 1
-[15:21:02]Info: tour de: lord Ó Seanáin, 2
-[15:21:02]Info: tour de: lord Tin, 3
-[15:21:02]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
-[15:21:02]Info: On éxécute toute les actions qui reste en 0
-[15:21:02]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
-[15:21:02]Info: Toute les piles actions ont était déplacer fin de eotactionfile
-[15:21:02]Info: file action après fin de tour: []
+[00:29:55]Info: Initialisation log terminé
+[00:29:55]Info: 1200x1200+150+150
+[00:29:55]Info: Initialisation de l'application terminé
+[00:29:56]Info: taille écran x,y: 1440, 900
+[00:29:56]Info: Taille de la Frame du Canvas: 1, 1
+[00:29:56]Info: Taille de la Frame du top: 1, 1
+[00:29:56]Info: Taille de la Frame du bas: 1, 1
+[00:29:56]Info: Taille du Canvas:1, 1
+[00:29:56]Info: coord0: ,[820, 760]
+[00:29:56]Info: coord1: ,[920, 860]
+[00:29:56]Info: coord0: ,[200, 1760]
+[00:29:56]Info: coord1: ,[300, 1860]
+[00:29:56]Info: coord0: ,[400, 1800]
+[00:29:56]Info: coord1: ,[500, 1900]
+[00:29:56]Info: coord0: ,[1520, 40]
+[00:29:56]Info: coord1: ,[1620, 140]
+[00:29:56]Info: coord0: ,[420, 720]
+[00:29:56]Info: coord1: ,[520, 820]
+[00:29:56]Info: coord0: ,[520, 1700]
+[00:29:56]Info: coord1: ,[620, 1800]
+[00:29:56]Info: coord0: ,[1260, 340]
+[00:29:56]Info: coord1: ,[1360, 440]
+[00:29:56]Info: coord0: ,[1380, 1880]
+[00:29:56]Info: coord1: ,[1480, 1980]
+[00:29:56]Info: coord0: ,[580, 940]
+[00:29:56]Info: coord1: ,[680, 1040]
+[00:29:56]Info: déplacement de x,y: , 270.0, 450.0
+[00:29:57]Info: Player hit end of turn button
+[00:29:57]Info: tour de: lord Ó Haodha, 1
+[00:29:57]Info: tour de: lord Llewellyn, 2
+[00:29:57]Info: tour de: lord Tomar, 3
+[00:29:57]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
+[00:29:57]Info: On éxécute toute les actions qui reste en 0
+[00:29:57]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
+[00:29:57]Info: Toute les piles actions ont était déplacer fin de eotactionfile
+[00:29:57]Info: file action après fin de tour: []
+[00:29:59]Info: entre dans un état interface_recruit_army
+[00:30:00]Info: Le Joueur Créer une armée
+[00:30:01]Info: On quitte l'état interface_recruit_army
+[00:30:02]Info: Player hit end of turn button
+[00:30:02]Info: tour de: lord Ó Haodha, 1
+[00:30:02]Info: tour de: lord Llewellyn, 2
+[00:30:02]Info: tour de: lord Tomar, 3
+[00:30:02]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
+[00:30:02]Info: On éxécute toute les actions qui reste en 0
+[00:30:02]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
+[00:30:02]Info: Toute les piles actions ont était déplacer fin de eotactionfile
+[00:30:02]Info: file action après fin de tour: []
+[00:30:03]Info: Player hit end of turn button
+[00:30:03]Info: tour de: lord Ó Haodha, 1
+[00:30:03]Info: tour de: lord Llewellyn, 2
+[00:30:03]Info: tour de: lord Tomar, 3
+[00:30:04]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
+[00:30:04]Info: On éxécute toute les actions qui reste en 0
+[00:30:04]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
+[00:30:04]Info: Toute les piles actions ont était déplacer fin de eotactionfile
+[00:30:04]Info: file action après fin de tour: []
+[00:30:04]Info: Player hit end of turn button
+[00:30:05]Info: tour de: lord Ó Haodha, 1
+[00:30:05]Info: tour de: lord Llewellyn, 2
+[00:30:05]Info: tour de: lord Tomar, 3
+[00:30:05]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
+[00:30:05]Info: On éxécute toute les actions qui reste en 0
+[00:30:05]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
+[00:30:05]Info: Toute les piles actions ont était déplacer fin de eotactionfile
+[00:30:05]Info: file action après fin de tour: []
+[00:30:06]Info: Player hit end of turn button
+[00:30:06]Info: tour de: lord Ó Haodha, 1
+[00:30:06]Info: tour de: lord Llewellyn, 2
+[00:30:06]Info: tour de: lord Tomar, 3
+[00:30:06]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
+[00:30:06]Info: On éxécute toute les actions qui reste en 0
+[00:30:06]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
+[00:30:06]Info: Toute les piles actions ont était déplacer fin de eotactionfile
+[00:30:06]Info: file action après fin de tour: []
+[00:30:08]Info: Player hit end of turn button
+[00:30:08]Info: tour de: lord Ó Haodha, 1
+[00:30:08]Info: tour de: lord Llewellyn, 2
+[00:30:08]Info: tour de: lord Tomar, 3
+[00:30:08]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
+[00:30:08]Info: On éxécute toute les actions qui reste en 0
+[00:30:08]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
+[00:30:08]Info: Toute les piles actions ont était déplacer fin de eotactionfile
+[00:30:08]Info: file action après fin de tour: []
+[00:30:09]Info: Player hit end of turn button
+[00:30:10]Info: tour de: lord Ó Haodha, 1
+[00:30:10]Info: tour de: lord Llewellyn, 2
+[00:30:10]Info: tour de: lord Tomar, 3
+[00:30:10]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
+[00:30:10]Info: On éxécute toute les actions qui reste en 0
+[00:30:10]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
+[00:30:10]Info: Toute les piles actions ont était déplacer fin de eotactionfile
+[00:30:10]Info: file action après fin de tour: []

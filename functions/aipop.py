@@ -38,6 +38,13 @@
 #	--> Il n'est pas soumis aux tax
 #	--> N'est présent que si il y a une Église
 #	--> l'église coute (10R, 10M) pour être Construite
+#	--> Le Prêtre est entretenue par le Seigneur qui possède l'église, Il demande une Dime de (2R, 2M)
+#	--> Un prêtre possède une capacité qui représente un passif définit dans le dictionnaire suivant:
+#		{[]: Prod_R + 2,
+#		 []: Prod_M + 2,
+#		 []: Prod_R + 1, Prod_M +1 ,
+#		 []: Pop Immigration +1
+#		}
 #
 # - Un Chevalier est une entité uniquement reliée à une unique Armée
 #	--> Un unique Individu peut être présent dans une Armée

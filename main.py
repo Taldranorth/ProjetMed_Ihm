@@ -155,13 +155,15 @@ from time import time
 #	--> Si souris sur village Ennemies alors affiche icône Pillage
 # 
 
-# - Implémenter Conditions de fin √
-# - Implémenter l'écran de fin √
-# - Terminer de définir removeactionqueu √
-# - Ajouter Update de la trésorerie des Villages à la fin des tours et après Impôts √
-# - Retravailler Global-Menu pour Plus d'info, Plus précis, et utiliser .grid() √
-# - Ajouter Cout de Construction aux Villages √
-# - Retravailler Entête pour Plus d'info √
+# - Fix le zoom au centre de la carte √ --> Repasser au zoom sur la souris
+# - Fix Pathfinding calcul des trajectoires hors de la map se qui fait crash le calcul de l'id de la tuile √
+# - Fix Brensenham, Oublié de mettre la dernière cases dans la liste des itinéraires √
+# - Ajouter Gestion Tax et production des enfants √
+# - Fix Zoom/Dezoom Linux √
+# - Fix Tax ressource qui se transforme en écus √
+# - Gestion du Bonheur √
+# - Mort √
+# - Prendre en compte de le salaire des Armées dans l'affichage de la prod par tour √
 
 # - Implémenter l'attaque d'armée dans le déplacement d'unité X
 #########################################################
@@ -178,13 +180,6 @@ from time import time
 # Décider d'adapter moveviewxy pour utiliser scan_dragto
 #	--> Plus performant car liés à l'afichage des coord et non le changement des coord de tout les objets du canvas comme move()
 
-# -> Fix Affichage ShowPathfinding
-#	--> L'affichage est sommaire, doit être remplacé par une fléche verte et rouge
-# 	--> Quand l'armée c'est déplacer l'affichage doit être update 
-# -> Fix déplacement d'unité √
-#	--> Améliorer déplacement unité
-#		--> C'est aproximatif
-#			--> Revoir Brensenham
 # -> Fix Build Church
 #	--> test en permanence si on est dans l'état build
 #		--> Aucun retour quand on construit une église
@@ -195,6 +190,7 @@ from time import time
 # 	--> Permettre l'attaque d'un village √
 #		--> Afficher une Icône quand on à la souris dessus
 #	--> Permettre l'attaque d'une armée
+#		--> Afficher une Icône quand on à la souris dessus
 # -> Revoir la destruction de village
 # -> Refactoriser le code pour réduire la réutilisation de même code pour a la place utilisr une fonction commune liée a l'objet utiliser
 #	--> Voir la récupération de village selon la position x,y via Classmap
@@ -209,32 +205,32 @@ from time import time
 #	--> Recruit Army √
 #	--> Build Church √
 #	--> Tax √
+#	--> GlobalViewMenu √
+#	--> War √
+#	--> Interface_Army
 
 #####
-
-# -> Améliorer le calcul pour récuperer le village dans prises de village
+# - Améliorer le calcul pour récuperer le village dans prises de village
+#		--> Cela met en avant un problème global de coord :/
 # - Gérer le Déplacement nécessaire
 
-# -> Après Prise d'un village doit changer la couleur du territoires du nouveau village
+# - Fix la création d'armée pour le nom est la position
 
-# -> Pathfinding calcul des trajectoires hors de la map se qui fait crash le calcul de l'id de la tuile
+# - Changer la gestion de la population d'un village pour un dico qui vient contenir pour le role la pop
+# - Mettre en place fin de tour pour les Villages Indépendants
 
-# -> Changer la gestion de la population d'un village pour un dico qui vient contenir pour le role la pop
-# -> Mettre en place fin de tour pour les Villages Indépendants
+# - La trajectoire d'une armée doit s'afficher quand on clique dessus
+# - Fix le clique de la trajectoire qui est bloquer par l'affichage du Pathfinding
 
-# -> Faire le point sur les ressources de Village
+# - Fix différence click droit Mac/Linux
+# - Retour utilisateur Quand Action Impossible
+#
+# - Réaction au Bonheur
 #####
 
-
-
-#####
-# - Ajouter Cout de Construction de Village
-#	--> Un village doit avoir 10 de pop à la création
-#	--> 8 Paysan et 2 artisan
-
+####
 # - Mettre en Place le Combat entre 2 armée
 # - Fix movetakevillage qui ne récupère pas à tout les coup le village voulu
-# - Fix Show pathfinding pour ne pas afficher les flèches sur la cases final mais un truc différent
 
 # - Refactoriser le Code
 # - Réorganiser le projet
@@ -242,20 +238,20 @@ from time import time
 
 ######## Fonctionnalité Principale à Implémenter
 # - Implémenter Event
+# - Capacité Prêtre
+# - Renouvellement de la population
+# - Gestion de la population par case
+# - Implémenter Résolutions Dynamique
 ########
 
 ######## Fonctionnalité Majeur Secondaire
 # - Implémenter IA
 # - Implémenter Sauvegarde et Chargement de Données
 # - Implémenter Options
-# - Implémenter Résolutions Dynamique
 # - Implémenter marché
 # - Implémenter Landforme
 # - Terminer GlobalViewMenu
 ########
-
-
-
 
 ######## Fonctionnalité Secondaire
 # - Faire petite animations qui montre le gain et la perte de Ressource
@@ -268,9 +264,8 @@ from time import time
 # - Changer interface entête pour afficher icône boufe et money
 # - Implémenter une interface plus pousser d'attaque de village
 # - Implémenter une interface plus pousser d'attaque d'armée
-# - lors du déplacement d'une armée avec ShowPathfinding afficher sur les tuiles en combien de tour l'armée fait le déplacement (voir Civ)
 # - Ajouter les Entrelac
-# - Améliorer la réaffichage d'un bordure
+# - Améliorer le réaffichage d'une bordure
 ########
 
 #### Landforme ####
@@ -752,6 +747,8 @@ def mainscreen(gamedata, classmap, option, root, pic):
 	for village in classmap.lvillages:
 		infovillage(classmap.listmap[village].village)
 
+	interface.updateinterface(gamedata, classmap)
+
 
 ####################################################################################################
 
@@ -829,7 +826,11 @@ def createmap(gamedata, classmap, option, pic):
 			idtuile += 1
 
 	#On lie Command+molette aux zoom/dézoom
+	# Sur Mac/Windows
 	mapcanv.bind("<MouseWheel>", lambda event: moveview.moveviewz(event, gamedata, classmap, option))
+	# Sur linux
+	mapcanv.bind("<Button-4>", lambda event: moveview.moveviewz(event, gamedata, classmap, option))
+	mapcanv.bind("<Button-5>", lambda event: moveview.moveviewz(event, gamedata, classmap, option))
 
 	#On focus sur le widget sinon il ne prendra pas en compte les entrées des touches fléchés
 	mapcanv.focus_set()
@@ -1061,6 +1062,8 @@ if __name__ == '__main__':
 
 	#Init de la fenêtre
 	root = tkinter.Tk()
+	print("Hauteur de l'écran: ", root.winfo_screenheight())
+	print("Largeur de l'écran: ", root.winfo_screenwidth())
 
 	# Chargement des Options:
 	option_instance = data.ClassOptions()

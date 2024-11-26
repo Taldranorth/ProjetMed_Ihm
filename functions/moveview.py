@@ -108,9 +108,11 @@ def moveviewz(event, gamedata, classmap, option):
 	#Pour éviter les différence entre windows et Mac ont normalise delta
 	#Doit prendre en compte linux -_-
 	gamedata.log.printinfo(f"{event.delta}")
-	if event.delta <= 0:
+
+
+	if (event.delta <= 0) or (event.num == 5):
 		delta = -2
-	else:
+	if (event.delta > 0) or (event.num == 4):
 		delta = 2
 	############################################################
 
@@ -141,8 +143,6 @@ def moveviewz(event, gamedata, classmap, option):
 		x = x*(-1/(delta))
 	#On recup les nouvelles coord du pointeur de la souris
 	coordcanv = event.widget.coords(idtuile)
-	# SI on veut recup depuis le centre de l'écran
-	coordcanv = [event.widget.canvasx(option.widthWindow//2), event.widget.canvasx((option.heightWindow*0.6)//2)]
 	centerviewcanvas(gamedata, classmap, option, coordcanv)
 	# On change la taille des tuiles stocker dans les données globaux
 	gamedata.newsizetuile(x)

@@ -412,6 +412,7 @@ def brensenham(coord0, coord1):
 					lcase += [[coord0[0] + x, coord0[1] + y]]
 
 
+	lcase += [[coord1[0], coord1[1]]]
 	return lcase
 
 
@@ -501,18 +502,10 @@ def pathfinding(gamedata, classmap, option, coord0, coord1, degr):
 	# compare le cout en déplacement de chaque itinéraires
 	#gamedata.log.printinfo(f"Calcul Cout itinéraire")
 	for itinéraire in lsnapshot:
-		cost = 0
-		# On se balade dans l'itinéraire
-		for cases in itinéraire:
-			#gamedata.log.printinfo(f"Calcul case: {cases}")
-			# On calcule l'id de la tuile 
-			idtuile = moveview.coordmaptoidtuile(option, cases)
-			#gamedata.log.printinfo(f"Idtuile: {idtuile}")
-			# On additione le cout de la tuile
-			cost += classmap.listmap[idtuile].movementcost
-		# Une fois que l'on à le cout total du déplacement on l'ajoute dans la liste
-		gamedata.log.printinfo(f"CM: {cost}")
-		lcostiti += [cost]
+		cost = costsequ(gamedata, classmap, option, itinéraire)
+		if cost != False:
+			lcostiti += [cost]
+
 
 	i = 0
 	small = 0
@@ -526,5 +519,23 @@ def pathfinding(gamedata, classmap, option, coord0, coord1, degr):
 
 	return lsnapshot[small]
 
+def costsequ(gamedata, classmap, option, itinéraire):
+	######
+	# Fonction qui retourne le cout en mouvement d'un itinéraire
+	# Retoune un False si l'itinéraire est invalide
+	######
+	cost = 0
+	for cases in itinéraire:
+		# Si la position x ou y de la cases est supérieur ou inférieur à la longueur de la carte alors invalide
+		if (cases[0] >= option.mapx) or (cases[1] >= option.mapy):
+			return False
+		elif(cases[0] < 0) or (cases[1] < 0):
+			return False
+		else:
+			# Sinon on calcule le cout de la case
+			idtuile = moveview.coordmaptoidtuile(option, cases)
+			cost += classmap.listmap[idtuile].movementcost
+
+	return cost
 
 

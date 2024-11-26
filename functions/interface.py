@@ -62,12 +62,13 @@ def gameinterface(gamedata, classmap, option, win):
 
 	player = gamedata.list_lord[gamedata.playerid]
 	prod_g = player.prod_global()
+	salaryarmy = player.total_salaryarmy()
 
 	# On les set
 	# Merde c'est pas dynamique
-	classmap.tkvar_list[0].set(f"Ressource : {player.nb_ressource}+{prod_g[1]}")
-	classmap.tkvar_list[1].set(f"Argent : {player.nb_money}+{prod_g[1]}")
-	classmap.tkvar_list[2].set(f"Bonheur: {player.global_joy}")
+	classmap.tkvar_list[0].set(f"Ressource : {player.nb_ressource} ({prod_g[1] - salaryarmy[1]})")
+	classmap.tkvar_list[1].set(f"Argent : {player.nb_money} ({prod_g[0] - salaryarmy[0]})")
+	classmap.tkvar_list[2].set(f"Bonheur: {int(player.global_joy)}%")
 	classmap.tkvar_list[3].set(f"Tour N°: {gamedata.Nb_tour}")
 
 	# Info Entête
@@ -145,9 +146,10 @@ def turnend(gamedata, classmap):
 def updateinterface(gamedata, classmap):
 	player = gamedata.list_lord[gamedata.playerid]
 	prod_g = player.prod_global()
-	classmap.tkvar_list[0].set(f"Ressource : {player.nb_ressource}+{prod_g[1]}")
-	classmap.tkvar_list[1].set(f"Argent : {player.nb_money}+{prod_g[1]}")
-	classmap.tkvar_list[2].set(f"Bonheur: {player.global_joy}")
+	salaryarmy = player.total_salaryarmy()
+	classmap.tkvar_list[0].set(f"Ressource : {player.nb_ressource} ({prod_g[1] - salaryarmy[1]})")
+	classmap.tkvar_list[1].set(f"Argent : {player.nb_money} ({prod_g[0] - salaryarmy[0]})")
+	classmap.tkvar_list[2].set(f"Bonheur: {int(player.global_joy)}%")
 	classmap.tkvar_list[3].set(f"Tour N°: {gamedata.Nb_tour}")
 
 ######################### Menu Vue Globale #########################
@@ -180,13 +182,13 @@ def globalviewmenu(gamedata, classmap, option):
 	# ------------------
 
 	# Window de la fenêtre
-	window_global_view = tkinter.Frame(classmap.framecanvas, height = option.heightWindow, width = option.widthWindow)
+	window_global_view = tkinter.Frame(classmap.framecanvas, height = option.heightWindow, width = option.widthWindow, padx = 25, pady = 25)
 	window_global_view.place(x = (option.widthWindow/5), y = (option.heightWindow/10))
+	# , padx = 25, pady = 25
 	player = gamedata.list_lord[gamedata.playerid]
 
 	frame_global_view = tkinter.Frame(window_global_view)
 	frame_global_view.grid()
-
 
 	# Affichage des Village
 	# legend
@@ -211,7 +213,8 @@ def globalviewmenu(gamedata, classmap, option):
 
 	# Séparateur
 	i += 1
-	tkinter.Label(frame_global_view, text = "-----------------").grid(row = i, column = 0)
+	for j in range(6):
+		tkinter.Label(frame_global_view, text = "-----------------").grid(row = i, column = j)
 	i += 1
 	#########
 
@@ -237,7 +240,8 @@ def globalviewmenu(gamedata, classmap, option):
 
 	# Séparateur
 	i += 1
-	tkinter.Label(frame_global_view, text = "-----------------").grid(row = i, column = 0)
+	for j in range(6):
+		tkinter.Label(frame_global_view, text = "-----------------").grid(row = i, column = j)
 	i += 1
 	#########
 
@@ -251,13 +255,12 @@ def globalviewmenu(gamedata, classmap, option):
 	i += 1
 	for vassal in player.vassal:
 		j = 0
-		for ele in (vassal.lordname, vassal.power, len(vassal.fief), vassal.prod_global()[1],vassal.prod_global()[0]):
+		for ele in (vassal.lordname, vassal.power, len(vassal.fief), 0, vassal.prod_global()[1], vassal.prod_global()[0]):
 			tkinter.Label(frame_global_view, text = ele).grid(row = i, column = j)
 			j += 1
 		i += 1
 
 	i += 1
-	print(".winfo_depth:",window_global_view.winfo_depth())
 
 	# Bouton pour quitter le menu
 	Button_exit = tkinter.Button(frame_global_view, text= "Quitter", command = lambda: destroyglobalviewmenu(window_global_view))
@@ -476,8 +479,20 @@ def buttoncreatearmy(gamedata, classmap, option, lc_interface_army):
 	# On vérifie que le joueur possède les ressource nécessaire pour recruter 1 Soldata
 	if player.verifcost(2,2) == True:
 		gamedata.log.printinfo("Le Joueur Créer une armée")
+
+		village = player.fief[0]
+		# On vérifie qu'il n'y a pas déjà une armée à cette position
+		x = village.x
+		y = village.y
+		inpos = False
+		for army in player.army:
+			if (army.x == x) and (army.y == y):
+				inpos = True
+		if inpos == True:
+			x = x+1
+
 		# On créer la nouvelle armée
-		player.createarmy(player.fief[0])
+		player.createarmy(village.name, x, y)
 		# On ajoute 1 Soldat
 		player.sub_money(2)
 		player.sub_ressource(2)
@@ -1135,7 +1150,7 @@ def collect_taxes_village(gamedata, classmap, village, type_tax, frame, tkvar_li
 			roturier.pay_tax_ressource(player)
 		tax = calculate_tax_village(village)
 		# On update l'interface
-		tkvar_list[1].set(f"Collecter {tax[1]} écus")
+		tkvar_list[1].set(f"Collecter {tax[1]} ressource")
 	# On update l'entête
 	updateinterface(gamedata, classmap)
 
@@ -1479,28 +1494,46 @@ def showpathfinding(event, gamedata, classmap, option, army):
 
 	# On calcul la meilleur trajectoire
 	sequ = affichage.pathfinding(gamedata, classmap, option,[army.x, army.y], coord1, 45)
-	#sequ = affichage.brensenham([army.x, army.y], coord1)
 
 	# On détruit la précédante trajectoire afficher
 	event.widget.delete("path")
 
 	ts = gamedata.tuilesize
+
 	# On affiche la trajectoire
 	move = army.moveturn
 	turn = 0
 	color = "green"
-	for cases in sequ:
-		#On calcule la tuile à partir des coord Map
-		idtuile = cases[0]+(option.mapx*cases[1])
-		if (move - classmap.listmap[idtuile].movementcost) >= 0:
-			move -= classmap.listmap[idtuile].movementcost
-			classmap.mapcanv.create_line((cases[0]*ts), (cases[1]*ts), (cases[0]*ts)+ts, (cases[1]*ts)+ts, width = 2, tags = "path", fill = color)
+	i = 0
+	lensequ = len(sequ)
+	while i < (lensequ-1):
+		# On place l'oval à la dernière coord
+		if i+1 == (lensequ-1):
+			classmap.mapcanv.create_oval((sequ[i][0]*ts), (sequ[i][1]*ts), (sequ[i][0]*ts)+ts, (sequ[i][1]*ts)+ts, width = 2, tags = "path", outline = color)
+			classmap.mapcanv.create_text((sequ[i][0]*ts)+ts/2, (sequ[i][1]*ts)+ts/2, tags = "path", text = turn, fill = color)
 		else:
-			turn += 1
-			move = army.moveturn
-			color = "red"
-			classmap.mapcanv.create_oval((cases[0]*ts), (cases[1]*ts), (cases[0]*ts)+ts, (cases[1]*ts)+ts, width = 2, tags = "path", outline = color)
-			classmap.mapcanv.create_text((cases[0]*ts)+ts/2, (cases[1]*ts)+ts/2, tags = "path", text = turn, fill = color)
+			#On calcule la tuile à partir des coord Map
+			idtuile = sequ[i][0]+(option.mapx*sequ[i][1])
+			idtuile2 = sequ[i+1][0]+(option.mapx*sequ[i+1][1])
+			if color == "green":
+				if(move - classmap.listmap[idtuile2].movementcost) < 0:
+					classmap.mapcanv.create_oval((sequ[i][0]*ts), (sequ[i][1]*ts), (sequ[i][0]*ts)+ts, (sequ[i][1]*ts)+ts, width = 2, tags = "path", outline = color)
+					classmap.mapcanv.create_text((sequ[i][0]*ts)+ts/2, (sequ[i][1]*ts)+ts/2, tags = "path", text = turn, fill = color)
+					color = "red"
+					move = army.moveturn
+				else:
+					move -= classmap.listmap[idtuile].movementcost	
+			else:
+				if (move - classmap.listmap[idtuile].movementcost) >= 0:
+					move -= classmap.listmap[idtuile].movementcost	
+				else:
+					turn += 1
+					move = army.moveturn
+					classmap.mapcanv.create_oval((sequ[i][0]*ts), (sequ[i][1]*ts), (sequ[i][0]*ts)+ts, (sequ[i][1]*ts)+ts, width = 2, tags = "path", outline = color)
+					classmap.mapcanv.create_text((sequ[i][0]*ts)+ts/2, (sequ[i][1]*ts)+ts/2, tags = "path", text = turn, fill = color)
+
+			classmap.mapcanv.create_line((sequ[i][0]*ts), (sequ[i][1]*ts), (sequ[i+1][0]*ts), (sequ[i+1][1]*ts), width = 2, tags = "path", fill = color)
+		i += 1
 
 def startsequencemoveunit(event, gamedata, classmap, option, army):
 	##################
