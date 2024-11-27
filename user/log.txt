@@ -1,93 +1,189 @@
-[00:29:55]Info: Initialisation log terminé
-[00:29:55]Info: 1200x1200+150+150
-[00:29:55]Info: Initialisation de l'application terminé
-[00:29:56]Info: taille écran x,y: 1440, 900
-[00:29:56]Info: Taille de la Frame du Canvas: 1, 1
-[00:29:56]Info: Taille de la Frame du top: 1, 1
-[00:29:56]Info: Taille de la Frame du bas: 1, 1
-[00:29:56]Info: Taille du Canvas:1, 1
-[00:29:56]Info: coord0: ,[820, 760]
-[00:29:56]Info: coord1: ,[920, 860]
-[00:29:56]Info: coord0: ,[200, 1760]
-[00:29:56]Info: coord1: ,[300, 1860]
-[00:29:56]Info: coord0: ,[400, 1800]
-[00:29:56]Info: coord1: ,[500, 1900]
-[00:29:56]Info: coord0: ,[1520, 40]
-[00:29:56]Info: coord1: ,[1620, 140]
-[00:29:56]Info: coord0: ,[420, 720]
-[00:29:56]Info: coord1: ,[520, 820]
-[00:29:56]Info: coord0: ,[520, 1700]
-[00:29:56]Info: coord1: ,[620, 1800]
-[00:29:56]Info: coord0: ,[1260, 340]
-[00:29:56]Info: coord1: ,[1360, 440]
-[00:29:56]Info: coord0: ,[1380, 1880]
-[00:29:56]Info: coord1: ,[1480, 1980]
-[00:29:56]Info: coord0: ,[580, 940]
-[00:29:56]Info: coord1: ,[680, 1040]
-[00:29:56]Info: déplacement de x,y: , 270.0, 450.0
-[00:29:57]Info: Player hit end of turn button
-[00:29:57]Info: tour de: lord Ó Haodha, 1
-[00:29:57]Info: tour de: lord Llewellyn, 2
-[00:29:57]Info: tour de: lord Tomar, 3
-[00:29:57]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
-[00:29:57]Info: On éxécute toute les actions qui reste en 0
-[00:29:57]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
-[00:29:57]Info: Toute les piles actions ont était déplacer fin de eotactionfile
-[00:29:57]Info: file action après fin de tour: []
-[00:29:59]Info: entre dans un état interface_recruit_army
-[00:30:00]Info: Le Joueur Créer une armée
-[00:30:01]Info: On quitte l'état interface_recruit_army
-[00:30:02]Info: Player hit end of turn button
-[00:30:02]Info: tour de: lord Ó Haodha, 1
-[00:30:02]Info: tour de: lord Llewellyn, 2
-[00:30:02]Info: tour de: lord Tomar, 3
-[00:30:02]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
-[00:30:02]Info: On éxécute toute les actions qui reste en 0
-[00:30:02]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
-[00:30:02]Info: Toute les piles actions ont était déplacer fin de eotactionfile
-[00:30:02]Info: file action après fin de tour: []
-[00:30:03]Info: Player hit end of turn button
-[00:30:03]Info: tour de: lord Ó Haodha, 1
-[00:30:03]Info: tour de: lord Llewellyn, 2
-[00:30:03]Info: tour de: lord Tomar, 3
-[00:30:04]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
-[00:30:04]Info: On éxécute toute les actions qui reste en 0
-[00:30:04]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
-[00:30:04]Info: Toute les piles actions ont était déplacer fin de eotactionfile
-[00:30:04]Info: file action après fin de tour: []
-[00:30:04]Info: Player hit end of turn button
-[00:30:05]Info: tour de: lord Ó Haodha, 1
-[00:30:05]Info: tour de: lord Llewellyn, 2
-[00:30:05]Info: tour de: lord Tomar, 3
-[00:30:05]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
-[00:30:05]Info: On éxécute toute les actions qui reste en 0
-[00:30:05]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
-[00:30:05]Info: Toute les piles actions ont était déplacer fin de eotactionfile
-[00:30:05]Info: file action après fin de tour: []
-[00:30:06]Info: Player hit end of turn button
-[00:30:06]Info: tour de: lord Ó Haodha, 1
-[00:30:06]Info: tour de: lord Llewellyn, 2
-[00:30:06]Info: tour de: lord Tomar, 3
-[00:30:06]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
-[00:30:06]Info: On éxécute toute les actions qui reste en 0
-[00:30:06]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
-[00:30:06]Info: Toute les piles actions ont était déplacer fin de eotactionfile
-[00:30:06]Info: file action après fin de tour: []
-[00:30:08]Info: Player hit end of turn button
-[00:30:08]Info: tour de: lord Ó Haodha, 1
-[00:30:08]Info: tour de: lord Llewellyn, 2
-[00:30:08]Info: tour de: lord Tomar, 3
-[00:30:08]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
-[00:30:08]Info: On éxécute toute les actions qui reste en 0
-[00:30:08]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
-[00:30:08]Info: Toute les piles actions ont était déplacer fin de eotactionfile
-[00:30:08]Info: file action après fin de tour: []
-[00:30:09]Info: Player hit end of turn button
-[00:30:10]Info: tour de: lord Ó Haodha, 1
-[00:30:10]Info: tour de: lord Llewellyn, 2
-[00:30:10]Info: tour de: lord Tomar, 3
-[00:30:10]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
-[00:30:10]Info: On éxécute toute les actions qui reste en 0
-[00:30:10]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
-[00:30:10]Info: Toute les piles actions ont était déplacer fin de eotactionfile
-[00:30:10]Info: file action après fin de tour: []
+[17:47:04]Info: Initialisation log terminé
+[17:47:04]Info: 1200x1200+150+150
+[17:47:04]Info: Initialisation de l'application terminé
+[17:47:05]Info: taille écran x,y: 1440, 900
+[17:47:05]Info: Taille de la Frame du Canvas: 1, 1
+[17:47:05]Info: Taille de la Frame du top: 1, 1
+[17:47:05]Info: Taille de la Frame du bas: 1, 1
+[17:47:05]Info: Taille du Canvas:1, 1
+[17:47:05]Info: coord0: ,[1300, 1400]
+[17:47:05]Info: coord1: ,[1400, 1500]
+[17:47:05]Info: coord0: ,[1600, 980]
+[17:47:05]Info: coord1: ,[1700, 1080]
+[17:47:05]Info: coord0: ,[820, 1440]
+[17:47:05]Info: coord1: ,[920, 1540]
+[17:47:05]Info: coord0: ,[420, 220]
+[17:47:05]Info: coord1: ,[520, 320]
+[17:47:05]Info: coord0: ,[1360, 460]
+[17:47:05]Info: coord1: ,[1460, 560]
+[17:47:05]Info: coord0: ,[1840, 500]
+[17:47:05]Info: coord1: ,[1940, 600]
+[17:47:05]Info: coord0: ,[1540, 1440]
+[17:47:05]Info: coord1: ,[1640, 1540]
+[17:47:05]Info: coord0: ,[60, 520]
+[17:47:05]Info: coord1: ,[160, 620]
+[17:47:05]Info: coord0: ,[1200, 1780]
+[17:47:05]Info: coord1: ,[1300, 1880]
+[17:47:05]Info: déplacement de x,y: , 750.0, 1090.0
+[17:47:07]Info: coord de la tuile 0,0 Canvas: , [10.0, 10.0]
+[17:47:07]Info: coordonnées window de la souris: , 1353, 1458
+[17:47:07]Info: 1
+[17:47:07]Info: déplacement de x,y: , 2100.0, 2540.0
+[17:47:07]Info: taille Atlas: 5
+[17:47:09]Info: entre dans un état interface_recruit_army
+[17:47:11]Info: Le Joueur Créer une armée
+[17:47:12]Info: On quitte l'état interface_recruit_army
+[17:47:13]Info: Player hit end of turn button
+[17:47:13]Info: tour de: lord Warde, 1
+[17:47:13]Info: tour de: lord Ó Caoim, 2
+[17:47:13]Info: tour de: lord Mccoy, 3
+[17:47:13]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
+[17:47:13]Info: On éxécute toute les actions qui reste en 0
+[17:47:13]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
+[17:47:13]Info: Toute les piles actions ont était déplacer fin de eotactionfile
+[17:47:13]Info: file action après fin de tour: []
+[17:47:13]Info: félicitation, Ame(17) et Dola(28) ont donné naissance à Dola
+[17:47:13]Info: félicitation, Tephy(16) et Naom(30) ont donné naissance à Teàrlac
+[17:47:13]Info: félicitation, Gauwis Son(19) et Wysta(18) ont donné naissance à Wulf
+[17:47:13]Info: félicitation, Wysta(22) et Nilid(28) ont donné naissance à Gibso
+[17:47:13]Info: félicitation, Dobharc(25) et Teàrlac(21) ont donné naissance à Còmha
+[17:47:13]Info: félicitation, Teàrlac(16) et Ælfsta(17) ont donné naissance à Dola
+[17:47:13]Info: félicitation, Wysta(23) et Sigewear(29) ont donné naissance à Ealasai
+[17:47:14]Info: Player hit end of turn button
+[17:47:14]Info: tour de: lord Warde, 1
+[17:47:14]Info: tour de: lord Ó Caoim, 2
+[17:47:14]Info: tour de: lord Mccoy, 3
+[17:47:14]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
+[17:47:14]Info: On éxécute toute les actions qui reste en 0
+[17:47:14]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
+[17:47:14]Info: Toute les piles actions ont était déplacer fin de eotactionfile
+[17:47:14]Info: file action après fin de tour: []
+[17:47:14]Info: félicitation, Wulfsig(24) et Ame(18) ont donné naissance à Gibso
+[17:47:14]Info: félicitation, Sigewear(20) et Gauwis Son(20) ont donné naissance à Gràinn
+[17:47:14]Info: félicitation, Scotaid(27) et Eadbur(28) ont donné naissance à Frici
+[17:47:14]Info: félicitation, Concha(19) et Wulf(22) ont donné naissance à Teàrlac
+[17:47:14]Info: félicitation, Concha(18) et Dobharc(19) ont donné naissance à Teàrlac
+[17:47:14]Info: Player hit end of turn button
+[17:47:14]Info: tour de: lord Warde, 1
+[17:47:14]Info: tour de: lord Ó Caoim, 2
+[17:47:14]Info: tour de: lord Mccoy, 3
+[17:47:15]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
+[17:47:15]Info: On éxécute toute les actions qui reste en 0
+[17:47:15]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
+[17:47:15]Info: Toute les piles actions ont était déplacer fin de eotactionfile
+[17:47:15]Info: file action après fin de tour: []
+[17:47:15]Info: félicitation, Concha(20) et Wulf(23) ont donné naissance à Eada
+[17:47:15]Info: félicitation, Concha(19) et Dobharc(20) ont donné naissance à Aithn
+[17:47:15]Info: félicitation, Langle(18) et Cyn(21) ont donné naissance à Beorn
+[17:47:15]Info: félicitation, Wysta(25) et Cyn(27) ont donné naissance à Sigewear
+[17:47:15]Info: Player hit end of turn button
+[17:47:15]Info: tour de: lord Warde, 1
+[17:47:15]Info: tour de: lord Ó Caoim, 2
+[17:47:15]Info: tour de: lord Mccoy, 3
+[17:47:15]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
+[17:47:15]Info: On éxécute toute les actions qui reste en 0
+[17:47:15]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
+[17:47:15]Info: Toute les piles actions ont était déplacer fin de eotactionfile
+[17:47:15]Info: file action après fin de tour: []
+[17:47:15]Info: félicitation, Gauwis Son(22) et Wysta(21) ont donné naissance à Ælfsta
+[17:47:15]Info: félicitation, Sigewear(25) et Ealasai(29) ont donné naissance à Beorn
+[17:47:15]Info: félicitation, Dobharc(28) et Teàrlac(24) ont donné naissance à Dobharc
+[17:47:16]Info: Player hit end of turn button
+[17:47:16]Info: tour de: lord Warde, 1
+[17:47:16]Info: tour de: lord Ó Caoim, 2
+[17:47:16]Info: tour de: lord Mccoy, 3
+[17:47:16]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
+[17:47:16]Info: On éxécute toute les actions qui reste en 0
+[17:47:16]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
+[17:47:16]Info: Toute les piles actions ont était déplacer fin de eotactionfile
+[17:47:16]Info: file action après fin de tour: []
+[17:47:16]Info: félicitation, Tephy(20) et Langle(21) ont donné naissance à Frici
+[17:47:16]Info: félicitation, Gauwis Son(23) et Wysta(22) ont donné naissance à Concha
+[17:47:16]Info: félicitation, Ælfsta(21) et Gauwis Son(22) ont donné naissance à Tephy
+[17:47:16]Info: félicitation, Langle(20) et Cyn(23) ont donné naissance à Gràinn
+[17:47:16]Info: Player hit end of turn button
+[17:47:17]Info: tour de: lord Warde, 1
+[17:47:17]Info: tour de: lord Ó Caoim, 2
+[17:47:17]Info: tour de: lord Mccoy, 3
+[17:47:17]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
+[17:47:17]Info: On éxécute toute les actions qui reste en 0
+[17:47:17]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
+[17:47:17]Info: Toute les piles actions ont était déplacer fin de eotactionfile
+[17:47:17]Info: file action après fin de tour: []
+[17:47:17]Info: félicitation, Dola(23) et Sigewear(24) ont donné naissance à Gauwis Son
+[17:47:17]Info: félicitation, Concha(22) et Dobharc(23) ont donné naissance à Langle
+[17:47:17]Info: Player hit end of turn button
+[17:47:17]Info: tour de: lord Warde, 1
+[17:47:17]Info: tour de: lord Ó Caoim, 2
+[17:47:17]Info: tour de: lord Mccoy, 3
+[17:47:17]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
+[17:47:17]Info: On éxécute toute les actions qui reste en 0
+[17:47:17]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
+[17:47:17]Info: Toute les piles actions ont était déplacer fin de eotactionfile
+[17:47:17]Info: file action après fin de tour: []
+[17:47:17]Info: félicitation, Teàrlac(27) et Teàrlac(22) ont donné naissance à Aere
+[17:47:17]Info: félicitation, Ælfsta(23) et Gauwis Son(24) ont donné naissance à Eadbur
+[17:47:18]Info: Player hit end of turn button
+[17:47:18]Info: tour de: lord Warde, 1
+[17:47:18]Info: tour de: lord Ó Caoim, 2
+[17:47:18]Info: tour de: lord Mccoy, 3
+[17:47:18]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
+[17:47:18]Info: On éxécute toute les actions qui reste en 0
+[17:47:18]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
+[17:47:18]Info: Toute les piles actions ont était déplacer fin de eotactionfile
+[17:47:18]Info: file action après fin de tour: []
+[17:47:18]Info: félicitation, Sigewear(29) et Wysta(29) ont donné naissance à Ealasai
+[17:47:18]Info: félicitation, Ælfsta(24) et Gauwis Son(25) ont donné naissance à Naom
+[17:47:21]Info: entre dans un état interface_village
+[17:47:21]Info: ('label', 'village', 'tuile', '79', '74', 'current')
+[17:47:21]Info: 7479
+[17:47:21]Info: déplacement de x,y: , 2580.0, 2600.0
+[17:47:21]Info: On affiche l'interface du village
+[17:47:21]Info: Domhan an Tea
+[17:47:23]Info: On quitte l'état interface_village
+[17:47:24]Info: Player hit end of turn button
+[17:47:24]Info: tour de: lord Warde, 1
+[17:47:24]Info: tour de: lord Ó Caoim, 2
+[17:47:24]Info: tour de: lord Mccoy, 3
+[17:47:24]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
+[17:47:24]Info: On éxécute toute les actions qui reste en 0
+[17:47:24]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
+[17:47:24]Info: Toute les piles actions ont était déplacer fin de eotactionfile
+[17:47:24]Info: file action après fin de tour: []
+[17:47:24]Info: félicitation, Ame(25) et Tephy(24) ont donné naissance à Teàrlac
+[17:47:24]Info: félicitation, Langle(25) et Teàrlac(28) ont donné naissance à Dola
+[17:47:25]Info: entre dans un état interface_village
+[17:47:25]Info: ('label', 'village', 'tuile', '79', '74', 'current')
+[17:47:25]Info: 7479
+[17:47:25]Info: déplacement de x,y: , 2580.0, 2600.0
+[17:47:25]Info: On affiche l'interface du village
+[17:47:25]Info: Domhan an Tea
+[17:47:25]Info: On quitte l'état interface_village
+[17:47:27]Info: entre dans un état interface_army
+[17:47:28]Info: On quitte l'état interface_army
+[17:47:30]Info: entre dans un état interface_recruit_army
+[17:47:31]Info: On se déplace vers l'armée 
+[17:47:31]Info: déplacement de x,y: , 2100.0, 2540.0
+[17:47:34]Info: On quitte l'état interface_recruit_army
+[17:47:35]Info: Player hit end of turn button
+[17:47:35]Info: tour de: lord Warde, 1
+[17:47:35]Info: tour de: lord Ó Caoim, 2
+[17:47:35]Info: tour de: lord Mccoy, 3
+[17:47:36]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
+[17:47:36]Info: On éxécute toute les actions qui reste en 0
+[17:47:36]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
+[17:47:36]Info: Toute les piles actions ont était déplacer fin de eotactionfile
+[17:47:36]Info: file action après fin de tour: []
+[17:47:36]Info: félicitation, Langle(26) et Teàrlac(29) ont donné naissance à Nilid
+[17:47:36]Info: félicitation, Concha(26) et Dobharc(27) ont donné naissance à Bláthnai
+[17:47:36]Info: félicitation, Langle(25) et Cyn(28) ont donné naissance à Atho
+[17:47:36]Info: Player hit end of turn button
+[17:47:36]Info: tour de: lord Warde, 1
+[17:47:36]Info: tour de: lord Ó Caoim, 2
+[17:47:36]Info: tour de: lord Mccoy, 3
+[17:47:36]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
+[17:47:36]Info: On éxécute toute les actions qui reste en 0
+[17:47:36]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
+[17:47:36]Info: Toute les piles actions ont était déplacer fin de eotactionfile
+[17:47:36]Info: file action après fin de tour: []
+[17:47:36]Info: félicitation, Langle(27) et Teàrlac(30) ont donné naissance à Frici

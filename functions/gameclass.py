@@ -211,6 +211,15 @@ class Classlord:
 
 		return [prod_money, prod_ressource]
 
+	def total_pop(self):
+		####
+		# Methode qui retourne le nombre total de Pop
+		####
+		tpop = 0
+		for village in self.fief:
+			tpop += len(village.population)
+		return tpop
+
 	def total_salaryarmy(self):
 		r = 0
 		m = 0
@@ -287,7 +296,7 @@ class Classlord:
 		for army in self.army:
 			self.power += army.power
 
-	def endofturn(self):
+	def endofturn(self, gamedata):
 		#######
 		# Méthode fin de tour
 		#######
@@ -298,7 +307,7 @@ class Classlord:
 
 		# On appels la fin de tour pour les villages
 		for village in self.fief:
-			village.endofturn()
+			village.endofturn(gamedata)
 
 		# On demande au vassaux de payer la tax annuelle
 		for vassal in self.vassal:
@@ -334,8 +343,10 @@ class Classvillage:
 
 		self.border = 2
 
-	#pop: Classhuman	
 	def addpopulation(self, pop):
+		#####
+		# Method Pour ajouter un Roturier à la liste de population du village
+		#####
 		self.population += [pop]
 		# On incrémente le compteur de pop
 		if pop.role == "artisan":
@@ -357,6 +368,22 @@ class Classvillage:
 		# On créer le prêtre associé à l'église
 		self.priest = Classpriest(name)
 
+		# On applique la capacité du prêtre à la population du village
+		self.translateprietcapacity(self.priest.ability)
+
+
+	def translateprietcapacity(self, ability):
+		####
+		# Methode qui pour le Prêtre envoyait Applique un Malus ou un Bonus
+		####
+		# 2 capacité:
+		# - Bonus de Production de Ressource (+2) 	(Bonus_Ressource)
+		# - Bonus d'immigration				 		(Bonus_Immigration)
+		####
+		if ability == "Bonus_Ressoure":
+			# On augmente la production de tout les Roturiers
+			for pop in self.population:
+				pop.addcpbonus(2)
 
 	#lord: Classlord
 	def setlord(self, lord):
@@ -369,18 +396,65 @@ class Classvillage:
 	def setnamevillage(self, name):
 		self.name = name
 
-	def birthpop(self):
+	def testbirthpop(self, gamedata):
 		#######
 		# Method Pour Faire une Pop selon le niveau de bonheur 
 		#######
 		# Fait le tour de la population:
 		# 1°) Prend 2 Pop avec un Age entre 15 et 30 et fait une moyenne de leur Bonheur
-		# 2°) Utilise 
-		# 3°) 
+		# 2°) Lance un chiffre entre 0 et 100, on y ajoute le Bonheur Moyen du couple
+		# 3°) Si le chiffre atteint ou dépasse le Seuil(75) alors on créer une nouvelle pop
+		# On considère que la population est libertine
 		#######
 
+		# On recup la liste des couples possibles
+		lcouple = self.couplepossibility()
+		# On se balade dans les couples
+		for couple in lcouple:
+			# On calcule le bonheur
+			joy = (self.population[couple[0]].joy+self.population[couple[1]].joy)//2
+			# On recup un chiffre aléatoires
+			r = random.randrange(0,100)
+			# On y ajoute le bonheur
+			r += (joy-50)
+			# On vérifie que c'est au dessus du Seuil
+			if r >= 75:
+				# on créer une nouvelle pop
+				# Prend le Rang le plus faible des 2 parents
+				# Afin d'éviter une sur apparition des Artisan
+				if (self.population[couple[0]].role == "paysan") or (self.population[couple[1]].role == "paysan"):
+					pop = ClassRoturier(gamedata.randomnametype("Nom"), "paysan", True)
+				else:
+					pop = ClassRoturier(gamedata.randomnametype("Nom"), "artisan", True)
+				gamedata.log.printinfo(f"félicitation, {self.population[couple[0]].name}({self.population[couple[0]].age}) et {self.population[couple[1]].name}({self.population[couple[1]].age}) ont donné naissance à {pop.name}")
+				self.addpopulation(pop)
+					
 
-		pass
+	def couplepossibility(self):
+		#######
+		# Methode qui renvoit une liste des couples unique possible
+		#######
+		lcouple = []
+		# On se balade dans la populations
+		i = 0
+		lenpop = len(self.population)
+		while i < (lenpop -1):
+			# On verifie que la pop cible est dans la tranche d'âge nécessaire
+			if (self.population[i].age <= 30) and (self.population[i].age >= 15):
+				# On cherche pour le 2ième membre du couple
+				i2 = i+1
+				# tant qu'ont se balade dans la liste
+				while((i2 < lenpop) and ((self.population[i2].age > 30) or (self.population[i2].age < 15))):
+					i2 += 1
+				if i2 < lenpop:
+					lcouple += [[i,i2]]
+				# On incrémente à i la différence entre i2 et i +1
+				i += ((i2-i)+1)
+			else:
+				i += 1
+
+		return lcouple
+
 
 	def killpop(self, pop):
 		#######
@@ -389,7 +463,7 @@ class Classvillage:
 
 		# Les Ressources qu'il possédait sont Récupérer par le Seigneur
 		# Si le Village est dirigé par une Seigneur
-		if lord != 0:
+		if self.lord != 0:
 			self.lord.nb_money += pop.money
 			self.lord.nb_ressource += pop.ressource
 
@@ -425,15 +499,19 @@ class Classvillage:
 		self.global_joy = temp_joy/len(self.population)
 
 
-	def endofturn(self):
+	def endofturn(self, gamedata):
 		#######
 		# Méthode fin de tour
 		#######		
 		for pop in self.population:
 			pop.endofturn(self.lord)
 			if pop.deathiscoming() == True:
+				gamedata.log.printinfo(f"{pop.name} Meurt à l'age de {pop.age}")
 				self.killpop(pop)
 
+		# On gère les naissances
+		self.testbirthpop(gamedata)
+		# On update les infos
 		self.updateinfo()
 
 
@@ -545,17 +623,18 @@ class Classpriest:
 		self.ressource = 0
 		self.money = 0
 		self.joy = 50
-		self.aptitude = 0
-		self.getaptitude()
+		self.ability = 0
+		self.getability()
 
 	def setname(self, name):
 		self.name = name
 
 
-	def getaptitude():
+	def getability(self):
 		######
 		# Methode qui fournit aux Prêtre une Capacité Aléatoire Passive 
 		######
+		# r = random.randrange()
 		#self.aptitude = 
 
 		pass
@@ -563,6 +642,9 @@ class Classpriest:
 	def endofturn(self, lord):
 		#######
 		# Méthode fin de tour
+		#######
+		#
+		#
 		#######
 		pass
 
@@ -671,7 +753,7 @@ et des actions comme la production et le paiement des impôts.
 """
 class ClassRoturier:
 
-	def __init__(self, name, role:str):
+	def __init__(self, name, role:str, child:bool):
 		# On commence par définir les données de base
 		self.name = name
 		self.ressource = 1
@@ -679,12 +761,44 @@ class ClassRoturier:
 		self.joy = 50
 		# capacité de production
 		self.cp = 2
-		self.age = random.randrange(15,30)
+		self.cpbonus = 0
+		self.cpmalus = 0
+
+		if child == True:
+			self.age = 0
+		else:
+			self.age = random.randrange(15,30)
 		# On change selon le rôle données
 		self.role = role
 		if role == "artisan":
 			self.cp = 4
 			self.money = 5
+
+
+	def addcpbonus(self, bonus):
+		####
+		# Method pour ajouter un Bonus de Production
+		#####
+		self.cpbonus += bonus
+
+
+	def subcpbonus(self, bonus):
+		####
+		# Method pour retirer un Bonus de Production
+		#####
+		self.cpbonus -= bonus
+
+	def addcpmalus(self, malus):
+		####
+		# Method pour ajouter un malus de Production
+		#####
+		self.cpmalus += malus
+
+	def subcpmalus(self, malus):
+		####
+		# Method pour retirer un Malus de Production
+		#####
+		self.cpmalus -= malus
 
 
 
@@ -856,10 +970,10 @@ class ClassRoturier:
 
 		# 6°) On update son humeur selon ses besoins
 		# Si il n'a pas put se nourrir, le bonheur baisse
-		if self.ressource < 0:
+		if (self.ressource < 0)  and (self.joy > 0):
 			self.joy -= 10
 		# Sinon Si il à put se nourrir et qu'il à de la bouffe en réserve il est optimiste
-		elif self.ressource > 1:
+		elif (self.ressource > 1) and (self.joy < 100):
 			self.joy += 5
 		# Sinon rien ne change
 
@@ -867,6 +981,7 @@ class ClassRoturier:
 		self.age += 1
 
 		# 8°) Mort Possible Du Roturier
+		# Gérer au niveau du Village
 
 
 		print(f"{self.name} un {self.role} Possède à la fin du tour: {self.money} écu et {self.ressource} Ressource")

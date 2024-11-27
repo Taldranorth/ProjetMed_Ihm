@@ -43,6 +43,7 @@ from time import time
 #	- Faire la doc de ce qui a était fait
 #	- Réduire le lag lors de l'observation d'un grand groupe de cases
 #		--> Utilisation du processeurs importante
+#			--> Problème uniquement présent sur mac
 #
 #	- Refactoriser le Code
 #		--> Le Nettoyer
@@ -53,9 +54,6 @@ from time import time
 #
 #	Additif:
 #	- Landforme
-#	- Préparer Système de la Boucle Principale
-#	- Recup Texture.png des Batiment, Unités, Event, Blason
-#		--> Recup Image Event depuis CK 2 ou 3
 #	- Ajouter du Son
 #		--> https://stackoverflow.com/questions/28795859/how-can-i-play-a-sound-when-a-tkinter-button-is-pushed
 #
@@ -63,10 +61,6 @@ from time import time
 #		--> https://stackoverflow.com/questions/53418926/button-motion-animation-in-tkinter
 #			--> Semble très gourmand
 #				--> Trouver une solution plus performante
-#
-#	- Doit changer la carte pour remplacer l'utilisation des tags par des classes pour la tuile
-#		--> Doit changer tout ce qui utiliser les tags
-#		--> Vérifier le cout en perf et garder l'ancien système dans un coin au cas ou
 #
 #	- Changer tout les EXIT pour ajouter une fenêtre de confirmation
 #		--> Rappel de la dernière sauvegarde si >1 minute
@@ -153,17 +147,6 @@ from time import time
 # - Ajouter la prise de village et le combat d'armée à l'interface de déplacement d'armée
 #	--> Si souris sur armée ennemie alors affiche icône Combat
 #	--> Si souris sur village Ennemies alors affiche icône Pillage
-# 
-
-# - Fix le zoom au centre de la carte √ --> Repasser au zoom sur la souris
-# - Fix Pathfinding calcul des trajectoires hors de la map se qui fait crash le calcul de l'id de la tuile √
-# - Fix Brensenham, Oublié de mettre la dernière cases dans la liste des itinéraires √
-# - Ajouter Gestion Tax et production des enfants √
-# - Fix Zoom/Dezoom Linux √
-# - Fix Tax ressource qui se transforme en écus √
-# - Gestion du Bonheur √
-# - Mort √
-# - Prendre en compte de le salaire des Armées dans l'affichage de la prod par tour √
 
 # - Implémenter l'attaque d'armée dans le déplacement d'unité X
 #########################################################
@@ -183,9 +166,6 @@ from time import time
 # -> Fix Build Church
 #	--> test en permanence si on est dans l'état build
 #		--> Aucun retour quand on construit une église
-# -> Terminer State War
-#		--> Faire détruire l'interface declaration de guerre √
-#		--> Recalculer la position de l'interface
 # -> Terminer StateMovearmy
 # 	--> Permettre l'attaque d'un village √
 #		--> Afficher une Icône quand on à la souris dessus
@@ -199,7 +179,7 @@ from time import time
 # -> Doit tester la prise de Village
 # -> Doit tester l'attaque d'armée Adverse
 # -> Fix la possetion de multiple armé
-#	-->Fait pop aux alentour de la ville la nouvelle armée si la case de la ville est déjà occupé par une armée
+#	-->Faire poper aux alentour de la ville la nouvelle armée si la case de la ville est déjà occupé par une armée
 # -> Ajouter Bouton Pour annuler Si on déplace une armée mais que l'on veut annuler son déplacement au tour prochain
 # -> Rework Interface avec Grid
 #	--> Recruit Army √
@@ -208,6 +188,7 @@ from time import time
 #	--> GlobalViewMenu √
 #	--> War √
 #	--> Interface_Army
+#	--> Interface Village √
 
 #####
 # - Améliorer le calcul pour récuperer le village dans prises de village
@@ -223,26 +204,43 @@ from time import time
 # - Fix le clique de la trajectoire qui est bloquer par l'affichage du Pathfinding
 
 # - Fix différence click droit Mac/Linux
-# - Retour utilisateur Quand Action Impossible
-#
+# - Besoin d'un Retour utilisateur Quand Action Impossible
+
 # - Réaction au Bonheur
+# - Naissance de la Population
 #####
 
 ####
 # - Mettre en Place le Combat entre 2 armée
 # - Fix movetakevillage qui ne récupère pas à tout les coup le village voulu
+# - Retravailler Interface Village
+# - Retravailler Menu Jouer
+#	--> Doit Utiliser Grid
+#	--> Doit permettre de Définir les VIllages Indépendants
+#	--> Doit Afficher sur la minimap les villages de départs
+# - Graphe de Fin de Partie
+# 	--> Comment stocker les données des  différentes étapes ?
+#		--> Une liste qui contient en 0 le tour 0 avec les données des différents Seigneur ?
+#	--> Quoi stocker qui soit suffisament pertinent ?
+#		--> Ne pas stocker des données qui soit calculable
+
+
+# - Fix la Construction d'église qui tente d'entrée dans l'interface de Village
+#		--> Après c'est une erreur Inoffensif
 
 # - Refactoriser le Code
 # - Réorganiser le projet
+#		--> Déplacer les fonctions de Menu dans le fichier interface_menu.py
 #####
+
+
 
 ######## Fonctionnalité Principale à Implémenter
 # - Implémenter Event
 # - Capacité Prêtre
-# - Renouvellement de la population
-# - Gestion de la population par case
 # - Implémenter Résolutions Dynamique
 ########
+
 
 ######## Fonctionnalité Majeur Secondaire
 # - Implémenter IA
@@ -250,7 +248,7 @@ from time import time
 # - Implémenter Options
 # - Implémenter marché
 # - Implémenter Landforme
-# - Terminer GlobalViewMenu
+# - Gestion de la population par case
 ########
 
 ######## Fonctionnalité Secondaire
@@ -270,7 +268,7 @@ from time import time
 
 #### Landforme ####
 # --> Utiliser Octaves Pour générer groupe de Terrain
-# --> Repasser un coup de Noise map dans le groupe de Terrain
+# --> Repasser un coup de Noise map dans le groupe de Terrain qui vient définir les tuiles
 #
 #
 

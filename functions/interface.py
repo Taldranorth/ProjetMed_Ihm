@@ -255,7 +255,7 @@ def globalviewmenu(gamedata, classmap, option):
 	i += 1
 	for vassal in player.vassal:
 		j = 0
-		for ele in (vassal.lordname, vassal.power, len(vassal.fief), 0, vassal.prod_global()[1], vassal.prod_global()[0]):
+		for ele in (vassal.lordname, vassal.power, len(vassal.fief), vassal.total_pop(), vassal.prod_global()[1], vassal.prod_global()[0]):
 			tkinter.Label(frame_global_view, text = ele).grid(row = i, column = j)
 			j += 1
 		i += 1
@@ -594,6 +594,9 @@ def button_recruit(gamedata, classmap, tkvar_list, army, unit):
 			tkvar_list[1].set(army.knight.name)
 			player.sub_money(10)
 			player.sub_ressource(10)
+		# On update l'affichage de l'armée
+		if gamedata.searchtexturetypeindico(army.texture) != "knight":
+			affichage.printupdatearmy(gamedata, classmap, army)
 
 	elif unit == "soldier":
 		if player.verifcost(2,2) == True:
@@ -602,9 +605,6 @@ def button_recruit(gamedata, classmap, tkvar_list, army, unit):
 			player.sub_money(2)
 			player.sub_ressource(2)			
 
-	# On update l'armée
-	if gamedata.searchtexturetypeindico(army.texture) != "knight":
-		affichage.printupdatearmy(gamedata, classmap, army)
 
 	# On update l'interface de l'armée
 	tkvar_list[0].set(army.power)
@@ -985,24 +985,13 @@ def triggerbuildchurch(event, gamedata, classmap, option):
 	############
 	# Fonction pour construire une église dans un village
 	############
-	print(classmap.mapcanv.gettags("current"))
 
-	# On récup l'id de la tuile ou se trouve le village
-	# Si c'est le label
-	if classmap.mapcanv.gettags("current")[0] == "label":
-		x = int(classmap.mapcanv.gettags("current")[3])
-		y = int(classmap.mapcanv.gettags("current")[4])
-	# Si c'est l'image
-	elif classmap.mapcanv.gettags("current")[0] == "village":
-		x = int(classmap.mapcanv.gettags("current")[4])
-		y = int(classmap.mapcanv.gettags("current")[5])
-	# Si c'est la tuile
-	elif classmap.mapcanv.gettags("current")[0] == "img":
-		x = int(classmap.mapcanv.gettags("current")[4])
-		y = int(classmap.mapcanv.gettags("current")[5])
+	# On recup les coord de la tuile:
+	coord = classmap.mapcanv.coords("current")
+	# On les transforme en coord map
+	coordmap = moveview.coordcanvastomap(gamedata, classmap, option, coord)
 
-
-	idvillage = x + (option.mapx * y)
+	idvillage = moveview.coordmaptoidtuile(option, coordmap)
 	village = classmap.listmap[idvillage].village
 	player = gamedata.list_lord[gamedata.playerid]
 
@@ -1010,10 +999,29 @@ def triggerbuildchurch(event, gamedata, classmap, option):
 	if village in player.fief:
 		# On Verfie que le joueur possède l'argent nécessaire
 		if player.verifcost(10,10):
+			# On construit
 			village.buildchurch(gamedata.randomnametype("Nom"))
+			# On retire l'argent
 			player.sub_money(10)
 			player.sub_ressource(10)
-		# On retire le carrer 
+			# On update l'interface
+			updateinterface(gamedata, classmap)
+			# On retire le carrer
+			deltuilecoordcanvas(gamedata, classmap, option, "buildchurch", [coord[0] - (gamedata.tuilesize//2), coord[1] - (gamedata.tuilesize//2)])
+
+def deltuilecoordcanvas(gamedata, classmap, option, tag, coord):
+	############
+	# Fonction pour détruire une tuile du Canvas avec le tag sélectionner
+	############
+	# On recup la liste des tuile
+	ltuile = classmap.mapcanv.find_withtag(tag)
+	# On se balade dedans
+	for tuile in ltuile:
+		coordtuile = classmap.mapcanv.coords(tuile)
+		if (coordtuile[0] == coord[0]) and (coordtuile[1] == coord[1]):
+			classmap.mapcanv.delete(tuile)
+			return
+
 ################################################  Tax  #################################################
 
 def statetax(gamedata, classmap, option):
@@ -1356,48 +1364,59 @@ def villageinterface(event, gamedata, classmap, option):
 		gamedata.log.printinfo("On affiche l'interface du village")
 		# On fait apparaitre l'interface informative
 		# On commence par créer le frame qui vient stocker les infos
-		frame_info = tkinter.Frame(classmap.framecanvas)
+		window_info = tkinter.Frame(classmap.framecanvas)
 		# On créer la frame qui vient contenir les actions possibles
-		frame_button = tkinter.Frame(classmap.framecanvas)
-		frame_info.place(x = (option.widthWindow/4), y = (option.heightWindow*0.2))
-		frame_button.place(x = (option.widthWindow/1.5), y = (option.heightWindow*0.2))
+		window_button = tkinter.Frame(classmap.framecanvas)
+		window_info.place(x = (option.widthWindow/4), y = (option.heightWindow*0.2))
+		window_button.place(x = (option.widthWindow/1.5), y = (option.heightWindow*0.2))
+
+		frame_info = tkinter.Frame(window_info)
+		frame_info.grid()
+
+		frame_button = tkinter.Frame(window_button)
+		frame_button.grid()
+
 
 		# On créer les fenêtre
 		# Demade un placement précis
-		canvas_window_list = [frame_info, frame_button]
+		canvas_window_list = [window_info, window_button]
+
+		# On recup l'objet village
+		village = classmap.listmap[idmapvillage].village
 
 		# Si le village appartient au joueur on affiche l'interface Button
 		# On vérifie que l'objet village est présent dans la liste de fief du joueur
-		if classmap.listmap[idmapvillage].village in gamedata.list_lord[gamedata.playerid].fief:
+		if village in gamedata.list_lord[gamedata.playerid].fief:
 			# On fait apparaitre les boutons
 			button_build_church = tkinter.Button(frame_button, text = "Construire Église")
 			button_immigration = tkinter.Button(frame_button, text = "Immigration")
 			button_tax = tkinter.Button(frame_button, text = "Impôt")
-			button_build_church.pack(side="top")
-			button_immigration.pack(side="top")
-			button_tax.pack(side="top")
+
+			button_build_church.grid(row = 0, column = 0)
+			button_immigration.grid(row = 1, column = 0)
+			button_tax.grid(row = 2, column = 0)
 
 
 		# On affiche les infos voulu
 		# Le nom du village
-		tkinter.Label(frame_info, text = classmap.listmap[idmapvillage].village.name).pack(side = "top")
-		gamedata.log.printinfo(f"{classmap.listmap[idmapvillage].village.name}")
+		tkinter.Label(frame_info, text = village.name).grid(row = 0, column = 0)
+		gamedata.log.printinfo(f"{village.name}")
 		# Le seigneur du village
 		if (classmap.listmap[idmapvillage].village.lord == 0):
-			tkinter.Label(frame_info, text = "lord").pack(side = "top")
+			tkinter.Label(frame_info, text = "Indépendant").grid(row = 1, column = 0)
 		else:
-			tkinter.Label(frame_info, text = classmap.listmap[idmapvillage].village.lord.lordname).pack(side = "top")
+			tkinter.Label(frame_info, text = f"Seigneur: {village.lord.lordname}").grid(row = 1, column = 0)
 		# Le prêtre du village
-		if classmap.listmap[idmapvillage].village.priest == 0:
-			tkinter.Label(frame_info, text = "priest").pack(side = "top")
+		if village.priest == 0:
+			tkinter.Label(frame_info, text = "Prêtre: Aucun").grid(row = 2, column = 0)
 		else:
-			tkinter.Label(frame_info, text = classmap.listmap[idmapvillage].village.priest.name).pack(side = "top")
+			tkinter.Label(frame_info, text = f"Prêtre: {village.priest.name}").grid(row = 2, column = 0)
 		# Le bonheur global
-		tkinter.Label(frame_info, textv = classmap.listmap[idmapvillage].village.global_joy).pack(side = "top")
+		tkinter.Label(frame_info, text = f"Humeur: {village.global_joy}%").grid(row = 3, column = 0)
 		# les ressources du village
-		tkinter.Label(frame_info, text = classmap.listmap[idmapvillage].village.prod_ressource).pack(side = "top")
+		tkinter.Label(frame_info, text = f"Produit: {village.prod_ressource} ressource").grid(row = 4, column = 0)
 		# l'argent du village
-		tkinter.Label(frame_info, text = classmap.listmap[idmapvillage].village.prod_money).pack(side = "top")
+		tkinter.Label(frame_info, text = f"Produit: {village.prod_money} écus").grid(row = 5, column = 0)
 
 		######################################################################
 

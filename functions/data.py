@@ -352,7 +352,7 @@ class ClassGameData:
 		# Renvoit 1 si l'état à était changer
 		####################
 		if self.state != 0:
-			self.log.printerror(f"déjà dans un état {self.state}")
+			self.log.printerror(f"tente d'entrée dans {newstate}, hors déjà dans un état {self.state}")
 			return False
 		else:
 			self.state = newstate
@@ -377,7 +377,7 @@ class ClassGameData:
 
 		# On appelle les méthode des instances des sous-classes lord
 		for lord in self.list_lord:
-			lord.endofturn()
+			lord.endofturn(self)
 
 		self.Nb_tour += 1
 
