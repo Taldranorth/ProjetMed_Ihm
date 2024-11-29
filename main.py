@@ -216,7 +216,7 @@ from time import time
 # - Retravailler Interface Village
 # - Retravailler Menu Jouer
 #	--> Doit Utiliser Grid
-#	--> Doit permettre de Définir les VIllages Indépendants
+#	--> Doit permettre de Définir les Villages Indépendants
 #	--> Doit Afficher sur la minimap les villages de départs
 # - Graphe de Fin de Partie
 # 	--> Comment stocker les données des  différentes étapes ?
@@ -231,6 +231,40 @@ from time import time
 # - Refactoriser le Code
 # - Réorganiser le projet
 #		--> Déplacer les fonctions de Menu dans le fichier interface_menu.py
+
+
+# - Mettre en place un level Log Erreur
+# - LVL 0: On affiche seulement les critique dans la Console
+# - LVL 1: On affiche les critiques et les important dans la Console
+# - LVL 2: On affiche tout dans la Console
+
+# - Changer la tax des IA pour être plus précise
+# 	--> Si il manque des Ressource alors va chercher des Ressources
+#	--> Si il manque des Écus alors va chercher des écus
+
+# - Au niveau Économique séparé la valeur des Ressource et des Écus
+
+# - Rendre aléatoire le placement 
+#	--> Pré-Remplir une liste de coord entre [0-5] ou il va tirer aléatoirement ?
+
+# - Implémenter IA en Plusieurs Partie:
+#	--> Tax √
+#	--> Immigration √
+#	--> Église √
+#	--> Construction Village √
+#	--> Création d'armée √
+# 	--> Recrutement d'armée √
+#	--> Vassalisation 
+#	--> Guerre
+#	--> Déplacement d'armée
+#	--> Prise de Village
+# - Ensuite Implémenter les Différents type de Comportement
+
+
+# - Normaliser en (Ressource,Argent)
+# - Terminer searchposition
+# - Faire fonction qui fusionne prod_global() et total_salaryarmy()
+
 #####
 
 
@@ -243,7 +277,6 @@ from time import time
 
 
 ######## Fonctionnalité Majeur Secondaire
-# - Implémenter IA
 # - Implémenter Sauvegarde et Chargement de Données
 # - Implémenter Options
 # - Implémenter marché
@@ -993,6 +1026,7 @@ def notplayerturn(gamedata, classmap, option):
 def endofturn(gamedata, classmap, option):
 	gamedata.semaphore = True
 	gamedata.log.printinfo("Il ne reste plus de Seigneur qui doit Jouer, Fin du tour")
+	#print("lplaines: ",classmap.lplaines)
 	gamedata.Nb_toplay = 0
 	# On vérifie que l'on ne soit pas en état de mettre fin aux jeu:
 	if victoryordefeat(gamedata, classmap, option) == False:

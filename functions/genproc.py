@@ -126,7 +126,9 @@ def buildvillagepossible(options, Classmap, idtuile):
         return False
     elif (xidtuile == (options.mapx-1)) or (yidtuile == (options.mapy-1)):
         return False
-
+    # On vérifie que c'est une plaines
+    if Classmap.listmap[idtuile].type != "plains":
+        return False
 
     for x in range(-5,5):
         for y in range(-5,5):
@@ -135,6 +137,7 @@ def buildvillagepossible(options, Classmap, idtuile):
             #On verifie qu'il n'y a pas de villages dans un rayon de 2 cases
             if idtemp in Classmap.lvillages:
                 return False
+
     return True
 
 

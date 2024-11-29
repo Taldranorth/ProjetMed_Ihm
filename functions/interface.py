@@ -63,11 +63,12 @@ def gameinterface(gamedata, classmap, option, win):
 	player = gamedata.list_lord[gamedata.playerid]
 	prod_g = player.prod_global()
 	salaryarmy = player.total_salaryarmy()
+	efficiency = player.total_efficiency()
 
 	# On les set
 	# Merde c'est pas dynamique
-	classmap.tkvar_list[0].set(f"Ressource : {player.nb_ressource} ({prod_g[1] - salaryarmy[1]})")
-	classmap.tkvar_list[1].set(f"Argent : {player.nb_money} ({prod_g[0] - salaryarmy[0]})")
+	classmap.tkvar_list[0].set(f"Ressource : {player.nb_ressource} ({efficiency[0]})")
+	classmap.tkvar_list[1].set(f"Argent : {player.nb_money} ({efficiency[1]})")
 	classmap.tkvar_list[2].set(f"Bonheur: {int(player.global_joy)}%")
 	classmap.tkvar_list[3].set(f"Tour N°: {gamedata.Nb_tour}")
 
@@ -145,10 +146,9 @@ def turnend(gamedata, classmap):
 
 def updateinterface(gamedata, classmap):
 	player = gamedata.list_lord[gamedata.playerid]
-	prod_g = player.prod_global()
-	salaryarmy = player.total_salaryarmy()
-	classmap.tkvar_list[0].set(f"Ressource : {player.nb_ressource} ({prod_g[1] - salaryarmy[1]})")
-	classmap.tkvar_list[1].set(f"Argent : {player.nb_money} ({prod_g[0] - salaryarmy[0]})")
+	efficiency = player.total_efficiency()
+	classmap.tkvar_list[0].set(f"Ressource : {player.nb_ressource} ({efficiency[0]})")
+	classmap.tkvar_list[1].set(f"Argent : {player.nb_money} ({efficiency[1]})")
 	classmap.tkvar_list[2].set(f"Bonheur: {int(player.global_joy)}%")
 	classmap.tkvar_list[3].set(f"Tour N°: {gamedata.Nb_tour}")
 
@@ -481,18 +481,11 @@ def buttoncreatearmy(gamedata, classmap, option, lc_interface_army):
 		gamedata.log.printinfo("Le Joueur Créer une armée")
 
 		village = player.fief[0]
-		# On vérifie qu'il n'y a pas déjà une armée à cette position
-		x = village.x
-		y = village.y
-		inpos = False
-		for army in player.army:
-			if (army.x == x) and (army.y == y):
-				inpos = True
-		if inpos == True:
-			x = x+1
-
+		# On recup la 1er position libre
+		coord = searchposition(gamedata, classmap, option, village)
 		# On créer la nouvelle armée
-		player.createarmy(village.name, x, y)
+		player.createarmy(village.name, coord[0], coord[1])
+		classmap.listmap[idvillage].setarmyinplace(lord.army[lastarmy])
 		# On ajoute 1 Soldat
 		player.sub_money(2)
 		player.sub_ressource(2)
@@ -503,6 +496,28 @@ def buttoncreatearmy(gamedata, classmap, option, lc_interface_army):
 		lc_interface_army.insert(tkinter.END, player.army[lastarmy].name)
 		# On update l'interface entête
 		updateinterface(gamedata, classmap)
+
+def searchposition(gamedata, classmap, option, village):
+	#####
+	# Fonction qui renvoit la 1er position non occupé par une armée pour le village sélectionner Dans un Rayon de 1
+	# Renvoit 0 si il ne trouve pas
+	#####
+	xvill = village.x
+	yvill = village.y
+	idvillage = moveview.coordmaptoidtuile(option, [xvill, yvill])
+	# On teste sur la case du village
+	if classmap.listmap[idvillage].armyintuile == 0:
+		return [village.x, village.y]
+
+	# on test dans un rayon de 1 cases autour du village
+	for x in range(-1,1):
+		for y in range(-1,1):
+			idtuile = moveview.coordmaptoidtuile(option, [xvill + x, yvill + y])
+			if classmap.listmap[idtuile].armyintuile == 0:
+				return [xvill + x, yvill + y]
+
+
+	return 0
 
 def interfacerecruit(event, gamedata, classmap, option, frame_interface_army):
 	################
@@ -884,7 +899,7 @@ def buildvillage(event, gamedata, classmap, option):
 		# On ajoute l'instance de vilalge à la liste de fief du lord
 		player.addfief(classmap.listmap[idtuile].village)
 		# On rempli le village de pop
-		genproc.genpopvillage(gamedata, classmap, option, classmap.listmap[idtuile].village, 2, 2)
+		genproc.genpopvillage(gamedata, classmap, option, classmap.listmap[idtuile].village, 8, 2)
 
 		# On retire les ressource 
 
@@ -1085,7 +1100,7 @@ def calculate_tax_vassal(vassal):
 	if (tax[0] == 0) or (tax[1] == 0):
 		taxtemp = [0,0]
 		for village in vassal.fief:
-			taxtemp2 = calculate_tax_village(village)
+			taxtemp2 = village.calculate_tax_village()
 			taxtemp[0] += taxtemp2[0]
 			taxtemp[1] += taxtemp2[1]
 		if tax[0] == 0:
@@ -1120,7 +1135,7 @@ def taxcentervillage(event, gamedata, classmap, option, wit):
 	frame_tax_collect.grid(row = 0, column = 1)
 	# On affiche plus d'info sur la populations
 
-	tax = calculate_tax_village(village)
+	tax = village.calculate_tax_village()
 	tkvar_money = tkinter.StringVar()
 	tkvar_money.set(f"Collecter {tax[0]} écus")
 	tkvar_ressource = tkinter.StringVar()
@@ -1147,7 +1162,7 @@ def collect_taxes_village(gamedata, classmap, village, type_tax, frame, tkvar_li
 		for roturier in village.population:
 			# ON les faits payer leur taxes
 			roturier.pay_tax_money(player)
-		tax = calculate_tax_village(village)
+		tax = village.calculate_tax_village()
 		# On update l'interface
 		tkvar_list[0].set(f"Collecter {tax[0]} écus")
 	# Si ressource on tax les ressources
@@ -1156,9 +1171,11 @@ def collect_taxes_village(gamedata, classmap, village, type_tax, frame, tkvar_li
 		for roturier in village.population:
 			# ON les faits payer leur taxes
 			roturier.pay_tax_ressource(player)
-		tax = calculate_tax_village(village)
+		tax = village.calculate_tax_village()
 		# On update l'interface
 		tkvar_list[1].set(f"Collecter {tax[1]} ressource")
+	# On update les infos du village
+	village.updateinfo()
 	# On update l'entête
 	updateinterface(gamedata, classmap)
 

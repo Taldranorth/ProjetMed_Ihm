@@ -209,7 +209,7 @@ class Classlord:
 			prod_ressource += village.prod_ressource
 
 
-		return [prod_money, prod_ressource]
+		return [prod_ressource, prod_money]
 
 	def total_pop(self):
 		####
@@ -228,7 +228,14 @@ class Classlord:
 			r += salary[1]
 			m += salary[0]
 
-		return [m, r]
+		return [r, m]
+
+
+	def total_efficiency(self):
+		prod_g = self.prod_global()
+		total_salary = self.total_salaryarmy()
+		efficency = [prod_g[0]- total_salary[0], prod_g[1]- total_salary[1]]
+		return efficency
 
 
 	def tax(self, lord):
@@ -421,7 +428,7 @@ class Classvillage:
 			if r >= 75:
 				# on créer une nouvelle pop
 				# Prend le Rang le plus faible des 2 parents
-				# Afin d'éviter une sur apparition des Artisan
+				# Afin d'éviter une sur-apparition des Artisan
 				if (self.population[couple[0]].role == "paysan") or (self.population[couple[1]].role == "paysan"):
 					pop = ClassRoturier(gamedata.randomnametype("Nom"), "paysan", True)
 				else:
@@ -482,6 +489,21 @@ class Classvillage:
 		# On détruit l'objet
 		del pop
 
+	def calculate_tax_village(self):
+		######
+		# Methode qui renvoit la tax que peut payer le village
+		######
+		tax_m = 0
+		tax_r = 0
+		# On se balade dans la liste des villageois
+		for roturier in self.population:
+			tax_m += roturier.tax_money()
+			tax_r += roturier.tax_ressource()
+
+		return [tax_m, tax_r]
+
+
+
 	def updateinfo(self):
 		#######
 		# Method pour mettre à jour automatiquement les données du village
@@ -513,6 +535,9 @@ class Classvillage:
 		self.testbirthpop(gamedata)
 		# On update les infos
 		self.updateinfo()
+
+
+
 
 
 # Classe qui vient définir une armée
@@ -817,12 +842,12 @@ class ClassRoturier:
 		# Si le roturier peut payer en Argent il paye en argent
 		if self.money > (10 * tax):
 			m = self.tax_money()
-			print(f"{self.name} un {self.role} à payer: {m} écu")
+			#print(f"{self.name} un {self.role} à payer: {m} écu")
 			lord.nb_money += m
 			self.money -= m
 		else:
 			r = self.tax_ressource()
-			print(f"{self.name} un {self.role} à payer: {r} Ressource")
+			#print(f"{self.name} un {self.role} à payer: {r} Ressource")
 			lord.nb_ressource += r
 			self.ressource -= r
 
@@ -878,10 +903,10 @@ class ClassRoturier:
 		# Methode pour produire la capacité de production en ressource
 		####
 		if self.age > 8:
-			print(f"{self.name} un {self.role} à produit: {self.cp} ressource")
+			#print(f"{self.name} un {self.role} à produit: {self.cp} ressource")
 			self.ressource += self.cp
 		else:
-			print(f"{self.name} un {self.role} à produit: {1} ressource")
+			#print(f"{self.name} un {self.role} à produit: {1} ressource")
 			self.ressource += 1			
 
 	def sell(self):
@@ -896,7 +921,7 @@ class ClassRoturier:
 			self.ressource -= i
 			# On ajoute à argent
 			self.money += i
-			print(f"{self.name} un {self.role}: gagne {i} argent")
+			#print(f"{self.name} un {self.role}: gagne {i} argent")
 
 	def buy(self):
 		####
@@ -947,7 +972,7 @@ class ClassRoturier:
 		# 7°) On augmente l'age
 		# 8°) Il peut Mourir
 		#######
-		print(f"{self.name} un {self.role} Possède aux début du tour: {self.money} écu et {self.ressource} Ressource")
+		#print(f"{self.name} un {self.role} Possède aux début du tour: {self.money} écu et {self.ressource} Ressource")
 
 
 		# 1°) Produit la CP
@@ -984,7 +1009,7 @@ class ClassRoturier:
 		# Gérer au niveau du Village
 
 
-		print(f"{self.name} un {self.role} Possède à la fin du tour: {self.money} écu et {self.ressource} Ressource")
-		print(f"{self.name} un {self.role} à {self.age} ans et est {self.joy}% heureux")
+		#print(f"{self.name} un {self.role} Possède à la fin du tour: {self.money} écu et {self.ressource} Ressource")
+		#print(f"{self.name} un {self.role} à {self.age} ans et est {self.joy}% heureux")
 
 

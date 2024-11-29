@@ -236,6 +236,7 @@ def sequencemoveunit(gamedata, classmap, option, army, coordObjectif):
 	lmovement = pathfinding(gamedata, classmap, option, [army.x, army.y], coordObjectif, 45)
 	gamedata.log.printinfo(f"lmovement: {lmovement}")
 
+	idtuile0 = moveview.coordmaptoidtuile(option, [army.x, army.y])
 	# Une fois la liste rempli ont éxécute autant que l'on peut
 	i = 0
 	idtuile = lmovement[i][0]+(option.mapx*lmovement[i][1])
@@ -243,6 +244,8 @@ def sequencemoveunit(gamedata, classmap, option, army, coordObjectif):
 		idtuile = lmovement[i][0]+(option.mapx*lmovement[i][1])
 		moveunit(gamedata, classmap, option, army, lmovement[i])
 		i += 1
+	classmap.listmap[idtuile0].removearmyinplace()
+	classmap.listmap[idtuile].setarmyinplace(army)
 
 	# Si la liste n'est pas vide on ajoute dans la file des actions la Sequence de movement 
 	if i != len(lmovement):
@@ -256,7 +259,7 @@ def moveunit(gamedata, classmap, option, army, coord):
 	##################
 
 	# On calcul l'id de la tuile
-	idtuile = coord[0]+(option.mapx*coord[1])
+	idtuile = moveview.coordmaptoidtuile(option, coord)
 
 	# On calcul les nouvelles coord
 	x = coord[0] - army.x

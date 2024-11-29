@@ -620,10 +620,13 @@ class Classtuiles:
 	def __init__(self, texture_name, type, x, y, canvasobject):
 		# N° de la tuile, défini par classmap
 		self.id = 0
-		#Position de la tuile
+		# Position de la tuile
 		self.x = x
 		self.y = y
 		self.type = type
+		# Si une armée est présente sur la tuile
+		self.armyintuile = 0
+
 		# nom du fichier texture associé
 		self.texture_name = texture_name
 		self.background = "plains.png"
@@ -670,6 +673,12 @@ class Classtuiles:
 
 	def setpossesor(self, possesor):
 		self.possesor = possesor
+
+	def setarmyinplace(self, army):
+		self.armyintuile = army
+
+	def removearmyinplace(self):
+		self.armyintuile = 0
 
 	def createvillage(self, gamedata):
 		# On créer un nouveau village que l'on stocke
@@ -722,13 +731,6 @@ def assetLoad():
 	####################
 	# Si on concidère que le cout en mémoire est trop important on peu remplacer le fichier ouvert par le chemin du fichier
 	# Ex: Oceans: ["Ocean.png", "/Asset/terrain/Ocean/Ocean.png"]
-	#
-	#
-	####################
-	#
-	# À modifier pour prendre en compte des Sous-Dossiers
-	#
-	#
 	####################
 
 	#On se place dans le dossier Asset puis dans texture
