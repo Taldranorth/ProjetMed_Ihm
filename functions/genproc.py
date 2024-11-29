@@ -126,7 +126,9 @@ def buildvillagepossible(options, Classmap, idtuile):
         return False
     elif (xidtuile == (options.mapx-1)) or (yidtuile == (options.mapy-1)):
         return False
-
+    # On vérifie que c'est une plaines
+    if Classmap.listmap[idtuile].type != "plains":
+        return False
 
     for x in range(-5,5):
         for y in range(-5,5):
@@ -135,20 +137,50 @@ def buildvillagepossible(options, Classmap, idtuile):
             #On verifie qu'il n'y a pas de villages dans un rayon de 2 cases
             if idtemp in Classmap.lvillages:
                 return False
+
     return True
 
 
 
-def genpopvillage(option, classmap, gamedata, idvillage, nbpop):
+def genpopidvillage(gamedata, classmap, option, idvillage, nbpaysan, nbartisan):
     ####################
-    # Fonction pour remplir un village de villageois
+    # Fonction pour ajouter de la pop dans un Village à partir de son ID
     ####################
-    for x in range(nbpop):
-        # On créer le villageois
-        pop = gameclass.ClassHuman(gamedata.randomnametype("Nom"))
+
+    village = classmap.listmap[idvillage].village
+
+    # On ajoute les paysans
+    for x in range(nbpaysan):
+        # On créer le paysan
+        pop = gameclass.ClassRoturier(gamedata.randomnametype("Nom"), "paysan", False)
         # On l'ajoute
-        classmap.listmap[idvillage].village.addpopulation(pop)
+        village.addpopulation(pop)
+
+    # On ajoute les Artisans
+    for x in range(nbartisan):
+        # On créer l'artisan
+        pop = gameclass.ClassRoturier(gamedata.randomnametype("Nom"), "artisan", False)
+        # On l'ajoute
+        village.addpopulation(pop)
         
+def genpopvillage(gamedata, classmap, option, village, nbpaysan, nbartisan):
+    ####################
+    # Fonction pour ajouter de la pop dans un Village à partir de l'objet
+    ####################
+
+    # On ajoute les paysans
+    for x in range(nbpaysan):
+        # On créer le paysan
+        pop = gameclass.ClassRoturier(gamedata.randomnametype("Nom"), "paysan", False)
+        # On l'ajoute
+        village.addpopulation(pop)
+
+    # On ajoute les Artisans
+    for x in range(nbartisan):
+        # On créer l'artisan
+        pop = gameclass.ClassRoturier(gamedata.randomnametype("Nom"), "artisan", False)
+        # On l'ajoute
+        village.addpopulation(pop)
 
 
 

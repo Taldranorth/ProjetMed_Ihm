@@ -93,8 +93,6 @@ def moveviewz(event, gamedata, classmap, option):
 
 	gamedata.log.printinfo(f"coord de la tuile 0,0 Canvas: , {classmap.mapcanv.coords(classmap.listmap[0].canvastuiles)}")
 
-
-
 	####################\ 1°) \####################
 
 	mousex = int(event.widget.canvasx(event.x))
@@ -110,9 +108,11 @@ def moveviewz(event, gamedata, classmap, option):
 	#Pour éviter les différence entre windows et Mac ont normalise delta
 	#Doit prendre en compte linux -_-
 	gamedata.log.printinfo(f"{event.delta}")
-	if event.delta <= 0:
+
+
+	if (event.delta <= 0) or (event.num == 5):
 		delta = -2
-	else:
+	if (event.delta > 0) or (event.num == 4):
 		delta = 2
 	############################################################
 
@@ -143,8 +143,6 @@ def moveviewz(event, gamedata, classmap, option):
 		x = x*(-1/(delta))
 	#On recup les nouvelles coord du pointeur de la souris
 	coordcanv = event.widget.coords(idtuile)
-	# SI on veut recup depuis le centre de l'écran
-	#coordcanv = [event.widget.canvasx(option.widthWindow//2), event.widget.canvasx((option.heightWindow*0.6)//2)]
 	centerviewcanvas(gamedata, classmap, option, coordcanv)
 	# On change la taille des tuiles stocker dans les données globaux
 	gamedata.newsizetuile(x)
@@ -162,16 +160,20 @@ def moveviewz(event, gamedata, classmap, option):
 			texture = "settlement.png"
 		# Si c'est une armée
 		elif "army" in event.widget.gettags(imgid):
-			coord = [int(event.widget.gettags(imgid)[3]), int(event.widget.gettags(imgid)[4])]
+			# On recup les coordonnées canvas
+			coord = classmap.mapcanv.coords(imgid)
+			# On transforme en coordonnées Map
+			coord = coordcanvastomap(gamedata, classmap, option, coord)
+			# On cherche l'objet armée
+			# On se balade parmi les Seigneurs
 			for lord in range(gamedata.Nb_lord):
 				army = gamedata.coordtoarmy(lord, coord)
-				if army != 0:
-					print(texture)
+				# Si la fonction n'a pas renvoyé False on a trouvé l'armée
+				if army != False:
 					texture = army.texture
 		else:
 			# Sinon On vient recup la texture stocker dans la Classtuile
 			texture = classmap.listmap[imgid-1].texture_name
-
 
 		# On change la texture lié
 		event.widget.itemconfigure(imgid, image = gamedata.atlas[texture].image)
@@ -179,22 +181,29 @@ def moveviewz(event, gamedata, classmap, option):
 	gamedata.log.printinfo(f"taille Atlas: {len(gamedata.atlas)}")
 	############################################################
 
-def moveviewzcenter(gamedata, classmap, option):
+def moveviewzcenter(gamedata, classmap, option, delta):
 	####################
-	# Version simplifié pour dezoom au centre de la carte
+	# Version simplifié pour zoom/dezoom au centre de la carte
 	#####################
 
 	####################\ 1°) \####################
 	# On recup la taille d'une tuile et définit le delta
 	x = gamedata.tuilesize
-	delta = -2
+	if delta < 0:
+		delta = -2
+	else:
+		delta = 2
 	############################################################
 
 	####################\ 2°) \####################
 	# DeZoom
 	canvasgooriginewindow(classmap)
-	classmap.mapcanv.scale("tuile", 0, 0, -1/(delta), -1/(delta))
-	x = x*(-1/(delta))
+	if delta < 0:
+		classmap.mapcanv.scale("tuile", 0, 0, -1/(delta), -1/(delta))
+		x = x*(-1/(delta))
+	else:
+		classmap.mapcanv.scale("tuile", 0, 0, (delta), (delta))
+		x = x*delta
 	print(x)
 	# Place au centre de l'écran
 	coordcanv = [classmap.mapcanv.canvasx(option.widthWindow//2), classmap.mapcanv.canvasx((option.heightWindow*0.6)//2)]
@@ -214,11 +223,20 @@ def moveviewzcenter(gamedata, classmap, option):
 			texture = "settlement.png"
 		# Si c'est une armée
 		elif "army" in classmap.mapcanv.gettags(imgid):
-			coord = [int(classmap.mapcanv.gettags(imgid)[3]), int(classmap.mapcanv.gettags(imgid)[4])]
+			# On recup les coordonnées canvas
+			coord = classmap.mapcanv.coords(imgid)
+			# On transforme en coordonnées Map
+			coord = coordcanvastomap(gamedata, classmap, option, coord)
+			# On cherche l'objet armée
+			# On se balade parmi les Seigneurs
 			for lord in range(gamedata.Nb_lord):
 				army = gamedata.coordtoarmy(lord, coord)
-				if army != 0:
+				# Si la fonction n'a pas renvoyé False on a trouvé l'armée
+				if army != False:
 					texture = army.texture
+
+
+
 		else:
 			# Sinon On vient recup la texture stocker dans la Classtuile
 			texture = classmap.listmap[imgid-1].texture_name
@@ -235,7 +253,6 @@ def centerviewcanvas(gamedata, classmap, option, coordcanv):
 	##################
 	# Fonction pour centrer la vue sur les coordonnées canvas donnés
 	##################
-
 
 	# On se place à l'origine
 	canvasgooriginewindow(classmap)
@@ -293,28 +310,33 @@ def coordcanvastomap(gamedata, classmap, option, coord):
 
 	return [xmap, ymap]
 
-def coordmaptocanvas(gamedata, classmap, option, coord):
+def coordmaptocanvas(gamedata, classmap, option, coord, decalage:bool):
 	##################
-	# Fonction pour traduire les coordonnées map en coordonnées du canvas √
+	# Fonction pour traduire les coordonnées map en coordonnées du canvas centrer ou non √
 	##################
 
-	gamedata.log.printinfo(f"Pour coord map: {coord[0]}, {coord[1]}")
+	#gamedata.log.printinfo(f"Pour coord map: {coord[0]}, {coord[1]}")
 
 	ts = gamedata.tuilesize
 
-	# calcul de base
-	xcanvas = (coord[0]*ts)+(ts/2)
-	ycanvas = (coord[1]*ts)+(ts/2)
-	gamedata.log.printinfo(f"coordcanv: {xcanvas}, {ycanvas}")
+	if decalage == True:
+		# calcul de base
+		xcanvas = (coord[0]*ts)+(ts/2)
+		ycanvas = (coord[1]*ts)+(ts/2)
+	else:
+		xcanvas = (coord[0]*ts)
+		ycanvas = (coord[1]*ts)		
+	#gamedata.log.printinfo(f"coordcanv: {xcanvas}, {ycanvas}")
 
 	return [xcanvas, ycanvas]
 
 def coordmaptoidtuile(option, coord):
 	##################
-	# Fonction pour traduire les coordonnées map en idtuile
+	# Fonction pour traduire les coordonnées map en idtuile √
 	##################
 
 	idtuile = coord[0] + (option.mapx*coord[1])
 	return idtuile
+
 
 ##########################################################################################

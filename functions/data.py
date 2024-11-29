@@ -112,9 +112,10 @@ class ClassGameData:
 		self.endturn = False
 		# Variable bool qui vient représenter un sémaphore qui vient bloquer le process quand un ia ou la fin du tour est actuellement lancé
 		self.semaphore = False
-
 		# Variable bool pour indiquer que la partie est terminé
 		self.is_finished = False
+		# Variable qui vient contenir en Fin de jeu si c'est une Victoire ou une défaite
+		self.victory = ""
 
 		# Variable qui vient contenir l'id du lord qui représente le seigneur
 		self.playerid = 0
@@ -123,11 +124,15 @@ class ClassGameData:
 		# Dico des Assets
 		self.dico_file = assetLoad()
 		# Dico des noms
-		self.dico_name = loadnamedico(os.getcwd()+"/Asset/name.txt")
+		self.dico_name = loadnamedico(os.getcwd()+"/asset/name.txt")
 		# Atlas
 		self.atlas = {}
 		# Label Frame Atlas
 		self.lframe = 0
+
+		# Dico contenant les effets des capacité des prêtres
+		self.dico_priest_ability = {}
+
 
 		# Variable qui vient contenir la file des actions
 		# liste de Piles
@@ -153,7 +158,6 @@ class ClassGameData:
 
 		for x in range(3):
 			self.createlord()
-
 
 	#tuile: Classtuiles
 	def addtuile(self, tuile):
@@ -270,10 +274,42 @@ class ClassGameData:
 		self.list_lord += [gameclass.Classlord(("lord "+self.randomnametype("Surnom")), False, self.Nb_lord)]
 		self.Nb_lord += 1
 
+	def lordnametoid(self, name):
+		#####
+		# Fonction qui renvoie l'id du seigneur dont le nom a été donné
+		#####
+		# On se balade dans la liste des Seigneurs
+		for lord in self.list_lord:
+			# Si on trouve un seigneur qui à le même nom on renvoit son ID
+			if lord.lordname == name:
+				return lord.idlord
+		# Si on ne trouve pas on Renvoit False
+		return False
+
+
 	def deletelord(self, idlord):
 		name = self.list_lord[idlord].lordname[5:]
+		# On récup l'objet
+		lord = self.list_lord[idlord]
+
+		# On reconstruit la liste de Seigneur
+		# On ne peut avoir au minimum que 2 seigneurs avec le Joueur en position 0:
+		if len(self.list_lord) > 2:
+			i = idlord
+			# On reconstruit la liste sans le seigneurs
+			self.list_lord = self.list_lord[:i] + self.list_lord[i+1:]
+			# On change les id des seigneurs qui était après lui
+			while i<len(self.list_lord):
+				self.list_lord[i].idlord = i
+				i += 1
+		else:
+			self.list_lord = [self.list_lord[0]]
+
 		# On détruit le seigneur
-		del self.list_lord[idlord]
+		del lord
+		# On réduit le compteur de seigneur
+		self.Nb_lord -= 1
+
 		# On libérer le nom utilisé
 		# Comment parcourir efficacement ?
 		i = 0
@@ -285,14 +321,14 @@ class ClassGameData:
 		#######
 		# Fonction qui pour les coord map données et l'idlord renvoit l'objet army du lord
 		# Return l'objet army si il trouve
-		# Sinon 0
+		# Sinon False
 		#######
 		for army in self.list_lord[idlord].army:
 			if (army.x == coord[0]) and (army.y == coord[1]):
 				#self.log.printinfo(f"armée trouvé pour x: {army.x} et y: {army.y}")
 				return army
 		#self.log.printerror(f"armée non trouvé pour coord x: {coord[0]} et y: {coord[1]}")
-		return 0
+		return False
 
 
 
@@ -316,7 +352,7 @@ class ClassGameData:
 		# Renvoit 1 si l'état à était changer
 		####################
 		if self.state != 0:
-			self.log.printerror(f"déjà dans un état {self.state}")
+			self.log.printerror(f"tente d'entrée dans {newstate}, hors déjà dans un état {self.state}")
 			return False
 		else:
 			self.state = newstate
@@ -336,10 +372,14 @@ class ClassGameData:
 		# Méthode appeler pour mettre fin au tour
 		################
 
-		self.Nb_tour += 1
-		#On appele les méthode des instances des sous class lord
+		# On vide la file des actions pour le tour 0:
+		self.eotactionfile()
+
+		# On appelle les méthode des instances des sous-classes lord
 		for lord in self.list_lord:
-			lord.endofturn()
+			lord.endofturn(self)
+
+		self.Nb_tour += 1
 
 	def exit(self):
 		################
@@ -349,7 +389,7 @@ class ClassGameData:
 
 		######################## Methode Queue des Actions	########################
 
-	def addactionlist(self, action, turn):
+	def addactionfile(self, action, turn):
 		################
 		# Méthode appeler quand ont veut ajouter une action qui se produira dans x tour
 		# Définit les variables stocker dans action
@@ -366,34 +406,61 @@ class ClassGameData:
 			for x in range((turn - len(self.actionlist))+1):
 				#print("file action :",self.actionlist)
 				self.actionlist += [[]]
-		#print("file action tour 0:", self.actionlist[0])
-		#print("file action tour 1:", self.actionlist[1])
 		# On ajoute l'action dans la turn pile à la dernière place
 		self.actionlist[turn] += [action]
-		#print("file action après ajout:",self.actionlist)
+		self.log.printinfo(f"file action après ajout: {self.actionlist}")
 
-	def removeactionlist(self, action, turn):
+	def actionfileeval(self, action):
 		################
-		# Méthode appeler quand ont veut retirer une action
+		# Méthode appeler par eotactionfile pour évaluer l'action selon une liste de fonction connu
 		################
-		pass
 
-	def eotactionlist(self):
+		if action[0] == "sequencemoveunit":
+			affichage.sequencemoveunit(action[1], action[2], action[3], action[4], action[5])
+
+
+
+	def removeactionfile(self, action, turn):
+		################
+		# Méthode appeler quand ont veut retirer une action dans la turn file
+		################
+
+		# On cherche la pos de l'action dans la file
+		i = 0
+		while(i < len(self.actionlist[turn])):
+			if self.actionlist[turn][i] == action:
+				#Une fois que l'on à la position on change la list pour retirer l'action
+				actionlist[turn] = actionlist[turn][:i] + actionlist[turn][i+1:]
+				# On s'ejecte
+				return
+
+	def eotactionfile(self):
 		################
 		# Méthode appeler à la fin du tour
 		################
 		# - Doit fix le comportement pour que les actions soit accompli si elles peuvent être accompli
 		#	--> On éxécute donc autant d'actions que l'on peut 
-		#		--> C'elle qui ne sont pas éxécuter sont garder dans la pile 0
+		#		--> Les actions qui correspondent à des sequences se réapelle elle même et se réajoute eux même dans la file
+		#			Si elles ne peuvent s'effectuer entierement
 
-		# On éxécute toute les actions en 0
-		for action in self.actionlist[0]:
-			eval(action)
 
-		# On déplace les piles vers la gauche 1->0, 2->1
-		i = 0
-		while i < len(self.actionlist):
-			self.actionlist[i] = self.actionlist[i+1]
+		self.log.printinfo("On éxécute toute les actions qui reste en 0")
+		if len(self.actionlist) > 1:
+			for action in self.actionlist[0]:
+				self.log.printinfo(f"action: {action}")
+				self.actionfileeval(action)
+		self.log.printinfo("Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2")
+		# Si la pile est supérieur à 1 il n'y a pas que la pile 0
+		if len(self.actionlist) > 1:
+			i = 0
+			while i < (len(self.actionlist)-1):
+				self.actionlist[i] = self.actionlist[i+1]
+				i += 1
+			self.actionlist[i] = []
+
+
+		self.log.printinfo("Toute les piles actions ont était déplacer fin de eotactionfile")
+		self.log.printinfo(f"file action après fin de tour: {self.actionlist}")
 
 	####################################################################################
 
@@ -417,6 +484,10 @@ class ClassOptions:
 		#Défintion de la fenêtre
 		self.widthWindow = 1200
 		self.heightWindow = 1200
+
+
+		#self.listResolutionWindow = []
+		#self.listResolutionWindow += 
 		# Définition de la carte
 		self.mapx = 100
 		self.mapy = 100
@@ -483,12 +554,14 @@ class Classmap:
 		self.framecanvas = 0
 		# Variable qui vient contenir le canvas de la map
 		self.mapcanv = 0
+		# Variable qui vient contenir les TK variable de l'entête
+		self.tkvar_list = []
 
 		#dico qui vient contenir les Classtuiles 
 		self.listmap = {}
 		self.nbtuile = 0
 
-		#Liste qui vient contenir les ids des:
+		#Liste qui vient contenir les idTuile des:
 		#	--> Villages
 		#	--> Plaines
 		self.lvillages = []
@@ -504,6 +577,13 @@ class Classmap:
 
 	def setlframecanvas(self, framecanvas):
 		self.framecanvas = framecanvas
+
+	def idtovillage(self, idvillage):
+		####################
+		# Fonction qui retoure l'objet village selon l'id de la tuile renvoyer
+		####################
+
+		return self.listmap[idvillage].village
 
 	def nametoid(self, name):
 		####################
@@ -540,10 +620,13 @@ class Classtuiles:
 	def __init__(self, texture_name, type, x, y, canvasobject):
 		# N° de la tuile, défini par classmap
 		self.id = 0
-		#Position de la tuile
+		# Position de la tuile
 		self.x = x
 		self.y = y
 		self.type = type
+		# Si une armée est présente sur la tuile
+		self.armyintuile = 0
+
 		# nom du fichier texture associé
 		self.texture_name = texture_name
 		self.background = "plains.png"
@@ -590,6 +673,12 @@ class Classtuiles:
 
 	def setpossesor(self, possesor):
 		self.possesor = possesor
+
+	def setarmyinplace(self, army):
+		self.armyintuile = army
+
+	def removearmyinplace(self):
+		self.armyintuile = 0
 
 	def createvillage(self, gamedata):
 		# On créer un nouveau village que l'on stocke
@@ -642,17 +731,10 @@ def assetLoad():
 	####################
 	# Si on concidère que le cout en mémoire est trop important on peu remplacer le fichier ouvert par le chemin du fichier
 	# Ex: Oceans: ["Ocean.png", "/Asset/terrain/Ocean/Ocean.png"]
-	#
-	#
-	####################
-	#
-	# À modifier pour prendre en compte des Sous-Dossiers
-	#
-	#
 	####################
 
 	#On se place dans le dossier Asset puis dans texture
-	pf = c_d+"/Asset/texture"
+	pf = c_d+"/asset/texture"
 	#print(pf)
 	#print(len(os.listdir()))
 	# On créer le Dico que l'on va renvoyer:

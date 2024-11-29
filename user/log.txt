@@ -1,13 +1,8 @@
-[18:17:33]Info: Initialisation log terminé
-[18:17:33]Info: 1200x1200+150+150
-[18:17:33]Info: Initialisation de l'application terminé
-[18:17:34]Info: taille écran x,y: 1440, 900
-[18:17:34]Info: Taille de la Frame du Canvas: 1, 1
-[18:17:34]Info: Taille de la Frame du top: 1, 1
-[18:17:34]Info: Taille de la Frame du bas: 1, 1
-[18:17:34]Info: Taille du Canvas:1, 1
-[18:17:36]Info: entre dans un état interface_war
-[18:17:36]Info: déplacement de x,y: , 0.0, 0.0
-[18:17:36]Info: taille Atlas: 5
-[18:17:36]Info: déplacement de x,y: , -100.0, 140.0
-[18:17:37]Info: On quitte l'état interface_war
+[18:47:20]Info: Initialisation log terminé
+[18:47:20]Info: 1200x1200+150+150
+[18:47:20]Info: Initialisation de l'application terminé
+[18:47:21]Info: taille écran x,y: 1366, 768
+[18:47:21]Info: Taille de la Frame du Canvas: 1, 1
+[18:47:21]Info: Taille de la Frame du top: 1, 1
+[18:47:21]Info: Taille de la Frame du bas: 1, 1
+[18:47:21]Info: Taille du Canvas:1, 1
