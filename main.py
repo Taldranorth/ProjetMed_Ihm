@@ -148,7 +148,6 @@ from time import time
 #	--> Si souris sur armée ennemie alors affiche icône Combat
 #	--> Si souris sur village Ennemies alors affiche icône Pillage
 
-# - Implémenter l'attaque d'armée dans le déplacement d'unité X
 #########################################################
 
 
@@ -244,35 +243,33 @@ from time import time
 
 # - Au niveau Économique séparé la valeur des Ressource et des Écus
 
-# - Rendre aléatoire le placement 
+# - Rendre aléatoire le placement des villages par l'Ia
 #	--> Pré-Remplir une liste de coord entre [0-5] ou il va tirer aléatoirement ?
 
-# - Implémenter IA en Plusieurs Partie:
-#	--> Tax √
-#	--> Immigration √
-#	--> Église √
-#	--> Construction Village √
-#	--> Création d'armée √
-# 	--> Recrutement d'armée √
-#	--> Vassalisation 
-#	--> Guerre
-#	--> Déplacement d'armée
-#	--> Prise de Village
-# - Ensuite Implémenter les Différents type de Comportement
+
+# - Implémenter les Différents type de Comportement pour l'IA
+
+# - Ajouter une Condition qui vérifie qu'une armée ne soit pas déjà présente sur la case
+
+# - Gérer les armées ennemies quand le Seigneur n'est plus là
+#	--> Ont les Supprimer ou ont les ajoute à la liste des Armées Bandit ?
+
+# - Ajouter Seigneur "Wild" qui vient gérer toute les Villages, armées Indépendantes
 
 
-# - Normaliser en (Ressource,Argent)
-# - Terminer searchposition
-# - Faire fonction qui fusionne prod_global() et total_salaryarmy()
+# - Actuellement cela bloque dans takevillage
+# - Changer les Interfaces Pour qu'elle n'utilise plus la texture de "base"
+
+# - Pour l'instant Les Seigneurs IA ne peuvent vassaliser le Joueur
+# - Ajouter une Gestion des Couleurs plus pousé aux différents Seigneurs
 
 #####
-
-
 
 ######## Fonctionnalité Principale à Implémenter
 # - Implémenter Event
 # - Capacité Prêtre
 # - Implémenter Résolutions Dynamique
+# - Implémenter les Réactions
 ########
 
 
@@ -282,6 +279,8 @@ from time import time
 # - Implémenter marché
 # - Implémenter Landforme
 # - Gestion de la population par case
+# - Pousser le Calcule de la Menace
+# - Pousser le Combat entre les Armées
 ########
 
 ######## Fonctionnalité Secondaire
@@ -1031,7 +1030,7 @@ def endofturn(gamedata, classmap, option):
 	# On vérifie que l'on ne soit pas en état de mettre fin aux jeu:
 	if victoryordefeat(gamedata, classmap, option) == False:
 		# On fait appel à la fonction de fin de tour
-		gamedata.endofturn()
+		gamedata.endofturn(classmap)
 		# Une fois que tout les objets se sont update ont update l'interface d'entête
 		interface.updateinterface(gamedata, classmap)
 		gamedata.endturn = False
@@ -1055,13 +1054,20 @@ def victoryordefeat(gamedata, classmap, option):
 	if len(player.fief) == 0:
 		gamedata.victory = "Défaite"
 		return True
+	# Si le joueur est un vassal d'un autre Seigneurs Alors Défaite
+	for lord in gamedata.list_lord:
+		if lord != player:
+			if player in lord.vassal:
+				gamedata.victory = "Défaite"
+				return True
+
 	# Sinon si le joueur possède un Nombre de Vassaux = Nombre de Seigneur-1
 	# Alors Victoire
-	elif len(player.vassal) == (gamedata.Nb_lord - 1):
+	if len(player.vassal) == (gamedata.Nb_lord - 1):
 		gamedata.victory = "Victoire"
 		return True
-	else:
-		return False
+
+	return False
 
 
 def endofgame(gamedata, classmap, option):

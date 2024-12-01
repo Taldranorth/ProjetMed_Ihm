@@ -194,7 +194,7 @@ def printarmy(gamedata, classmap, option, army):
 	# On charge dans l'atlas la texture préparer avec une taille qui correspond à la moitier d'une tuile
 	gamedata.loadtextureatlassize(texture_name, unit, ts/2)
 	# On créer à l'emplacement voulu
-	army.idCanv = classmap.mapcanv.create_image((posx*ts)+(ts/2), (posy*ts)+(ts/2), tags = ["army","tuile","img", army.x, army.y], image = gamedata.atlas[texture_name].image)
+	army.idCanv = classmap.mapcanv.create_image((posx*ts)+(ts/2), (posy*ts)+(ts/2), tags = ["army","tuile","img", army.name], image = gamedata.atlas[texture_name].image)
 
 	# On bind l'interface
 	classmap.mapcanv.tag_bind("army", "<Button-1>", lambda event: interface.armyinterface(event, gamedata, classmap, option))
@@ -421,7 +421,8 @@ def brensenham(coord0, coord1):
 
 def pathfinding(gamedata, classmap, option, coord0, coord1, degr):
 	##################
-	# Fonction pour calculer déplacement d'une unité valable
+	# Fonction pour calculer déplacement d'une unité valable, retourne l'itinéraire la plus efficace
+	# Utilise des Coordonnées Map
 	# On utilise Brensenham
 	# Que pour 3 snapshot (3 itinéraires)
 	##################
@@ -540,5 +541,20 @@ def costsequ(gamedata, classmap, option, itinéraire):
 			cost += classmap.listmap[idtuile].movementcost
 
 	return cost
+
+def armymoveoneturn(gamedata, classmap, option, itinéraire, army):
+	#####
+	# Fonction qui retourne True si l'armée peut faire le trajet en 1 tour
+	#####
+	cost = 0
+	for cases in itinéraire:
+		idtuile = moveview.coordmaptoidtuile(option, cases)
+		cost += classmap.listmap[idtuile].movementcost
+		if cost > army.moveturn:
+			return False
+	return True
+
+
+
 
 

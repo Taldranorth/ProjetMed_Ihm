@@ -302,11 +302,14 @@ def coordcanvastomap(gamedata, classmap, option, coord):
 	##################
 	# Fonction pour traduire les coordonnées du canvas en coordonnées de la carte √
 	##################
+	# Le problème est que l'on à forcément un décalage qui se créer pour des valeur importante lors de la division
+	# Ex:
+	# (389-(20//2))/20 = 18.95 = 18 hors on veut 19
+	# Comment calculer efficacement ?
 	ts = gamedata.tuilesize
 
-	xmap = (((coord[0]) - ts/2)//ts)
-	ymap = (((coord[1]) - ts/2)//ts)
-
+	xmap = ((coord[0])//ts)
+	ymap = ((coord[1])//ts)
 
 	return [xmap, ymap]
 

@@ -76,7 +76,6 @@ def genVillage(gamedata, classmap, options):
             # On change le Propriétaire de la tuile du village
             classmap.listmap[r].setpossesor(gamedata.list_lord[x].lordname)
 
-
     print("lvillage: ",classmap.lvillages)
 
 

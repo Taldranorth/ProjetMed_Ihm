@@ -100,6 +100,17 @@ class Classlord:
 		print("On créer une armée dans le village: ", name)
 		self.army += [Classarmy(x, y, ("unit " + name))]
 
+	def removearmy(self, army):
+		####
+		# Methode pour retirer une armée de la liste
+		####
+		i = 0
+		while(i< len(self.army)):
+			if self.army[i] == army:
+				self.army = self.army[:i] + self.army[i+1:]
+				return
+			i += 1
+
 	def addvassal(self, vassal):
 		self.vassal += [vassal]
 		self.updateinfo()
@@ -279,6 +290,53 @@ class Classlord:
 		self.nb_money -= tax_money
 		lord.nb_ressource += tax_ressource
 		self.nb_ressource -= tax_ressource
+
+	def coordtoobject(self, coord, typeobject):
+		######
+		# Methode qui renvoit l'objet pour les coordonnées données
+		######
+		if typeobject == "army":
+			for army in self.army:
+				if (army.x == coord[0]) and (army.y == coord[1]):
+					return army
+			return 0
+		elif typeobject == "village":
+			for village in self.fief:
+				if ((village.x == coord[0]) and (village.y == coord[1])):
+					return village
+			return 0
+		else:
+			print("Mauvais Type d'object: (army, village)")
+			return 0
+
+	def score(self):
+		######
+		# Methode qui calcul le Score du Seigneurs
+		######
+		################
+		# On calcul selon plusieurs facteurs:
+		# - La puissance Militaire de Chacun
+		# - Le Nombre de (Village * Nb_pop) de Chacun
+		# - Le Nombre de (Vassaux*(power+Village * Nb_pop)) de Chacun
+		# L'ensemble permet d'obtenir un Score qui va être comparer
+		################
+		# Puissance Militaire
+		score = self.power
+
+		# Puissance Démographique
+		for village in self.fief:
+			score += len(village.population)
+
+		# Puissance Diplomatique
+		diplo_power = 0
+		for vassal in self.vassal:
+			diplo_power += vassal.power
+			for village in vassal.fief:
+				diplo_power += len(village.population)
+
+		score += diplo_power
+
+		return score
 
 	def updateinfo(self):
 		############
@@ -563,6 +621,7 @@ class Classarmy:
 
 		# Déplacement possible de la troupe
 		self.movecapacity = 0
+		# Déplacement possible restant de la troupe pour le tour actuelle
 		self.moveturn = self.movecapacity
 
 		# Texture de l'armée
@@ -582,6 +641,14 @@ class Classarmy:
 		#######
 		self.unit += [ClassSoldier(name)]
 		self.updatearmy()
+
+
+	def destroyarmy(self):
+		######
+		# Methode pour détruire l'armée
+		######
+		self.unit = []
+		self.knight = 0
 
 	def salarycount(self):
 		#######
@@ -995,7 +1062,7 @@ class ClassRoturier:
 
 		# 6°) On update son humeur selon ses besoins
 		# Si il n'a pas put se nourrir, le bonheur baisse
-		if (self.ressource < 0)  and (self.joy > 0):
+		if (self.ressource < 0) and (self.joy > 0):
 			self.joy -= 10
 		# Sinon Si il à put se nourrir et qu'il à de la bouffe en réserve il est optimiste
 		elif (self.ressource > 1) and (self.joy < 100):

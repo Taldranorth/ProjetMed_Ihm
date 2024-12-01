@@ -63,8 +63,8 @@ import functions.affichage as affichage
 # - Si il possède les ressources et 2* la Production nécessaire pour un soldat recrute alors un Soldat
 # - Cherche a possède une armée composé de 20 soldat + 1 chevalier avant de créer une nouvelle armée
 # 3°)
-# - Si possède 2* le score d'une autre IA alors tente de le Vassaliser, par la Diplomatie en Premier, puis par la force
-# - Si le Score de Menace d'une Autre IA est trop importante alors lui déclare la guerre
+# - Si le Pourcentage de Réussite est de 75% alors tente de Vassaliser un Seigneurs
+# - Si le Score de Menace d'une Autre IA est trop importante alors elle lui déclare la guerre
 # 4°)
 # - Si il est en guerre il gère les armée pour d'abord détruire les troupes adverse et ensuite prendre leur village
 ######
@@ -76,6 +76,7 @@ def mainai(gamedata, classmap, option):
 	banderole_window = interface.banderole(gamedata, classmap, option)
 
 	lord = gamedata.list_lord[gamedata.Nb_toplay]
+	player = gamedata.list_lord[gamedata.playerid]
 
 	# L'Ia joue
 	# 0°) Tax
@@ -164,13 +165,64 @@ def mainai(gamedata, classmap, option):
 				efficiency = lord.total_efficiency()
 				gamedata.log.printinfo(f"{lord.lordname} A recruter dans l'armée {army.name}, {army.knight.name}")
 
-	# 3°) Vassalisation
+	
+	list_lord_menace = []
 
+	# 3°) Vassalisation/Menace
+	for otherlord in gamedata.list_lord:
+		# Si le seigneur selectionner n'est pas le Seigneurs qui joue
+		if (otherlord != lord) and (otherlord != player):
+			# On calcul la réussite
+			succes = interface.vassal_try(gamedata, lord, otherlord)
+			gamedata.log.printinfo(f"{lord.lordname} à {succes}% de chance de Vassaliser: {otherlord.lordname}")
+			# On calcul la menace
+			# On calcul la distance
+			distx = otherlord.fief[0].x - lord.fief[0].x 
+			disty = otherlord.fief[0].y - lord.fief[0].y
+			if distx < 0:
+				distx = distx*-1
+			if disty < 0:
+				disty = disty*-1
+			dist = distx + disty
+			menace = (otherlord.score()-lord.score())//dist
+			# On ajoute la menace du Seigneur dans la liste de menace
+			print("menace: ", menace)
+			list_lord_menace += [[otherlord.idlord, menace]]
+			if succes >= 75:
+				gamedata.log.printinfo(f"{lord.lordname} tente de Vassaliser: {otherlord.lordname}")
+				interface.vassal_offer(gamedata, classmap, option, lord, otherlord, succes)
 
-	# 3°) Menace
-
-
+	gamedata.log.printinfo(f"{lord.lordname} liste de Menace: {list_lord_menace}")
 	# 4°) Guerre
+	# Si le Seigneur est en Guerre
+	if len(lord.war) > 0:
+		nbarmy = 0
+		nblord = 0
+		# Tant que le Seigneur possède des Armées libre
+		# 4°) Attaque de Troupe
+		while(nbarmy < len(lord.army)) and (nblord < len(lord.war)):
+			# 4°) Attaque de Troupe
+			if len(lord.war[nblord].army) > 0:
+				nbarmy2 = 0
+				while (nbarmy2 < len(lord.war[nblord].army)) and (nbarmy < len(lord.army)):
+					gamedata.log.printinfo(f"{lord.lordname} déplace {lord.army[nbarmy].name} pour attaquer {lord.war[nblord].army[nbarmy2].name} de {lord.war[nblord].lordname}")
+					interface.sequencemovefight(gamedata, classmap, option, lord.army[nbarmy], lord.war[nblord].army[nbarmy2])
+					nbarmy2 += 1
+					nbarmy += 1
+			nblord += 1
+
+		nblord = 0
+		# 4°) Attaque de Village
+		while(nbarmy < len(lord.army)) and (nblord < len(lord.war)):
+			nbvillage = 0
+			while ((nbvillage < len(lord.war[nblord].fief)) and (nbarmy < len(lord.army))):
+				gamedata.log.printinfo(f"{lord.lordname} déplace {lord.army[nbarmy].name} pour attaquer {lord.war[nblord].fief[nbvillage].name} de {lord.war[nblord].lordname}")
+				interface.sequencemovetakevillage(gamedata, classmap, option, lord, lord.army[nbarmy], lord.war[nblord].fief[nbvillage])
+				nbvillage += 1
+				nbarmy += 1
+			nblord += 1
+
+
 
 
 	# Une fois que l'ia à terminé on incrémente Nb_toplay
@@ -214,11 +266,12 @@ def actionbuildvillage(gamedata, classmap, option, lord):
 		# On cherche Une cases autour de la ville principale
 		idcases = searchvillage(gamedata, classmap, option, lord.fief[i])
 		# Si on a pas trouvé autour de la ville principale
-		while (idcases == 0) and (i < len(lord.fief)):
+		while ((idcases == 0) and (i < len(lord.fief))):
 			gamedata.log.printinfo(f"{lord.lordname} n'a pas trouvé pour {lord.fief[i].name}")
 			i += 1
-			gamedata.log.printinfo(f"{lord.lordname} Cherche un Lieu pour construire son nouveaux village aux alentour de {lord.fief[i].name}")
-			idcases = searchvillage(gamedata, classmap, option, lord.fief[i])
+			if (i < len(lord.fief)):
+				gamedata.log.printinfo(f"{lord.lordname} Cherche un Lieu pour construire son nouveaux village aux alentour de {lord.fief[i].name}")
+				idcases = searchvillage(gamedata, classmap, option, lord.fief[i])
 		# Si on a trouvé une cases on construit un village
 		if idcases != 0:
 			gamedata.log.printinfo(f"{lord.lordname} à trouvé :{idcases}")

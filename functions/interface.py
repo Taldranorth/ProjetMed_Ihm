@@ -294,16 +294,19 @@ def statesubjugate(gamedata, classmap, option):
 		lc_subjugate.grid(row = 1, column = 0)
 		for lord in gamedata.list_lord:
 			if lord.player == False:
+				# On n'affiche pas les vassaux
 				if lord not in (player.vassal):
-					lc_subjugate.insert(tkinter.END, lord.lordname)
+					# On n'affiche pas ceux avec qui nous somme en guerre
+					if lord not in (player.war):
+						lc_subjugate.insert(tkinter.END, lord.lordname)
 		# On bind double click
-		lc_subjugate.bind("<Double-Button-1>", lambda event: vassal_offer(event, gamedata, classmap, option, window_interface_subjugate, lc_subjugate))
+		lc_subjugate.bind("<Double-Button-1>", lambda event: l_vassal_offer(event, gamedata, classmap, option, window_interface_subjugate, lc_subjugate))
 
 
 		# On bind l'exit
 		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], [window_interface_subjugate]))
 
-def vassal_offer(event, gamedata, classmap, option, wis, lc):
+def l_vassal_offer(event, gamedata, classmap, option, wis, lc):
 	################
 	# Fonction pour affiche interface pour Afficher les Infos sur le Seigneur est confirmer la proposition de Vassalisation
 	################
@@ -341,15 +344,27 @@ def vassal_offer(event, gamedata, classmap, option, wis, lc):
 	tkinter.Label(frame_interface_offer, textvariable = tkvar_succes).grid(row = 4,column = 1)
 
 	# Le Boutton pour envoyer la proposition de Vassalisation
-	button_vassalage_offer = tkinter.Button(frame_interface_offer, command = lambda: b_vassal_offer(gamedata, classmap, option, lc, lord, frame_interface_offer, succes), text = "Envoyer Proposition")
+	button_vassalage_offer = tkinter.Button(frame_interface_offer, command = lambda: b_vassal_offer(gamedata, classmap, option, lc, player, lord, frame_interface_offer, succes), text = "Envoyer Proposition")
 	button_vassalage_offer.grid(row = 5, column = 1)
 
-def b_vassal_offer(gamedata, classmap, option, lc, lord, frame, succes):
+def b_vassal_offer(gamedata, classmap, option, lc, lord, lord2, frame, succes):
 	################
-	# Fonction pour gérer l'envoit d'une demande de Vassalisation
+	# Fonction pour gérer l'envoit d'une demande de Vassalisation et l'update de l'écran
 	################
 
-	player = gamedata.list_lord[gamedata.playerid]
+	# On appel la fonction qui gérer l'envoit et les répercusion
+	vassal_offer(gamedata, classmap, option, lord, lord2, succes)
+
+	# On update la Listbox
+	lc.delete(lc.curselection()[0])
+
+	# On détruit la fenêtre Une fois la demande faite
+	frame.destroy()
+
+def vassal_offer(gamedata, classmap, option, lord, lord2, succes):
+	################
+	# Fonction pour gérer l'envoit d'une demande de Vassalisation et l'affichage des répercution
+	################
 
 	# On teste la probabilité
 	# On genère un chiffre entre 1 et 100
@@ -362,21 +377,18 @@ def b_vassal_offer(gamedata, classmap, option, lc, lord, frame, succes):
 	if r >= 100:
 		gamedata.log.printinfo("Succès")
 		# On ajoute le Seigneur à la liste des Vassaux
-		player.addvassal(lord)
+		lord.addvassal(lord2)
 		# On ajoute les vassaux du Seigneur à la liste des Vassaux
-		for vassal in lord.vassal:
+		for vassal in lord2.vassal:
 			# On retire de la liste des Vassaux du Seigneur les vassaux qu'il possède
-			lord.removevassal(vassallord)
-			player.addvassal(vassal)
-		print("Liste des vassaux du Joueurs: ",player.vassal)
+			lord2.removevassal(vassal)
+			lord.addvassal(vassal)
+		print("Liste des vassaux du Joueurs: ", lord.vassal)
 	# Sinon on déclare la guerre
 	else:
 		gamedata.log.printinfo("Echecs")
-		player.addwar(lord)
-		lord.addwar(player)
-
-	# On update la Listbox
-	lc.delete(lc.curselection()[0])
+		lord.addwar(lord2)
+		lord2.addwar(lord)
 
 	# On update l'affichage de la carte
 	affichage.bordervillage(gamedata, classmap, option)
@@ -384,48 +396,16 @@ def b_vassal_offer(gamedata, classmap, option, lc, lord, frame, succes):
 	# On update l'entête
 	updateinterface(gamedata, classmap)
 
-	# On détruit la fenêtre Une fois la demande faite
-	frame.destroy()
+
 
 def vassal_try(gamedata, lord, lord2):
 	################
 	# Fonction qui calcul le % de chance de réussite que le Seigneur1 vassalise le Seigneur2 par une tentative
 	################
-	# On calcul selon plusieurs facteurs:
-	# - La puissance Militaire de Chacun
-	# - Le Nombre de (Village * Nb_pop) de Chacun
-	# - Le Nombre de (Vassaux*(power+Village * Nb_pop)) de Chacun
-	# L'ensemble permet d'obtenir un Score qui va être comparer
-	################
 
 	# On ajoute la puissance Militaire
-	lord_score1 = lord.power
-	lord_score2 = lord2.power
-	# On ajoute la puissance Démographique
-
-	for village in lord.fief:
-		lord_score1 += len(village.population)
-
-	for village in lord2.fief:
-		lord_score2 += len(village.population)
-
-	# On ajoute la puissance Diplomatique
-	diplo_power = 0
-	for vassal in lord.vassal:
-		diplo_power += lord.power
-		for village in vassal.fief:
-			diplo_power += len(village.population)
-
-	lord_score1 += diplo_power
-
-	diplo_power = 0
-	for vassal in lord2.vassal:
-		diplo_power += lord2.power
-		for village in vassal.fief:
-			diplo_power += len(village.population)
-
-	lord_score2 += diplo_power	
-
+	lord_score1 = lord.score()
+	lord_score2 = lord2.score()
 
 	# On compare les 2 Scores
 	rs = ((lord_score1 - lord_score2)/100)*100
@@ -485,7 +465,8 @@ def buttoncreatearmy(gamedata, classmap, option, lc_interface_army):
 		coord = searchposition(gamedata, classmap, option, village)
 		# On créer la nouvelle armée
 		player.createarmy(village.name, coord[0], coord[1])
-		classmap.listmap[idvillage].setarmyinplace(lord.army[lastarmy])
+		idvillage = moveview.coordmaptoidtuile(option, coord)
+		classmap.listmap[idvillage].setarmyinplace(player.army[lastarmy])
 		# On ajoute 1 Soldat
 		player.sub_money(2)
 		player.sub_ressource(2)
@@ -1504,10 +1485,10 @@ def statemovearmy(gamedata, classmap, option, army, fra):
 	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: startsequencemoveunit(event, gamedata, classmap, option, army))
 
 	# On bind sur les villages l'attaque
-	funcvillage =  classmap.mapcanv.tag_bind("village", "<Button-1>", lambda event: movetakevillage(event, gamedata, classmap, option, army), add= "+")
+	funcvillage =  classmap.mapcanv.tag_bind("village", "<Button-1>", lambda event: startsequencemovetakevillage(event, gamedata, classmap, option, army), add= "+")
 
 	# On bind sur les armées l'attaque
-	funcarmy = classmap.mapcanv.tag_bind("army", "<Button-1>", lambda event: movefight(event, gamedata, classmap, army), add= "+")
+	funcarmy = classmap.mapcanv.tag_bind("army", "<Button-1>", lambda event: startsequencemovefight(event, gamedata, classmap, option, army), add= "+")
 
 	# On bind l'exit de l'état aux clic gauche
 	classmap.mapcanv.tag_bind("click", "<Button-2>", lambda event: cancelmovearmy(event, gamedata, classmap, option, [funcpath, funcvillage, funcarmy], fra))
@@ -1608,18 +1589,121 @@ def cancelmovearmy(event, gamedata, classmap, option, lfuncpath, fra):
 	# On debind le click Gauche
 	classmap.mapcanv.tag_unbind("click", "<Button-2>")
 
+def startsequencemovefight(event, gamedata, classmap, option, army):
+	##################
+	# Fonction pour entamer le déplacement vers l'armé adverse puis le combat
+	##################
+	gamedata.log.printinfo(f"startsequencemovefight")
+	# On recupère les coord
+	posx = event.widget.canvasx(event.x)
+	posy = event.widget.canvasy(event.y)
+	print("pos: ", posx, posy)
+	coord1 = moveview.coordcanvastomap(gamedata, classmap, option, [posx, posy])
+	print("coord: ", coord1)
+	# On récupère l'armée adverse
+	army2 = 0
+	i = 0
+	while((army2 == 0) and (i< len(gamedata.list_lord))):
+		army2 = gamedata.list_lord[i].coordtoobject(coord1, "army")
+		i += 1
 
-def movefight(event, gamedata, classmap, army):
+	if army2 != 0:
+		gamedata.log.printinfo(f"On à trouvé l'armée 2: {army2.name}")
+		sequencemovefight(gamedata, classmap, option, army, army2)
+	else:
+		gamedata.log.printinfo(f"On n'a pas trouvé l'armée 2 pour les coord:{coord1}")
+
+
+def sequencemovefight(gamedata, classmap, option, army1, army2):
 	##################
 	# Fonction qui gérer le déplacement d'une armée puis le combat avec une autre
 	##################
+	gamedata.log.printinfo(f"sequencemovefight")
+	# On recup les coord Map
+	coord1 = [army2.x, army2.y]
+	# On récupère l'itinéraire la plus efficace
+	itinéraire = affichage.pathfinding(gamedata, classmap, option, [army1.x, army1.y], coord1, 45)
 
-	# On calcul l'armé adverse
-	pass
+	# On déplace autant que l'on peut
+	i = 0
+	idtuile = moveview.coordmaptoidtuile(option, itinéraire[0])
+	idtuile0 = idtuile
+	while (army1.moveturn - classmap.listmap[idtuile].movementcost >=0) and (i < len(itinéraire)):
+		idtuile = moveview.coordmaptoidtuile(option, itinéraire[i])
+		affichage.moveunit(gamedata, classmap, option, army1, itinéraire[i])
+		i += 1
+	classmap.listmap[idtuile0].removearmyinplace()
+	classmap.listmap[idtuile].setarmyinplace(army1)
+	# Si l'armée à porté on attaque
+	if army1.moveturn > 0:
+		gamedata.log.printinfo(f"l'armée {army2.name} est à porté de {army1.name}")
+		# Si l'armée 1 est vainqueur On détruit l'armée 2
+		if(fight(gamedata, classmap, army1, army2)) == True:
+			gamedata.log.printinfo(f"l'armée {army1.name} à remporté le combat contre: {army2.name}")
+			gamedata.log.printinfo(f"l'armée {army2.name} est détruite")
+			# On déréférence toute les unités de l'armée
+			army2.destroyarmy()
+			# On retire l'armée de la liste du Seigneur
+			lord = 0
+			i = 0
+			while((lord == 0) and (i<len(gamedata.list_lord))):
+				if gamedata.list_lord[i].coordtoobject(coord1, "army") != 0:
+					lord = gamedata.list_lord[i]
+				i += 1
+			lord.removearmy(army2)
+			# On détruit l'objet du canvas
+			classmap.mapcanv.delete(classmap.mapcanv.find_withtag(army2.name)[0])
+			# On détruit l'armée
+			del army2
+		# Sinon On détruit l'armée 1
+		else:
+			gamedata.log.printinfo(f"l'armée {army2.name} à remporté le combat contre: {army1.name}")
+			gamedata.log.printinfo(f"l'armée {army1.name} est détruite")
+			# On déréférence toute les unités de l'armée
+			army1.destroyarmy()
+			# On retire l'armée de la liste du Seigneur
+			lord = 0
+			i = 0
+			while((lord == 0) and (i<len(gamedata.list_lord))):
+				if gamedata.list_lord[i].coordtoobject([army1.x, army1.y], "army") != 0:
+					lord = gamedata.list_lord[i]
+				i += 1
+			lord.removearmy(army1)
+			# On détruit l'objet du canvas
+			classmap.mapcanv.delete(classmap.mapcanv.find_withtag(army1.name)[0])
+			# On détruit l'armée
+			del army1
+
+	# Sinon on met en mémoire
+	else:
+		# On met en mémoire 
+		gamedata.log.printinfo(f"l'armée {army2.name} n'est pas à porté de {army1.name}")
+		gamedata.addactionfile(["sequencemovefight", gamedata, classmap, option, army1, army2], 1)
 
 
+def startsequencemovetakevillage(event, gamedata, classmap, option, army):
+	##################
+	# Fonction qui entame le déplacement d'une armée vers la prise d'un village
+	##################
+	player = gamedata.list_lord[gamedata.playerid]
 
-def movetakevillage(event, gamedata, classmap, option, army):
+	# On recup les coord Canvas de la tuile 
+	posx = event.widget.canvasx(event.x)
+	posy = event.widget.canvasy(event.y)
+	print("pos:", posx, posy)
+	# On transforme en coord Map
+	coord = moveview.coordcanvastomap(gamedata, classmap, option, [posx, posy])
+	idvillage = moveview.coordmaptoidtuile(option, coord)
+	print("idvillage: ",idvillage)
+	# On recup l'objet village
+	village = classmap.idtovillage(idvillage)
+	gamedata.log.printinfo(f"Objet village trouvé pour les coord({coord}): {village}")
+
+	# On lance la sequence
+	sequencemovetakevillage(gamedata, classmap, option, player, army, village)
+
+
+def sequencemovetakevillage(gamedata, classmap, option, lord, army, village):
 	##################
 	# Fonction qui gérer le déplacement d'une armée puis la prise d'un village
 	##################
@@ -1627,22 +1711,35 @@ def movetakevillage(event, gamedata, classmap, option, army):
 	#
 	######
 
-	# On recup les coord Canvas de la tuile 
-	posx = event.widget.canvasx(event.x)
-	posy = event.widget.canvasy(event.y)
-	# On transforme en coord Map
-	coord = moveview.coordcanvastomap(gamedata, classmap, option, [posx, posy])
-	idvillage = moveview.coordmaptoidtuile(option, coord)
-	print("idvillage: ",idvillage)
+	# On Recup les coordonnées Map du village
+	coord1 = [village.x, village.y]
 
-	# On recup l'objet village
-	village = classmap.idtovillage(idvillage)
-	gamedata.log.printinfo(f"Objet village trouvé pour les coord({coord}): {village}")
+	# On récupère l'itinéraire la plus efficace
+	itinéraire = affichage.pathfinding(gamedata, classmap, option, [army.x, army.y], coord1, 45)
+	print("itinéraire: ",itinéraire)
 
+	# On déplace autant que l'on peut
+	i = 0
+	idtuile = moveview.coordmaptoidtuile(option, itinéraire[0])
+	idtuile0 = idtuile
+	while (army.moveturn - classmap.listmap[idtuile].movementcost >=0) and (i < len(itinéraire)):
+		idtuile = moveview.coordmaptoidtuile(option, itinéraire[i])
+		affichage.moveunit(gamedata, classmap, option, army, itinéraire[i])
+		i += 1
+	classmap.listmap[idtuile0].removearmyinplace()
+	classmap.listmap[idtuile].setarmyinplace(army)
+
+	# Si on est a porté on prend le contrôle du village
 	# On prend le contrôle du village
-	TakeVillage(gamedata, classmap, option, army, village, False)
+	if army.moveturn > 0:
+		gamedata.log.printinfo(f"Le Village {village.name} est à porté de {army.name}")
+		TakeVillage(gamedata, classmap, option, lord, army, village, False)
+	# Sinon on met en mémoire la séquence
+	else:
+		gamedata.log.printinfo(f"Le Village {village.name} n'est pas à porté de {army.name}")
+		gamedata.addactionfile(["sequencemovetakevillage", gamedata, classmap, option, lord, army, village], 1)
 
-def fight(gamedata, classmap, army1 , army2):
+def fight(gamedata, classmap, army1, army2):
 	##################
 	# Fonction pour gérer le combat entre 2 armée
 	##################
@@ -1657,9 +1754,9 @@ def fight(gamedata, classmap, army1 , army2):
 	else:
 		return False
 
-def TakeVillage(gamedata, classmap, option, army, village, subjugate):
+def TakeVillage(gamedata, classmap, option, lord, army, village, subjugate):
 	##################
-	# Fonction pour gérer la prise de Village par le Joueur
+	# Fonction pour gérer la prise de Village par le Seigneur
 	##################
 	# Subjugate vient définir 2 comportement:
 	# Si C'est le Seul Village Du Seigneur Ennemie:
@@ -1670,8 +1767,7 @@ def TakeVillage(gamedata, classmap, option, army, village, subjugate):
 	# Si le Seigneur Ennemie possède des Vassaux ils sont soit libérer soit ajouté a c'est vassaux
 	#	- On prend comme cas de figure standars la prise de contrôle immédiate des Vassaux
 
-	player = gamedata.list_lord[gamedata.playerid]
-	gamedata.log.printinfo(f"prise de {village.name} par {player.lordname}")
+	gamedata.log.printinfo(f"Prise de {village.name} par {lord.lordname}")
 
 	# Si le village n'est pas indépendant
 	if village.lord != 0:
@@ -1683,37 +1779,37 @@ def TakeVillage(gamedata, classmap, option, army, village, subjugate):
 			# On debind le Village du Seigneur Ennemie
 			Ennemielord.removefief(village)
 			# ON Prend le contrôle du village
-			player.addfief(village)
+			lord.addfief(village)
 		# Sinon On Vassalise le Seigneur ou on le détruit et récupère le village
 		else:
 			gamedata.log.printinfo(f"C'est le dernier village de: {Ennemielord.lordname}")
 			# on retire le seigneur et c'est vassaux de la liste War
-			player.removewar(Ennemielord)
+			lord.removewar(Ennemielord)
 			# On retire le joueur de la liste war du Seigneurs Ennemie et de c'est vassaux
-			Ennemielord.removewar(player)
+			Ennemielord.removewar(lord)
 			# On transfert le controle des Vassaux du Seigneurs Ennemie aux joueur
 			for vassallord in Ennemielord.vassal:
 				# On retire le vassal de la liste du seigneurs Ennemie
 				Ennemielord.removevassal(vassallord)
 				# On l'ajoute à la liste du Joueur
-				player.addvassal(vassal)
+				lord.addvassal(vassal)
 				gamedata.log.printinfo(f"{vassal.lordname} subjuger")
-			gamedata.log.printinfo(f"{player.lordname} à pris le contrôle de tout les Vassaux Ennemie")
+			gamedata.log.printinfo(f"{lord.lordname} à pris le contrôle de tout les Vassaux Ennemie")
 			# On Vassalise le Seigneur
 			if subjugate == True:
 				# On Vassalise le Seigneurs Ennemie
-				player.addvassal(Ennemielord)
+				lord.addvassal(Ennemielord)
 				gamedata.log.printinfo(f"{Ennemielord.lordname} subjuger")
 			# On détruit le Seigneur
 			else:
 				# On transfert le contrôle du Village du Seigneur Ennemies
 				Ennemielord.removefief(village)
-				player.addfief(village)
-				gamedata.log.printinfo(f"{Ennemielord.lordname} ANÉHANTIE")
+				lord.addfief(village)
+				gamedata.log.printinfo(f"{Ennemielord.lordname} ANÉANTIE")
 				# ON LE DELETE NIARK NIARK NIARK NIARK
 				gamedata.deletelord(Ennemielord.idlord)
 	else:
-		player.addfief(village)
+		lord.addfief(village)
 
 	# On update l'affichage du territoire
 	# On supp

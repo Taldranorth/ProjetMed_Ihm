@@ -1,232 +1,105 @@
-[22:20:35]Info: Initialisation log terminé
-[22:20:35]Info: 1200x1200+150+150
-[22:20:35]Info: Initialisation de l'application terminé
-[22:20:36]Info: taille écran x,y: 1440, 900
-[22:20:36]Info: Taille de la Frame du Canvas: 1, 1
-[22:20:36]Info: Taille de la Frame du top: 1, 1
-[22:20:36]Info: Taille de la Frame du bas: 1, 1
-[22:20:36]Info: Taille du Canvas:1, 1
-[22:20:36]Info: coord0: ,[1800, 1560]
-[22:20:36]Info: coord1: ,[1900, 1660]
-[22:20:36]Info: coord0: ,[1740, 600]
-[22:20:36]Info: coord1: ,[1840, 700]
-[22:20:36]Info: coord0: ,[160, 1920]
-[22:20:36]Info: coord1: ,[260, 1980]
-[22:20:36]Info: coord0: ,[100, 1600]
-[22:20:36]Info: coord1: ,[200, 1700]
-[22:20:36]Info: coord0: ,[120, 380]
-[22:20:36]Info: coord1: ,[220, 480]
-[22:20:36]Info: coord0: ,[480, 1060]
-[22:20:36]Info: coord1: ,[580, 1160]
-[22:20:36]Info: coord0: ,[0, 0]
-[22:20:36]Info: coord1: ,[80, 80]
-[22:20:36]Info: coord0: ,[900, 360]
-[22:20:36]Info: coord1: ,[1000, 460]
-[22:20:36]Info: coord0: ,[1260, 700]
-[22:20:36]Info: coord1: ,[1360, 800]
-[22:20:36]Info: déplacement de x,y: , 1250.0, 1250.0
-[22:20:39]Info: Player hit end of turn button
-[22:20:39]Info: tour de: lord Llewellyn, 1
-[22:20:39]Info: lord Llewellyn Fait venir 1 paysan et 0 artisan
-[22:20:39]Info: lord Llewellyn Peut Créer une Armée
-[22:20:39]Info: lord Llewellyn A créer l'armée unit Shuydo
-[22:20:39]Info: tour de: lord Zargothra, 2
-[22:20:39]Info: lord Zargothra Fait venir 1 paysan et 0 artisan
-[22:20:39]Info: lord Zargothra Peut Créer une Armée
-[22:20:39]Info: lord Zargothra A créer l'armée unit Halwatc
-[22:20:39]Info: tour de: lord Erar, 3
-[22:20:39]Info: lord Erar Fait venir 1 paysan et 0 artisan
-[22:20:39]Info: lord Erar Peut Créer une Armée
-[22:20:39]Info: lord Erar A créer l'armée unit Mightgulc
-[22:20:39]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
-[22:20:39]Info: On éxécute toute les actions qui reste en 0
-[22:20:39]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
-[22:20:39]Info: Toute les piles actions ont était déplacer fin de eotactionfile
-[22:20:39]Info: file action après fin de tour: []
-[22:20:39]Info: félicitation, Rodaid(20) et Nilid(30) ont donné naissance à Wulfsig
-[22:20:39]Info: félicitation, Wulf(22) et Dobharc(19) ont donné naissance à Dola
-[22:20:39]Info: félicitation, Rodaid(27) et Ælfsta(25) ont donné naissance à Atho
-[22:20:39]Info: félicitation, Rodaid(21) et Wysta(24) ont donné naissance à Cyn
-[22:20:39]Info: félicitation, Eadbur(28) et Rodaid(17) ont donné naissance à Aerin
-[22:20:40]Info: Player hit end of turn button
-[22:20:40]Info: tour de: lord Llewellyn, 1
-[22:20:40]Info: lord Llewellyn Éxige une tax aux village Shuydo de Ressource:False, d'Écus:True
-[22:20:40]Info: lord Llewellyn possède dans ses caisses: 15 ressource,8 écus
-[22:20:40]Info: lord Llewellyn Fait venir 1 paysan et 0 artisan
-[22:20:40]Info: tour de: lord Zargothra, 2
-[22:20:40]Info: lord Zargothra Éxige une tax aux village Halwatc de Ressource:False, d'Écus:True
-[22:20:40]Info: lord Zargothra possède dans ses caisses: 15 ressource,8 écus
-[22:20:40]Info: lord Zargothra Fait venir 1 paysan et 0 artisan
-[22:20:40]Info: lord Zargothra Construit une Église dans Halwatc
-[22:20:40]Info: tour de: lord Erar, 3
-[22:20:40]Info: lord Erar Éxige une tax aux village Mightgulc de Ressource:False, d'Écus:True
-[22:20:40]Info: lord Erar possède dans ses caisses: 15 ressource,8 écus
-[22:20:40]Info: lord Erar Fait venir 1 paysan et 0 artisan
-[22:20:40]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
-[22:20:40]Info: On éxécute toute les actions qui reste en 0
-[22:20:40]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
-[22:20:40]Info: Toute les piles actions ont était déplacer fin de eotactionfile
-[22:20:40]Info: file action après fin de tour: []
-[22:20:40]Info: félicitation, Dobharc(20) et Tan(25) ont donné naissance à Teàrlac
-[22:20:40]Info: félicitation, Rodaid(28) et Ælfsta(26) ont donné naissance à Gibso
-[22:20:40]Info: félicitation, Aithn(26) et Gauwis Son(20) ont donné naissance à Caitlí
-[22:20:40]Info: félicitation, Wysta(20) et Bláthnai(20) ont donné naissance à Langle
-[22:20:40]Info: félicitation, Wulfsig(17) et Aerin(20) ont donné naissance à Dola
-[22:20:49]Info: coord de la tuile 0,0 Canvas: , [10.0, 10.0]
-[22:20:49]Info: coordonnées window de la souris: , 1818, 1566
-[22:20:49]Info: -1
-[22:20:49]Info: déplacement de x,y: , 305.0, 425.0
-[22:20:49]Info: taille Atlas: 8
-[22:20:49]Info: coord de la tuile 0,0 Canvas: , [5.0, 5.0]
-[22:20:49]Info: coordonnées window de la souris: , 873, 741
-[22:20:49]Info: -1
-[22:20:49]Info: déplacement de x,y: , -162.5, 12.5
-[22:20:49]Info: taille Atlas: 8
-[22:20:54]Info: coord de la tuile 0,0 Canvas: , [2.5, 2.5]
-[22:20:54]Info: coordonnées window de la souris: , 447, 159
-[22:20:54]Info: 1
-[22:20:54]Info: déplacement de x,y: , 295.0, -40.0
-[22:20:54]Info: taille Atlas: 8
-[22:20:54]Info: coord de la tuile 0,0 Canvas: , [5.0, 5.0]
-[22:20:54]Info: coordonnées window de la souris: , 1003, 272
-[22:20:54]Info: 1
-[22:20:54]Info: déplacement de x,y: , 1390.0, 190.0
-[22:20:54]Info: taille Atlas: 8
-[22:20:55]Info: coord de la tuile 0,0 Canvas: , [10.0, 10.0]
-[22:20:55]Info: coordonnées window de la souris: , 1790, 643
-[22:20:55]Info: 1
-[22:20:55]Info: déplacement de x,y: , 2980.0, 920.0
-[22:20:55]Info: taille Atlas: 8
-[22:20:56]Info: coord de la tuile 0,0 Canvas: , [20.0, 20.0]
-[22:20:56]Info: coordonnées window de la souris: , 3380, 1373
-[22:20:56]Info: -1
-[22:20:56]Info: déplacement de x,y: , 1090.0, 330.0
-[22:20:56]Info: taille Atlas: 8
-[22:20:56]Info: coord de la tuile 0,0 Canvas: , [10.0, 10.0]
-[22:20:56]Info: coordonnées window de la souris: , 1490, 783
-[22:20:56]Info: -1
-[22:20:56]Info: déplacement de x,y: , 145.0, 35.0
-[22:20:56]Info: taille Atlas: 8
-[22:20:56]Info: coord de la tuile 0,0 Canvas: , [5.0, 5.0]
-[22:20:56]Info: coordonnées window de la souris: , 545, 488
-[22:20:56]Info: -1
-[22:20:56]Info: déplacement de x,y: , -327.5, -117.5
-[22:20:56]Info: taille Atlas: 8
-[22:20:58]Info: Player hit end of turn button
-[22:20:58]Info: tour de: lord Llewellyn, 1
-[22:20:58]Info: lord Llewellyn Éxige une tax aux village Shuydo de Ressource:False, d'Écus:True
-[22:20:58]Info: lord Llewellyn possède dans ses caisses: 23 ressource,8 écus
-[22:20:58]Info: lord Llewellyn Fait venir 1 paysan et 0 artisan
-[22:20:58]Info: tour de: lord Zargothra, 2
-[22:20:58]Info: lord Zargothra Éxige une tax aux village Halwatc de Ressource:False, d'Écus:True
-[22:20:58]Info: lord Zargothra possède dans ses caisses: 23 ressource,9 écus
-[22:20:58]Info: lord Zargothra Fait venir 1 paysan et 0 artisan
-[22:20:58]Info: tour de: lord Erar, 3
-[22:20:58]Info: lord Erar Éxige une tax aux village Mightgulc de Ressource:False, d'Écus:True
-[22:20:58]Info: lord Erar possède dans ses caisses: 23 ressource,8 écus
-[22:20:58]Info: lord Erar Fait venir 1 paysan et 0 artisan
-[22:20:58]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
-[22:20:58]Info: On éxécute toute les actions qui reste en 0
-[22:20:58]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
-[22:20:58]Info: Toute les piles actions ont était déplacer fin de eotactionfile
-[22:20:58]Info: file action après fin de tour: []
-[22:20:58]Info: félicitation, Aere(22) et Wulf(18) ont donné naissance à Ame
-[22:20:58]Info: félicitation, Rodaid(22) et Wulf(24) ont donné naissance à Eadbur
-[22:20:58]Info: félicitation, Rodaid(29) et Ælfsta(27) ont donné naissance à Concha
-[22:20:58]Info: félicitation, Ealasai(27) et Rodaid(23) ont donné naissance à Nilid
-[22:20:58]Info: félicitation, Ealasai(20) et Tan(28) ont donné naissance à Concha
-[22:20:58]Info: félicitation, Aithn(27) et Gauwis Son(21) ont donné naissance à Nilid
-[22:20:58]Info: félicitation, Cyn(27) et Concha(30) ont donné naissance à Naom
-[22:20:58]Info: félicitation, Eadbur(30) et Rodaid(19) ont donné naissance à Caitlí
-[22:20:58]Info: félicitation, Wulfsig(18) et Aerin(21) ont donné naissance à Eada
-[22:20:58]Info: félicitation, Wulf(27) et Wysta(30) ont donné naissance à Ealasai
-[22:21:11]Info: Player hit end of turn button
-[22:21:11]Info: tour de: lord Llewellyn, 1
-[22:21:11]Info: lord Llewellyn Éxige une tax aux village Shuydo de Ressource:False, d'Écus:True
-[22:21:11]Info: lord Llewellyn possède dans ses caisses: 32 ressource,6 écus
-[22:21:11]Info: lord Llewellyn Fait venir 1 paysan et 0 artisan
-[22:21:11]Info: lord Llewellyn Peut Construire un Village
-[22:21:11]Info: tour de: lord Zargothra, 2
-[22:21:11]Info: lord Zargothra Éxige une tax aux village Halwatc de Ressource:False, d'Écus:True
-[22:21:11]Info: lord Zargothra possède dans ses caisses: 32 ressource,8 écus
-[22:21:11]Info: lord Zargothra Fait venir 1 paysan et 0 artisan
-[22:21:11]Info: tour de: lord Erar, 3
-[22:21:11]Info: lord Erar Éxige une tax aux village Mightgulc de Ressource:False, d'Écus:True
-[22:21:11]Info: lord Erar possède dans ses caisses: 32 ressource,6 écus
-[22:21:11]Info: lord Erar Fait venir 1 paysan et 0 artisan
-[22:21:11]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
-[22:21:11]Info: On éxécute toute les actions qui reste en 0
-[22:21:11]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
-[22:21:11]Info: Toute les piles actions ont était déplacer fin de eotactionfile
-[22:21:11]Info: file action après fin de tour: []
-[22:21:11]Info: félicitation, Aere(23) et Wulf(19) ont donné naissance à Ame
-[22:21:11]Info: félicitation, Gibso(27) et Naom(20) ont donné naissance à Wulf
-[22:21:11]Info: félicitation, Ealasai(21) et Tan(29) ont donné naissance à Cyn
-[22:21:11]Info: félicitation, Aerin(20) et Aerin(20) ont donné naissance à Caitlí
-[22:21:11]Info: félicitation, Aithn(28) et Gauwis Son(22) ont donné naissance à Wysta
-[22:21:24]Info: Player hit end of turn button
-[22:21:24]Info: tour de: lord Llewellyn, 1
-[22:21:24]Info: lord Llewellyn Éxige une tax aux village Shuydo de Ressource:False, d'Écus:True
-[22:21:24]Info: lord Llewellyn possède dans ses caisses: 42 ressource,4 écus
-[22:21:24]Info: lord Llewellyn Peut Construire un Village
-[22:21:24]Info: tour de: lord Zargothra, 2
-[22:21:24]Info: lord Zargothra Éxige une tax aux village Halwatc de Ressource:False, d'Écus:True
-[22:21:24]Info: lord Zargothra possède dans ses caisses: 42 ressource,7 écus
-[22:21:24]Info: lord Zargothra Peut Construire un Village
-[22:21:24]Info: tour de: lord Erar, 3
-[22:21:24]Info: lord Erar Éxige une tax aux village Mightgulc de Ressource:False, d'Écus:True
-[22:21:24]Info: lord Erar possède dans ses caisses: 42 ressource,4 écus
-[22:21:24]Info: lord Erar Fait venir 1 paysan et 0 artisan
-[22:21:24]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
-[22:21:24]Info: On éxécute toute les actions qui reste en 0
-[22:21:24]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
-[22:21:24]Info: Toute les piles actions ont était déplacer fin de eotactionfile
-[22:21:24]Info: file action après fin de tour: []
-[22:21:24]Info: félicitation, Aere(24) et Wulf(20) ont donné naissance à Caitlí
-[22:21:24]Info: félicitation, Tan(30) et Gibso(22) ont donné naissance à Wulfsig
-[22:21:24]Info: félicitation, Dola(27) et Aere(24) ont donné naissance à Bláthnai
-[22:21:24]Info: félicitation, Wulf(29) et Frici(19) ont donné naissance à Frici
-[22:21:35]Info: Player hit end of turn button
-[22:21:35]Info: tour de: lord Llewellyn, 1
-[22:21:35]Info: lord Llewellyn Éxige une tax aux village Shuydo de Ressource:False, d'Écus:True
-[22:21:35]Info: lord Llewellyn possède dans ses caisses: 53 ressource,7 écus
-[22:21:35]Info: lord Llewellyn Peut Construire un Village
-[22:21:35]Info: tour de: lord Zargothra, 2
-[22:21:35]Info: lord Zargothra Peut Construire un Village
-[22:21:35]Info: tour de: lord Erar, 3
-[22:21:35]Info: lord Erar Éxige une tax aux village Mightgulc de Ressource:False, d'Écus:True
-[22:21:35]Info: lord Erar possède dans ses caisses: 53 ressource,6 écus
-[22:21:35]Info: lord Erar Peut Construire un Village
-[22:21:35]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
-[22:21:35]Info: On éxécute toute les actions qui reste en 0
-[22:21:35]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
-[22:21:35]Info: Toute les piles actions ont était déplacer fin de eotactionfile
-[22:21:35]Info: file action après fin de tour: []
-[22:21:35]Info: félicitation, Aere(25) et Wulf(21) ont donné naissance à Concha
-[22:21:35]Info: félicitation, Dobharc(24) et Tan(29) ont donné naissance à Cyn
-[22:21:35]Info: félicitation, Naom(22) et Ealasai(30) ont donné naissance à Dola
-[22:21:35]Info: félicitation, Wysta(24) et Bláthnai(24) ont donné naissance à Aithn
-[22:21:35]Info: félicitation, Frici(22) et Caitlí(26) ont donné naissance à Còmha
-[22:21:44]Info: Player hit end of turn button
-[22:21:44]Info: tour de: lord Llewellyn, 1
-[22:21:44]Info: lord Llewellyn Construit une Église dans Shuydo
-[22:21:44]Info: lord Llewellyn Peut Construire un Village
-[22:21:44]Info: lord Llewellyn A recruter dans l'armée unit Shuydo, 1 soldat
-[22:21:44]Info: tour de: lord Zargothra, 2
-[22:21:44]Info: lord Zargothra Peut Construire un Village
-[22:21:44]Info: lord Zargothra A recruter dans l'armée unit Halwatc, 1 soldat
-[22:21:44]Info: tour de: lord Erar, 3
-[22:21:44]Info: lord Erar Éxige une tax aux village Mightgulc de Ressource:False, d'Écus:True
-[22:21:44]Info: lord Erar possède dans ses caisses: 65 ressource,9 écus
-[22:21:44]Info: lord Erar Construit une Église dans Mightgulc
-[22:21:44]Info: lord Erar Peut Construire un Village
-[22:21:44]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
-[22:21:44]Info: On éxécute toute les actions qui reste en 0
-[22:21:44]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
-[22:21:44]Info: Toute les piles actions ont était déplacer fin de eotactionfile
-[22:21:44]Info: file action après fin de tour: []
-[22:21:44]Info: félicitation, Aere(26) et Wulf(22) ont donné naissance à Teàrlac
-[22:21:44]Info: félicitation, Gibso(30) et Naom(23) ont donné naissance à Ame
-[22:21:44]Info: félicitation, Sigewear(30) et Ealasai(24) ont donné naissance à Gràinn
-[22:21:44]Info: félicitation, Wulfsig(22) et Aerin(25) ont donné naissance à Ame
-[22:21:44]Info: félicitation, Tan(29) et Frici(21) ont donné naissance à Wysta
+[19:25:28]Info: Initialisation log terminé
+[19:25:28]Info: 1200x1200+150+150
+[19:25:28]Info: Initialisation de l'application terminé
+[19:25:29]Info: taille écran x,y: 1440, 900
+[19:25:29]Info: Taille de la Frame du Canvas: 1, 1
+[19:25:29]Info: Taille de la Frame du top: 1, 1
+[19:25:29]Info: Taille de la Frame du bas: 1, 1
+[19:25:29]Info: Taille du Canvas:1, 1
+[19:25:29]Info: coord0: ,[840, 1080]
+[19:25:29]Info: coord1: ,[940, 1180]
+[19:25:29]Info: coord0: ,[1400, 780]
+[19:25:29]Info: coord1: ,[1500, 880]
+[19:25:29]Info: coord0: ,[1800, 40]
+[19:25:29]Info: coord1: ,[1900, 140]
+[19:25:29]Info: coord0: ,[120, 40]
+[19:25:29]Info: coord1: ,[220, 140]
+[19:25:29]Info: coord0: ,[1040, 0]
+[19:25:29]Info: coord1: ,[1140, 80]
+[19:25:29]Info: coord0: ,[1780, 540]
+[19:25:29]Info: coord1: ,[1880, 640]
+[19:25:29]Info: coord0: ,[520, 740]
+[19:25:29]Info: coord1: ,[620, 840]
+[19:25:29]Info: coord0: ,[1860, 1340]
+[19:25:29]Info: coord1: ,[1960, 1440]
+[19:25:29]Info: coord0: ,[1860, 1780]
+[19:25:29]Info: coord1: ,[1960, 1880]
+[19:25:29]Info: déplacement de x,y: , 290.0, 770.0
+[19:25:30]Info: Player hit end of turn button
+[19:25:30]Info: tour de: lord Ó Seanáin, 1
+[19:25:30]Info: lord Ó Seanáin Fait venir 1 paysan et 0 artisan
+[19:25:30]Info: lord Ó Seanáin Peut Créer une Armée
+[19:25:30]Info: lord Ó Seanáin A créer l'armée unit Hoemoo
+[19:25:30]Info: lord Ó Seanáin à 1.0% de chance de Vassaliser: lord Ó Caoim
+[19:25:30]Info: lord Ó Seanáin à 1.0% de chance de Vassaliser: lord Zargothra
+[19:25:30]Info: lord Ó Seanáin liste de Menace: [[2, -1], [3, -1]]
+[19:25:30]Info: tour de: lord Ó Caoim, 2
+[19:25:30]Info: lord Ó Caoim Fait venir 1 paysan et 0 artisan
+[19:25:30]Info: lord Ó Caoim Peut Créer une Armée
+[19:25:30]Info: lord Ó Caoim A créer l'armée unit Winsto
+[19:25:30]Info: lord Ó Caoim à 0.0% de chance de Vassaliser: lord Ó Seanáin
+[19:25:30]Info: lord Ó Caoim à 1.0% de chance de Vassaliser: lord Zargothra
+[19:25:30]Info: lord Ó Caoim liste de Menace: [[1, 0], [3, -1]]
+[19:25:30]Info: tour de: lord Zargothra, 3
+[19:25:30]Info: lord Zargothra Fait venir 1 paysan et 0 artisan
+[19:25:30]Info: lord Zargothra Peut Créer une Armée
+[19:25:30]Info: lord Zargothra A créer l'armée unit Halwatc
+[19:25:30]Info: lord Zargothra à 0.0% de chance de Vassaliser: lord Ó Seanáin
+[19:25:30]Info: lord Zargothra à 0.0% de chance de Vassaliser: lord Ó Caoim
+[19:25:30]Info: lord Zargothra liste de Menace: [[1, 0], [2, 0]]
+[19:25:30]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
+[19:25:30]Info: On éxécute toute les actions qui reste en 0
+[19:25:30]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
+[19:25:30]Info: Toute les piles actions ont était déplacer fin de eotactionfile
+[19:25:30]Info: file action après fin de tour: []
+[19:25:30]Info: félicitation, Gauwis Son(18) et Atho(20) ont donné naissance à Eadbur
+[19:25:30]Info: félicitation, Sigewear(22) et Gauwis Son(21) ont donné naissance à Eada
+[19:25:30]Info: félicitation, Aithn(28) et Wysta(30) ont donné naissance à Rodaid
+[19:25:30]Info: félicitation, Teàrlac(30) et Tephy(27) ont donné naissance à Tan
+[19:25:30]Info: félicitation, Cyn(25) et Dobharc(29) ont donné naissance à Rodaid
+[19:25:30]Info: félicitation, Frici(30) et Ealasai(27) ont donné naissance à Naom
+[19:25:30]Info: félicitation, Langle(30) et Eadbur(27) ont donné naissance à Ealasai
+[19:25:30]Info: félicitation, Ælfsta(29) et Langle(23) ont donné naissance à Naom
+[19:25:30]Info: félicitation, Wulfsig(24) et Tan(26) ont donné naissance à Concha
+[19:25:30]Info: félicitation, Ame(18) et Tephy(22) ont donné naissance à Tan
+[19:25:30]Info: félicitation, Atho(18) et Concha(16) ont donné naissance à Tan
+[19:25:30]Info: félicitation, Langle(26) et Ælfsta(16) ont donné naissance à Gràinn
+[19:25:30]Info: félicitation, Ælfsta(30) et Dobharc(25) ont donné naissance à Atho
+[19:25:31]Info: Player hit end of turn button
+[19:25:31]Info: tour de: lord Ó Seanáin, 1
+[19:25:31]Info: lord Ó Seanáin Éxige une tax aux village Hoemoo de Ressource:False, d'Écus:True
+[19:25:31]Info: lord Ó Seanáin possède dans ses caisses: 15 ressource,8 écus
+[19:25:31]Info: lord Ó Seanáin Fait venir 1 paysan et 0 artisan
+[19:25:31]Info: lord Ó Seanáin à 0.0% de chance de Vassaliser: lord Ó Caoim
+[19:25:31]Info: lord Ó Seanáin à 4.0% de chance de Vassaliser: lord Zargothra
+[19:25:31]Info: lord Ó Seanáin liste de Menace: [[2, 0], [3, -1]]
+[19:25:31]Info: tour de: lord Ó Caoim, 2
+[19:25:31]Info: lord Ó Caoim Éxige une tax aux village Winsto de Ressource:False, d'Écus:True
+[19:25:31]Info: lord Ó Caoim possède dans ses caisses: 15 ressource,8 écus
+[19:25:31]Info: lord Ó Caoim Fait venir 1 paysan et 0 artisan
+[19:25:31]Info: lord Ó Caoim à 2.0% de chance de Vassaliser: lord Ó Seanáin
+[19:25:31]Info: lord Ó Caoim à 6.0% de chance de Vassaliser: lord Zargothra
+[19:25:31]Info: lord Ó Caoim liste de Menace: [[1, -1], [3, -1]]
+[19:25:31]Info: tour de: lord Zargothra, 3
+[19:25:31]Info: lord Zargothra Éxige une tax aux village Halwatc de Ressource:False, d'Écus:True
+[19:25:31]Info: lord Zargothra possède dans ses caisses: 15 ressource,8 écus
+[19:25:31]Info: lord Zargothra Fait venir 1 paysan et 0 artisan
+[19:25:31]Info: lord Zargothra à -2.0% de chance de Vassaliser: lord Ó Seanáin
+[19:25:31]Info: lord Zargothra à -4.0% de chance de Vassaliser: lord Ó Caoim
+[19:25:31]Info: lord Zargothra liste de Menace: [[1, 0], [2, 0]]
+[19:25:31]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
+[19:25:31]Info: On éxécute toute les actions qui reste en 0
+[19:25:31]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
+[19:25:31]Info: Toute les piles actions ont était déplacer fin de eotactionfile
+[19:25:31]Info: file action après fin de tour: []
+[19:25:31]Info: félicitation, Nilid(20) et Eada(24) ont donné naissance à Dobharc
+[19:25:31]Info: félicitation, Gibso(20) et Aerin(24) ont donné naissance à Còmha
+[19:25:31]Info: félicitation, Dobharc(30) et Ame(26) ont donné naissance à Wysta
+[19:25:31]Info: félicitation, Wulfsig(29) et Cyn(26) ont donné naissance à Gibso
+[19:25:31]Info: félicitation, Langle(27) et Eada(22) ont donné naissance à Gauwis Son
+[19:25:31]Info: félicitation, Scotaid(19) et Wysta(25) ont donné naissance à Eada
+[19:25:31]Info: félicitation, Gibso(29) et Tephy(17) ont donné naissance à Wulf
+[19:25:31]Info: félicitation, Eada(17) et Aere(18) ont donné naissance à Aithn
+[19:25:31]Info: félicitation, Frici(17) et Atho(24) ont donné naissance à Sigewear
+[19:25:31]Info: félicitation, Ælfsta(24) et Wulfsig(23) ont donné naissance à Dola
+[19:25:31]Info: félicitation, Ealasai(24) et Caitlí(29) ont donné naissance à Aere
