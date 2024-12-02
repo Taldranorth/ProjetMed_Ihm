@@ -1,105 +1,63 @@
-[19:25:28]Info: Initialisation log terminé
-[19:25:28]Info: 1200x1200+150+150
-[19:25:28]Info: Initialisation de l'application terminé
-[19:25:29]Info: taille écran x,y: 1440, 900
-[19:25:29]Info: Taille de la Frame du Canvas: 1, 1
-[19:25:29]Info: Taille de la Frame du top: 1, 1
-[19:25:29]Info: Taille de la Frame du bas: 1, 1
-[19:25:29]Info: Taille du Canvas:1, 1
-[19:25:29]Info: coord0: ,[840, 1080]
-[19:25:29]Info: coord1: ,[940, 1180]
-[19:25:29]Info: coord0: ,[1400, 780]
-[19:25:29]Info: coord1: ,[1500, 880]
-[19:25:29]Info: coord0: ,[1800, 40]
-[19:25:29]Info: coord1: ,[1900, 140]
-[19:25:29]Info: coord0: ,[120, 40]
-[19:25:29]Info: coord1: ,[220, 140]
-[19:25:29]Info: coord0: ,[1040, 0]
-[19:25:29]Info: coord1: ,[1140, 80]
-[19:25:29]Info: coord0: ,[1780, 540]
-[19:25:29]Info: coord1: ,[1880, 640]
-[19:25:29]Info: coord0: ,[520, 740]
-[19:25:29]Info: coord1: ,[620, 840]
-[19:25:29]Info: coord0: ,[1860, 1340]
-[19:25:29]Info: coord1: ,[1960, 1440]
-[19:25:29]Info: coord0: ,[1860, 1780]
-[19:25:29]Info: coord1: ,[1960, 1880]
-[19:25:29]Info: déplacement de x,y: , 290.0, 770.0
-[19:25:30]Info: Player hit end of turn button
-[19:25:30]Info: tour de: lord Ó Seanáin, 1
-[19:25:30]Info: lord Ó Seanáin Fait venir 1 paysan et 0 artisan
-[19:25:30]Info: lord Ó Seanáin Peut Créer une Armée
-[19:25:30]Info: lord Ó Seanáin A créer l'armée unit Hoemoo
-[19:25:30]Info: lord Ó Seanáin à 1.0% de chance de Vassaliser: lord Ó Caoim
-[19:25:30]Info: lord Ó Seanáin à 1.0% de chance de Vassaliser: lord Zargothra
-[19:25:30]Info: lord Ó Seanáin liste de Menace: [[2, -1], [3, -1]]
-[19:25:30]Info: tour de: lord Ó Caoim, 2
-[19:25:30]Info: lord Ó Caoim Fait venir 1 paysan et 0 artisan
-[19:25:30]Info: lord Ó Caoim Peut Créer une Armée
-[19:25:30]Info: lord Ó Caoim A créer l'armée unit Winsto
-[19:25:30]Info: lord Ó Caoim à 0.0% de chance de Vassaliser: lord Ó Seanáin
-[19:25:30]Info: lord Ó Caoim à 1.0% de chance de Vassaliser: lord Zargothra
-[19:25:30]Info: lord Ó Caoim liste de Menace: [[1, 0], [3, -1]]
-[19:25:30]Info: tour de: lord Zargothra, 3
-[19:25:30]Info: lord Zargothra Fait venir 1 paysan et 0 artisan
-[19:25:30]Info: lord Zargothra Peut Créer une Armée
-[19:25:30]Info: lord Zargothra A créer l'armée unit Halwatc
-[19:25:30]Info: lord Zargothra à 0.0% de chance de Vassaliser: lord Ó Seanáin
-[19:25:30]Info: lord Zargothra à 0.0% de chance de Vassaliser: lord Ó Caoim
-[19:25:30]Info: lord Zargothra liste de Menace: [[1, 0], [2, 0]]
-[19:25:30]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
-[19:25:30]Info: On éxécute toute les actions qui reste en 0
-[19:25:30]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
-[19:25:30]Info: Toute les piles actions ont était déplacer fin de eotactionfile
-[19:25:30]Info: file action après fin de tour: []
-[19:25:30]Info: félicitation, Gauwis Son(18) et Atho(20) ont donné naissance à Eadbur
-[19:25:30]Info: félicitation, Sigewear(22) et Gauwis Son(21) ont donné naissance à Eada
-[19:25:30]Info: félicitation, Aithn(28) et Wysta(30) ont donné naissance à Rodaid
-[19:25:30]Info: félicitation, Teàrlac(30) et Tephy(27) ont donné naissance à Tan
-[19:25:30]Info: félicitation, Cyn(25) et Dobharc(29) ont donné naissance à Rodaid
-[19:25:30]Info: félicitation, Frici(30) et Ealasai(27) ont donné naissance à Naom
-[19:25:30]Info: félicitation, Langle(30) et Eadbur(27) ont donné naissance à Ealasai
-[19:25:30]Info: félicitation, Ælfsta(29) et Langle(23) ont donné naissance à Naom
-[19:25:30]Info: félicitation, Wulfsig(24) et Tan(26) ont donné naissance à Concha
-[19:25:30]Info: félicitation, Ame(18) et Tephy(22) ont donné naissance à Tan
-[19:25:30]Info: félicitation, Atho(18) et Concha(16) ont donné naissance à Tan
-[19:25:30]Info: félicitation, Langle(26) et Ælfsta(16) ont donné naissance à Gràinn
-[19:25:30]Info: félicitation, Ælfsta(30) et Dobharc(25) ont donné naissance à Atho
-[19:25:31]Info: Player hit end of turn button
-[19:25:31]Info: tour de: lord Ó Seanáin, 1
-[19:25:31]Info: lord Ó Seanáin Éxige une tax aux village Hoemoo de Ressource:False, d'Écus:True
-[19:25:31]Info: lord Ó Seanáin possède dans ses caisses: 15 ressource,8 écus
-[19:25:31]Info: lord Ó Seanáin Fait venir 1 paysan et 0 artisan
-[19:25:31]Info: lord Ó Seanáin à 0.0% de chance de Vassaliser: lord Ó Caoim
-[19:25:31]Info: lord Ó Seanáin à 4.0% de chance de Vassaliser: lord Zargothra
-[19:25:31]Info: lord Ó Seanáin liste de Menace: [[2, 0], [3, -1]]
-[19:25:31]Info: tour de: lord Ó Caoim, 2
-[19:25:31]Info: lord Ó Caoim Éxige une tax aux village Winsto de Ressource:False, d'Écus:True
-[19:25:31]Info: lord Ó Caoim possède dans ses caisses: 15 ressource,8 écus
-[19:25:31]Info: lord Ó Caoim Fait venir 1 paysan et 0 artisan
-[19:25:31]Info: lord Ó Caoim à 2.0% de chance de Vassaliser: lord Ó Seanáin
-[19:25:31]Info: lord Ó Caoim à 6.0% de chance de Vassaliser: lord Zargothra
-[19:25:31]Info: lord Ó Caoim liste de Menace: [[1, -1], [3, -1]]
-[19:25:31]Info: tour de: lord Zargothra, 3
-[19:25:31]Info: lord Zargothra Éxige une tax aux village Halwatc de Ressource:False, d'Écus:True
-[19:25:31]Info: lord Zargothra possède dans ses caisses: 15 ressource,8 écus
-[19:25:31]Info: lord Zargothra Fait venir 1 paysan et 0 artisan
-[19:25:31]Info: lord Zargothra à -2.0% de chance de Vassaliser: lord Ó Seanáin
-[19:25:31]Info: lord Zargothra à -4.0% de chance de Vassaliser: lord Ó Caoim
-[19:25:31]Info: lord Zargothra liste de Menace: [[1, 0], [2, 0]]
-[19:25:31]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
-[19:25:31]Info: On éxécute toute les actions qui reste en 0
-[19:25:31]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
-[19:25:31]Info: Toute les piles actions ont était déplacer fin de eotactionfile
-[19:25:31]Info: file action après fin de tour: []
-[19:25:31]Info: félicitation, Nilid(20) et Eada(24) ont donné naissance à Dobharc
-[19:25:31]Info: félicitation, Gibso(20) et Aerin(24) ont donné naissance à Còmha
-[19:25:31]Info: félicitation, Dobharc(30) et Ame(26) ont donné naissance à Wysta
-[19:25:31]Info: félicitation, Wulfsig(29) et Cyn(26) ont donné naissance à Gibso
-[19:25:31]Info: félicitation, Langle(27) et Eada(22) ont donné naissance à Gauwis Son
-[19:25:31]Info: félicitation, Scotaid(19) et Wysta(25) ont donné naissance à Eada
-[19:25:31]Info: félicitation, Gibso(29) et Tephy(17) ont donné naissance à Wulf
-[19:25:31]Info: félicitation, Eada(17) et Aere(18) ont donné naissance à Aithn
-[19:25:31]Info: félicitation, Frici(17) et Atho(24) ont donné naissance à Sigewear
-[19:25:31]Info: félicitation, Ælfsta(24) et Wulfsig(23) ont donné naissance à Dola
-[19:25:31]Info: félicitation, Ealasai(24) et Caitlí(29) ont donné naissance à Aere
+[00:38:33]Info: Initialisation log terminé
+[00:38:33]Info: 1200x1200+150+150
+[00:38:33]Info: Initialisation de l'application terminé
+[00:38:35]Info: taille écran x,y: 1440, 900
+[00:38:35]Info: Taille de la Frame du Canvas: 1, 1
+[00:38:35]Info: Taille de la Frame du top: 1, 1
+[00:38:35]Info: Taille de la Frame du bas: 1, 1
+[00:38:35]Info: Taille du Canvas:1, 1
+[00:38:35]Info: coord0: ,[1180, 1840]
+[00:38:35]Info: coord1: ,[1280, 1940]
+[00:38:35]Info: coord0: ,[1220, 1340]
+[00:38:35]Info: coord1: ,[1320, 1440]
+[00:38:35]Info: coord0: ,[100, 440]
+[00:38:35]Info: coord1: ,[200, 540]
+[00:38:35]Info: coord0: ,[700, 1820]
+[00:38:35]Info: coord1: ,[800, 1920]
+[00:38:35]Info: coord0: ,[1520, 260]
+[00:38:35]Info: coord1: ,[1620, 360]
+[00:38:35]Info: coord0: ,[1820, 1400]
+[00:38:35]Info: coord1: ,[1920, 1500]
+[00:38:35]Info: coord0: ,[1560, 1500]
+[00:38:35]Info: coord1: ,[1660, 1600]
+[00:38:35]Info: coord0: ,[40, 980]
+[00:38:35]Info: coord1: ,[140, 1080]
+[00:38:35]Info: coord0: ,[780, 1360]
+[00:38:35]Info: coord1: ,[880, 1460]
+[00:38:35]Info: déplacement de x,y: , 630.0, 1530.0
+[00:38:37]Info: entre dans un état interface_recruit_army
+[00:38:38]Info: Le Joueur Créer une armée
+[00:38:39]Info: On quitte l'état interface_recruit_army
+[00:38:40]Info: entre dans un état interface_army
+[00:38:42]Info: dx, dy: ,7.0, 5.0
+[00:38:42]Info: itinéraires le moins couteux avec 16PM : [[62, 94], [62, 95], [63, 95], [64, 95], [64, 96], [64.0, 96.0], [65.0, 96.0], [65.0, 97.0], [66.0, 97.0], [67.0, 97.0], [67.0, 98.0], [68.0, 98.0], [68.0, 99.0], [68.0, 99.0]]
+[00:38:42]Info: dx, dy: ,7.0, 1.0
+[00:38:42]Info: itinéraires le moins couteux avec 10PM : [[62, 94], [63, 94], [64, 94], [64.0, 94.0], [65.0, 94.0], [66.0, 94.0], [67.0, 94.0], [67.0, 95.0], [68.0, 95.0], [68.0, 95.0]]
+[00:38:42]Info: dx, dy: ,7.0, 1.0
+[00:38:42]Info: itinéraires le moins couteux avec 10PM : [[62, 94], [63, 94], [64, 94], [64.0, 94.0], [65.0, 94.0], [66.0, 94.0], [67.0, 94.0], [67.0, 95.0], [68.0, 95.0], [68.0, 95.0]]
+[00:38:43]Info: dx, dy: ,7.0, 1.0
+[00:38:43]Info: itinéraires le moins couteux avec 10PM : [[62, 94], [63, 94], [64, 94], [64.0, 94.0], [65.0, 94.0], [66.0, 94.0], [67.0, 94.0], [67.0, 95.0], [68.0, 95.0], [68.0, 95.0]]
+[00:38:43]Info: dx, dy: ,9.0, 1.0
+[00:38:43]Info: itinéraires le moins couteux avec 12PM : [[62, 94], [63, 94], [64, 94], [65, 94], [65.0, 94.0], [66.0, 94.0], [67.0, 94.0], [68.0, 94.0], [68.0, 95.0], [69.0, 95.0], [70.0, 95.0], [70.0, 95.0]]
+[00:38:43]Info: dx, dy: ,9.0, 1.0
+[00:38:43]Info: itinéraires le moins couteux avec 12PM : [[62, 94], [63, 94], [64, 94], [65, 94], [65.0, 94.0], [66.0, 94.0], [67.0, 94.0], [68.0, 94.0], [68.0, 95.0], [69.0, 95.0], [70.0, 95.0], [70.0, 95.0]]
+[00:38:43]Info: dx, dy: ,9.0, 1.0
+[00:38:43]Info: itinéraires le moins couteux avec 12PM : [[62, 94], [63, 94], [64, 94], [65, 94], [65.0, 94.0], [66.0, 94.0], [67.0, 94.0], [68.0, 94.0], [68.0, 95.0], [69.0, 95.0], [70.0, 95.0], [70.0, 95.0]]
+[00:38:44]Info: coordmap: ,[70.0, 95.0]
+[00:38:44]Info: On calcul les déplacement nécessaire
+[00:38:44]Info: coord0, coord1: (61, 94), [70.0, 95.0]
+[00:38:44]Info: dx, dy: ,9.0, 1.0
+[00:38:44]Info: itinéraires le moins couteux avec 12PM : [[62, 94], [63, 94], [64, 94], [65, 94], [65.0, 94.0], [66.0, 94.0], [67.0, 94.0], [68.0, 94.0], [68.0, 95.0], [69.0, 95.0], [70.0, 95.0], [70.0, 95.0]]
+[00:38:44]Info: lmovement: [[62, 94], [63, 94], [64, 94], [65, 94], [65.0, 94.0], [66.0, 94.0], [67.0, 94.0], [68.0, 94.0], [68.0, 95.0], [69.0, 95.0], [70.0, 95.0], [70.0, 95.0]]
+[00:38:44]Info: Unité déplacement vers coord Canvas : [30.0, 10.0]
+[00:38:44]Info: On déplace l'armée unit Mag an Gáir avec l'id Canvas: 10028 de: 1x,0y 
+[00:38:44]Info: Unité déplacement vers coord Canvas : [30.0, 10.0]
+[00:38:44]Info: On déplace l'armée unit Mag an Gáir avec l'id Canvas: 10028 de: 1x,0y 
+[00:38:44]Info: Unité déplacement vers coord Canvas : [30.0, 10.0]
+[00:38:44]Info: On déplace l'armée unit Mag an Gáir avec l'id Canvas: 10028 de: 1x,0y 
+[00:38:44]Info: Unité déplacement vers coord Canvas : [30.0, 10.0]
+[00:38:44]Info: On déplace l'armée unit Mag an Gáir avec l'id Canvas: 10028 de: 1x,0y 
+[00:38:44]Info: Il reste des mouvement à effectuer mais il y n'a plus de PM
+[00:38:44]Info: On ajoute dans la file des actions
+[00:38:44]Info: file action après ajout: [[], [['sequencemoveunit', <functions.data.ClassGameData object at 0x1191e52b0>, <functions.data.Classmap object at 0x1191e6270>, <functions.data.ClassOptions object at 0x1191e5160>, <functions.gameclass.Classarmy object at 0x1191e7620>, [70.0, 95.0]]]]
+[00:38:46]Info: On quitte l'état interface_army

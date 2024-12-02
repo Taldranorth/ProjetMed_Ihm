@@ -4,7 +4,7 @@ import random
 
 import functions.gameclass as gameclass
 import functions.affichage as affichage
-import functions.interface as interface
+import functions.interfacegame as interfacegame
 
 from datetime import datetime
 from time import time
@@ -257,6 +257,8 @@ class ClassGameData:
 
 	def createlord(self):
 		self.list_lord += [gameclass.Classlord(("lord "+self.randomnametype("Surnom")), False, self.Nb_lord)]
+		color = f'#{random.randrange(256**3):06x}'
+		self.list_lord[self.Nb_lord].setcolor(color)
 		self.Nb_lord += 1
 
 	def lordnametoid(self, name):
@@ -408,9 +410,9 @@ class ClassGameData:
 		if action[0] == "sequencemoveunit":
 			affichage.sequencemoveunit(action[1], action[2], action[3], action[4], action[5])
 		elif action[0] == "sequencemovefight":
-			interface.sequencemovefight(action[1], action[2], action[3], action[4], action[5])
+			interfacegame.sequencemovefight(action[1], action[2], action[3], action[4], action[5])
 		elif action[0] == "sequencemovetakevillage":
-			interface.sequencemovetakevillage(action[1], action[2], action[3], action[4], action[5], action[6])
+			interfacegame.sequencemovetakevillage(action[1], action[2], action[3], action[4], action[5], action[6])
 
 
 

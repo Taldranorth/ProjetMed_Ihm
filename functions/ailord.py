@@ -1,11 +1,12 @@
 import time
 import random
 
-import functions.interface as interface
+import functions.interfacegame as interfacegame
 import functions.gameclass as gameclass
 import functions.moveview as moveview
 import functions.genproc as genproc
 import functions.affichage as affichage
+import functions.common as common
 
 #########################
 # Fichier qui vient contenir les fonctions liées à la gestion de l'ia
@@ -73,7 +74,7 @@ import functions.affichage as affichage
 def mainai(gamedata, classmap, option):
 	
 	# ON affiche la banderole que l'ia Joue
-	banderole_window = interface.banderole(gamedata, classmap, option)
+	banderole_window = interfacegame.banderole(gamedata, classmap, option)
 
 	lord = gamedata.list_lord[gamedata.Nb_toplay]
 	player = gamedata.list_lord[gamedata.playerid]
@@ -128,9 +129,9 @@ def mainai(gamedata, classmap, option):
 		gamedata.log.printinfo(f"{lord.lordname} Peut Créer une Armée")
 		if lord.verifcost(2,2) == True:
 			village = lord.fief[0]
-			idvillage = moveview.coordmaptoidtuile(option, [village.x, village.y])
+			idvillage = common.coordmaptoidtuile(option, [village.x, village.y])
 			# Récupère les coord de la 1er cases libres
-			coord = interface.searchposition(gamedata, classmap, option, village)
+			coord = interfacegame.searchposition(gamedata, classmap, option, village)
 			i = len(lord.army)
 			# Créer l'armée
 			lord.createarmy(village.name, coord[0], coord[1])
@@ -173,7 +174,7 @@ def mainai(gamedata, classmap, option):
 		# Si le seigneur selectionner n'est pas le Seigneurs qui joue
 		if (otherlord != lord) and (otherlord != player):
 			# On calcul la réussite
-			succes = interface.vassal_try(gamedata, lord, otherlord)
+			succes = interfacegame.vassal_try(gamedata, lord, otherlord)
 			gamedata.log.printinfo(f"{lord.lordname} à {succes}% de chance de Vassaliser: {otherlord.lordname}")
 			# On calcul la menace
 			# On calcul la distance
@@ -190,7 +191,7 @@ def mainai(gamedata, classmap, option):
 			list_lord_menace += [[otherlord.idlord, menace]]
 			if succes >= 75:
 				gamedata.log.printinfo(f"{lord.lordname} tente de Vassaliser: {otherlord.lordname}")
-				interface.vassal_offer(gamedata, classmap, option, lord, otherlord, succes)
+				interfacegame.vassal_offer(gamedata, classmap, option, lord, otherlord, succes)
 
 	gamedata.log.printinfo(f"{lord.lordname} liste de Menace: {list_lord_menace}")
 	# 4°) Guerre
@@ -206,7 +207,7 @@ def mainai(gamedata, classmap, option):
 				nbarmy2 = 0
 				while (nbarmy2 < len(lord.war[nblord].army)) and (nbarmy < len(lord.army)):
 					gamedata.log.printinfo(f"{lord.lordname} déplace {lord.army[nbarmy].name} pour attaquer {lord.war[nblord].army[nbarmy2].name} de {lord.war[nblord].lordname}")
-					interface.sequencemovefight(gamedata, classmap, option, lord.army[nbarmy], lord.war[nblord].army[nbarmy2])
+					interfacegame.sequencemovefight(gamedata, classmap, option, lord.army[nbarmy], lord.war[nblord].army[nbarmy2])
 					nbarmy2 += 1
 					nbarmy += 1
 			nblord += 1
@@ -217,7 +218,7 @@ def mainai(gamedata, classmap, option):
 			nbvillage = 0
 			while ((nbvillage < len(lord.war[nblord].fief)) and (nbarmy < len(lord.army))):
 				gamedata.log.printinfo(f"{lord.lordname} déplace {lord.army[nbarmy].name} pour attaquer {lord.war[nblord].fief[nbvillage].name} de {lord.war[nblord].lordname}")
-				interface.sequencemovetakevillage(gamedata, classmap, option, lord, lord.army[nbarmy], lord.war[nblord].fief[nbvillage])
+				interfacegame.sequencemovetakevillage(gamedata, classmap, option, lord, lord.army[nbarmy], lord.war[nblord].fief[nbvillage])
 				nbvillage += 1
 				nbarmy += 1
 			nblord += 1
@@ -228,7 +229,7 @@ def mainai(gamedata, classmap, option):
 	# Une fois que l'ia à terminé on incrémente Nb_toplay
 	gamedata.Nb_toplay += 1
 	# Supprime la banderole
-	interface.destroybanderole(gamedata, classmap, banderole_window)
+	interfacegame.destroybanderole(gamedata, classmap, banderole_window)
 	# Et On rend les clés de la Maison,le sémaphore
 	gamedata.semaphore = False
 
@@ -304,7 +305,7 @@ def searchvillage(gamedata, classmap, option, village):
 
 	for x in range(-5, 5):
 		for y in range(-5, 5):
-			idtuile = moveview.coordmaptoidtuile(option,[xvill + x, yvill + y])
+			idtuile = common.coordmaptoidtuile(option,[xvill + x, yvill + y])
 			if genproc.buildvillagepossible(option, classmap, idtuile) == True:
 				return idtuile
 	return 0

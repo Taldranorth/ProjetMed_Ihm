@@ -125,6 +125,10 @@ def buildvillagepossible(options, Classmap, idtuile):
         return False
     elif (xidtuile == (options.mapx-1)) or (yidtuile == (options.mapy-1)):
         return False
+    elif(xidtuile == 1) or (yidtuile == 1):
+        return False
+    elif (xidtuile == (options.mapx-2)) or (yidtuile == (options.mapy-2)):
+        return False
     # On vérifie que c'est une plaines
     if Classmap.listmap[idtuile].type != "plains":
         return False

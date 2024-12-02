@@ -75,6 +75,7 @@ class Classlord:
 
 		self.lordname = lordname
 		self.player = player
+		self.color = "black" 
 
 		# liste des vassaux
 		# d'autre seigneurs
@@ -94,6 +95,12 @@ class Classlord:
 		# liste de type: ["expansionniste", "belliciste", "économique"]
 		# Pour plus tard
 		self.type = 0
+
+	def setcolor(self, color):
+		####
+		# Methode pour changer la couleur du Seigneur
+		####
+		self.color = color
 
 	def createarmy(self, name, x, y):
 		# On vérifie qu'il n'y a pas déjà une armée à cette position
