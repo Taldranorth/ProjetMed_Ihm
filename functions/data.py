@@ -4,6 +4,7 @@ import random
 
 import functions.gameclass as gameclass
 import functions.affichage as affichage
+import functions.interfacegame as interfacegame
 
 from datetime import datetime
 from time import time
@@ -52,23 +53,8 @@ c_d = os.getcwd()
 #
 #############################################################################
 
-
-
-
-
-
-###########################################################################
-
 ######################### Def de Classes #########################
 
-
-####################
-#
-#
-#
-#
-#
-####################
 class ClassGameData:
 
 	####################
@@ -90,8 +76,6 @@ class ClassGameData:
 	#	À l'initialisation de la game on créer une instance de la classe qui va contenir les données suivante:
 	#		Nb_tour = 0
 	#		Nb_lord = 3
-	#		
-	#
 	# 
 	####################
 
@@ -119,6 +103,7 @@ class ClassGameData:
 
 		# Variable qui vient contenir l'id du lord qui représente le seigneur
 		self.playerid = 0
+		# Liste qui vient contenir les Seigneurs
 		self.list_lord = []
 
 		# Dico des Assets
@@ -272,6 +257,8 @@ class ClassGameData:
 
 	def createlord(self):
 		self.list_lord += [gameclass.Classlord(("lord "+self.randomnametype("Surnom")), False, self.Nb_lord)]
+		color = f'#{random.randrange(256**3):06x}'
+		self.list_lord[self.Nb_lord].setcolor(color)
 		self.Nb_lord += 1
 
 	def lordnametoid(self, name):
@@ -367,7 +354,7 @@ class ClassGameData:
 		self.log.printinfo(f"On quitte l'état {self.state}")
 		self.state = 0
 
-	def endofturn(self):
+	def endofturn(self, classmap):
 		################
 		# Méthode appeler pour mettre fin au tour
 		################
@@ -378,6 +365,11 @@ class ClassGameData:
 		# On appelle les méthode des instances des sous-classes lord
 		for lord in self.list_lord:
 			lord.endofturn(self)
+		# On appelle les méhodes des instances des sous-classes villages qui n'ont pas de Seigneurs
+		for idvillage in classmap.lvillages:
+			village = classmap.idtovillage(idvillage)
+			if village.lord == 0:
+				village.endofturn(self)
 
 		self.Nb_tour += 1
 
@@ -417,6 +409,10 @@ class ClassGameData:
 
 		if action[0] == "sequencemoveunit":
 			affichage.sequencemoveunit(action[1], action[2], action[3], action[4], action[5])
+		elif action[0] == "sequencemovefight":
+			interfacegame.sequencemovefight(action[1], action[2], action[3], action[4], action[5])
+		elif action[0] == "sequencemovetakevillage":
+			interfacegame.sequencemovetakevillage(action[1], action[2], action[3], action[4], action[5], action[6])
 
 
 
@@ -730,7 +726,7 @@ def assetLoad():
 	# !!!! Voir Pour le cout en mémoire de la fonction !!!!
 	####################
 	# Si on concidère que le cout en mémoire est trop important on peu remplacer le fichier ouvert par le chemin du fichier
-	# Ex: Oceans: ["Ocean.png", "/Asset/terrain/Ocean/Ocean.png"]
+	# Ex: Oceans: ["Ocean.png", "/asset/terrain/Ocean/Ocean.png"]
 	####################
 
 	#On se place dans le dossier Asset puis dans texture

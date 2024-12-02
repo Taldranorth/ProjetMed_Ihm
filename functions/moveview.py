@@ -1,5 +1,6 @@
 import functions.data as data
 
+import functions.common as common
 
 #########################
 # Fichier qui vient contenir les fonctions liées aux déplacement du canvas
@@ -163,7 +164,7 @@ def moveviewz(event, gamedata, classmap, option):
 			# On recup les coordonnées canvas
 			coord = classmap.mapcanv.coords(imgid)
 			# On transforme en coordonnées Map
-			coord = coordcanvastomap(gamedata, classmap, option, coord)
+			coord = common.coordcanvastomap(gamedata, classmap, option, coord)
 			# On cherche l'objet armée
 			# On se balade parmi les Seigneurs
 			for lord in range(gamedata.Nb_lord):
@@ -226,7 +227,7 @@ def moveviewzcenter(gamedata, classmap, option, delta):
 			# On recup les coordonnées canvas
 			coord = classmap.mapcanv.coords(imgid)
 			# On transforme en coordonnées Map
-			coord = coordcanvastomap(gamedata, classmap, option, coord)
+			coord = common.coordcanvastomap(gamedata, classmap, option, coord)
 			# On cherche l'objet armée
 			# On se balade parmi les Seigneurs
 			for lord in range(gamedata.Nb_lord):
@@ -294,49 +295,3 @@ def canvasgooriginewindow(classmap):
 	classmap.mapcanv.scan_dragto(int(coord[0]), int(coord[1]), gain = 1)
 
 ###########################################################################
-
-#################################### Fonction Calcul de coord ####################################
-
-
-def coordcanvastomap(gamedata, classmap, option, coord):
-	##################
-	# Fonction pour traduire les coordonnées du canvas en coordonnées de la carte √
-	##################
-	ts = gamedata.tuilesize
-
-	xmap = (((coord[0]) - ts/2)//ts)
-	ymap = (((coord[1]) - ts/2)//ts)
-
-
-	return [xmap, ymap]
-
-def coordmaptocanvas(gamedata, classmap, option, coord, decalage:bool):
-	##################
-	# Fonction pour traduire les coordonnées map en coordonnées du canvas centrer ou non √
-	##################
-
-	#gamedata.log.printinfo(f"Pour coord map: {coord[0]}, {coord[1]}")
-
-	ts = gamedata.tuilesize
-
-	if decalage == True:
-		# calcul de base
-		xcanvas = (coord[0]*ts)+(ts/2)
-		ycanvas = (coord[1]*ts)+(ts/2)
-	else:
-		xcanvas = (coord[0]*ts)
-		ycanvas = (coord[1]*ts)		
-	#gamedata.log.printinfo(f"coordcanv: {xcanvas}, {ycanvas}")
-
-	return [xcanvas, ycanvas]
-
-def coordmaptoidtuile(option, coord):
-	##################
-	# Fonction pour traduire les coordonnées map en idtuile √
-	##################
-
-	idtuile = coord[0] + (option.mapx*coord[1])
-	return idtuile
-
-
-##########################################################################################

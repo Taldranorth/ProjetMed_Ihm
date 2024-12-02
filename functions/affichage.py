@@ -1,8 +1,9 @@
 import tkinter
 
 import functions.data as data
-import functions.interface as interface
+import functions.interfacegame as interfacegame
 import functions.moveview as moveview
+import functions.common as common
 
 #########################
 # Fichier qui vient contenir les fonctions liées à l'affichage
@@ -28,7 +29,7 @@ def printvillage(gamedata, classmap, option, frame):
 
 
 	# On ajoute lie au tag village la fonction pour ouvrir l'interface des villages
-	classmap.mapcanv.tag_bind("village","<Button-1>", lambda event, opt = option, gd = gamedata, cm = classmap: interface.villageinterface(event, gd, cm, opt))
+	classmap.mapcanv.tag_bind("village","<Button-1>", lambda event, opt = option, gd = gamedata, cm = classmap: interfacegame.villageinterface(event, gd, cm, opt))
 
 
 def printvillageunit(gamedata, classmap, option, coordmap):
@@ -51,7 +52,7 @@ def printvillageunit(gamedata, classmap, option, coordmap):
 	classmap.mapcanv.create_text((posx*ts)+(ts/2), (posy*ts), text = classmap.listmap[idtuile].village.name,tags = ["label","village","tuile", posx, posy], activefill = "Black")
 
 	# On ajoute lie au village la fonction pour ouvrir l'interface
-	classmap.mapcanv.tag_bind("village","<Button-1>", lambda event, opt = option, gd = gamedata, cm = classmap: interface.villageinterface(event, gd, cm, opt))
+	classmap.mapcanv.tag_bind("village","<Button-1>", lambda event, opt = option, gd = gamedata, cm = classmap: interfacegame.villageinterface(event, gd, cm, opt))
 
 def bordervillage(gamedata, classmap, option):
 	##################
@@ -81,9 +82,9 @@ def bordervillage(gamedata, classmap, option):
 			elif village.lord in player.war:
 				color = "red"
 			else:
-				color = "white"
+				color = village.lord.color
 		else:
-			color = "white"
+			color = "brown"
 		# On calcule la Bordure
 		border = village.border
 		# On s'assure de ne pas donner des coordonnées hors de la map
@@ -112,8 +113,8 @@ def bordervillage(gamedata, classmap, option):
 
 
 		# On convertit les Coordonnées Map en Coordonnées Canvas
-		coord0 = moveview.coordmaptocanvas(gamedata, classmap, option, [posx, posy], False)
-		coord1 = moveview.coordmaptocanvas(gamedata, classmap, option, [posx2, posy2], False)
+		coord0 = common.coordmaptocanvas(gamedata, classmap, option, [posx, posy], False)
+		coord1 = common.coordmaptocanvas(gamedata, classmap, option, [posx2, posy2], False)
 		gamedata.log.printinfo(f"coord0: ,{coord0}")
 		gamedata.log.printinfo(f"coord1: ,{coord1}")
 		classmap.mapcanv.create_rectangle( coord0[0], coord0[1], coord1[0], coord1[1], tags = ["tuile", "border", lordname], outline = color)
@@ -134,9 +135,9 @@ def bordervillageunit(gamedata, classmap, option, village):
 		elif village.lord in player.war:
 			color = "red"
 		else:
-			color = "white"
+			color = village.lord.color
 	else:
-		color = "white"
+		color = "brown"
 
 	# On calcule les coordonnées de la Bordure
 
@@ -166,8 +167,8 @@ def bordervillageunit(gamedata, classmap, option, village):
 		posy2 = village.y + border + 1 
 
 	# On convertit les Coordonnées Map en Coordonnées Canvas
-	coord0 = moveview.coordmaptocanvas(gamedata, classmap, option, [posx, posy], False)
-	coord1 = moveview.coordmaptocanvas(gamedata, classmap, option, [posx2, posy2], False)
+	coord0 = common.coordmaptocanvas(gamedata, classmap, option, [posx, posy], False)
+	coord1 = common.coordmaptocanvas(gamedata, classmap, option, [posx2, posy2], False)
 	# MonkeyPatch
 	classmap.mapcanv.create_rectangle( coord0[0], coord0[1], coord1[0], coord1[1], tags = ["tuile", "border"], outline = color)
 
@@ -194,10 +195,10 @@ def printarmy(gamedata, classmap, option, army):
 	# On charge dans l'atlas la texture préparer avec une taille qui correspond à la moitier d'une tuile
 	gamedata.loadtextureatlassize(texture_name, unit, ts/2)
 	# On créer à l'emplacement voulu
-	army.idCanv = classmap.mapcanv.create_image((posx*ts)+(ts/2), (posy*ts)+(ts/2), tags = ["army","tuile","img", army.x, army.y], image = gamedata.atlas[texture_name].image)
+	army.idCanv = classmap.mapcanv.create_image((posx*ts)+(ts/2), (posy*ts)+(ts/2), tags = ["army","tuile","img", army.name], image = gamedata.atlas[texture_name].image)
 
 	# On bind l'interface
-	classmap.mapcanv.tag_bind("army", "<Button-1>", lambda event: interface.armyinterface(event, gamedata, classmap, option))
+	classmap.mapcanv.tag_bind("army", "<Button-1>", lambda event: interfacegame.armyinterface(event, gamedata, classmap, option))
 
 def printupdatearmy(gamedata, classmap, army):
 	##################
@@ -236,7 +237,7 @@ def sequencemoveunit(gamedata, classmap, option, army, coordObjectif):
 	lmovement = pathfinding(gamedata, classmap, option, [army.x, army.y], coordObjectif, 45)
 	gamedata.log.printinfo(f"lmovement: {lmovement}")
 
-	idtuile0 = moveview.coordmaptoidtuile(option, [army.x, army.y])
+	idtuile0 = common.coordmaptoidtuile(option, [army.x, army.y])
 	# Une fois la liste rempli ont éxécute autant que l'on peut
 	i = 0
 	idtuile = lmovement[i][0]+(option.mapx*lmovement[i][1])
@@ -259,12 +260,12 @@ def moveunit(gamedata, classmap, option, army, coord):
 	##################
 
 	# On calcul l'id de la tuile
-	idtuile = moveview.coordmaptoidtuile(option, coord)
+	idtuile = common.coordmaptoidtuile(option, coord)
 
 	# On calcul les nouvelles coord
 	x = coord[0] - army.x
 	y = coord[1] - army.y
-	coord = moveview.coordmaptocanvas(gamedata, classmap, option, [x, y], True)
+	coord = common.coordmaptocanvas(gamedata, classmap, option, [x, y], True)
 	gamedata.log.printinfo(f"Unité déplacement vers coord Canvas : {coord}")
 	gamedata.log.printinfo(f"On déplace l'armée {army.name} avec l'id Canvas: {army.idCanv} de: {x}x,{y}y ")
 	# On déplace l'objet
@@ -421,7 +422,8 @@ def brensenham(coord0, coord1):
 
 def pathfinding(gamedata, classmap, option, coord0, coord1, degr):
 	##################
-	# Fonction pour calculer déplacement d'une unité valable
+	# Fonction pour calculer déplacement d'une unité valable, retourne l'itinéraire la plus efficace
+	# Utilise des Coordonnées Map
 	# On utilise Brensenham
 	# Que pour 3 snapshot (3 itinéraires)
 	##################
@@ -536,9 +538,24 @@ def costsequ(gamedata, classmap, option, itinéraire):
 			return False
 		else:
 			# Sinon on calcule le cout de la case
-			idtuile = moveview.coordmaptoidtuile(option, cases)
+			idtuile = common.coordmaptoidtuile(option, cases)
 			cost += classmap.listmap[idtuile].movementcost
 
 	return cost
+
+def armymoveoneturn(gamedata, classmap, option, itinéraire, army):
+	#####
+	# Fonction qui retourne True si l'armée peut faire le trajet en 1 tour
+	#####
+	cost = 0
+	for cases in itinéraire:
+		idtuile = common.coordmaptoidtuile(option, cases)
+		cost += classmap.listmap[idtuile].movementcost
+		if cost > army.moveturn:
+			return False
+	return True
+
+
+
 
 

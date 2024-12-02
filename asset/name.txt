@@ -53,6 +53,7 @@ O'Connelli
 O'Brien
 Ó Seanáini
 Ó Haodhai
+Zargothrax
 Village:
 Teestead
 Tibrook
@@ -107,3 +108,4 @@ Mag Cumhra
 Domhan an Teas
 Tír an Fás
 Mag an Gáire
+Abernethy

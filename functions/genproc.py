@@ -76,7 +76,6 @@ def genVillage(gamedata, classmap, options):
             # On change le Propriétaire de la tuile du village
             classmap.listmap[r].setpossesor(gamedata.list_lord[x].lordname)
 
-
     print("lvillage: ",classmap.lvillages)
 
 
@@ -125,6 +124,10 @@ def buildvillagepossible(options, Classmap, idtuile):
     if (xidtuile == 0) or (yidtuile == 0):
         return False
     elif (xidtuile == (options.mapx-1)) or (yidtuile == (options.mapy-1)):
+        return False
+    elif(xidtuile == 1) or (yidtuile == 1):
+        return False
+    elif (xidtuile == (options.mapx-2)) or (yidtuile == (options.mapy-2)):
         return False
     # On vérifie que c'est une plaines
     if Classmap.listmap[idtuile].type != "plains":
