@@ -91,23 +91,15 @@ from time import time
 # Main:
 # - Déplacement en mettant la souris sur la bordure extérieur de la carte
 # - Améliorer le Zoom/Dezoom
-# - Normaliser les Tags
 #
 # Interface:
 # - Améliorer l'interface
 # - Suprimmer le carrer du village ou l'église a était construite
-# - Léger décalage sur la droite lorsque l'on centre la vue
+# - Léger décalage sur la droite lorsqu'on centre la vue
 #
-# affichage:
-#	- Régler les labels des noms
-#		--> Actuellement ils ont tendance à ce couper quand ils sont trop long
-#			--> Le problème est dans le stockage du nom
 
-#
 # Data:
-#	- Sauvegarde des données
-#	- Faire Résolution Dynamique
-#	- Faire Placement Fenêtre Dynamique
+#
 #
 # Moveview: 
 #	- Implémenter une limite sur le déplacement de la vue pour ne pas aller plus loin que nécessaires
@@ -122,6 +114,7 @@ from time import time
 
 
 # - Ajouter Gestion des couleurs à PlayMenu
+
 
 #########################################################
 
@@ -148,20 +141,10 @@ from time import time
 
 # -> Fix la possetion de multiple armé
 #	-->Faire poper aux alentour de la ville la nouvelle armée si la case de la ville est déjà occupé par une armée
-
-# -> Ajouter Bouton Pour annuler Si on déplace une armée mais que l'on veut annuler son déplacement au tour prochain
 # -> Rework Interface avec Grid
 #	--> Interface_Army
 
 #####
-# - Améliorer le calcul pour récuperer le village dans prises de village
-#		--> Cela met en avant un problème global de coord :/
-# - Gérer le Déplacement nécessaire
-
-# - Fix la création d'armée pour le nom est la position
-
-# - Changer la gestion de la population d'un village pour un dico qui vient contenir pour le role la pop
-# - Mettre en place fin de tour pour les Villages Indépendants
 
 # - La trajectoire d'une armée doit s'afficher quand on clique dessus
 
@@ -169,16 +152,16 @@ from time import time
 # - Besoin d'un Retour utilisateur Quand Action Impossible
 
 # - Réaction au Bonheur
+# --> Si le Bonheur d'un vassaux est trop bas alors il tente une révolte
+# --> Si le Bonheur d'un village est trop bas et qu'une armée n'est pas présente Pour contrer alors déclare le Village déclare son Indépendance
 #####
 
 ####
-# - Mettre en Place le Combat entre 2 armée
-# - Fix movetakevillage qui ne récupère pas à tout les coup le village voulu
 # - Retravailler Interface Village
 # - Retravailler Menu Jouer
-#	--> Doit Utiliser Grid
 #	--> Doit permettre de Définir les Villages Indépendants
 #	--> Doit Afficher sur la minimap les villages de départs
+
 # - Graphe de Fin de Partie
 # 	--> Comment stocker les données des  différentes étapes ?
 #		--> Une liste qui contient en 0 le tour 0 avec les données des différents Seigneur ?
@@ -195,7 +178,6 @@ from time import time
 # - Rendre aléatoire le placement des villages par l'Ia
 #	--> Pré-Remplir une liste de coord entre [0-5] ou il va tirer aléatoirement ?
 
-
 # - Implémenter les Différents type de Comportement pour l'IA
 
 # - Ajouter une Condition qui vérifie qu'une armée ne soit pas déjà présente sur la case
@@ -203,10 +185,6 @@ from time import time
 # - Gérer les armées ennemies quand le Seigneur n'est plus là
 #	--> On les Supprimer ou ont les ajoute à la liste des Armées Bandit ?
 
-# - Ajouter Seigneur "Wild" qui vient gérer toute les Villages, armées Indépendantes
-
-
-# - Actuellement cela bloque dans takevillage
 # - Changer les Interfaces Pour qu'elle n'utilise plus la texture de "base"
 
 # - Pour l'instant Les Seigneurs IA ne peuvent vassaliser le Joueur
@@ -219,8 +197,39 @@ from time import time
 # - Réorganiser le Projet en Transformant des Fonctions en Methode
 
 # - Définir comment annuler une action ajouter dans la file d'action
+#	--> Si c'est une armée on cherche dans la file toute les actions qui ont pour paramètre l'objet Armée
+
+# - Bloquer la vue Pour le Déplacement avec la Souris
+
+# - Implémenter Event
+# - Retravailler Menu Déplacement Unité
+
+# - AJouter affichage Victoire ou défaite aux combat d'armée
 
 # - Remplir le Menu Cheat
+
+# - Améliorer Interface Village Stat
+#	--> Empécher de quitter l'interface Village quand on est dedans
+#	--> Ajouter ScrollBar
+
+# - Améliorer Création de Seigneur en ajoutant une Scrollbar
+
+# - Ajouter texture Pseudo-Aléatoire
+
+# - Ajouter Rebellion Vassaux Contre Seigneur
+
+# - Pousser la Gestion de la Menace
+
+# - Fix Sequence FightArmy Pour que l'armée ne soit pas obligé d'être sur la case de l'armée pour entamer le Combat
+
+# - Fix logique Ailord quand Un Seigneur est détruit, Nblord change mais cela n'est pas pris en compte dans le fonctionnement
+
+# -> Ajouter Bouton Pour annuler Si on déplace une armée mais que l'on veut annuler son déplacement au tour prochain
+#	--> Annuler retire l'action en cour dans la pile 1 ou 0
+
+# - Vérifier Pour l'initialisation de la map la différence entre X et Y
+
+#https://www.aimosta.com/Blogt/blogt-16.html
 
 #####
 
@@ -239,7 +248,7 @@ from time import time
 # - Implémenter marché
 # - Implémenter Landforme
 # - Gestion de la population par case
-# - Pousser le Calcule de la Menace
+# - Pousser le Calcul de la Menace
 # - Pousser le Combat entre les Armées
 # - Refactoriser le Code
 ########
@@ -255,7 +264,6 @@ from time import time
 # - Changer interface entête pour afficher icône boufe et money
 # - Implémenter une interface plus pousser d'attaque de village
 # - Implémenter une interface plus pousser d'attaque d'armée
-# - Ajouter les Entrelac
 # - Améliorer le réaffichage d'une bordure
 # - Refactoriser le Code
 ########

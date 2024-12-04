@@ -430,7 +430,6 @@ class Classvillage:
 
 		#print("lord: ",self.lord)
 		# Une fois mis à jour on mets à jour pour le seigneur du village
-		# 'list' object has no attribute 'updateinfo'
 		if self.lord != 0:
 			self.lord.updateinfo()
 
@@ -978,7 +977,7 @@ class ClassRoturier:
 		####
 		if self.age > 8:
 			#print(f"{self.name} un {self.role} à produit: {self.cp} ressource")
-			self.ressource += self.cp
+			self.ressource += self.cp + self.cpbonus + self.cpmalus
 		else:
 			#print(f"{self.name} un {self.role} à produit: {1} ressource")
 			self.ressource += 1			

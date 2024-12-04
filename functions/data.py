@@ -109,7 +109,7 @@ class ClassGameData:
 		# Dico des Assets
 		self.dico_file = assetLoad()
 		# Dico des noms
-		self.dico_name = loadnamedico(os.getcwd()+"/Asset/name.txt")
+		self.dico_name = loadnamedico(os.getcwd()+"/asset/name.txt")
 		# Atlas
 		self.atlas = {}
 		# Label Frame Atlas
@@ -404,7 +404,7 @@ class ClassGameData:
 
 	def actionfileeval(self, action):
 		################
-		# Méthode appeler par eotactionfile pour évaluer l'action selon une liste de fonction connu
+		# Méthode appeler par eotactionfile pour évaluer l'action selon une liste de fonction connue
 		################
 
 		if action[0] == "sequencemoveunit":
@@ -414,21 +414,71 @@ class ClassGameData:
 		elif action[0] == "sequencemovetakevillage":
 			interfacegame.sequencemovetakevillage(action[1], action[2], action[3], action[4], action[5], action[6])
 
-
-
-	def removeactionfile(self, action, turn):
+	def removeactionfile(self, searchobject):
 		################
-		# Méthode appeler quand ont veut retirer une action dans la turn file
+		# Méthode appeler quand ont veut retirer les actions de l'objet dans la file
 		################
 
-		# On cherche la pos de l'action dans la file
+		i = 0
+		while (i< len(self.actionlist)):
+			removeactionfileturn(searchobject, turn)
+			i += 1
+
+
+	def removeactionfileturn(self, searchobject, turn):
+		################
+		# Méthode appeler quand ont veut retirer les actions de l'objet dans la file ciblé
+		################
+
+		# On Se balade dans la liste des actions pour le tour ciblé
 		i = 0
 		while(i < len(self.actionlist[turn])):
-			if self.actionlist[turn][i] == action:
-				#Une fois que l'on à la position on change la list pour retirer l'action
-				actionlist[turn] = actionlist[turn][:i] + actionlist[turn][i+1:]
-				# On s'ejecte
-				return
+			action = self.actionlist[turn][i]
+			# Si l'action correspond à sequencemoveunit ont vérifie si l'armée utilisé correspond à l'objet
+			if action[0] == "sequencemoveunit":
+				if searchobject == action[4]:
+					# Si c'est le cas ont retire l'action de la liste puis on s'éjecte
+					self.actionlist[turn] = self.actionlist[turn][:i] + self.actionlist[turn][i+1:]
+					return
+			elif action[0] == "sequencemovefight":
+				if searchobject == action[4]:
+					self.actionlist[turn] = self.actionlist[turn][:i] + self.actionlist[turn][i+1:]
+					return
+			elif action[0] == "sequencemovetakevillage":
+				if searchobject == action[5]:
+					self.actionlist[turn] = self.actionlist[turn][:i] + self.actionlist[turn][i+1:]
+					return
+			i += 1
+
+	def inactionfile(self, searchobject, typeobject):
+		################
+		# Méthode qui renvoit True si l'objet à une Action dans la file d'actions
+		################
+		if typeobject == "army":
+			for i in range(len(self.actionlist)):
+				if inactionfileturn(searchobject, typeobject, i) == True:
+					return True
+		return False
+
+	def inactionfileturn(self, searchobject, typeobject, turn):
+		################
+		# Méthode qui renvoit True si l'objet à une Action dans la file d'actions à la turn pile
+		################
+		if typeobject == "army":
+			pile = self.actionlist[turn]
+			for action in pile:
+				if action[0] == "sequencemoveunit":
+					if searchobject == action[4]:
+						return True
+				elif action[0] == "sequencemovefight":
+					if searchobject == action[4]:
+						return True
+				elif action[0] == "sequencemovetakevillage":
+					if searchobject == action[5]:
+						return True
+
+		return False
+
 
 	def eotactionfile(self):
 		################
@@ -911,7 +961,7 @@ def loadnamedico(filepath):
 		else:
 			# on evite de prendre en compte les saut à la ligne
 			if line[-1:] == "\n":
-				dico_name[var] += [[line[:-2], 0]]
+				dico_name[var] += [[line[:-1], 0]]
 			else:
 				dico_name[var] += [[line, 0]]
 		line = f.readline()

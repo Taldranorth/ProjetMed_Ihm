@@ -647,7 +647,7 @@ def statewar(gamedata, classmap, option):
 		# On affiche les territoire 
 		# On se balade dans la liste des territoire
 		for nblord in range(len(gamedata.list_lord)):
-			color = village.lord.color
+			color = gamedata.list_lord[nblord].color
 			# Si c'est un joueur actuellement en guerre on change la couleur en rouge
 			if gamedata.list_lord[nblord] in player.war:
 				color = "red"
@@ -890,6 +890,9 @@ def buildvillage(event, gamedata, classmap, option):
 
 		# On update la carte des villages possible
 		updatestatbuildvillage(classmap, option)
+
+		# On update l'entête
+		updateinterface(gamedata, classmap)
 
 def updatestatbuildvillage(classmap, option):
 	############
@@ -1413,11 +1416,65 @@ def villageinterface(event, gamedata, classmap, option):
 		tkinter.Label(frame_info, text = f"Produit: {village.prod_ressource} ressource").grid(row = 4, column = 0)
 		# l'argent du village
 		tkinter.Label(frame_info, text = f"Produit: {village.prod_money} écus").grid(row = 5, column = 0)
+		# Boutton Vue détaillé
+		tkinter.Button(frame_info, text = "Vue détaillé", command = lambda: b_village_stat(gamedata, classmap, option, village)).grid(row = 6, column = 0)
 
 		######################################################################
 
 		# Si le joueur clique autre part on sort de l'interface
 		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event, cwl = canvas_window_list: exitstate(gamedata, classmap, option, [], [], cwl))
+
+def b_village_stat(gamedata, classmap, option, village):
+	################
+	# Fonction créer pour afficher la Fenêtre de Vue détaillé du village
+	################
+	# On créer la fenêtre
+	window_village_stat = tkinter.Frame(classmap.framecanvas)
+	window_village_stat.place(x = (option.widthWindow/20), y = (option.heightWindow/20))
+	# On créer la frame
+	frame_village_stat = tkinter.Frame(window_village_stat)
+	frame_village_stat.grid()
+
+	i = 0
+	# On Affiche les Infos de base du Village
+	for legend in ("Village", "Population", "Bonheur", "Production de Ressource", "Production d'argent", "Prêtre"):
+		tkinter.Label(frame_village_stat, text = legend).grid(row = 0, column = i)
+		i += 1
+	i = 0
+	for ele in (village.name, len(village.population), village.global_joy, village.prod_ressource, village.prod_money, village.priest):
+		if ele == village.priest:
+			if ele != 0:
+				tkinter.Label(frame_village_stat, text = village.priest.name).grid(row = 1, column = i)
+			else:
+				tkinter.Label(frame_village_stat, text = 0).grid(row = 1, column = i)
+		else:
+			tkinter.Label(frame_village_stat, text = ele).grid(row = 1, column = i)
+		i += 1
+
+	for j in range(6):
+		tkinter.Label(frame_village_stat, text = "-----------------").grid(row = 2, column = j)
+
+
+	# On affiche les Artisans
+	i = 0
+	for legend in ("Role", "Nom", "Bonheur", "Ressource", "Argent", "Capacité Production", "CP Bonus", "CP Malus"):
+		tkinter.Label(frame_village_stat, text = legend).grid(row = 3,column = i)
+		i += 1
+
+	i = 4
+	for pop in village.population:
+		j = 0
+		for ele in (pop.role, pop.name, pop.joy, pop.ressource, pop.money, pop.cp, pop.cpbonus, pop.cpmalus):
+			tkinter.Label(frame_village_stat, text = ele).grid(row = i, column = j)
+			j += 1
+		i += 1
+	tkinter.Button(frame_village_stat, text = "Quitter", command = lambda: exit_village_stat(window_village_stat)).grid(row = i, columnspan = 7)
+
+def exit_village_stat(wvs):
+	#######
+	# Fonction pour quitter l'interface Village stat
+	#######
+	wvs.destroy()
 
 
 def armyinterface(event, gamedata, classmap, option):
@@ -1554,7 +1611,7 @@ def startsequencemoveunit(event, gamedata, classmap, option, army):
 	##################
 	# Fonctions pour entamer le déplacement d'une armée vers la case clicker
 	##################
-
+	gamedata.removeactionfileturn(army)
 	# On recup les coord canvas de la tuile Viser
 	posfinalx = classmap.mapcanv.canvasx(event.x)
 	posfinaly = classmap.mapcanv.canvasy(event.y)
@@ -1567,7 +1624,7 @@ def startsequencemoveunit(event, gamedata, classmap, option, army):
 
 def cancelmovearmy(event, gamedata, classmap, option, lfuncpath, fra):
 	################
-	# Fonction pour annuler le déplacement d'une armée
+	# Fonction pour annuler l'état de déplacement d'armée déplacement d'une armée
 	################
 	print("exit movearmy")
 	# On debind l'affichage
@@ -1592,6 +1649,7 @@ def startsequencemovefight(event, gamedata, classmap, option, army):
 	# Fonction pour entamer le déplacement vers l'armé adverse puis le combat
 	##################
 	gamedata.log.printinfo(f"startsequencemovefight")
+	gamedata.removeactionfileturn(army)
 	# On recupère les coord
 	posx = event.widget.canvasx(event.x)
 	posy = event.widget.canvasy(event.y)
@@ -1617,72 +1675,82 @@ def sequencemovefight(gamedata, classmap, option, army1, army2):
 	# Fonction qui gérer le déplacement d'une armée puis le combat avec une autre
 	##################
 	gamedata.log.printinfo(f"sequencemovefight")
-	# On recup les coord Map
-	coord1 = [army2.x, army2.y]
-	# On récupère l'itinéraire la plus efficace
-	itinéraire = affichage.pathfinding(gamedata, classmap, option, [army1.x, army1.y], coord1, 45)
+	# On vérifie que les 2 armées existe toujours
+	if (army1 != 0) and (army2 != 0):
+		# On recup les coord Map
+		coord1 = [army2.x, army2.y]
+		# On récupère l'itinéraire la plus efficace
+		itinéraire = affichage.pathfinding(gamedata, classmap, option, [army1.x, army1.y], coord1, 45)
 
-	# On déplace autant que l'on peut
-	i = 0
-	idtuile = common.coordmaptoidtuile(option, itinéraire[0])
-	idtuile0 = idtuile
-	while (army1.moveturn - classmap.listmap[idtuile].movementcost >=0) and (i < len(itinéraire)):
-		idtuile = common.coordmaptoidtuile(option, itinéraire[i])
-		affichage.moveunit(gamedata, classmap, option, army1, itinéraire[i])
-		i += 1
-	classmap.listmap[idtuile0].removearmyinplace()
-	classmap.listmap[idtuile].setarmyinplace(army1)
-	# Si l'armée à porté on attaque
-	if army1.moveturn > 0:
-		gamedata.log.printinfo(f"l'armée {army2.name} est à porté de {army1.name}")
-		# Si l'armée 1 est vainqueur On détruit l'armée 2
-		if(fight(gamedata, classmap, army1, army2)) == True:
-			gamedata.log.printinfo(f"l'armée {army1.name} à remporté le combat contre: {army2.name}")
-			gamedata.log.printinfo(f"l'armée {army2.name} est détruite")
-			# On déréférence toute les unités de l'armée
-			army2.destroyarmy()
-			# On retire l'armée de la liste du Seigneur
-			lord = 0
-			i = 0
-			while((lord == 0) and (i<len(gamedata.list_lord))):
-				if gamedata.list_lord[i].coordtoobject(coord1, "army") != 0:
-					lord = gamedata.list_lord[i]
-				i += 1
-			lord.removearmy(army2)
-			# On détruit l'objet du canvas
-			classmap.mapcanv.delete(classmap.mapcanv.find_withtag(army2.name)[0])
-			# On détruit l'armée
-			del army2
-		# Sinon On détruit l'armée 1
+		# On déplace autant que l'on peut
+		i = 0
+		idtuile = common.coordmaptoidtuile(option, itinéraire[0])
+		idtuile0 = idtuile
+		while (army1.moveturn - classmap.listmap[idtuile].movementcost >=0) and (i < len(itinéraire)):
+			idtuile = common.coordmaptoidtuile(option, itinéraire[i])
+			affichage.moveunit(gamedata, classmap, option, army1, itinéraire[i])
+			i += 1
+		classmap.listmap[idtuile0].removearmyinplace()
+		classmap.listmap[idtuile].setarmyinplace(army1)
+		# Si l'armée à porté on attaque
+		if army1.moveturn > 0:
+			gamedata.log.printinfo(f"l'armée {army2.name} est à porté de {army1.name}")
+			# Si l'armée 1 est vainqueur On détruit l'armée 2
+			if(fight(gamedata, classmap, army1, army2)) == True:
+				gamedata.log.printinfo(f"l'armée {army1.name} à remporté le combat contre: {army2.name}")
+				gamedata.log.printinfo(f"l'armée {army2.name} est détruite")
+				# On déréférence toute les unités de l'armée
+				army2.destroyarmy()
+				# On retire l'armée de la liste du Seigneur
+				lord = 0
+				i = 0
+				while((lord == 0) and (i<len(gamedata.list_lord))):
+					if gamedata.list_lord[i].coordtoobject(coord1, "army") != 0:
+						lord = gamedata.list_lord[i]
+					i += 1
+				lord.removearmy(army2)
+				# On détruit l'objet du canvas
+				classmap.mapcanv.delete(classmap.mapcanv.find_withtag(army2.name)[0])
+				# On détruit l'armée
+				del army2
+			# Sinon On détruit l'armée 1
+			else:
+				gamedata.log.printinfo(f"l'armée {army2.name} à remporté le combat contre: {army1.name}")
+				gamedata.log.printinfo(f"l'armée {army1.name} est détruite")
+				# On déréférence toute les unités de l'armée
+				army1.destroyarmy()
+				# On retire l'armée de la liste du Seigneur
+				lord = 0
+				i = 0
+				while((lord == 0) and (i<len(gamedata.list_lord))):
+					if gamedata.list_lord[i].coordtoobject([army1.x, army1.y], "army") != 0:
+						lord = gamedata.list_lord[i]
+					i += 1
+				lord.removearmy(army1)
+				# On détruit l'objet du canvas
+				classmap.mapcanv.delete(classmap.mapcanv.find_withtag(army1.name)[0])
+				# On détruit l'armée
+				del army1
+
+		# Sinon on met en mémoire
 		else:
-			gamedata.log.printinfo(f"l'armée {army2.name} à remporté le combat contre: {army1.name}")
-			gamedata.log.printinfo(f"l'armée {army1.name} est détruite")
-			# On déréférence toute les unités de l'armée
-			army1.destroyarmy()
-			# On retire l'armée de la liste du Seigneur
-			lord = 0
-			i = 0
-			while((lord == 0) and (i<len(gamedata.list_lord))):
-				if gamedata.list_lord[i].coordtoobject([army1.x, army1.y], "army") != 0:
-					lord = gamedata.list_lord[i]
-				i += 1
-			lord.removearmy(army1)
-			# On détruit l'objet du canvas
-			classmap.mapcanv.delete(classmap.mapcanv.find_withtag(army1.name)[0])
-			# On détruit l'armée
-			del army1
-
-	# Sinon on met en mémoire
+			# On met en mémoire 
+			gamedata.log.printinfo(f"l'armée {army2.name} n'est pas à porté de {army1.name}")
+			gamedata.addactionfile(["sequencemovefight", gamedata, classmap, option, army1, army2], 1)
 	else:
-		# On met en mémoire 
-		gamedata.log.printinfo(f"l'armée {army2.name} n'est pas à porté de {army1.name}")
-		gamedata.addactionfile(["sequencemovefight", gamedata, classmap, option, army1, army2], 1)
+		if army2 == 0:
+			gamedata.log.printinfo(f"l'armée viser n'existe plus, on annule l'action")
+		elif army1 == 0:
+			gamedata.log.printinfo(f"l'armée n'existe plus, on annule l'action")
 
 
 def startsequencemovetakevillage(event, gamedata, classmap, option, army):
 	##################
 	# Fonction qui entame le déplacement d'une armée vers la prise d'un village
 	##################
+
+	gamedata.removeactionfileturn(army)
+	
 	player = gamedata.list_lord[gamedata.playerid]
 
 	# On recup les coord Canvas de la tuile 
@@ -1708,34 +1776,42 @@ def sequencemovetakevillage(gamedata, classmap, option, lord, army, village):
 	# V1 on ne prend pas en compte la vassalisation d'un Seigneur
 	#
 	######
+	if (village not in lord.fief) and (army != 0):
+		# On Recup les coordonnées Map du village
+		coord1 = [village.x, village.y]
 
-	# On Recup les coordonnées Map du village
-	coord1 = [village.x, village.y]
+		# On récupère l'itinéraire la plus efficace
+		itinéraire = affichage.pathfinding(gamedata, classmap, option, [army.x, army.y], coord1, 45)
+		print("itinéraire: ",itinéraire)
 
-	# On récupère l'itinéraire la plus efficace
-	itinéraire = affichage.pathfinding(gamedata, classmap, option, [army.x, army.y], coord1, 45)
-	print("itinéraire: ",itinéraire)
+		# On déplace autant que l'on peut
+		i = 0
+		idtuile = common.coordmaptoidtuile(option, itinéraire[0])
+		idtuile0 = idtuile
+		while (army.moveturn - classmap.listmap[idtuile].movementcost >=0) and (i < len(itinéraire)):
+			idtuile = common.coordmaptoidtuile(option, itinéraire[i])
+			affichage.moveunit(gamedata, classmap, option, army, itinéraire[i])
+			i += 1
+		classmap.listmap[idtuile0].removearmyinplace()
+		classmap.listmap[idtuile].setarmyinplace(army)
 
-	# On déplace autant que l'on peut
-	i = 0
-	idtuile = common.coordmaptoidtuile(option, itinéraire[0])
-	idtuile0 = idtuile
-	while (army.moveturn - classmap.listmap[idtuile].movementcost >=0) and (i < len(itinéraire)):
-		idtuile = common.coordmaptoidtuile(option, itinéraire[i])
-		affichage.moveunit(gamedata, classmap, option, army, itinéraire[i])
-		i += 1
-	classmap.listmap[idtuile0].removearmyinplace()
-	classmap.listmap[idtuile].setarmyinplace(army)
-
-	# Si on est a porté on prend le contrôle du village
-	# On prend le contrôle du village
-	if army.moveturn > 0:
-		gamedata.log.printinfo(f"Le Village {village.name} est à porté de {army.name}")
-		TakeVillage(gamedata, classmap, option, lord, army, village, False)
-	# Sinon on met en mémoire la séquence
+		# Si on est a porté on prend le contrôle du village
+		# On prend le contrôle du village
+		if army.moveturn > 0:
+			gamedata.log.printinfo(f"Le Village {village.name} est à porté de {army.name}")
+			TakeVillage(gamedata, classmap, option, lord, army, village, False)
+		# Sinon on met en mémoire la séquence
+		else:
+			gamedata.log.printinfo(f"Le Village {village.name} n'est pas à porté de {army.name}")
+			gamedata.addactionfile(["sequencemovetakevillage", gamedata, classmap, option, lord, army, village], 1)
 	else:
-		gamedata.log.printinfo(f"Le Village {village.name} n'est pas à porté de {army.name}")
-		gamedata.addactionfile(["sequencemovetakevillage", gamedata, classmap, option, lord, army, village], 1)
+		gamedata.log.printinfo(f"Action annulé")
+		if army == 0:
+			gamedata.log.printinfo(f"l'armée attaquante du Seigneur {lord.lordname} à était détruite")
+		else:
+			gamedata.log.printinfo(f"{village.name} à déjà était pris le Seigneur: {lord.lordname}")
+
+
 
 def fight(gamedata, classmap, army1, army2):
 	##################
@@ -1805,7 +1881,9 @@ def TakeVillage(gamedata, classmap, option, lord, army, village, subjugate):
 				lord.addfief(village)
 				gamedata.log.printinfo(f"{Ennemielord.lordname} ANÉANTIE")
 				# ON LE DELETE NIARK NIARK NIARK NIARK
-				gamedata.deletelord(Ennemielord.idlord)
+				# On vérifie que se n'est pas le joueur
+				if Ennemielord != gamedata.list_lord[gamedata.playerid]:
+					gamedata.deletelord(Ennemielord.idlord)
 	else:
 		lord.addfief(village)
 

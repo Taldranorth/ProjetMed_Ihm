@@ -202,25 +202,31 @@ def mainai(gamedata, classmap, option):
 		# Tant que le Seigneur possède des Armées libre
 		# 4°) Attaque de Troupe
 		while(nbarmy < len(lord.army)) and (nblord < len(lord.war)):
-			# 4°) Attaque de Troupe
-			if len(lord.war[nblord].army) > 0:
-				nbarmy2 = 0
-				while (nbarmy2 < len(lord.war[nblord].army)) and (nbarmy < len(lord.army)):
-					gamedata.log.printinfo(f"{lord.lordname} déplace {lord.army[nbarmy].name} pour attaquer {lord.war[nblord].army[nbarmy2].name} de {lord.war[nblord].lordname}")
-					interfacegame.sequencemovefight(gamedata, classmap, option, lord.army[nbarmy], lord.war[nblord].army[nbarmy2])
-					nbarmy2 += 1
-					nbarmy += 1
+			gamedata.log.printinfo(f"l'armée {lord.army[nbarmy].name} à t'elle une action de prévu ?: {gamedata.inactionfile(lord.army[nbarmy], "army")}")
+			# Si l'armée à déjà une action en cours one ne fait rien
+			if gamedata.inactionfile(lord.army[nbarmy], "army") == False:
+				if len(lord.war[nblord].army) > 0:
+					nbarmy2 = 0
+					while (nbarmy2 < len(lord.war[nblord].army)) and (nbarmy < len(lord.army)):
+						gamedata.log.printinfo(f"{lord.lordname} déplace {lord.army[nbarmy].name} pour attaquer {lord.war[nblord].army[nbarmy2].name} de {lord.war[nblord].lordname}")
+						interfacegame.sequencemovefight(gamedata, classmap, option, lord.army[nbarmy], lord.war[nblord].army[nbarmy2])
+						nbarmy2 += 1
+						nbarmy += 1
 			nblord += 1
 
 		nblord = 0
+		# Tant que le Seigneur possède des Armées libre
 		# 4°) Attaque de Village
 		while(nbarmy < len(lord.army)) and (nblord < len(lord.war)):
-			nbvillage = 0
-			while ((nbvillage < len(lord.war[nblord].fief)) and (nbarmy < len(lord.army))):
-				gamedata.log.printinfo(f"{lord.lordname} déplace {lord.army[nbarmy].name} pour attaquer {lord.war[nblord].fief[nbvillage].name} de {lord.war[nblord].lordname}")
-				interfacegame.sequencemovetakevillage(gamedata, classmap, option, lord, lord.army[nbarmy], lord.war[nblord].fief[nbvillage])
-				nbvillage += 1
-				nbarmy += 1
+			gamedata.log.printinfo(f"l'armée {lord.army[nbarmy].name} à t'elle une action de prévu ?: {gamedata.inactionfile(lord.army[nbarmy], "army")}")
+			# Si l'armée à déjà une action en cours one ne fait rien
+			if gamedata.inactionfile(lord.army[nbarmy], "army") == False:
+				nbvillage = 0
+				while ((nbvillage < len(lord.war[nblord].fief)) and (nbarmy < len(lord.army))):
+					gamedata.log.printinfo(f"{lord.lordname} déplace {lord.army[nbarmy].name} pour attaquer {lord.war[nblord].fief[nbvillage].name} de {lord.war[nblord].lordname}")
+					interfacegame.sequencemovetakevillage(gamedata, classmap, option, lord, lord.army[nbarmy], lord.war[nblord].fief[nbvillage])
+					nbvillage += 1
+					nbarmy += 1
 			nblord += 1
 
 
@@ -305,9 +311,12 @@ def searchvillage(gamedata, classmap, option, village):
 
 	for x in range(-5, 5):
 		for y in range(-5, 5):
-			idtuile = common.coordmaptoidtuile(option,[xvill + x, yvill + y])
-			if genproc.buildvillagepossible(option, classmap, idtuile) == True:
-				return idtuile
+			# On vérifie que les coordonnées sont dans la carte
+			if ((xvill+x) > 0) and ((xvill+x) < option.mapx):
+				if ((yvill+y) > 0) and ((yvill+y) < option.mapy):
+					idtuile = common.coordmaptoidtuile(option,[xvill + x, yvill + y])
+					if genproc.buildvillagepossible(option, classmap, idtuile) == True:
+						return idtuile
 	return 0
 
 def actionbuildchurch(gamedata, classmap, option, lord):

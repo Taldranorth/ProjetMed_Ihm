@@ -29,6 +29,7 @@ def moveviewxy(event, deltax, deltay, gamedata, classmap, option):
 	# En appyant sur les touches fléchés 
 	####################
 	mult = 100
+	ts = gamedata.tuilesize
 
 	gamedata.log.printinfo("move map arrow")
 
@@ -41,12 +42,27 @@ def moveviewxy(event, deltax, deltay, gamedata, classmap, option):
 
 	movex = x + (mult * deltax)
 	movey = y + (mult * deltay)
+	xorigine = classmap.mapcanv.canvasx(0)
+	yorigine = classmap.mapcanv.canvasy(0)
+	xf = classmap.mapcanv.canvasx(option.widthWindow)
+	yf = classmap.mapcanv.canvasy(option.heightWindow*0.6)
 
-	classmap.mapcanv.scan_dragto(movex, movey, gain = 1)
+	# Pour éviter de Déborder hors de la carte
+	if ((x - movex) < 0) and (xorigine > -10):
+		classmap.mapcanv.scan_dragto(movex, movey, gain = 1)
+	elif ((y - movey)< 0) and (yorigine > - 10):
+		classmap.mapcanv.scan_dragto(movex, movey, gain = 1)
+	elif ((x - movex)> 0) and (xf < (ts*option.mapx)):
+		classmap.mapcanv.scan_dragto(movex, movey, gain = 1)
+	elif ((y - movey)> 0) and (yf < (ts*option.mapy)):
+		classmap.mapcanv.scan_dragto(movex, movey, gain = 1)
+
+	#classmap.mapcanv.scan_dragto(movex, movey, gain = 1)
+
 	gamedata.log.printinfo(f"coords (0,0) : {classmap.mapcanv.coords(classmap.listmap[0].canvastuiles)}")
 	#######################################################
 
-def startmoveviewmouse(event):
+def startmoveviewmouse(event, window):
 	####################
 	# Fonction pour déplacer la vue en:
 	# Maintenant le click droit de la souris
@@ -54,9 +70,17 @@ def startmoveviewmouse(event):
 	# Utiliser .scan_mark(x, y)
 	#
 	####################
+	window.configure(cursor = "trek")
 	event.widget.scan_mark(event.x, event.y)
 
-def moveviewmouse(event):
+def endmoveviewmouse(event, window):
+	####################
+	# Fonction Pour remttre le curseur normal de la souris
+	####################
+	window.configure(cursor = "arrow")
+
+
+def moveviewmouse(event, gamedata, classmap, option):
 	####################
 	# Fonction pour déplacer la vue en:
 	# Maintenant le click droit de la souris
@@ -64,8 +88,27 @@ def moveviewmouse(event):
 	# Utiliser .scan_dragto(x, y)
 	# !!!! A cause de l'utilisation de Move est très couteux !!!!
 	####################
+
 	event.widget.scan_dragto(event.x, event.y, gain = 1)
 
+	ts = gamedata.tuilesize
+	
+	xorigine = classmap.mapcanv.canvasx(0)
+	yorigine = classmap.mapcanv.canvasy(0)
+	xf = classmap.mapcanv.canvasx(option.widthWindow)
+	yf = classmap.mapcanv.canvasy(option.heightWindow*0.6)
+
+
+	if (xorigine < -10):
+		event.widget.scan_dragto(int(-xorigine), event.y, gain = 1)
+	if (yorigine < - 10):
+		event.widget.scan_dragto(event.x,int(-yorigine), gain = 1)
+	'''
+	elif (xf > (ts*option.mapx)):
+		event.widget.scan_dragto(event.x, event.y, gain = 1)
+	elif (yf > (ts*option.mapy)):
+		event.widget.scan_dragto(event.x, event.y, gain = 1)
+	'''
 
 def moveviewz(event, gamedata, classmap, option):
 	####################
