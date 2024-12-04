@@ -84,7 +84,7 @@ def bordervillage(gamedata, classmap, option):
 			else:
 				color = village.lord.color
 		else:
-			color = "brown"
+			color = "white"
 		# On calcule la Bordure
 		border = village.border
 		# On s'assure de ne pas donner des coordonnées hors de la map
@@ -137,7 +137,7 @@ def bordervillageunit(gamedata, classmap, option, village):
 		else:
 			color = village.lord.color
 	else:
-		color = "brown"
+		color = "white"
 
 	# On calcule les coordonnées de la Bordure
 

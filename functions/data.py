@@ -257,9 +257,33 @@ class ClassGameData:
 
 	def createlord(self):
 		self.list_lord += [gameclass.Classlord(("lord "+self.randomnametype("Surnom")), False, self.Nb_lord)]
-		color = f'#{random.randrange(256**3):06x}'
+		
+		#color = f'#{random.randrange(256**3):06x}'
+		#Liste des couleurs disponibles
+		colorlist = ['Yellow', 'BlueViolet' , 'DeepPink', 'Darkorange4', "Orange","Blue4", "Cyan", "LightSalmon", "Khaki1", "coral", "Yellow4", "Firebrick4", "Orange4", "Hotpink4", "Brown","magenta", "Salmon4", "SeaGreen"]
+		
+		#Trouver les couleurs déjà utilisées
+		used_colors = []
+		for lord in self.list_lord:
+			used_colors.append(lord.color)
+    		#Trouver une couleur disponible
+		available_colors = []
+		for color in colorlist:
+			if color not in used_colors:
+    				available_colors.append(color)
+    				
+		#Si plus de couleurs disponibles on affiche dans le terminal une erreur
+		if len(available_colors) == 0:
+        		raise ValueError("Toutes les couleurs disponibles ont été attribuées. Ajoutez plus de couleurs ou retirez des joueurs")
+
+    		#Choisir une couleur au hasard parmi les couleurs disponibles
+		color = random.randint(0, len(available_colors)-1)
+		color = available_colors[color]
+		
+    		#Attribuer la couleur au seigneur et incrémentation du nombre de joueurs
 		self.list_lord[self.Nb_lord].setcolor(color)
 		self.Nb_lord += 1
+
 
 	def lordnametoid(self, name):
 		#####
