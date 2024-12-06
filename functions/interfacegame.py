@@ -8,6 +8,7 @@ import functions.moveview as moveview
 import functions.warfunctions as warfunctions
 import functions.common as common
 
+import functions.savegame as save
 ######################### Fonction Interface ############################
 
 def gameinterface(gamedata, classmap, option, win):
@@ -124,12 +125,27 @@ def gameinterface(gamedata, classmap, option, win):
 
 
 	# Button Droit
-
+	"""
 	# Buton pour quitter(A remplacer par un listbutton)
 	# Exit, Option, Load, Sauvegarder
 	Button_exit = tkinter.Button(bottomFrame, command = exit, text = "Quitter")
 	# Button pour acceder à la vue générale
+	"""
+	#Lisbutton
+	Menu_Button_option = tkinter.Menubutton(bottomFrame, text= "Options")
+	menu_option = tkinter.Menu(Menu_Button_option)
+
+	#On lie les button au menu
+	Menu_Button_option["menu"] = menu_option
+
+	# On associe les Commandes Militaires
+	menu_option.add_command(label = "Load", command = lambda: save.load_game(gamedata, classmap))
+	menu_option.add_command(label = "Save", command = lambda: save.save_game(gamedata, classmap))
+	menu_option.add_command(label = "Quitter", command = exit)
+	
+	
 	Button_globalview = tkinter.Button(bottomFrame, command = lambda: globalviewmenu(gamedata, classmap, option), text = "Vue Générale")
+
 
 	# Boutton Central
 	# Bouton Fin de Tour
@@ -141,8 +157,8 @@ def gameinterface(gamedata, classmap, option, win):
 	Menu_Button_military.pack(side="left",padx="1mm",fill='x',expand=True)
 	Button_endofturn.pack(side="left",padx='1m',fill='x',expand=True)
 	Button_globalview.pack(side="left",padx="1mm")
-	Button_exit.pack(side="right",padx="1mm")	
-	
+	#Button_exit.pack(side="right",padx="1mm")	
+	Menu_Button_option.pack(side="right",padx="1mm")
 #########################################################################
 # Fonction lier au bouton de fin de tour
 def turnend(gamedata, classmap):

@@ -12,6 +12,7 @@ import functions.moveview as moveview
 import functions.genproc as genproc
 import functions.ailord as ailord
 import functions.cheat as cheat
+import functions.savegame as save
 
 import functions.common as common
 
@@ -44,7 +45,7 @@ def mainmenu(gamedata, classmap, option, root):
 	Button_mainm_QuickPlay = tkinter.Button(fmainm, command = lambda: initgame(mainmenuwin, gamedata, classmap, option, root), text = "Partie Rapide")
 
 	# Button Load
-	Button_mainm_load = tkinter.Button(fmainm, text = "Load")
+	Button_mainm_load = tkinter.Button(fmainm, command = lambda: save.load_game(gamedata, classmap),text="Load")
 
 	#Button Options
 	Button_mainm_option = tkinter.Button(fmainm, text = "Options")
@@ -218,9 +219,11 @@ def previewmap(mapcanv, pic, mapx, mapy):
 	# Si on à déjà afficher une minimap pour un seed différent on efface
 	mapcanv.delete("minimap")
 
-	for x in range(mapx):
-		for y in range(mapy):
-			tl = tuile(pic[x][y])[0]
+	for y in range(mapy):
+		for x in range(mapx):
+			print("picx, picy: ", len(pic[0]), len(pic))
+			print("x,y: ",x,y)
+			tl = tuile(pic[y][x])[0]
 			mapcanv.create_rectangle((x*2), y*2, (x*2)+2, (y*2)+2, fill=tl, tags = "minimap", outline='black')
 
 	mapcanv.pack(expand = "True",fill="both")
@@ -499,7 +502,7 @@ def mainscreen(gamedata, classmap, option, root, pic):
 	fcanvas.pack()
 
 	# Carte de Jeu
-	createmap(gamedata, classmap, option, pic)
+	createmap(gamedata, classmap, option, pic, win1)
 
 
 	# Genération des Villages
@@ -535,7 +538,7 @@ def mainscreen(gamedata, classmap, option, root, pic):
 ####################################################################################################
 
 ######################### Creation de la Carte Canvas #######################################################
-def createmap(gamedata, classmap, option, pic):
+def createmap(gamedata, classmap, option, pic, win1):
 
 	#Si heigthWindow/1.5 le boutton quitter disparait
 	mapcanv = tkinter.Canvas(classmap.framecanvas, height = (option.heightWindow*0.6), width= option.widthWindow)
@@ -561,7 +564,7 @@ def createmap(gamedata, classmap, option, pic):
 		for x in range(option.mapx):
 
 			# On utilise la valeur de la case pour définir la tuile que l'on va créer
-			tl = tuile(pic[x][y])
+			tl = tuile(pic[y][x])
 
 			# Création de la carte avec Rectangle
 			#mapcanv.create_rectangle((x*sizetuile), (y*sizetuile), (x*sizetuile)+sizetuile, (y*sizetuile)+sizetuile, fill = tl[0], tags = ["click","tuile",x,y,pic[x][y], tl[1]], outline='black')
@@ -624,8 +627,9 @@ def createmap(gamedata, classmap, option, pic):
 	mapcanv.bind("<KeyPress-Down>", lambda event, x=0,y=-1: moveview.moveviewxy(event, x, y, gamedata, classmap, option))
 
 	#On lie le déplacement de la vue au maintient du bouton droit de la souris + motion
-	mapcanv.bind('<Shift-ButtonPress-2>', moveview.startmoveviewmouse)
-	mapcanv.bind('<Shift-B2-Motion>', moveview.moveviewmouse)
+	mapcanv.bind('<Shift-ButtonPress-2>', lambda event: moveview.startmoveviewmouse(event, win1))
+	mapcanv.bind('<Shift-ButtonRelease-2>', lambda event: moveview.endmoveviewmouse(event, win1))
+	mapcanv.bind('<Shift-B2-Motion>', lambda event: moveview.moveviewmouse(event, gamedata, classmap, option))
 
 
 	#ON lie les différentes Cases à l'action click

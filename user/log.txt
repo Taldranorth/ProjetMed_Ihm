@@ -1,27 +1,3 @@
-[22:29:14]Info: Initialisation log terminé
-[22:29:14]Info: 1200x1200+150+150
-[22:29:14]Info: Initialisation de l'application terminé
-[22:29:16]Info: taille écran x,y: 1366, 768
-[22:29:16]Info: Taille de la Frame du Canvas: 1, 1
-[22:29:16]Info: Taille de la Frame du top: 1, 1
-[22:29:16]Info: Taille de la Frame du bas: 1, 1
-[22:29:16]Info: Taille du Canvas:1, 1
-[22:29:16]Info: coord0: ,[640, 720]
-[22:29:16]Info: coord1: ,[740, 820]
-[22:29:16]Info: coord0: ,[940, 880]
-[22:29:16]Info: coord1: ,[1040, 980]
-[22:29:16]Info: coord0: ,[20, 1440]
-[22:29:16]Info: coord1: ,[120, 1540]
-[22:29:16]Info: coord0: ,[580, 480]
-[22:29:16]Info: coord1: ,[680, 580]
-[22:29:16]Info: coord0: ,[900, 1440]
-[22:29:16]Info: coord1: ,[1000, 1540]
-[22:29:16]Info: coord0: ,[1100, 220]
-[22:29:16]Info: coord1: ,[1200, 320]
-[22:29:16]Info: coord0: ,[940, 1220]
-[22:29:16]Info: coord1: ,[1040, 1320]
-[22:29:16]Info: coord0: ,[1160, 1060]
-[22:29:16]Info: coord1: ,[1260, 1160]
-[22:29:16]Info: coord0: ,[340, 280]
-[22:29:16]Info: coord1: ,[440, 380]
-[22:29:16]Info: déplacement de x,y: , 90.0, 410.0
+[17:53:27]Info: Initialisation log terminé
+[17:53:27]Info: 1200x1200+150+150
+[17:53:27]Info: Initialisation de l'application terminé
