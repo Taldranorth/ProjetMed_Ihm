@@ -45,3 +45,22 @@ def coordmaptoidtuile(option, coord):
 	return idtuile
 
 ##########################################################################################
+
+def distance(object1, object2):
+	###############
+	# Fonction qui retourne la distance entre 2 objets
+	###############
+	print("pos Objet1:", object1.x, object1.y)
+	print("pos Objet2:", object2.x, object2.y)
+	distx = object1.x - object2.x
+	disty = object1.y - object2.y
+	if distx < 0:
+		distx = distx*-1
+	if disty < 0:
+		disty = disty*-1
+	dist = distx + disty
+	print("distance: ", dist)
+	return dist
+
+
+

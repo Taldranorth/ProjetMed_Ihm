@@ -116,6 +116,7 @@ from time import time
 # - Ajouter Gestion des couleurs à PlayMenu
 
 
+# - Mise En place Debut Event 
 #########################################################
 
 
@@ -150,10 +151,6 @@ from time import time
 
 # - Fix différence click droit Mac/Linux
 # - Besoin d'un Retour utilisateur Quand Action Impossible
-
-# - Réaction au Bonheur
-# --> Si le Bonheur d'un vassaux est trop bas alors il tente une révolte
-# --> Si le Bonheur d'un village est trop bas et qu'une armée n'est pas présente Pour contrer alors déclare le Village déclare son Indépendance
 #####
 
 ####
@@ -190,11 +187,6 @@ from time import time
 # - Pour l'instant Les Seigneurs IA ne peuvent vassaliser le Joueur
 
 # --> Ajouter la gestion de la couleur aux menu Play
-# --> Déplacer les différentes fonctions dans common
-# --> Déplacer les différentes fonctions dans warfunctions
-# --> Réorganiser interfacemenu
-
-# - Réorganiser le Projet en Transformant des Fonctions en Methode
 
 # - Définir comment annuler une action ajouter dans la file d'action
 #	--> Si c'est une armée on cherche dans la file toute les actions qui ont pour paramètre l'objet Armée
@@ -220,10 +212,6 @@ from time import time
 
 # - Pousser la Gestion de la Menace
 
-# - Fix Sequence FightArmy Pour que l'armée ne soit pas obligé d'être sur la case de l'armée pour entamer le Combat
-
-# - Fix logique Ailord quand Un Seigneur est détruit, Nblord change mais cela n'est pas pris en compte dans le fonctionnement
-
 # -> Ajouter Bouton Pour annuler Si on déplace une armée mais que l'on veut annuler son déplacement au tour prochain
 #	--> Annuler retire l'action en cour dans la pile 1 ou 0
 
@@ -231,11 +219,32 @@ from time import time
 
 #https://www.aimosta.com/Blogt/blogt-16.html
 
+# - Réaction au Bonheur
+# --> Si le Bonheur d'un vassaux est trop bas alors il tente une révolte
+
+
+# - Déplacer les différentes fonctions dans common
+# - Déplacer les différentes fonctions dans warfunctions
+# - Réorganiser interfacemenu
+# - Réorganiser le Projet en Transformant des Fonctions en Methode
+# - Changer Fonctionnement log pour qu'il soit séparer de Gamedata
+# - Changer Fonctionnement Dico_file pour qu'il soit séparer de Gamedata
+# - Changer Fonctionnement Dico_name pour qu'il soit séparer de Gamedata
+# - Refactoriser Fonction qui change la Bordure d'un Unique Village pour utiliser PrintvillageBorderunit
 #####
+
+#### Objectif Week-End:
+# - Réaction Bonheur Vassaux
+# - Event
+# - Fix, Optimisation et Refactorisation
+# - Pop-Up --> Event.Enter, Event.Leave
+# - Graphe
+####
+
+
 
 ######## Fonctionnalité Principale à Implémenter
 # - Implémenter Event
-# - Capacité Prêtre
 # - Implémenter Résolutions Dynamique
 # - Implémenter les Réactions
 # - Implémenter les Différents Comportement de l'IA

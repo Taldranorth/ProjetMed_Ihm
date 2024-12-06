@@ -178,13 +178,7 @@ def mainai(gamedata, classmap, option):
 			gamedata.log.printinfo(f"{lord.lordname} à {succes}% de chance de Vassaliser: {otherlord.lordname}")
 			# On calcul la menace
 			# On calcul la distance
-			distx = otherlord.fief[0].x - lord.fief[0].x 
-			disty = otherlord.fief[0].y - lord.fief[0].y
-			if distx < 0:
-				distx = distx*-1
-			if disty < 0:
-				disty = disty*-1
-			dist = distx + disty
+			dist = common.distance(otherlord.fief[0], lord.fief[0])
 			menace = (otherlord.score()-lord.score())//dist
 			# On ajoute la menace du Seigneur dans la liste de menace
 			print("menace: ", menace)
@@ -222,7 +216,7 @@ def mainai(gamedata, classmap, option):
 			# Si l'armée à déjà une action en cours one ne fait rien
 			if gamedata.inactionfile(lord.army[nbarmy], "army") == False:
 				nbvillage = 0
-				while ((nbvillage < len(lord.war[nblord].fief)) and (nbarmy < len(lord.army))):
+				while (((nbvillage < len(lord.war[nblord].fief)) and (nbarmy < len(lord.army))) and (nblord < len(lord.war))):
 					gamedata.log.printinfo(f"{lord.lordname} déplace {lord.army[nbarmy].name} pour attaquer {lord.war[nblord].fief[nbvillage].name} de {lord.war[nblord].lordname}")
 					interfacegame.sequencemovetakevillage(gamedata, classmap, option, lord, lord.army[nbarmy], lord.war[nblord].fief[nbvillage])
 					nbvillage += 1
@@ -350,6 +344,12 @@ def actionimmigration(gamedata, classmap, option, lord, village, nbpaysan, nbart
 		village.addpopulation(pop)
 		lord.sub_ressource(4)
 		lord.sub_money(4)
+
+	if village.priest != 0:
+		if village.priest.ability == "Bonus_Immigration":
+			gamedata.log.printinfo(f"la Capacité {village.priest.ability} de {village.priest.name} s'active !")
+			pop = gameclass.ClassRoturier(gamedata.randomnametype("Nom"), "paysan", False)
+			village.addpopulation(pop)
 
 
 def actionwar(gamedata, classmap, option, lord):

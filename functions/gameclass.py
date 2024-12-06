@@ -1,6 +1,11 @@
 import tkinter
 import random
 
+
+import functions.common as common
+
+
+
 ####################
 #
 # Utiliser un Id pour séparer les instance ?
@@ -214,11 +219,11 @@ class Classlord:
 		#####
 		# Methode pour retirer au Seigneurs nb_m Argent
 		#####
-		self.nb_money -= nb_m	
+		self.nb_money -= nb_m
 
 	def prod_global(self):
 		####
-		# Methode qui retourne un tuple qui repèsente la production global de son fief
+		# Methode qui retourne un tuple qui reprèsente la production global de son fief
 		####
 		prod_money = 0
 		prod_ressource = 0
@@ -419,6 +424,10 @@ class Classvillage:
 		#####
 		# Method Pour ajouter un Roturier à la liste de population du village
 		#####
+		# On aplique à la pop le Bonus du Prêtre Si on à un Prêtre
+		if self.priest != 0:
+			self.translateprietcapacityunit(self.priest.ability, pop)
+
 		self.population += [pop]
 		# On incrémente le compteur de pop
 		if pop.role == "artisan":
@@ -442,25 +451,41 @@ class Classvillage:
 		# On applique la capacité du prêtre à la population du village
 		self.translateprietcapacity(self.priest.ability)
 
+		self.updateinfo()
+
 
 	def translateprietcapacity(self, ability):
 		####
 		# Methode qui pour le Prêtre envoyait Applique un Malus ou un Bonus
 		####
-		# 2 capacité:
+		# 3 capacité:
 		# - Bonus de Production de Ressource (+2) 	(Bonus_Ressource)
 		# - Bonus d'immigration				 		(Bonus_Immigration)
+		# - Bonus de Bonheur						(Bonus_Joy)
 		####
-		if ability == "Bonus_Ressoure":
+		if ability == "Bonus_Ressource":
 			# On augmente la production de tout les Roturiers
 			for pop in self.population:
 				pop.addcpbonus(2)
+		elif ability == "Bonus_joy":
+			for pop in self.population:
+				pop.addjoybonus(5)
 
-	#lord: Classlord
+	def translateprietcapacityunit(self, ability, pop):
+		####
+		# Methode qui applique à une unique pop la capacité du Prêtre
+		####
+		if ability == "Bonus_Ressource":
+			print(f"la Capacité {self.priest.ability} de {self.priest.name} s'active !")
+			pop.addcpbonus(2)
+		elif ability == "Bonus_joy":
+			print(f"la Capacité {self.priest.ability} de {self.priest.name} s'active !")
+			pop.addjoybonus(5)
+
+
 	def setlord(self, lord):
 		self.lord = lord
 
-	#priest: Classpriest
 	def setpriest(self, priest):
 		self.priest = priest
 
@@ -566,7 +591,47 @@ class Classvillage:
 
 		return [tax_m, tax_r]
 
+	def try_revolt(self):
+		#####
+		# Methode qui gère la tentative de Révolte
+		#####
+		# - Pour qu'un village se Révolte sont bonheur doit être == 0
+		# - Il lance un dé 100 est si il obtient un chiffre > 50 alors il tente de se révolté
+		# - Si il y a une armée stationner et que sa population est supérieur à la puissance de l'armée alors la révolte est menée à bien
+		# - Si un Village se Révolte il Devient Indépendant
+		r = random.randrange(100)
+		if r > 50:
+			print(f"Le village{self.name} à fait un jet de {r}, il tente de se révolter")
+			# On vérifie qu'une armée du Seigneur est présent à proximité dans un Rayon de 3 cases
+			for army in self.lord.army:
+				if common.distance(self, army) <= 3:
+					print(f"Le Village{self.name} affontre l'armée{army.name}")
+					# On vérifie que la taille de la population du village est supérieur à la puissance de l'armée
+					if len(self.population) > army.power:
+						print(f"Le Village{self.name} à remporté le Combat contre l'armée{army.name}")
+						# l'armée se fait détruire
+						self.army.destroyarmy()
+						self.lord.removearmy(army)
+						del army
+					else:
+						print(f"L'armée{army.name} à maté la Révolte du Village{self.name}")
+						return
+			# Si il n'y a pas d'armée ou que toute les armée se sont fait battre le village obtient sont indépendance
+			print(f"Le Village{self.name} à Vaincu son Seigneurs")
+			self.revolt()
 
+
+	def revolt(self):
+		#####
+		# Methode qui gère la révolte
+		#####
+		print(f"Le Village{self.name} à Obtenue Son indépendance !")
+		# On retire le village de la liste du Seigneur
+		self.lord.removefief(self)
+		# On update les stats du Seigneurs
+		self.lord.updateinfo()
+		# On Change le Seigneurs du Village Pour 0 qui correspond à l'indépendance
+		self.lord = 0
 
 	def updateinfo(self):
 		#######
@@ -597,6 +662,9 @@ class Classvillage:
 
 		# On gère les naissances
 		self.testbirthpop(gamedata)
+		# On gère la Révolte
+		if self.global_joy == 0:
+			self.try_revolt()
 		# On update les infos
 		self.updateinfo()
 
@@ -732,10 +800,10 @@ class Classpriest:
 		######
 		# Methode qui fournit aux Prêtre une Capacité Aléatoire Passive 
 		######
-		# r = random.randrange()
-		#self.aptitude = 
-
-		pass
+		lcapacity = ["Bonus_Ressource","Bonus_Immigration","Bonus_Joy"]
+		r = random.randrange(len(lcapacity))
+		self.aptitude = lcapacity[r]
+		print(f"Le prêtre {self.name} à comme capacité: {self.aptitude}")
 
 	def endofturn(self, lord):
 		#######
@@ -857,8 +925,12 @@ class ClassRoturier:
 		self.ressource = 1
 		self.money = 0
 		self.joy = 50
+		# Bonus, Malus de Bonheur
+		self.joybonus = 0
+		self.joymalus = 0
 		# capacité de production
 		self.cp = 2
+		# Bonus, Malus de Gain de Production
 		self.cpbonus = 0
 		self.cpmalus = 0
 
@@ -872,6 +944,7 @@ class ClassRoturier:
 			self.cp = 4
 			self.money = 5
 
+	#############\	CP	\##################
 
 	def addcpbonus(self, bonus):
 		####
@@ -897,7 +970,34 @@ class ClassRoturier:
 		# Method pour retirer un Malus de Production
 		#####
 		self.cpmalus -= malus
+	##########################################
 
+	#############\	Joy	\##################
+	def addjoybonus(self, bonus):
+		####
+		# Method pour ajouter un Bonus de Bonheur
+		#####
+		self.joybonus += bonus
+
+
+	def subjoybonus(self, bonus):
+		####
+		# Method pour retirer un Bonus de Bonheur
+		#####
+		self.joybonus -= bonus
+
+	def addjoymalus(self, malus):
+		####
+		# Method pour ajouter un malus de Bonheur
+		#####
+		self.joymalus += malus
+
+	def subjoymalus(self, malus):
+		####
+		# Method pour retirer un Malus de Bonheur
+		#####
+		self.joymalus -= malus
+	##########################################
 
 
 	def pay_tax(self, lord):
@@ -1074,6 +1174,12 @@ class ClassRoturier:
 		elif (self.ressource > 1) and (self.joy < 100):
 			self.joy += 5
 		# Sinon rien ne change
+		# On applique le Bonus/Malus de Bonheur
+		self.joy += self.joybonus + self.joymalus
+		if self.joy > 100:
+			self.joy = 100
+		elif self.joy < 0:
+			self.joy = 0
 
 		# 7°) On Augmente son Age
 		self.age += 1

@@ -1,22 +1,20 @@
-import tkinter
-import random
-import sys
+
 import os
-
-import functions.data as data
-import functions.interfacegame as interfacegame
-import functions.interfacemenu as interfacemenu
-import functions.gameclass as gameclass
-import functions.affichage as affichage
-import functions.moveview as moveview
-import functions.genproc as genproc
-import functions.ailord as ailord
-import functions.cheat as cheat
-
-import functions.common as common
+import sys
+import random
+import tkinter
 
 from time import time
 
+import functions.game as game
+import functions.data as data
+import functions.stats as stats
+import functions.common as common
+import functions.genproc as genproc
+import functions.moveview as moveview
+import functions.gameclass as gameclass
+import functions.affichage as affichage
+import functions.interfacegame as interfacegame
 
 ######################### Menu Principale #########################
 
@@ -41,7 +39,7 @@ def mainmenu(gamedata, classmap, option, root):
 
 	# Button Quickplay
 	# !!! A CORRIGER !!!
-	Button_mainm_QuickPlay = tkinter.Button(fmainm, command = lambda: initgame(mainmenuwin, gamedata, classmap, option, root), text = "Partie Rapide")
+	Button_mainm_QuickPlay = tkinter.Button(fmainm, command = lambda: game.initgame(mainmenuwin, gamedata, classmap, option, root), text = "Partie Rapide")
 
 	# Button Load
 	Button_mainm_load = tkinter.Button(fmainm, text = "Load")
@@ -164,7 +162,7 @@ def playmenu(mainmenuwin, gamedata, classmap, option, root):
 	button_deletelastlord.grid(columnspan = 5)
 
 	# Button pour lancer une nouvelle partie
-	Button_playmenu_play = tkinter.Button(fplaymenu, command = lambda: initgame(mainmenuwin, gamedata, classmap, option, root),text = "Jouer")
+	Button_playmenu_play = tkinter.Button(fplaymenu, command = lambda: game.initgame(mainmenuwin, gamedata, classmap, option, root),text = "Jouer")
 	Button_playmenu_play.grid(columnspan = 5)
 
 	# Boutton pour revenir en arrière
@@ -388,7 +386,7 @@ def eofgamescreen_main(gamedata, classmap, option, frame_eof_screen_up):
 
 	# Info de base Principale
 	# Nb Tour
-	tkinter.Label(frame_eof_screen_up_child, text = f"Nombre de tour: {gamedata.Nb_tour}").grid(row = 1, column = 2)
+	tkinter.Label(frame_eof_screen_up_child, text = f"Nombre de tour: {gamedata.nb_turn}").grid(row = 1, column = 2)
 	# Nb Vassaux possèder
 	tkinter.Label(frame_eof_screen_up_child, text = f"Nombre de Vassaux: {len(player.vassal)}").grid(row = 2, column = 2)
 	# Puissance Militaire
@@ -438,44 +436,7 @@ def exit_mainmenu(gamedata, classmap, option):
 	#######
 	# Fonction pour retourner aux Menu Principale
 	#######
-	pass
-
-
-###########################################################################
-
-######################### Initiation de la partie #########################
-
-##########
-#
-# Appeler par Quickplay ou Play depuis le Menu Principale
-#
-# On initialise le Gamedata:
-#	Tour 1:
-#		- Chaque Seigneur Possède 10 de Ressource et 10 d'argent
-#
-#
-#
-# Doit détruire le MenuPrincipale
-#
-##########
-
-
-
-def initgame(mainmenuwin, gamedata, classmap, option, root):
-
-
-	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, option.mapx, option.mapy)
-	# On lance la création de la game
-	mainscreen(gamedata, classmap, option, root, pic)
-
-	# Une fois l'initialisation lancé on détruit la fenêtre du menu principale
-	mainmenuwin.destroy()
-
-	# On lance la game
-	# Actuellement Bloque le process
-	gameloop(gamedata, classmap, option, root)
-	cheat.cheat_menu(gamedata, classmap, option, root)
-	root.mainloop()
+	exit()
 
 
 ###########################################################################
@@ -626,8 +587,8 @@ def createmap(gamedata, classmap, option, pic, win1):
 	mapcanv.bind("<KeyPress-Down>", lambda event, x=0,y=-1: moveview.moveviewxy(event, x, y, gamedata, classmap, option))
 
 	#On lie le déplacement de la vue au maintient du bouton droit de la souris + motion
-	mapcanv.bind('<Shift-ButtonPress-2>', lambda event: moveview.startmoveviewmouse(event, win1))
-	mapcanv.bind('<Shift-ButtonRelease-2>', lambda event: moveview.endmoveviewmouse(event, win1))
+	mapcanv.bind('<Shift-ButtonPress-2>', lambda event: moveview.startmoveviewmouse(event))
+	mapcanv.bind('<Shift-ButtonRelease-2>', lambda event: moveview.endmoveviewmouse(event))
 	mapcanv.bind('<Shift-B2-Motion>', lambda event: moveview.moveviewmouse(event, gamedata, classmap, option))
 
 
@@ -698,137 +659,6 @@ def typetoimgdico(dico_file, type, sizetuile):
 		img = data.loadtexturefromdico(dico_file, "ocean_inner.png", type, sizetuile)[1]
 	return img
 
-
-######################### Fonction Jeu #########################
-
-#################### 
-# Ensemble de Fonction qui vont régir un tour de jeu
-#	Phase d'un Tour de jeu:
-#		- Calcul du gain de Ressource et d'Argent
-#		- Calcul Mort/Viellisement de la population
-#		- Event
-#		-- Début du tour du Joueur
-#		- action - Réaction
-#		- Fin du tour quand le Joueur clique sur la case fin de tour
-#		- Les Vassaux du joueur Joue
-#################### 
-# fin de tour:
-#	- CP = capacité de production >=2
-#	- Chaque roturier produit CP ressource
-#	- Chaque roturier consomme 1 ressource
-#	- Si 1 roturier atteint le plafond de ressource qu'il peut posséder la ressource produite est vendu
-#	- Si 1 roturier n'a plus de ressource il achète 1 ressource
-#	- Chaque roturier voit son âge augmenté de 1
-#	- Si 1 roturier voit son âge atteindre 100 il meurt et c'est ressource/money son transférer au Seigneur du village
-#	- Le bonheur augmente 
-####################
-#Tcl/Tk applications are normally event-driven, meaning that after initialization, the interpreter runs an event loop (i.e. Tk.mainloop()) and responds to events.
-#Because it is single-threaded, event handlers must respond quickly, otherwise they will block other events from being processed.
-#To avoid this, any long-running computations should not run in an event handler, but are either broken into smaller pieces using timers, or run in another thread.
-#This is different from many GUI toolkits where the GUI runs in a completely separate thread from all application code including event handlers.
-####################
-
-def gameloop(gamedata, classmap, option, root):
-	####################
-	#
-	#	Le Retour des Sémaphore :)
-	#
-	#
-	####################
-
-	if gamedata.semaphore == False:
-		# si on a fait le tour des joueurs
-		if gamedata.Nb_toplay == gamedata.Nb_lord:
-			endofturn(gamedata, classmap, option)
-
-		# Si c'est au joueurs de jouer
-		if gamedata.Nb_toplay == gamedata.playerid:
-			# On entre dans la loop du tour du joueur
-			playerturn(gamedata, classmap, option)
-		# Sinon c'est à un Ia de jouer
-		else:
-			# On entre dans la loop de l'ia
-			notplayerturn(gamedata, classmap, option)
-
-	# On vérifie que la partie n'est pas terminé
-	if gamedata.is_finished == False:
-		# Si elle ne l'est pas on rapelle cette fonction dans 
-		root.after(50, lambda: gameloop(gamedata, classmap, option, root))
-
-
-
-def playerturn(gamedata, classmap, option):
-	# Si le joueur à appuier sur le bouton fin de tour
-	if gamedata.endturn == True:
-		gamedata.log.printinfo("Player hit end of turn button")
-		# On incrémente le joueur qui doit jouer
-		gamedata.Nb_toplay += 1
-		# On indique au joueurs que c'est à l'ia de Jouer
-
-# Fonction qui gère l'ia des ennemies
-def notplayerturn(gamedata, classmap, option):
-	# On affiche la banderole
-	gamedata.semaphore = True
-	gamedata.log.printinfo(f"tour de: {gamedata.list_lord[gamedata.Nb_toplay].lordname}, {gamedata.Nb_toplay}")
-	# L'ia Joue
-	ailord.mainai(gamedata, classmap, option)
-
-def endofturn(gamedata, classmap, option):
-	gamedata.semaphore = True
-	gamedata.log.printinfo("Il ne reste plus de Seigneur qui doit Jouer, Fin du tour")
-	#print("lplaines: ",classmap.lplaines)
-	gamedata.Nb_toplay = 0
-	# On vérifie que l'on ne soit pas en état de mettre fin aux jeu:
-	if victoryordefeat(gamedata, classmap, option) == False:
-		# On fait appel à la fonction de fin de tour
-		gamedata.endofturn(classmap)
-		# Une fois que tout les objets se sont update ont update l'interface d'entête
-		interfacegame.updateinterface(gamedata, classmap)
-		gamedata.endturn = False
-		gamedata.semaphore = False
-	else:
-		endofgame(gamedata, classmap, option)
-
-
-
-# after(time, function)
-
-def victoryordefeat(gamedata, classmap, option):
-	#######
-	# Fonction pour vérifier si le Joueur est en Victoire ou défaite
-	#######
-	# Return un Bool et modifie une variable dans gamedata
-
-	player = gamedata.list_lord[gamedata.playerid]
-
-	# Si le joueur ne Possède plus de village Alors Défaite
-	if len(player.fief) == 0:
-		gamedata.victory = "Défaite"
-		return True
-	# Si le joueur est un vassal d'un autre Seigneurs Alors Défaite
-	for lord in gamedata.list_lord:
-		if lord != player:
-			if player in lord.vassal:
-				gamedata.victory = "Défaite"
-				return True
-
-	# Sinon si le joueur possède un Nombre de Vassaux = Nombre de Seigneur-1
-	# Alors Victoire
-	if len(player.vassal) == (gamedata.Nb_lord - 1):
-		gamedata.victory = "Victoire"
-		return True
-
-	return False
-
-
-def endofgame(gamedata, classmap, option):
-	#####
-	# Fonction qui gère la fin de partie
-	#####
-	eofgamescreen(gamedata, classmap, option)
-
-
-
 ###########################################################################
 
 ######################### Autre Fonction #########################
@@ -844,3 +674,5 @@ def infovillage(village):
 		print("village priest: ", 0)
 	print("village global joy: ", village.global_joy)
 	print("village ressource, money: ", village.prod_ressource, village.prod_money)
+
+

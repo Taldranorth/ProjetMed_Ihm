@@ -62,7 +62,7 @@ def moveviewxy(event, deltax, deltay, gamedata, classmap, option):
 	gamedata.log.printinfo(f"coords (0,0) : {classmap.mapcanv.coords(classmap.listmap[0].canvastuiles)}")
 	#######################################################
 
-def startmoveviewmouse(event, window):
+def startmoveviewmouse(event):
 	####################
 	# Fonction pour déplacer la vue en:
 	# Maintenant le click droit de la souris
@@ -70,13 +70,15 @@ def startmoveviewmouse(event, window):
 	# Utiliser .scan_mark(x, y)
 	#
 	####################
+	window = event.widget.winfo_toplevel()
 	window.configure(cursor = "trek")
 	event.widget.scan_mark(event.x, event.y)
 
-def endmoveviewmouse(event, window):
+def endmoveviewmouse(event):
 	####################
 	# Fonction Pour remttre le curseur normal de la souris
 	####################
+	window = event.widget.winfo_toplevel()
 	window.configure(cursor = "arrow")
 
 
@@ -91,6 +93,7 @@ def moveviewmouse(event, gamedata, classmap, option):
 
 	event.widget.scan_dragto(event.x, event.y, gain = 1)
 
+	'''
 	ts = gamedata.tuilesize
 	
 	xorigine = classmap.mapcanv.canvasx(0)
@@ -103,7 +106,7 @@ def moveviewmouse(event, gamedata, classmap, option):
 		event.widget.scan_dragto(int(-xorigine), event.y, gain = 1)
 	if (yorigine < - 10):
 		event.widget.scan_dragto(event.x,int(-yorigine), gain = 1)
-	'''
+
 	elif (xf > (ts*option.mapx)):
 		event.widget.scan_dragto(event.x, event.y, gain = 1)
 	elif (yf > (ts*option.mapy)):

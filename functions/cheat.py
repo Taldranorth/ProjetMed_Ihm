@@ -1,6 +1,7 @@
 import tkinter
 
 
+import functions.game as game
 import functions.interfacemenu as interfacemenu
 
 
@@ -28,5 +29,5 @@ def cheat_victory(gamedata, classmap, option):
 	#####
 
 	gamedata.victory = "Victoire"
-	interfacemenu.endofgame(gamedata, classmap, option)
+	game.endofgame(gamedata, classmap, option)
 

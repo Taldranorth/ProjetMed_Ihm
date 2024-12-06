@@ -65,7 +65,7 @@ def bordervillage(gamedata, classmap, option):
 	# - En Bleu Le Territoire du Joueur
 
 
-
+	classmap.mapcanv.delete("border")
 	player = gamedata.list_lord[gamedata.playerid]
 
 	# On se balade dans la liste des villages
@@ -117,7 +117,7 @@ def bordervillage(gamedata, classmap, option):
 		coord1 = common.coordmaptocanvas(gamedata, classmap, option, [posx2, posy2], False)
 		gamedata.log.printinfo(f"coord0: ,{coord0}")
 		gamedata.log.printinfo(f"coord1: ,{coord1}")
-		classmap.mapcanv.create_rectangle( coord0[0], coord0[1], coord1[0], coord1[1], tags = ["tuile", "border", lordname], outline = color)
+		classmap.mapcanv.create_rectangle( coord0[0], coord0[1], coord1[0], coord1[1], tags = ["tuile", "border", village.name], outline = color)
 
 def bordervillageunit(gamedata, classmap, option, village):
 	##################
@@ -169,9 +169,21 @@ def bordervillageunit(gamedata, classmap, option, village):
 	# On convertit les Coordonnées Map en Coordonnées Canvas
 	coord0 = common.coordmaptocanvas(gamedata, classmap, option, [posx, posy], False)
 	coord1 = common.coordmaptocanvas(gamedata, classmap, option, [posx2, posy2], False)
+	# Si le village possède déjà une Bordure on Supprime l'ancienne
+	delborder(gamedata, classmap, village)
 	# MonkeyPatch
-	classmap.mapcanv.create_rectangle( coord0[0], coord0[1], coord1[0], coord1[1], tags = ["tuile", "border"], outline = color)
+	classmap.mapcanv.create_rectangle( coord0[0], coord0[1], coord1[0], coord1[1], tags = ["tuile", "border", village.name], outline = color)
 
+def delborder(gamedata, classmap, village):
+	##################
+	# Fonction pour détruire la bordure d'un unique village
+	##################
+	lb = classmap.mapcanv.find_withtag("border")
+	for ele in lb:
+		if classmap.mapcanv.gettags(ele)[2] == village.name:
+			print(f"Bordure Trouvé Pour le village{village.name} On supprime l'ancienne")
+			classmap.mapcanv.delete(ele)
+			return
 
 def printarmy(gamedata, classmap, option, army):
 	##################

@@ -74,7 +74,7 @@ class ClassGameData:
 	#		- Après initialisation de la game
 	#
 	#	À l'initialisation de la game on créer une instance de la classe qui va contenir les données suivante:
-	#		Nb_tour = 0
+	#		nb_turn = 0
 	#		Nb_lord = 3
 	# 
 	####################
@@ -82,7 +82,7 @@ class ClassGameData:
 	def __init__(self):
 
 		# Variable qui vient contenir le nombre de tour passé
-		self.Nb_tour = 1
+		self.nb_turn = 1
 		# Variable qui vient contenir le nombre de joueurs
 		self.Nb_lord = 0
 		# variable qui vient contenir le Seigneur qui doit jouer
@@ -371,7 +371,7 @@ class ClassGameData:
 			if village.lord == 0:
 				village.endofturn(self)
 
-		self.Nb_tour += 1
+		self.nb_turn += 1
 
 	def exit(self):
 		################
@@ -421,7 +421,7 @@ class ClassGameData:
 
 		i = 0
 		while (i< len(self.actionlist)):
-			removeactionfileturn(searchobject, turn)
+			self.removeactionfileturn(searchobject, turn)
 			i += 1
 
 
@@ -456,7 +456,7 @@ class ClassGameData:
 		################
 		if typeobject == "army":
 			for i in range(len(self.actionlist)):
-				if inactionfileturn(searchobject, typeobject, i) == True:
+				if self.inactionfileturn(searchobject, typeobject, i) == True:
 					return True
 		return False
 

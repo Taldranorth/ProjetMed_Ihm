@@ -73,7 +73,7 @@ def gameinterface(gamedata, classmap, option, win):
 	classmap.tkvar_list[0].set(f"Ressource : {player.nb_ressource} ({efficiency[0]})")
 	classmap.tkvar_list[1].set(f"Argent : {player.nb_money} ({efficiency[1]})")
 	classmap.tkvar_list[2].set(f"Bonheur: {int(player.global_joy)}%")
-	classmap.tkvar_list[3].set(f"Tour N°: {gamedata.Nb_tour}")
+	classmap.tkvar_list[3].set(f"Tour N°: {gamedata.nb_turn}")
 
 	# Info Entête
 	# Nb Total Ressource
@@ -153,7 +153,7 @@ def updateinterface(gamedata, classmap):
 	classmap.tkvar_list[0].set(f"Ressource : {player.nb_ressource} ({efficiency[0]})")
 	classmap.tkvar_list[1].set(f"Argent : {player.nb_money} ({efficiency[1]})")
 	classmap.tkvar_list[2].set(f"Bonheur: {int(player.global_joy)}%")
-	classmap.tkvar_list[3].set(f"Tour N°: {gamedata.Nb_tour}")
+	classmap.tkvar_list[3].set(f"Tour N°: {gamedata.nb_turn}")
 
 ######################### Menu Vue Globale #########################
 
@@ -936,8 +936,9 @@ def statebuildchurch(gamedata, classmap, option):
 
 		# On créer la listbox
 		tkinter.Label(frame_interface_church, text = "Village").grid(row = 0, column = 0)
+		tkinter.Label(frame_interface_church, text = "Cout: 10 Ressource, 10 Écus").grid(row = 1, column = 0)
 		lc_interface_church = tkinter.Listbox(frame_interface_church)
-		lc_interface_church.grid(row = 1, column = 0)
+		lc_interface_church.grid(row = 2, column = 0)
 		# On créer un menu déroulant qui présente les villages éligible à la construction d'une église avec les donnés du villag
 		for village in player.fief:
 			if village.church == 0:
@@ -982,6 +983,7 @@ def triggerbuildchurch(event, gamedata, classmap, option):
 	############
 	# Fonction pour construire une église dans un village
 	############
+	canvas = event.widget
 
 	# On recup les coord de la tuile:
 	coord = classmap.mapcanv.coords("current")
@@ -1005,6 +1007,12 @@ def triggerbuildchurch(event, gamedata, classmap, option):
 			updateinterface(gamedata, classmap)
 			# On retire le carrer
 			deltuilecoordcanvas(gamedata, classmap, option, "buildchurch", [coord[0] - (gamedata.tuilesize//2), coord[1] - (gamedata.tuilesize//2)])
+		else:
+			#print("Pas de Ressource")
+			#print("x,y: ",canvas.canvasx(event.x), canvas.canvasx(event.y))
+			#canvas.create_text(canvas.canvasx(event.x), canvas.canvasx(event.y), text = "Pas Assez de Ressource ou d'Écu", fill = "red")
+			#wait()
+			pass
 
 def deltuilecoordcanvas(gamedata, classmap, option, tag, coord):
 	############
@@ -1308,6 +1316,12 @@ def button_add_population(gamedata, classmap, option, village, role, tkvar_list)
 			tkvar_list[2].set(f"Nb artisan: {village.nb_artisan}")
 			player.sub_ressource(4)
 			player.sub_money(4)
+
+	if village.priest != 0:
+		if village.priest.ability == "Bonus_Immigration":
+			gamedata.log.printinfo(f"la Capacité {village.priest.ability} de {village.priest.name} s'active !")
+			pop = gameclass.ClassRoturier(gamedata.randomnametype("Nom"), "paysan", False)
+			village.addpopulation(pop)
 
 	# On update l'interface Immigration
 	tkvar_list[0].set(f"Nb Pop: {len(village.population)}")
@@ -1681,6 +1695,8 @@ def sequencemovefight(gamedata, classmap, option, army1, army2):
 		coord1 = [army2.x, army2.y]
 		# On récupère l'itinéraire la plus efficace
 		itinéraire = affichage.pathfinding(gamedata, classmap, option, [army1.x, army1.y], coord1, 45)
+		# On retire le dernier déplacement car ils nous placent sur la case ou se trouve l'armée adverse
+		itinéraire = itinéraire[:-1]
 
 		# On déplace autant que l'on peut
 		i = 0
@@ -1702,13 +1718,16 @@ def sequencemovefight(gamedata, classmap, option, army1, army2):
 				# On déréférence toute les unités de l'armée
 				army2.destroyarmy()
 				# On retire l'armée de la liste du Seigneur
+				# On recupère le Seigneur affilié à l'armée
 				lord = 0
 				i = 0
 				while((lord == 0) and (i<len(gamedata.list_lord))):
 					if gamedata.list_lord[i].coordtoobject(coord1, "army") != 0:
 						lord = gamedata.list_lord[i]
 					i += 1
-				lord.removearmy(army2)
+				# On retirer du Registre du Seigneur l'armée
+				if lord != 0:
+					lord.removearmy(army2)
 				# On détruit l'objet du canvas
 				classmap.mapcanv.delete(classmap.mapcanv.find_withtag(army2.name)[0])
 				# On détruit l'armée
@@ -1726,7 +1745,8 @@ def sequencemovefight(gamedata, classmap, option, army1, army2):
 					if gamedata.list_lord[i].coordtoobject([army1.x, army1.y], "army") != 0:
 						lord = gamedata.list_lord[i]
 					i += 1
-				lord.removearmy(army1)
+				if lord != 0:
+					lord.removearmy(army1)
 				# On détruit l'objet du canvas
 				classmap.mapcanv.delete(classmap.mapcanv.find_withtag(army1.name)[0])
 				# On détruit l'armée
@@ -1750,7 +1770,7 @@ def startsequencemovetakevillage(event, gamedata, classmap, option, army):
 	##################
 
 	gamedata.removeactionfileturn(army)
-	
+
 	player = gamedata.list_lord[gamedata.playerid]
 
 	# On recup les coord Canvas de la tuile 

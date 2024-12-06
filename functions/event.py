@@ -67,8 +67,8 @@ import random
 #############################################################################
 
 ##################
-# À chaque début de tour chaque joueur va tirer un chiffre aléatoire
-#
+# - À chaque début de tour chaque joueur va tirer un chiffre aléatoire
+# - Selon le Chiffre tirer 
 #
 #
 ##################
