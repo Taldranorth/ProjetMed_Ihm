@@ -1,12 +1,13 @@
 import time
 import random
 
-import functions.interfacegame as interfacegame
-import functions.gameclass as gameclass
-import functions.moveview as moveview
-import functions.genproc as genproc
-import functions.affichage as affichage
+import functions.log as log
 import functions.common as common
+import functions.genproc as genproc
+import functions.moveview as moveview
+import functions.gameclass as gameclass
+import functions.affichage as affichage
+import functions.interfacegame as interfacegame
 
 #########################
 # Fichier qui vient contenir les fonctions liées à la gestion de l'ia
@@ -93,8 +94,8 @@ def mainai(gamedata, classmap, option):
 		while (lord.verifcost(10,10) == False) and (i< len(lord.fief)):
 			# le i village paye la tax au seigneurs
 			village = lord.fief[i]
-			gamedata.log.printinfo(f"{lord.lordname} Éxige une tax aux village {village.name} de Ressource:{r}, d'Écus:{m}")
-			gamedata.log.printinfo(f"{lord.lordname} possède dans ses caisses: {lord.nb_ressource} ressource,{lord.nb_money} écus")
+			log.log.printinfo(f"{lord.lordname} Éxige une tax aux village {village.name} de Ressource:{r}, d'Écus:{m}")
+			log.log.printinfo(f"{lord.lordname} possède dans ses caisses: {lord.nb_ressource} ressource,{lord.nb_money} écus")
 			actiontaxVillage(gamedata, classmap, option, lord, village, r, m)
 			i += 1
 	# 1°) Immigration
@@ -113,20 +114,25 @@ def mainai(gamedata, classmap, option):
 	# Si possède les ressources nécessaires pour construire une Église
 	for village in lord.fief:
 		if village.priest == 0:
-			if lord.verifcost(10,10):
-				gamedata.log.printinfo(f"{lord.lordname} Construit une Église dans {village.name}")
+			if ((lord.verifcost(10,10)) or (lord.freechurch >= 1)):
+				log.log.printinfo(f"{lord.lordname} Construit une Église dans {village.name}")
 				village.buildchurch(gamedata.randomnametype("Nom"))
+				if lord.freechurch >= 1:
+					lord.freechurch -= 1
+				else:
+					lord.sub_ressource(10)
+					lord.sub_money(10)
 
 	# 1°) Construction de Village
 	# Si possède un village avec plus de 20 de population
 	if canbuildvillage(gamedata, classmap, option, lord) == True:
-		gamedata.log.printinfo(f"{lord.lordname} Peut Construire un Village")
+		log.log.printinfo(f"{lord.lordname} Peut Construire un Village")
 		actionbuildvillage(gamedata, classmap, option, lord)
 
 
 	# 2°) Création d'armée
 	if canrecruitarmy(gamedata, classmap, option, lord) == True:
-		gamedata.log.printinfo(f"{lord.lordname} Peut Créer une Armée")
+		log.log.printinfo(f"{lord.lordname} Peut Créer une Armée")
 		if lord.verifcost(2,2) == True:
 			village = lord.fief[0]
 			idvillage = common.coordmaptoidtuile(option, [village.x, village.y])
@@ -142,7 +148,7 @@ def mainai(gamedata, classmap, option):
 			affichage.printarmy(gamedata, classmap, option, lord.army[i])
 			lord.sub_money(2)
 			lord.sub_ressource(2)
-			gamedata.log.printinfo(f"{lord.lordname} A créer l'armée {lord.army[i].name}")
+			log.log.printinfo(f"{lord.lordname} A créer l'armée {lord.army[i].name}")
 
 	# 2°) Recrutement Soldat/ Chevalier
 	for army in lord.army:
@@ -153,7 +159,7 @@ def mainai(gamedata, classmap, option):
 			lord.sub_money(2)
 			lord.sub_ressource(2)
 			efficiency = lord.total_efficiency()
-			gamedata.log.printinfo(f"{lord.lordname} A recruter dans l'armée {army.name}, 1 soldat")
+			log.log.printinfo(f"{lord.lordname} A recruter dans l'armée {army.name}, 1 soldat")
 
 		# Recrutement Chevalier
 		if army.knight == 0:
@@ -164,7 +170,7 @@ def mainai(gamedata, classmap, option):
 				lord.sub_money(10)
 				lord.sub_ressource(10)
 				efficiency = lord.total_efficiency()
-				gamedata.log.printinfo(f"{lord.lordname} A recruter dans l'armée {army.name}, {army.knight.name}")
+				log.log.printinfo(f"{lord.lordname} A recruter dans l'armée {army.name}, {army.knight.name}")
 
 	
 	list_lord_menace = []
@@ -175,19 +181,19 @@ def mainai(gamedata, classmap, option):
 		if (otherlord != lord) and (otherlord != player):
 			# On calcul la réussite
 			succes = interfacegame.vassal_try(gamedata, lord, otherlord)
-			gamedata.log.printinfo(f"{lord.lordname} à {succes}% de chance de Vassaliser: {otherlord.lordname}")
+			log.log.printinfo(f"{lord.lordname} à {succes}% de chance de Vassaliser: {otherlord.lordname}")
 			# On calcul la menace
 			# On calcul la distance
 			dist = common.distance(otherlord.fief[0], lord.fief[0])
 			menace = (otherlord.score()-lord.score())//dist
 			# On ajoute la menace du Seigneur dans la liste de menace
-			print("menace: ", menace)
+			log.log.printinfo(f"menace:  {menace}")
 			list_lord_menace += [[otherlord.idlord, menace]]
 			if succes >= 75:
-				gamedata.log.printinfo(f"{lord.lordname} tente de Vassaliser: {otherlord.lordname}")
+				log.log.printinfo(f"{lord.lordname} tente de Vassaliser: {otherlord.lordname}")
 				interfacegame.vassal_offer(gamedata, classmap, option, lord, otherlord, succes)
 
-	gamedata.log.printinfo(f"{lord.lordname} liste de Menace: {list_lord_menace}")
+	log.log.printinfo(f"{lord.lordname} liste de Menace: {list_lord_menace}")
 	# 4°) Guerre
 	# Si le Seigneur est en Guerre
 	if len(lord.war) > 0:
@@ -196,13 +202,13 @@ def mainai(gamedata, classmap, option):
 		# Tant que le Seigneur possède des Armées libre
 		# 4°) Attaque de Troupe
 		while(nbarmy < len(lord.army)) and (nblord < len(lord.war)):
-			gamedata.log.printinfo(f"l'armée {lord.army[nbarmy].name} à t'elle une action de prévu ?: {gamedata.inactionfile(lord.army[nbarmy], "army")}")
+			log.log.printinfo(f"l'armée {lord.army[nbarmy].name} à t'elle une action de prévu ?: {gamedata.inactionfile(lord.army[nbarmy], "army")}")
 			# Si l'armée à déjà une action en cours one ne fait rien
 			if gamedata.inactionfile(lord.army[nbarmy], "army") == False:
 				if len(lord.war[nblord].army) > 0:
 					nbarmy2 = 0
 					while (nbarmy2 < len(lord.war[nblord].army)) and (nbarmy < len(lord.army)):
-						gamedata.log.printinfo(f"{lord.lordname} déplace {lord.army[nbarmy].name} pour attaquer {lord.war[nblord].army[nbarmy2].name} de {lord.war[nblord].lordname}")
+						log.log.printinfo(f"{lord.lordname} déplace {lord.army[nbarmy].name} pour attaquer {lord.war[nblord].army[nbarmy2].name} de {lord.war[nblord].lordname}")
 						interfacegame.sequencemovefight(gamedata, classmap, option, lord.army[nbarmy], lord.war[nblord].army[nbarmy2])
 						nbarmy2 += 1
 						nbarmy += 1
@@ -212,12 +218,12 @@ def mainai(gamedata, classmap, option):
 		# Tant que le Seigneur possède des Armées libre
 		# 4°) Attaque de Village
 		while(nbarmy < len(lord.army)) and (nblord < len(lord.war)):
-			gamedata.log.printinfo(f"l'armée {lord.army[nbarmy].name} à t'elle une action de prévu ?: {gamedata.inactionfile(lord.army[nbarmy], "army")}")
+			log.log.printinfo(f"l'armée {lord.army[nbarmy].name} à t'elle une action de prévu ?: {gamedata.inactionfile(lord.army[nbarmy], "army")}")
 			# Si l'armée à déjà une action en cours one ne fait rien
 			if gamedata.inactionfile(lord.army[nbarmy], "army") == False:
 				nbvillage = 0
 				while (((nbvillage < len(lord.war[nblord].fief)) and (nbarmy < len(lord.army))) and (nblord < len(lord.war))):
-					gamedata.log.printinfo(f"{lord.lordname} déplace {lord.army[nbarmy].name} pour attaquer {lord.war[nblord].fief[nbvillage].name} de {lord.war[nblord].lordname}")
+					log.log.printinfo(f"{lord.lordname} déplace {lord.army[nbarmy].name} pour attaquer {lord.war[nblord].fief[nbvillage].name} de {lord.war[nblord].lordname}")
 					interfacegame.sequencemovetakevillage(gamedata, classmap, option, lord, lord.army[nbarmy], lord.war[nblord].fief[nbvillage])
 					nbvillage += 1
 					nbarmy += 1
@@ -261,21 +267,21 @@ def actionbuildvillage(gamedata, classmap, option, lord):
 	#####
 	# On vérifie que le seigneur possède les ressource nécessaire pour construire un village
 	if lord.verifcost(15,15) == True:
-		gamedata.log.printinfo(f"{lord.lordname} Cherche un Lieu pour construire son nouveaux village aux alentour de {lord.fief[0].name}")
+		log.log.printinfo(f"{lord.lordname} Cherche un Lieu pour construire son nouveaux village aux alentour de {lord.fief[0].name}")
 		# On cherche dans un Rayon de 5 cases autour de son village principale les lieux ou il peut construire un village
 		i = 0
 		# On cherche Une cases autour de la ville principale
 		idcases = searchvillage(gamedata, classmap, option, lord.fief[i])
 		# Si on a pas trouvé autour de la ville principale
 		while ((idcases == 0) and (i < len(lord.fief))):
-			gamedata.log.printinfo(f"{lord.lordname} n'a pas trouvé pour {lord.fief[i].name}")
+			log.log.printinfo(f"{lord.lordname} n'a pas trouvé pour {lord.fief[i].name}")
 			i += 1
 			if (i < len(lord.fief)):
-				gamedata.log.printinfo(f"{lord.lordname} Cherche un Lieu pour construire son nouveaux village aux alentour de {lord.fief[i].name}")
+				log.log.printinfo(f"{lord.lordname} Cherche un Lieu pour construire son nouveaux village aux alentour de {lord.fief[i].name}")
 				idcases = searchvillage(gamedata, classmap, option, lord.fief[i])
 		# Si on a trouvé une cases on construit un village
 		if idcases != 0:
-			gamedata.log.printinfo(f"{lord.lordname} à trouvé :{idcases}")
+			log.log.printinfo(f"{lord.lordname} à trouvé :{idcases}")
 			# On construit le village
 			classmap.lvillages += [idcases]
 			classmap.listmap[idcases].createvillage(gamedata)
@@ -285,7 +291,7 @@ def actionbuildvillage(gamedata, classmap, option, lord):
 			lord.addfief(village)
 			# On ajoute la pop dans le village
 			genproc.genpopvillage(gamedata, classmap, option, village, 8, 2)
-			gamedata.log.printinfo(f"{lord.lordname} à Fonder :{village.name} en pos: {village.x}, {village.y}")
+			log.log.printinfo(f"{lord.lordname} à Fonder :{village.name} en pos: {village.x}, {village.y}")
 			# On retire les ressources
 			lord.sub_ressource(15)
 			lord.sub_money(15)
@@ -332,7 +338,7 @@ def actiontaxVillage(gamedata, classmap, option, lord, village, ressource:bool, 
 	village.updateinfo()
 
 def actionimmigration(gamedata, classmap, option, lord, village, nbpaysan, nbartisan):
-	gamedata.log.printinfo(f"{lord.lordname} Fait venir {nbpaysan} paysan et {nbartisan} artisan")
+	log.log.printinfo(f"{lord.lordname} Fait venir {nbpaysan} paysan et {nbartisan} artisan")
 	for x in range(nbpaysan):
 		pop = gameclass.ClassRoturier(gamedata.randomnametype("Nom"), "paysan", False)
 		village.addpopulation(pop)
@@ -347,7 +353,7 @@ def actionimmigration(gamedata, classmap, option, lord, village, nbpaysan, nbart
 
 	if village.priest != 0:
 		if village.priest.ability == "Bonus_Immigration":
-			gamedata.log.printinfo(f"la Capacité {village.priest.ability} de {village.priest.name} s'active !")
+			log.log.printinfo(f"la Capacité {village.priest.ability} de {village.priest.name} s'active !")
 			pop = gameclass.ClassRoturier(gamedata.randomnametype("Nom"), "paysan", False)
 			village.addpopulation(pop)
 

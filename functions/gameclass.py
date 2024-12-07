@@ -2,6 +2,7 @@ import tkinter
 import random
 
 
+import functions.log as log
 import functions.common as common
 
 
@@ -96,10 +97,13 @@ class Classlord:
 		# Liste des seigneur avec les quelles on est en guerres
 		self.war = []
 
-		#Type du seigneur si non joueur, cela vient coder son comportement
+		# Type du seigneur si non joueur, cela vient coder son comportement
 		# liste de type: ["expansionniste", "belliciste", "économique"]
 		# Pour plus tard
 		self.type = 0
+
+		# Variable qui vient contenir le Nombre d'église que peut construire le Seigneur Gratuitement
+		self.freechurch = 0
 
 	def setcolor(self, color):
 		####
@@ -109,7 +113,7 @@ class Classlord:
 
 	def createarmy(self, name, x, y):
 		# On vérifie qu'il n'y a pas déjà une armée à cette position
-		print("On créer une armée dans le village: ", name)
+		log.log.printinfo(f"On créer une armée dans le village: {name}")
 		self.army += [Classarmy(x, y, ("unit " + name))]
 
 	def removearmy(self, army):
@@ -183,12 +187,12 @@ class Classlord:
 		# On retire le lord
 		i = 0
 		found = False
-		print(f"On cherche {lord,lord.lordname} dans la liste war{self.war}")
+		log.log.printinfo(f"On cherche {lord,lord.lordname} dans la liste war{self.war}")
 		while (i < len(self.war)) and (found != True):
 			# une fois le seigneur trouver On le supprime de la liste
 			if self.war[i] == lord:
 				self.war = self.war[:i] + self.war[i+1:]
-				print(f"On à trouver, liste war changer: {self.war}")
+				log.log.printinfo(f"On à trouver, liste war changer: {self.war}")
 				found = True
 
 		# On retire les vassaux du lord
@@ -295,8 +299,8 @@ class Classlord:
 			tax_money = int(self.nb_money*(1/4))
 
 
-		print(f"Moi {self.lordname}: Paye {tax_money} écu à Mon Liege: {lord.lordname}")
-		print(f"Moi {self.lordname}: Paye {tax_ressource} ressource à Mon Liege: {lord.lordname}")
+		log.log.printinfo(f"Moi {self.lordname}: Paye {tax_money} écu à Mon Liege: {lord.lordname}")
+		log.log.printinfo(f"Moi {self.lordname}: Paye {tax_ressource} ressource à Mon Liege: {lord.lordname}")
 		# Le Noble paye la tax
 		lord.nb_money += tax_money
 		self.nb_money -= tax_money
@@ -318,7 +322,7 @@ class Classlord:
 					return village
 			return 0
 		else:
-			print("Mauvais Type d'object: (army, village)")
+			log.log.printinfo("Mauvais Type d'object: (army, village)")
 			return 0
 
 	def score(self):
@@ -388,7 +392,7 @@ class Classlord:
 
 		# On demande au vassaux de payer la tax annuelle
 		for vassal in self.vassal:
-			print("On tax le vassal: ",vassal.lordname)
+			log.log.printinfo(f"On tax le vassal: {vassal.lordname}")
 			vassal.tax(self)
 
 		# On update les infos du Seigneurs
@@ -426,7 +430,7 @@ class Classvillage:
 		#####
 		# On aplique à la pop le Bonus du Prêtre Si on à un Prêtre
 		if self.priest != 0:
-			self.translateprietcapacityunit(self.priest.ability, pop)
+			self.addpriestcapacityunit(pop)
 
 		self.population += [pop]
 		# On incrémente le compteur de pop
@@ -449,12 +453,14 @@ class Classvillage:
 		self.priest = Classpriest(name)
 
 		# On applique la capacité du prêtre à la population du village
-		self.translateprietcapacity(self.priest.ability)
+		self.addpriestcapacity()
 
 		self.updateinfo()
 
 
-	def translateprietcapacity(self, ability):
+	#############################\ Prêtre Capacité \######################################
+
+	def addpriestcapacity(self):
 		####
 		# Methode qui pour le Prêtre envoyait Applique un Malus ou un Bonus
 		####
@@ -463,6 +469,7 @@ class Classvillage:
 		# - Bonus d'immigration				 		(Bonus_Immigration)
 		# - Bonus de Bonheur						(Bonus_Joy)
 		####
+		ability = self.priest.ability
 		if ability == "Bonus_Ressource":
 			# On augmente la production de tout les Roturiers
 			for pop in self.population:
@@ -471,16 +478,52 @@ class Classvillage:
 			for pop in self.population:
 				pop.addjoybonus(5)
 
-	def translateprietcapacityunit(self, ability, pop):
+	def subpriestcapacity(self):
+		####
+		# Methode qui pour le Prêtre envoyait Applique un Malus ou un Bonus
+		####
+		# 3 capacité:
+		# - Bonus de Production de Ressource (+2) 	(Bonus_Ressource)
+		# - Bonus d'immigration				 		(Bonus_Immigration)
+		# - Bonus de Bonheur						(Bonus_Joy)
+		####
+		ability = self.priest.ability
+		if ability == "Bonus_Ressource":
+			# On augmente la production de tout les Roturiers
+			for pop in self.population:
+				pop.subcpbonus(2)
+		elif ability == "Bonus_joy":
+			for pop in self.population:
+				pop.subjoybonus(5)
+
+
+	def addpriestcapacityunit(self, pop):
 		####
 		# Methode qui applique à une unique pop la capacité du Prêtre
+		ability = self.priest.ability
 		####
 		if ability == "Bonus_Ressource":
-			print(f"la Capacité {self.priest.ability} de {self.priest.name} s'active !")
+			log.log.printinfo(f"la Capacité {self.priest.ability} de {self.priest.name} s'active !")
 			pop.addcpbonus(2)
 		elif ability == "Bonus_joy":
-			print(f"la Capacité {self.priest.ability} de {self.priest.name} s'active !")
+			log.log.printinfo(f"la Capacité {self.priest.ability} de {self.priest.name} s'active !")
 			pop.addjoybonus(5)
+
+	def subpriestcapacityunit(self, pop):
+		####
+		# Methode qui retire à une unique pop la capacité du Prêtre
+		####
+		ability = self.priest.ability
+		if ability == "Bonus_Ressource":
+			log.log.printinfo(f"la Capacité {self.priest.ability} de {self.priest.name} s'active !")
+			pop.subcpbonus(2)
+		elif ability == "Bonus_joy":
+			log.log.printinfo(f"la Capacité {self.priest.ability} de {self.priest.name} s'active !")
+			pop.subjoybonus(5)
+
+
+
+	################################################################################
 
 
 	def setlord(self, lord):
@@ -522,7 +565,7 @@ class Classvillage:
 					pop = ClassRoturier(gamedata.randomnametype("Nom"), "paysan", True)
 				else:
 					pop = ClassRoturier(gamedata.randomnametype("Nom"), "artisan", True)
-				gamedata.log.printinfo(f"félicitation, {self.population[couple[0]].name}({self.population[couple[0]].age}) et {self.population[couple[1]].name}({self.population[couple[1]].age}) ont donné naissance à {pop.name}")
+				log.log.printinfo(f"félicitation, {self.population[couple[0]].name}({self.population[couple[0]].age}) et {self.population[couple[1]].name}({self.population[couple[1]].age}) ont donné naissance à {pop.name}")
 				self.addpopulation(pop)
 					
 
@@ -555,6 +598,7 @@ class Classvillage:
 	def killpop(self, pop):
 		#######
 		# Method pour tuer un Roturier
+		# Prend en entré un objet pop
 		#######
 
 		# Les Ressources qu'il possédait sont Récupérer par le Seigneur
@@ -601,23 +645,23 @@ class Classvillage:
 		# - Si un Village se Révolte il Devient Indépendant
 		r = random.randrange(100)
 		if r > 50:
-			print(f"Le village{self.name} à fait un jet de {r}, il tente de se révolter")
+			log.log.printinfo(f"Le village{self.name} à fait un jet de {r}, il tente de se révolter")
 			# On vérifie qu'une armée du Seigneur est présent à proximité dans un Rayon de 3 cases
 			for army in self.lord.army:
 				if common.distance(self, army) <= 3:
-					print(f"Le Village{self.name} affontre l'armée{army.name}")
+					log.log.printinfo(f"Le Village{self.name} affontre l'armée{army.name}")
 					# On vérifie que la taille de la population du village est supérieur à la puissance de l'armée
 					if len(self.population) > army.power:
-						print(f"Le Village{self.name} à remporté le Combat contre l'armée{army.name}")
+						log.log.printinfo(f"Le Village{self.name} à remporté le Combat contre l'armée{army.name}")
 						# l'armée se fait détruire
 						self.army.destroyarmy()
 						self.lord.removearmy(army)
 						del army
 					else:
-						print(f"L'armée{army.name} à maté la Révolte du Village{self.name}")
+						log.log.printinfo(f"L'armée{army.name} à maté la Révolte du Village{self.name}")
 						return
 			# Si il n'y a pas d'armée ou que toute les armée se sont fait battre le village obtient sont indépendance
-			print(f"Le Village{self.name} à Vaincu son Seigneurs")
+			log.log.printinfo(f"Le Village{self.name} à Vaincu son Seigneurs")
 			self.revolt()
 
 
@@ -625,7 +669,7 @@ class Classvillage:
 		#####
 		# Methode qui gère la révolte
 		#####
-		print(f"Le Village{self.name} à Obtenue Son indépendance !")
+		log.log.printinfo(f"Le Village{self.name} à Obtenue Son indépendance !")
 		# On retire le village de la liste du Seigneur
 		self.lord.removefief(self)
 		# On update les stats du Seigneurs
@@ -657,7 +701,7 @@ class Classvillage:
 		for pop in self.population:
 			pop.endofturn(self.lord)
 			if pop.deathiscoming() == True:
-				gamedata.log.printinfo(f"{pop.name} Meurt à l'age de {pop.age}")
+				log.log.printinfo(f"{pop.name} Meurt à l'age de {pop.age}")
 				self.killpop(pop)
 
 		# On gère les naissances
@@ -802,8 +846,8 @@ class Classpriest:
 		######
 		lcapacity = ["Bonus_Ressource","Bonus_Immigration","Bonus_Joy"]
 		r = random.randrange(len(lcapacity))
-		self.aptitude = lcapacity[r]
-		print(f"Le prêtre {self.name} à comme capacité: {self.aptitude}")
+		self.ability = lcapacity[r]
+		log.log.printinfo(f"Le prêtre {self.name} à comme capacité: {self.ability}")
 
 	def endofturn(self, lord):
 		#######
@@ -813,29 +857,6 @@ class Classpriest:
 		#
 		#######
 		pass
-
-
-
-
-#Classe générale:
-class ClassHuman:
-
-	def __init__(self, name):
-		self.name = name
-		self.ressource = 1
-		self.money = 0
-		self.joy = 50
-		#capacité de production
-		self.cp = 2
-		self.age = random.randrange(15,30)
-
-	def endofturn(self):
-		#######
-		# Méthode fin de tour
-		#######
-		pass
-
-
 
 class ClassKnight:
 
@@ -958,6 +979,8 @@ class ClassRoturier:
 		# Method pour retirer un Bonus de Production
 		#####
 		self.cpbonus -= bonus
+		if self.cpbonus <0:
+			self.cpbonus = 0
 
 	def addcpmalus(self, malus):
 		####
@@ -970,6 +993,8 @@ class ClassRoturier:
 		# Method pour retirer un Malus de Production
 		#####
 		self.cpmalus -= malus
+		if self.cpmalus <0:
+			self.cpmalus = 0
 	##########################################
 
 	#############\	Joy	\##################
@@ -985,6 +1010,8 @@ class ClassRoturier:
 		# Method pour retirer un Bonus de Bonheur
 		#####
 		self.joybonus -= bonus
+		if self.joybonus < 0:
+			self.joybonus = 0
 
 	def addjoymalus(self, malus):
 		####
@@ -997,6 +1024,8 @@ class ClassRoturier:
 		# Method pour retirer un Malus de Bonheur
 		#####
 		self.joymalus -= malus
+		if self.joymalus < 0:
+			self.joymalus = 0
 	##########################################
 
 
@@ -1077,7 +1106,9 @@ class ClassRoturier:
 		####
 		if self.age > 8:
 			#print(f"{self.name} un {self.role} à produit: {self.cp} ressource")
-			self.ressource += self.cp + self.cpbonus + self.cpmalus
+			cptotal = self.cp + self.cpbonus + self.cpmalus
+			if cptotal >= 0:
+				self.ressource += cptotal
 		else:
 			#print(f"{self.name} un {self.role} à produit: {1} ressource")
 			self.ressource += 1			
@@ -1133,6 +1164,18 @@ class ClassRoturier:
 		else:
 			return False
 
+	def changejoy(self, joy):
+		######
+		# Methode Pour modifier le Bonheur du Roturier
+		######
+		self.joy += joy
+
+		if self.joy > 100:
+			self.joy = 100
+		elif self.joy < 0:
+			self.joy = 0
+
+
 	def endofturn(self, lord):
 		#######
 		# Méthode de fin de tour
@@ -1168,18 +1211,14 @@ class ClassRoturier:
 
 		# 6°) On update son humeur selon ses besoins
 		# Si il n'a pas put se nourrir, le bonheur baisse
-		if (self.ressource < 0) and (self.joy > 0):
-			self.joy -= 10
+		if (self.ressource < 0):
+			self.changejoy(-10)
 		# Sinon Si il à put se nourrir et qu'il à de la bouffe en réserve il est optimiste
-		elif (self.ressource > 1) and (self.joy < 100):
-			self.joy += 5
+		elif (self.ressource > 1):
+			self.changejoy(5)
 		# Sinon rien ne change
 		# On applique le Bonus/Malus de Bonheur
-		self.joy += self.joybonus + self.joymalus
-		if self.joy > 100:
-			self.joy = 100
-		elif self.joy < 0:
-			self.joy = 0
+		self.changejoy(self.joybonus + self.joymalus)
 
 		# 7°) On Augmente son Age
 		self.age += 1

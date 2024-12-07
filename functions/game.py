@@ -1,5 +1,6 @@
 import tkinter
 
+import functions.log as log
 import functions.cheat as cheat
 import functions.stats as stats
 import functions.event as event
@@ -61,7 +62,6 @@ def initgame(mainmenuwin, gamedata, classmap, option, root):
 	cheat.cheat_menu(gamedata, classmap, option, root)
 	root.mainloop()
 
-
 ###########################################################################
 
 
@@ -97,7 +97,7 @@ def endofturn(gamedata, classmap, option):
 	# Fonction Qui gère la fin de Tour
 	#####
 	gamedata.semaphore = True
-	gamedata.log.printinfo("Il ne reste plus de Seigneur qui doit Jouer, Fin du tour")
+	log.log.printinfo("Il ne reste plus de Seigneur qui doit Jouer, Fin du tour")
 	#print("lplaines: ",classmap.lplaines)
 	gamedata.Nb_toplay = 0
 	# On vérifie que l'on ne soit pas en état de mettre fin aux jeu:
@@ -105,6 +105,7 @@ def endofturn(gamedata, classmap, option):
 		# On fait appel à la fonction de fin de tour
 		gamedata.endofturn(classmap)
 		# On calcul l'event qui va s'appliquer
+		event.Eventsystem.randomevent(gamedata, classmap, option)
 
 		# Une fois que tout les objets se sont update ont update l'interface d'entête
 		interfacegame.updateinterface(gamedata, classmap)
@@ -128,7 +129,7 @@ def playerturn(gamedata, classmap, option):
 	######
 	# Si le joueur à appuier sur le bouton fin de tour
 	if gamedata.endturn == True:
-		gamedata.log.printinfo("Player hit end of turn button")
+		log.log.printinfo("Player hit end of turn button")
 		# On incrémente le joueur qui doit jouer
 		gamedata.Nb_toplay += 1
 		# On indique au joueurs que c'est à l'ia de Jouer
@@ -140,7 +141,7 @@ def notplayerturn(gamedata, classmap, option):
 	######
 	# On affiche la banderole
 	gamedata.semaphore = True
-	gamedata.log.printinfo(f"tour de: {gamedata.list_lord[gamedata.Nb_toplay].lordname}, {gamedata.Nb_toplay}")
+	log.log.printinfo(f"tour de: {gamedata.list_lord[gamedata.Nb_toplay].lordname}, {gamedata.Nb_toplay}")
 	# L'ia Joue
 	ailord.mainai(gamedata, classmap, option)
 

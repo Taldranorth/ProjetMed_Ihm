@@ -1,6 +1,7 @@
 import sys
 import random
 
+import functions.log as log
 import functions.gameclass as gameclass
 
 import matplotlib.pyplot as plt

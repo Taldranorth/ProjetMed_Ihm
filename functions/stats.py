@@ -1,4 +1,5 @@
 
+import functions.log as log
 
 #################### Fonction Stats ####################
 

@@ -1,5 +1,6 @@
 import tkinter
 
+import functions.log as log
 import functions.data as data
 import functions.interfacegame as interfacegame
 import functions.moveview as moveview
@@ -53,6 +54,30 @@ def printvillageunit(gamedata, classmap, option, coordmap):
 
 	# On ajoute lie au village la fonction pour ouvrir l'interface
 	classmap.mapcanv.tag_bind("village","<Button-1>", lambda event, opt = option, gd = gamedata, cm = classmap: interfacegame.villageinterface(event, gd, cm, opt))
+
+def delvillageunit(mapcanv, village):
+	########
+	# Fonction pour supprimer l'affichage d'un village
+	########
+	# On récup une liste de tout les objets du canvas qui ont le tag village, cela prend en compte les village et leur tags
+	# On à 2 objet à détruire
+	lcanvvillage = mapcanv.find_withtag("village")
+	i = 0
+	for objet in lcanvvillage:
+		if i == 2:
+			return
+		ltag = mapcanv.gettags(objet)
+		# Si on à trouvé l'image village
+		if ((ltag[4] == village.x) and (ltag[5] == village.y)):
+			mapcanv.delete(objet)
+			i += 1
+		# Si on à trouvé le label village
+		elif ((ltag[3] == village.x) and (ltag[4] == village.y)):
+			mapcanv.delete(objet)
+			i += 1
+
+
+
 
 def bordervillage(gamedata, classmap, option):
 	##################
@@ -115,8 +140,8 @@ def bordervillage(gamedata, classmap, option):
 		# On convertit les Coordonnées Map en Coordonnées Canvas
 		coord0 = common.coordmaptocanvas(gamedata, classmap, option, [posx, posy], False)
 		coord1 = common.coordmaptocanvas(gamedata, classmap, option, [posx2, posy2], False)
-		gamedata.log.printinfo(f"coord0: ,{coord0}")
-		gamedata.log.printinfo(f"coord1: ,{coord1}")
+		log.log.printinfo(f"coord0: ,{coord0}")
+		log.log.printinfo(f"coord1: ,{coord1}")
 		classmap.mapcanv.create_rectangle( coord0[0], coord0[1], coord1[0], coord1[1], tags = ["tuile", "border", village.name], outline = color)
 
 def bordervillageunit(gamedata, classmap, option, village):
@@ -170,18 +195,18 @@ def bordervillageunit(gamedata, classmap, option, village):
 	coord0 = common.coordmaptocanvas(gamedata, classmap, option, [posx, posy], False)
 	coord1 = common.coordmaptocanvas(gamedata, classmap, option, [posx2, posy2], False)
 	# Si le village possède déjà une Bordure on Supprime l'ancienne
-	delborder(gamedata, classmap, village)
+	delborder(classmap, village)
 	# MonkeyPatch
 	classmap.mapcanv.create_rectangle( coord0[0], coord0[1], coord1[0], coord1[1], tags = ["tuile", "border", village.name], outline = color)
 
-def delborder(gamedata, classmap, village):
+def delborder(classmap, village):
 	##################
 	# Fonction pour détruire la bordure d'un unique village
 	##################
 	lb = classmap.mapcanv.find_withtag("border")
 	for ele in lb:
 		if classmap.mapcanv.gettags(ele)[2] == village.name:
-			print(f"Bordure Trouvé Pour le village{village.name} On supprime l'ancienne")
+			log.log.printinfo(f"Bordure Trouvé Pour le village{village.name} On supprime l'ancienne")
 			classmap.mapcanv.delete(ele)
 			return
 
@@ -241,13 +266,13 @@ def sequencemoveunit(gamedata, classmap, option, army, coordObjectif):
 	# On calcul les cases par lequel l'armée doit passer
 	# Liste dans laquelle on va enregistrer les déplacement nécessaires
 	# Algo de Bresenham
-	gamedata.log.printinfo("On calcul les déplacement nécessaire")
-	gamedata.log.printinfo(f"coord0, coord1: {army.x, army.y}, {coordObjectif}")
+	log.log.printinfo("On calcul les déplacement nécessaire")
+	log.log.printinfo(f"coord0, coord1: {army.x, army.y}, {coordObjectif}")
 	# Brensenham
 	lmovement = brensenham([army.x, army.y], coordObjectif)
 	# Pathfinding
 	lmovement = pathfinding(gamedata, classmap, option, [army.x, army.y], coordObjectif, 45)
-	gamedata.log.printinfo(f"lmovement: {lmovement}")
+	log.log.printinfo(f"lmovement: {lmovement}")
 
 	idtuile0 = common.coordmaptoidtuile(option, [army.x, army.y])
 	# Une fois la liste rempli ont éxécute autant que l'on peut
@@ -262,8 +287,8 @@ def sequencemoveunit(gamedata, classmap, option, army, coordObjectif):
 
 	# Si la liste n'est pas vide on ajoute dans la file des actions la Sequence de movement 
 	if i != len(lmovement):
-		gamedata.log.printinfo(f"Il reste des mouvement à effectuer mais il y n'a plus de PM")
-		gamedata.log.printinfo(f"On ajoute dans la file des actions")
+		log.log.printinfo(f"Il reste des mouvement à effectuer mais il y n'a plus de PM")
+		log.log.printinfo(f"On ajoute dans la file des actions")
 		gamedata.addactionfile(["sequencemoveunit", gamedata, classmap, option, army, coordObjectif], 1)
 
 def moveunit(gamedata, classmap, option, army, coord):
@@ -278,8 +303,8 @@ def moveunit(gamedata, classmap, option, army, coord):
 	x = coord[0] - army.x
 	y = coord[1] - army.y
 	coord = common.coordmaptocanvas(gamedata, classmap, option, [x, y], True)
-	gamedata.log.printinfo(f"Unité déplacement vers coord Canvas : {coord}")
-	gamedata.log.printinfo(f"On déplace l'armée {army.name} avec l'id Canvas: {army.idCanv} de: {x}x,{y}y ")
+	log.log.printinfo(f"Unité déplacement vers coord Canvas : {coord}")
+	log.log.printinfo(f"On déplace l'armée {army.name} avec l'id Canvas: {army.idCanv} de: {x}x,{y}y ")
 	# On déplace l'objet
 	classmap.mapcanv.move(army.idCanv, coord[0]- (gamedata.tuilesize/2), coord[1]-(gamedata.tuilesize/2))
 
@@ -469,13 +494,13 @@ def pathfinding(gamedata, classmap, option, coord0, coord1, degr):
 		cosdegr = 0.707
 		sindegr = 0.707
 	else:
-		gamedata.log.printerror("degrer non valide (30 ou 45)")
+		log.log.printerror("degrer non valide (30 ou 45)")
 		return
 
 	# On calcul la distance en C0 et C1
 	dx = coord1[0] - coord0[0]
 	dy = coord1[1] - coord0[1]
-	gamedata.log.printinfo(f"dx, dy: ,{dx}, {dy}")
+	log.log.printinfo(f"dx, dy: ,{dx}, {dy}")
 
 	# Point Central 
 	C = [coord0[0] + dx//2, coord0[1] + dy//2]
@@ -494,12 +519,12 @@ def pathfinding(gamedata, classmap, option, coord0, coord1, degr):
 	# C2y:
 	C2[1] = int(((C[0] - coord0[0])*(-sindegr)) + ((C[1] - coord0[1])*cosdegr) + coord0[1])
 
-	#gamedata.log.printinfo(f"coord0: ,{coord0}")
-	#gamedata.log.printinfo(f"coord1: ,{coord1}")
+	#log.log.printinfo(f"coord0: ,{coord0}")
+	#log.log.printinfo(f"coord1: ,{coord1}")
 
-	#gamedata.log.printinfo(f"C: ,{C}")
-	#gamedata.log.printinfo(f"C1: ,{C1}")
-	#gamedata.log.printinfo(f"C2: ,{C2}")
+	#log.log.printinfo(f"C: ,{C}")
+	#log.log.printinfo(f"C1: ,{C1}")
+	#log.log.printinfo(f"C2: ,{C2}")
 
 	# On calcul les 3 itinéraires
 	iti1 = brensenham(coord0, C)
@@ -511,13 +536,13 @@ def pathfinding(gamedata, classmap, option, coord0, coord1, degr):
 	iti3 += brensenham(C2, coord1)
 
 	lsnapshot = [iti1, iti2, iti3]
-	#gamedata.log.printinfo(f"liste des itinéraires: {lsnapshot}")
+	#log.log.printinfo(f"liste des itinéraires: {lsnapshot}")
 	lcostiti = []
 
 	# On vérifie qu'un itinéraires ne passe pas par une cases interdites
 
 	# compare le cout en déplacement de chaque itinéraires
-	#gamedata.log.printinfo(f"Calcul Cout itinéraire")
+	#log.log.printinfo(f"Calcul Cout itinéraire")
 	for itinéraire in lsnapshot:
 		cost = costsequ(gamedata, classmap, option, itinéraire)
 		if cost != False:
@@ -532,7 +557,7 @@ def pathfinding(gamedata, classmap, option, coord0, coord1, degr):
 			small = i
 		i += 1
 
-	gamedata.log.printinfo(f"itinéraires le moins couteux avec {lcostiti[small]}PM : {lsnapshot[small]}")
+	log.log.printinfo(f"itinéraires le moins couteux avec {lcostiti[small]}PM : {lsnapshot[small]}")
 
 	return lsnapshot[small]
 

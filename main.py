@@ -1,17 +1,19 @@
-import tkinter
-import random
-import sys
 import os
+import sys
+import random
+import tkinter
 
+import functions.log as log
 import functions.data as data
-import functions.interfacegame as interfacegame
-import functions.interfacemenu as interfacemenu
+import functions.cheat as cheat
+import functions.ailord as ailord
+import functions.genproc as genproc
+import functions.moveview as moveview
 import functions.gameclass as gameclass
 import functions.affichage as affichage
-import functions.moveview as moveview
-import functions.genproc as genproc
-import functions.ailord as ailord
-import functions.cheat as cheat
+import functions.interfacegame as interfacegame
+import functions.interfacemenu as interfacemenu
+
 
 from time import time
 
@@ -115,8 +117,12 @@ from time import time
 
 # - Ajouter Gestion des couleurs à PlayMenu
 
+# - Implémenter Tout les Event prévu x
+# - Implémenter Event Positif 3/4
+# - Implémenter Event Neutre 1/2
 
-# - Mise En place Debut Event 
+# - Implémenter Tout les Event prévu
+# - Implémenter l'affichage de l'event pour le Joueur
 #########################################################
 
 
@@ -193,11 +199,10 @@ from time import time
 
 # - Bloquer la vue Pour le Déplacement avec la Souris
 
-# - Implémenter Event
+
+
 # - Retravailler Menu Déplacement Unité
-
 # - AJouter affichage Victoire ou défaite aux combat d'armée
-
 # - Remplir le Menu Cheat
 
 # - Améliorer Interface Village Stat
@@ -227,10 +232,13 @@ from time import time
 # - Déplacer les différentes fonctions dans warfunctions
 # - Réorganiser interfacemenu
 # - Réorganiser le Projet en Transformant des Fonctions en Methode
-# - Changer Fonctionnement log pour qu'il soit séparer de Gamedata
 # - Changer Fonctionnement Dico_file pour qu'il soit séparer de Gamedata
 # - Changer Fonctionnement Dico_name pour qu'il soit séparer de Gamedata
 # - Refactoriser Fonction qui change la Bordure d'un Unique Village pour utiliser PrintvillageBorderunit
+# - Refactoriser Classmap
+# --> Changer le lien entre les objets villages et les tuiles
+# --> Changer lvillage pour un Dico qui contient pour l'id l'objet Village
+# - Refactoriser la Création de Village
 #####
 
 #### Objectif Week-End:
@@ -238,7 +246,7 @@ from time import time
 # - Event
 # - Fix, Optimisation et Refactorisation
 # - Pop-Up --> Event.Enter, Event.Leave
-# - Graphe
+# - Graphe Stats
 ####
 
 
@@ -287,20 +295,20 @@ if __name__ == '__main__':
 
 	#Init de la fenêtre
 	root = tkinter.Tk()
-	print("Hauteur de l'écran: ", root.winfo_screenheight())
-	print("Largeur de l'écran: ", root.winfo_screenwidth())
+	log.log.printinfo(f"Hauteur de l'écran:  {root.winfo_screenheight()}")
+	log.log.printinfo(f"Largeur de l'écran: {root.winfo_screenwidth()}")
 
 	# Chargement des Options:
 	option_instance = data.ClassOptions()
 	# Initialisation de GameData
 	gamedata_instance = data.ClassGameData()
-	gamedata_instance.log.printinfo("Initialisation log terminé")
+	log.log.printinfo("Initialisation log terminé")
 
 	# Initialisation de la Carte
 	map_instance = data.Classmap()
 
 	# Menu principale
 	interfacemenu.mainmenu(gamedata_instance, map_instance, option_instance, root)
-	gamedata_instance.log.printinfo("Initialisation de l'application terminé")
+	log.log.printinfo("Initialisation de l'application terminé")
 
 	root.mainloop()

@@ -1,6 +1,7 @@
 import tkinter
 
 
+import functions.log as log
 import functions.game as game
 import functions.interfacemenu as interfacemenu
 

@@ -6,6 +6,7 @@ import tkinter
 
 from time import time
 
+import functions.log as log
 import functions.game as game
 import functions.data as data
 import functions.stats as stats
@@ -23,7 +24,7 @@ def mainmenu(gamedata, classmap, option, root):
 	mainmenuwin = tkinter.Toplevel(root, height = option.heightWindow, width = option.widthWindow)
 	# On centre la fenêtre
 	# Pourquoi ?
-	gamedata.log.printinfo(f"{option.heightWindow}x{option.widthWindow}+{option.heightWindow//8}+{option.widthWindow//8}")
+	log.log.printinfo(f"{option.heightWindow}x{option.widthWindow}+{option.heightWindow//8}+{option.widthWindow//8}")
 	mainmenuwin.geometry(f"+{option.widthWindow//2}+{option.heightWindow//4}")
 
 
@@ -218,8 +219,8 @@ def previewmap(mapcanv, pic, mapx, mapy):
 
 	for y in range(mapy):
 		for x in range(mapx):
-			print("picx, picy: ", len(pic[0]), len(pic))
-			print("x,y: ",x,y)
+			log.log.printinfo("picx, picy: ", len(pic[0]), len(pic))
+			log.log.printinfo("x,y: ",x,y)
 			tl = tuile(pic[y][x])[0]
 			mapcanv.create_rectangle((x*2), y*2, (x*2)+2, (y*2)+2, fill=tl, tags = "minimap", outline='black')
 
@@ -234,11 +235,11 @@ def playmenucreatelord(gamedata, frame_listlord):
 	####################
 	# Fonction pour Créer un seigneur dans le menu play
 	####################
-	gamedata.log.printinfo("On Créer un nouveau Seigneur")
+	log.log.printinfo("On Créer un nouveau Seigneur")
 	gamedata.createlord()
 	lord = gamedata.list_lord[gamedata.Nb_lord-1]
 
-	gamedata.log.printinfo("On l'ajoute au frame")
+	log.log.printinfo("On l'ajoute au frame")
 	tkinter.Label(frame_listlord, text = gamedata.list_lord[gamedata.Nb_lord-1].lordname, fg = lord.color).grid(columnspan = 5)
 
 
@@ -247,15 +248,15 @@ def playmenudeletelord(gamedata, frame_listlord):
 	# Fonction pour Suprimer un seigneur dans le menu play
 	####################
 	if gamedata.Nb_lord-1 != gamedata.playerid:
-		gamedata.log.printinfo(f"On supprime le Dernier Seigneur de la liste {gamedata.list_lord[gamedata.Nb_lord-1].lordname}, avec pour id: {gamedata.list_lord[gamedata.Nb_lord-1].idlord}")
+		log.log.printinfo(f"On supprime le Dernier Seigneur de la liste {gamedata.list_lord[gamedata.Nb_lord-1].lordname}, avec pour id: {gamedata.list_lord[gamedata.Nb_lord-1].idlord}")
 		gamedata.deletelord(gamedata.Nb_lord-1)
-		gamedata.log.printinfo("On le retire du frame")
-		print(frame_listlord.winfo_children())
+		log.log.printinfo("On le retire du frame")
+		log.log.printinfo(frame_listlord.winfo_children())
 		# On retire le seigneur de la liste
 		frame_listlord.winfo_children()[-1].destroy()
 
 	else:
-		gamedata.log.printerror("Il ne reste plus que le joueur")
+		log.log.printerror("Il ne reste plus que le joueur")
 
 ###########################################################################
 
@@ -446,14 +447,14 @@ def mainscreen(gamedata, classmap, option, root, pic):
 
 	# Création de la fenêtre
 	win1 = tkinter.Toplevel(root, height = option.heightWindow, width= option.widthWindow)
-	gamedata.log.printinfo(f"taille écran x,y: {root.winfo_screenwidth()}, {root.winfo_screenheight()}")
+	log.log.printinfo(f"taille écran x,y: {root.winfo_screenwidth()}, {root.winfo_screenheight()}")
 	win1.geometry(f"+{option.widthWindow//8}+{option.heightWindow//4}")
 	win1.title("Medieval Game")
 
 
 	# Frame Map
 	fcanvas = tkinter.Frame(win1, height = (option.heightWindow*0.6), width= option.widthWindow)
-	gamedata.log.printinfo(f"Taille de la Frame du Canvas: {fcanvas.winfo_width()}, {fcanvas.winfo_height()}")
+	log.log.printinfo(f"Taille de la Frame du Canvas: {fcanvas.winfo_width()}, {fcanvas.winfo_height()}")
 	classmap.setlframecanvas(fcanvas)
 
 	# Interface de Jeu
@@ -502,7 +503,7 @@ def createmap(gamedata, classmap, option, pic, win1):
 
 	#Si heigthWindow/1.5 le boutton quitter disparait
 	mapcanv = tkinter.Canvas(classmap.framecanvas, height = (option.heightWindow*0.6), width= option.widthWindow)
-	gamedata.log.printinfo(f"Taille du Canvas:{mapcanv.winfo_width()}, {mapcanv.winfo_height()}")
+	log.log.printinfo(f"Taille du Canvas:{mapcanv.winfo_width()}, {mapcanv.winfo_height()}")
 	# On setup le frame de l'atlas
 	gamedata.setlframe(classmap.framecanvas)
 	# On lie le mapcanvas à classmap
@@ -663,16 +664,16 @@ def typetoimgdico(dico_file, type, sizetuile):
 
 ######################### Autre Fonction #########################
 def infovillage(village):
-	print("village name", village.name)
+	log.log.printinfo(f"village name {village.name}")
 	if village.lord != 0:
-		print("village lord: ", village.lord.lordname)
+		log.log.printinfo(f"village lord:  {village.lord.lordname}")
 	else:
-		print("village lord: ", 0)
+		log.log.printinfo(f"village lord: 0")
 	if village.priest != 0:
-		print("village priest: ", village.priest.name)
+		log.log.printinfo(f"village priest:  {village.priest.name}")
 	else:
-		print("village priest: ", 0)
-	print("village global joy: ", village.global_joy)
-	print("village ressource, money: ", village.prod_ressource, village.prod_money)
+		log.log.printinfo(f"village priest: 0")
+	log.log.printinfo(f"village global joy: {village.global_joy}")
+	log.log.printinfo(f"village ressource, money:  {village.prod_ressource}, {village.prod_money}")
 
 

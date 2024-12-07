@@ -2,11 +2,11 @@ import sys
 import tkinter
 import random
 
+import functions.log as log
 import functions.gameclass as gameclass
 import functions.affichage as affichage
 import functions.interfacegame as interfacegame
 
-from datetime import datetime
 from time import time
 from PIL import ImageTk, Image, ImageShow
 
@@ -123,7 +123,7 @@ class ClassGameData:
 		# liste de Piles
 		self.actionlist = []
 
-		self.log = Classlog()
+		self.log = log.log
 		# Donnés qui vient contenir l'état du joueur
 		#	Utiliser quand on créer une interface spéciale
 		#	Ex: - quand on affiche l'interface du village
@@ -406,13 +406,27 @@ class ClassGameData:
 		################
 		# Méthode appeler par eotactionfile pour évaluer l'action selon une liste de fonction connue
 		################
-
-		if action[0] == "sequencemoveunit":
-			affichage.sequencemoveunit(action[1], action[2], action[3], action[4], action[5])
-		elif action[0] == "sequencemovefight":
-			interfacegame.sequencemovefight(action[1], action[2], action[3], action[4], action[5])
-		elif action[0] == "sequencemovetakevillage":
-			interfacegame.sequencemovetakevillage(action[1], action[2], action[3], action[4], action[5], action[6])
+		try:
+			if action[0] == "sequencemoveunit":
+				log.log.printinfo(f"Action trouvé: sequencemoveunit")
+				affichage.sequencemoveunit(action[1], action[2], action[3], action[4], action[5])
+			elif action[0] == "sequencemovefight":
+				log.log.printinfo(f"Action trouvé: sequencemovefight")
+				interfacegame.sequencemovefight(action[1], action[2], action[3], action[4], action[5])
+			elif action[0] == "sequencemovetakevillage":
+				log.log.printinfo(f"Action trouvé: sequencemovetakevillage")
+				interfacegame.sequencemovetakevillage(action[1], action[2], action[3], action[4], action[5], action[6])
+			elif action[0] == "addpriestcapacity":
+				log.log.printinfo(f"Action trouvé: addpriestcapacity")
+				action[1].addpriestcapacity()
+			elif action[0] == "subcpbonus":
+				log.log.printinfo(f"Action trouvé: subcpbonus")
+				action[1].subcpbonus(action[2])
+			elif action[0] == "subcpmalus":
+				log.log.printinfo(f"Action trouvé: subcpmalus")
+				action[1].subcpmalus(action[2])
+		except BaseException as error:
+			log.log.printerror(f"{error}")
 
 	def removeactionfile(self, searchobject):
 		################
@@ -552,42 +566,6 @@ class ClassOptions:
 		pass
 
 
-class Classlog:
-	####################
-	# Classe qui va gérer toute les Erreurs et autre infos
-	####################
-
-	def __init__(self):
-
-		self.file = open("user/log.txt", "w")
-		self.loglevel = 0
-
-
-	def printerror(self, ch):
-
-		ch = "Erreur: " + ch
-		ch = self.formatlog(ch)
-		print(ch)
-		self.file.write(ch+"\n")
-		self.file.flush()
-
-	def printinfo(self, ch):
-
-		ch = "Info: " +ch
-		ch = self.formatlog(ch)
-		print(ch)
-		self.file.write(ch+"\n")
-		self.file.flush()
-
-	def formatlog(self, ch):
-		####################
-		# Fonction qui formatte le message pour l'écriture
-		####################
-		ch = "[" + str(datetime.now())[11:19] +"]" + ch
-		return ch
-
-
-
 class Classmap:
 	####################
 	# Classe qui va contenir toute les sous-classes tuiles dans une liste associer à un identificateur
@@ -631,16 +609,35 @@ class Classmap:
 
 		return self.listmap[idvillage].village
 
+	def removeidvillage(self, idvillage):
+		#######
+		# Methode Pour retirer un village selon son id
+		#######
+		village = self.listmap[idvillage].village
+		# On retire le Bind de la tuile
+		self.listmap[idvillage].village = 0
+
+		# On supprime son affichage
+		affichage.delvillageunit(self.mapcanv, village)
+
+		# On le cherche dans la liste idvillage avant de le retirer
+		i = 0
+		for village in self.lvillages:
+			if village == idvillage:
+				self.lvillages = self.lvillages[:i] + self.lvillages[i+1:]
+				# Une fois trouvé on le del Puis on s'éjecte
+				del village
+				return
+			i += 1
+
+
+
 	def nametoid(self, name):
 		####################
 		# Méthode pour obtenir l'id d'un village selon son nom
 		####################
-		#print("On cherche: ", name)
 		for ele in self.lvillages:
-			#print("ele: ", ele)
-			#print("village.name: ", self.listmap[ele].village.name)
 			if self.listmap[ele].village.name == name:
-				#print("idvillage trouvé: ", ele)
 				return ele
 
 
@@ -887,8 +884,8 @@ def randomloadtexturefromdico(dico_file, type, sizetuile):
 		img = img.resize((sizetuile,sizetuile), Image.BOX)
 		return [dico_file[type][r][0], ImageTk.PhotoImage(img)]
 	else:
-		print("erreur type non présent dans les clé du dico")
-		print(dico_file.keys())
+		log.log.printinfo("erreur type non présent dans les clé du dico")
+		log.log.printinfo(f"{dico_file.keys()}")
 
 def randomtexturefromdico(dico_file, type):
 	####################
@@ -899,8 +896,8 @@ def randomtexturefromdico(dico_file, type):
 		texture_name = dico_file[type][r][0]
 		return texture_name
 	else:
-		print("erreur type non présent dans les clé du dico")
-		print(dico_file.keys())
+		log.log.printinfo("erreur type non présent dans les clé du dico")
+		log.log.printinfo(f"{dico_file.keys()}")
 
 
 def loadtexturefromdico(dico_file, filename, type, sizetuile):
@@ -928,7 +925,7 @@ def loadtexturefromdico(dico_file, filename, type, sizetuile):
 
 	# Sinon on renvoit une erreur
 	else:
-		print("erreur fichier non trouvé")
+		log.log.printinfo("erreur fichier non trouvé")
 
 
 def loadnamedico(filepath):
@@ -981,8 +978,8 @@ if __name__ == '__main__':
 	#### Test Dico ####
 	dico_file = assetLoad()
 	#for key in dico_file.keys():
-	#	print(key,dico_file[key])
-	#	print("\n")
+	#	log.log.printinfo(key,dico_file[key])
+	#	log.log.printinfo("\n")
 	####################
 	#print(dico_file["knight"])
 	#print(dico_file["soldier"])

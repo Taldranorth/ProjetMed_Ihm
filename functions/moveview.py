@@ -1,5 +1,7 @@
-import functions.data as data
 
+
+import functions.log as log
+import functions.data as data
 import functions.common as common
 
 #########################
@@ -31,7 +33,7 @@ def moveviewxy(event, deltax, deltay, gamedata, classmap, option):
 	mult = 100
 	ts = gamedata.tuilesize
 
-	gamedata.log.printinfo("move map arrow")
+	log.log.printinfo("move map arrow")
 
 	################ Déplacement de la vue ################
 	# On recup le point central de la fenêtre
@@ -59,7 +61,7 @@ def moveviewxy(event, deltax, deltay, gamedata, classmap, option):
 
 	#classmap.mapcanv.scan_dragto(movex, movey, gain = 1)
 
-	gamedata.log.printinfo(f"coords (0,0) : {classmap.mapcanv.coords(classmap.listmap[0].canvastuiles)}")
+	log.log.printinfo(f"coords (0,0) : {classmap.mapcanv.coords(classmap.listmap[0].canvastuiles)}")
 	#######################################################
 
 def startmoveviewmouse(event):
@@ -138,7 +140,7 @@ def moveviewz(event, gamedata, classmap, option):
 	while event.widget.type(idorigine) != "image":
 		idorigine += 1
 
-	gamedata.log.printinfo(f"coord de la tuile 0,0 Canvas: , {classmap.mapcanv.coords(classmap.listmap[0].canvastuiles)}")
+	log.log.printinfo(f"coord de la tuile 0,0 Canvas: , {classmap.mapcanv.coords(classmap.listmap[0].canvastuiles)}")
 
 	####################\ 1°) \####################
 
@@ -148,13 +150,13 @@ def moveviewz(event, gamedata, classmap, option):
 	# On recup les coord-canvas de la tuile
 	idtuile = event.widget.find_closest(mousex, mousey)
 
-	gamedata.log.printinfo(f"coordonnées window de la souris: , {mousex}, {mousey}")
+	log.log.printinfo(f"coordonnées window de la souris: , {mousex}, {mousey}")
 	############################################################
 
 	####################\ 2°) \####################
 	#Pour éviter les différence entre windows et Mac ont normalise delta
 	#Doit prendre en compte linux -_-
-	gamedata.log.printinfo(f"{event.delta}")
+	log.log.printinfo(f"{event.delta}")
 
 
 	if (event.delta <= 0) or (event.num == 5):
@@ -179,12 +181,12 @@ def moveviewz(event, gamedata, classmap, option):
 	#Zoom
 	canvasgooriginewindow(classmap)
 	if (x<320) and (delta == 2):
-		print("Zoom")
+		log.log.printinfo("Zoom")
 		event.widget.scale("tuile", 0, 0, delta, delta)
 		x = x*delta
 	#Dezoom
 	elif(x>5) and (delta == -2):
-		print("DeZoom")
+		log.log.printinfo("DeZoom")
 		#On rend positive le delta sinon il inverse le sens de la carte
 		event.widget.scale("tuile", 0, 0, -1/(delta), -1/(delta))
 		x = x*(-1/(delta))
@@ -225,7 +227,7 @@ def moveviewz(event, gamedata, classmap, option):
 		# On change la texture lié
 		event.widget.itemconfigure(imgid, image = gamedata.atlas[texture].image)
 	############################################################
-	gamedata.log.printinfo(f"taille Atlas: {len(gamedata.atlas)}")
+	log.log.printinfo(f"taille Atlas: {len(gamedata.atlas)}")
 	############################################################
 
 def moveviewzcenter(gamedata, classmap, option, delta):
@@ -251,7 +253,7 @@ def moveviewzcenter(gamedata, classmap, option, delta):
 	else:
 		classmap.mapcanv.scale("tuile", 0, 0, (delta), (delta))
 		x = x*delta
-	print(x)
+	log.log.printinfo(f"{x}")
 	# Place au centre de l'écran
 	coordcanv = [classmap.mapcanv.canvasx(option.widthWindow//2), classmap.mapcanv.canvasx((option.heightWindow*0.6)//2)]
 	centerviewcanvas(gamedata, classmap, option, coordcanv)
@@ -292,7 +294,7 @@ def moveviewzcenter(gamedata, classmap, option, delta):
 		# On change la texture lié
 		classmap.mapcanv.itemconfigure(imgid, image = gamedata.atlas[texture].image)
 	############################################################
-	gamedata.log.printinfo(f"taille Atlas: {len(gamedata.atlas)}")
+	log.log.printinfo(f"taille Atlas: {len(gamedata.atlas)}")
 
 ###########################################################################
 
@@ -318,7 +320,7 @@ def centerviewcanvas(gamedata, classmap, option, coordcanv):
 
 	movex = coordcanv[0] - ((option.widthWindow/ts)//2) * ts
 	movey = coordcanv[1] - (((option.heightWindow*0.6)/ts)//2) * ts
-	gamedata.log.printinfo(f"déplacement de x,y: , {movex}, {movey}")
+	log.log.printinfo(f"déplacement de x,y: , {movex}, {movey}")
 
 	# On indique ou on veut aller
 	classmap.mapcanv.scan_mark(0,0)

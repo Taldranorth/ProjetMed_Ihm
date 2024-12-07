@@ -1,4 +1,5 @@
 
+import functions.log as log
 #################################### Fonction Calcul de coord ####################################
 
 def coordcanvastomap(gamedata, classmap, option, coord):
@@ -21,7 +22,7 @@ def coordmaptocanvas(gamedata, classmap, option, coord, decalage:bool):
 	# Fonction pour traduire les coordonnées map en coordonnées du canvas centrer ou non √
 	##################
 
-	#gamedata.log.printinfo(f"Pour coord map: {coord[0]}, {coord[1]}")
+	#log.log.printinfo(f"Pour coord map: {coord[0]}, {coord[1]}")
 
 	ts = gamedata.tuilesize
 
@@ -32,7 +33,7 @@ def coordmaptocanvas(gamedata, classmap, option, coord, decalage:bool):
 	else:
 		xcanvas = (coord[0]*ts)
 		ycanvas = (coord[1]*ts)		
-	#gamedata.log.printinfo(f"coordcanv: {xcanvas}, {ycanvas}")
+	#log.log.printinfo(f"coordcanv: {xcanvas}, {ycanvas}")
 
 	return [xcanvas, ycanvas]
 
@@ -50,8 +51,8 @@ def distance(object1, object2):
 	###############
 	# Fonction qui retourne la distance entre 2 objets
 	###############
-	print("pos Objet1:", object1.x, object1.y)
-	print("pos Objet2:", object2.x, object2.y)
+	log.log.printinfo(f"pos Objet1: {object1.x}, {object1.y}")
+	log.log.printinfo(f"pos Objet2: {object2.x}, {object2.y}")
 	distx = object1.x - object2.x
 	disty = object1.y - object2.y
 	if distx < 0:
@@ -59,7 +60,7 @@ def distance(object1, object2):
 	if disty < 0:
 		disty = disty*-1
 	dist = distx + disty
-	print("distance: ", dist)
+	log.log.printinfo(f"distance:  {dist}")
 	return dist
 
 
