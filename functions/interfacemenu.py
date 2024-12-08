@@ -10,6 +10,7 @@ import functions.log as log
 import functions.game as game
 import functions.data as data
 import functions.stats as stats
+import functions.asset as asset
 import functions.common as common
 import functions.genproc as genproc
 import functions.moveview as moveview
@@ -219,8 +220,8 @@ def previewmap(mapcanv, pic, mapx, mapy):
 
 	for y in range(mapy):
 		for x in range(mapx):
-			log.log.printinfo("picx, picy: ", len(pic[0]), len(pic))
-			log.log.printinfo("x,y: ",x,y)
+			log.log.printinfo(f"picx, picy: {len(pic[0])}, {len(pic)}")
+			log.log.printinfo(f"x,y: {x},{y}")
 			tl = tuile(pic[y][x])[0]
 			mapcanv.create_rectangle((x*2), y*2, (x*2)+2, (y*2)+2, fill=tl, tags = "minimap", outline='black')
 
@@ -251,7 +252,7 @@ def playmenudeletelord(gamedata, frame_listlord):
 		log.log.printinfo(f"On supprime le Dernier Seigneur de la liste {gamedata.list_lord[gamedata.Nb_lord-1].lordname}, avec pour id: {gamedata.list_lord[gamedata.Nb_lord-1].idlord}")
 		gamedata.deletelord(gamedata.Nb_lord-1)
 		log.log.printinfo("On le retire du frame")
-		log.log.printinfo(frame_listlord.winfo_children())
+		log.log.printinfo(f"{frame_listlord.winfo_children()}")
 		# On retire le seigneur de la liste
 		frame_listlord.winfo_children()[-1].destroy()
 
@@ -372,9 +373,13 @@ def eofgamescreen_main(gamedata, classmap, option, frame_eof_screen_up):
 	#######
 	# Affichage Principale
 	#######
+
+	# On gère l'affichage précédent
 	lchildren = frame_eof_screen_up.winfo_children()
-	if len(lchildren) > 1:
+	print(lchildren)
+	while len(lchildren) >= 1:
 		frame_eof_screen_up.winfo_children()[0].destroy()
+		lchildren = frame_eof_screen_up.winfo_children()
 
 	frame_eof_screen_up_child = tkinter.Frame(frame_eof_screen_up)
 	frame_eof_screen_up_child.grid()
@@ -407,30 +412,166 @@ def eof_military_graph(gamedata, classmap, option, frame_eof_screen_up):
 	#######
 	# Affichage Graphe Évolution Militaire
 	#######
+
+	# On gère l'affichage précédent
+	lchildren = frame_eof_screen_up.winfo_children()
+	print(lchildren)
+	while len(lchildren) >= 1:
+		frame_eof_screen_up.winfo_children()[0].destroy()
+		lchildren = frame_eof_screen_up.winfo_children()
+
+	frame_eof_screen_up_child = tkinter.Frame(frame_eof_screen_up)
+	frame_eof_screen_up_child.grid()
+
+	# Label de la Fenêtre
+	tkinter.Label(frame_eof_screen_up_child, text = f"").grid(row = 0,column = 3)
+
+	i = 0
+	for lord in gamedata.list_lord:
+		# On Met en place bouton pour pouvoir désactiver l'affichage de la courbe du Seigneur
+		tkinter.Button(frame_eof_screen_up_child, text = lord.lordname, fg = lord.color).grid(row = 1, column = i)
+
+		i +=1
+
+	# Label de la Fenêtre
+	tkinter.Label(frame_eof_screen_up_child, text = f"Croissance Militaire").grid(row = 0,column = 0, columnspan = i)
+
+	# On créer le Canvas
+	canvas = tkinter.Canvas(frame_eof_screen_up_child)
+	canvas.grid(row = 2, column = 0, columnspan = i)
+
 	pass
 
 def eof_demography_graph(gamedata, classmap, option, frame_eof_screen_up):
 	#######
 	# Affichage Graphe Évolution démographique
 	#######
+
+	# On gère l'affichage précédent
+	lchildren = frame_eof_screen_up.winfo_children()
+	print(lchildren)
+	while len(lchildren) >= 1:
+		frame_eof_screen_up.winfo_children()[0].destroy()
+		lchildren = frame_eof_screen_up.winfo_children()
+
+	frame_eof_screen_up_child = tkinter.Frame(frame_eof_screen_up)
+	frame_eof_screen_up_child.grid()
+
+	# Label de la Fenêtre
+	tkinter.Label(frame_eof_screen_up_child, text = f"").grid(row = 0,column = 3)
+
+	i = 0
+	for lord in gamedata.list_lord:
+		# On Met en place bouton pour pouvoir désactiver l'affichage de la courbe du Seigneur
+		tkinter.Button(frame_eof_screen_up_child, text = lord.lordname, fg = lord.color).grid(row = 1, column = i)
+
+		i +=1
+
+	# Label de la Fenêtre
+	tkinter.Label(frame_eof_screen_up_child, text = f"Croissance Démographique").grid(row = 0,column = 0, columnspan = i)
+
+	# On créer le Canvas
+	canvas = tkinter.Canvas(frame_eof_screen_up_child)
+	canvas.grid(row = 2, column = 0, columnspan = i)
 	pass
 
 def eof_economy_graph(gamedata, classmap, option, frame_eof_screen_up):
 	#######
 	# Affichage Graphe Évolution Économique
 	#######
+
+	# On gère l'affichage précédent
+	lchildren = frame_eof_screen_up.winfo_children()
+	print(lchildren)
+	while len(lchildren) >= 1:
+		frame_eof_screen_up.winfo_children()[0].destroy()
+		lchildren = frame_eof_screen_up.winfo_children()
+
+	frame_eof_screen_up_child = tkinter.Frame(frame_eof_screen_up)
+	frame_eof_screen_up_child.grid()
+
+	# Label de la Fenêtre
+	tkinter.Label(frame_eof_screen_up_child, text = f"").grid(row = 0,column = 3)
+
+	i = 0
+	for lord in gamedata.list_lord:
+		# On Met en place bouton pour pouvoir désactiver l'affichage de la courbe du Seigneur
+		tkinter.Button(frame_eof_screen_up_child, text = lord.lordname, fg = lord.color).grid(row = 1, column = i)
+
+		i +=1
+
+	# Label de la Fenêtre
+	tkinter.Label(frame_eof_screen_up_child, text = f"Croissance Économique").grid(row = 0,column = 0, columnspan = i)
+
+	# On créer le Canvas
+	canvas = tkinter.Canvas(frame_eof_screen_up_child)
+	canvas.grid(row = 2, column = 0, columnspan = i)
 	pass
 
 def eof_score_graph(gamedata, classmap, option, frame_eof_screen_up):
 	#######
 	# Affichage Graphe Évolution Score
 	#######
+
+	# On gère l'affichage précédent
+	lchildren = frame_eof_screen_up.winfo_children()
+	print(lchildren)
+	while len(lchildren) >= 1:
+		frame_eof_screen_up.winfo_children()[0].destroy()
+		lchildren = frame_eof_screen_up.winfo_children()
+
+	frame_eof_screen_up_child = tkinter.Frame(frame_eof_screen_up)
+	frame_eof_screen_up_child.grid()
+
+	# Label de la Fenêtre
+	tkinter.Label(frame_eof_screen_up_child, text = f"").grid(row = 0,column = 3)
+
+	i = 0
+	for lord in gamedata.list_lord:
+		# On Met en place bouton pour pouvoir désactiver l'affichage de la courbe du Seigneur
+		tkinter.Button(frame_eof_screen_up_child, text = lord.lordname, fg = lord.color).grid(row = 1, column = i)
+
+		i +=1
+
+	# Label de la Fenêtre
+	tkinter.Label(frame_eof_screen_up_child, text = f"Score").grid(row = 0,column = 0, columnspan = i)
+
+	# On créer le Canvas
+	canvas = tkinter.Canvas(frame_eof_screen_up_child)
+	canvas.grid(row = 2, column = 0, columnspan = i)
 	pass
 
 def eof_death_graph(gamedata, classmap, option, frame_eof_screen_up):
 	#######
 	# Affichage Graphe Évolution Mort
 	#######
+
+	# On gère l'affichage précédent
+	lchildren = frame_eof_screen_up.winfo_children()
+	print(lchildren)
+	while len(lchildren) >= 1:
+		frame_eof_screen_up.winfo_children()[0].destroy()
+		lchildren = frame_eof_screen_up.winfo_children()
+
+	frame_eof_screen_up_child = tkinter.Frame(frame_eof_screen_up)
+	frame_eof_screen_up_child.grid()
+
+	# Label de la Fenêtre
+	tkinter.Label(frame_eof_screen_up_child, text = f"").grid(row = 0,column = 3)
+
+	i = 0
+	for lord in gamedata.list_lord:
+		# On Met en place bouton pour pouvoir désactiver l'affichage de la courbe du Seigneur
+		tkinter.Button(frame_eof_screen_up_child, text = lord.lordname, fg = lord.color).grid(row = 1, column = i)
+
+		i +=1
+
+	# Label de la Fenêtre
+	tkinter.Label(frame_eof_screen_up_child, text = f"Mort").grid(row = 0,column = 0, columnspan = i)
+
+	# On créer le Canvas
+	canvas = tkinter.Canvas(frame_eof_screen_up_child)
+	canvas.grid(row = 2, column = 0, columnspan = i)
 	pass
 
 def exit_mainmenu(gamedata, classmap, option):
@@ -482,8 +623,6 @@ def mainscreen(gamedata, classmap, option, root, pic):
 	# On affiche les Bordures des villages:
 	affichage.bordervillage(gamedata, classmap, option)
 
-
-
 	village = gamedata.list_lord[gamedata.playerid].fief[0]
 	coordcanvas = common.coordmaptocanvas(gamedata, classmap, option, [village.x, village.y], True)
 	# On centre la vue sur le village de départ
@@ -505,7 +644,7 @@ def createmap(gamedata, classmap, option, pic, win1):
 	mapcanv = tkinter.Canvas(classmap.framecanvas, height = (option.heightWindow*0.6), width= option.widthWindow)
 	log.log.printinfo(f"Taille du Canvas:{mapcanv.winfo_width()}, {mapcanv.winfo_height()}")
 	# On setup le frame de l'atlas
-	gamedata.setlframe(classmap.framecanvas)
+	asset.atlas.setlframe(classmap.framecanvas)
 	# On lie le mapcanvas à classmap
 	classmap.setmapcanv(mapcanv)
 	# On Créer les Différentes Cases avec le tags tuile pour indiquer et les trouvé plus facilement
@@ -516,7 +655,7 @@ def createmap(gamedata, classmap, option, pic, win1):
 
 	idtuile = 0
 
-	sizetuile = gamedata.tuilesize
+	ts = gamedata.tuilesize
 
 	# !!!!!!
 	# Différence position entre map texture et map carré causer par le fait que la map texture utilise les coordonnées donnés comme point centrale et non point en haut à gauche
@@ -528,24 +667,24 @@ def createmap(gamedata, classmap, option, pic, win1):
 			tl = tuile(pic[y][x])
 
 			# Création de la carte avec Rectangle
-			#mapcanv.create_rectangle((x*sizetuile), (y*sizetuile), (x*sizetuile)+sizetuile, (y*sizetuile)+sizetuile, fill = tl[0], tags = ["click","tuile",x,y,pic[x][y], tl[1]], outline='black')
+			#mapcanv.create_rectangle((x*ts), (y*ts), (x*ts)+ts, (y*ts)+ts, fill = tl[0], tags = ["click","tuile",x,y,pic[x][y], tl[1]], outline='black')
 			
 			##### Version Non-Aléatoire Dico Avec Atlas #####
 			
 			if tl[1] == "mountains":
-				gamedata.loadtextureatlas("mountains_inner.png", tl[1])
+				asset.atlas.loadtextureatlas(asset.dico_file, ts, "mountains_inner.png", tl[1])
 				texture_name = "mountains_inner.png"
 			elif tl[1] == "forest":
-				gamedata.loadtextureatlas("conifer_forest_inner.png", tl[1])
+				asset.atlas.loadtextureatlas(asset.dico_file, ts, "conifer_forest_inner.png", tl[1])
 				texture_name = "conifer_forest_inner.png"
 			elif tl[1] == "plains":
-				gamedata.loadtextureatlas("plains.png", tl[1])
+				asset.atlas.loadtextureatlas(asset.dico_file, ts, "plains.png", tl[1])
 				texture_name = "plains.png"
 			elif tl[1] == "ocean":
-				gamedata.loadtextureatlas("ocean_inner.png", tl[1])
+				asset.atlas.loadtextureatlas(asset.dico_file, ts, "ocean_inner.png", tl[1])
 				texture_name = "ocean_inner.png"
 
-			mcanvt = mapcanv.create_image((x*sizetuile)+(sizetuile/2), (y*sizetuile)+(sizetuile/2), image = gamedata.atlas[texture_name].image, tags = ["img",tl[1],"tuile","click", x, y, pic[x][y], idtuile])
+			mcanvt = mapcanv.create_image((x*ts)+(ts/2), (y*ts)+(ts/2), image = asset.atlas.dico[texture_name].image, tags = ["img",tl[1],"tuile","click", x, y, pic[y][x], idtuile])
 			
 			################################
 
@@ -557,17 +696,16 @@ def createmap(gamedata, classmap, option, pic, win1):
 				if texture_name not in ["mountains_inner.png", "conifer_forest_inner.png", "ocean_inner.png", "plains.png"]:
 					# On affiche en arrière plans une texture background
 					gamedata.loadtextureatlas("plains.png", "plains")
-					mapcanv.create_image((x*sizetuile)+(sizetuile/2), (y*sizetuile)+(sizetuile/2), image = gamedata.atlas["plains.png"].image, tags = ["img",tl[1],"tuile","click", x, y, pic[x][y], idtuile])
+					mapcanv.create_image((x*ts)+(ts/2), (y*ts)+(ts/2), image = gamedata.atlas["plains.png"].image, tags = ["img",tl[1],"tuile","click", x, y, pic[x][y], idtuile])
 			
 			gamedata.loadtextureatlas(texture_name, tl[1])
-			mcanvt = mapcanv.create_image((x*sizetuile)+(sizetuile/2), (y*sizetuile)+(sizetuile/2), image = gamedata.atlas[texture_name].image, tags = ["img",tl[1],"tuile","click", x, y, pic[x][y], idtuile])
+			mcanvt = mapcanv.create_image((x*ts)+(ts/2), (y*ts)+(ts/2), image = gamedata.atlas[texture_name].image, tags = ["img",tl[1],"tuile","click", x, y, pic[x][y], idtuile])
 			"""
 			################################
 
 			# On créer une nouvelle instance de la classe tuiles
 			instancetuile = data.Classtuiles(texture_name, tl[1], x, y, mcanvt)
 			# On le stocker dans la ClassMap
-			#gamedata.list_tuile += [instancetuile]
 			classmap.addtuileinlist(instancetuile)
 			idtuile += 1
 
@@ -623,7 +761,7 @@ def tuile(nb):
 
 
 
-def typetoimg(type, sizetuile):
+def typetoimg(type, ts):
 	####################
 	# Fonction qui va renvoyer une image selon le type envoyer en entré
 	# l'image est resize à la taille d'une tuile
@@ -632,17 +770,17 @@ def typetoimg(type, sizetuile):
 	img = ""
 
 	if type == "mountains":
-		img = data.loadtexture("/asset/texture/terrain/mountains/mountains_inner.png", sizetuile)
+		img = data.loadtexture("/asset/texture/terrain/mountains/mountains_inner.png", ts)
 	elif type == "forest":
-		img = data.loadtexture("/asset/texture/terrain/conifer_forest/conifer_forest_inner.png", sizetuile)
+		img = data.loadtexture("/asset/texture/terrain/conifer_forest/conifer_forest_inner.png", ts)
 	elif type == "plains":
-		img = data.loadtexture("/asset/texture/terrain/plains/plains.png", sizetuile)
+		img = data.loadtexture("/asset/texture/terrain/plains/plains.png", ts)
 	elif type == "ocean":
-		img = data.loadtexture("/asset/texture/terrain/ocean/ocean_inner.png", sizetuile)
+		img = data.loadtexture("/asset/texture/terrain/ocean/ocean_inner.png", ts)
 	return img
 
 
-def typetoimgdico(dico_file, type, sizetuile):
+def typetoimgdico(dico_file, type, ts):
 	####################
 	# Fonction qui va renvoyer une image selon le type envoyer en entré et le dico
 	# l'image est resize à la taille d'une tuile
@@ -651,13 +789,13 @@ def typetoimgdico(dico_file, type, sizetuile):
 	img = ""
 
 	if type == "mountains":
-		img = data.loadtexturefromdico(dico_file, "mountains_inner.png", type, sizetuile)[1]
+		img = data.loadtexturefromdico(dico_file, "mountains_inner.png", type, ts)[1]
 	elif type == "forest":
-		img = data.loadtexturefromdico(dico_file, "conifer_forest_inner.png", type, sizetuile)[1]
+		img = data.loadtexturefromdico(dico_file, "conifer_forest_inner.png", type, ts)[1]
 	elif type == "plains":
-		img = data.loadtexturefromdico(dico_file, "plains.png", type, sizetuile)[1]
+		img = data.loadtexturefromdico(dico_file, "plains.png", type, ts)[1]
 	elif type == "ocean":
-		img = data.loadtexturefromdico(dico_file, "ocean_inner.png", type, sizetuile)[1]
+		img = data.loadtexturefromdico(dico_file, "ocean_inner.png", type, ts)[1]
 	return img
 
 ###########################################################################
@@ -668,7 +806,7 @@ def infovillage(village):
 	if village.lord != 0:
 		log.log.printinfo(f"village lord:  {village.lord.lordname}")
 	else:
-		log.log.printinfo(f"village lord: 0")
+		log.log.printinfo(f"village lord: Indépendant")
 	if village.priest != 0:
 		log.log.printinfo(f"village priest:  {village.priest.name}")
 	else:

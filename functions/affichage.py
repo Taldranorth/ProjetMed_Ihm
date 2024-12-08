@@ -2,6 +2,7 @@ import tkinter
 
 import functions.log as log
 import functions.data as data
+import functions.asset as asset
 import functions.interfacegame as interfacegame
 import functions.moveview as moveview
 import functions.common as common
@@ -17,16 +18,16 @@ def printvillage(gamedata, classmap, option, frame):
 
 	ts = gamedata.tuilesize
 	for ele in classmap.lvillages:
-		gamedata.loadtextureatlas("settlement.png", "build")
+		asset.atlas.loadtextureatlas(asset.dico_file, ts, "settlement.png", "build")
 		#On recup la position en x et y 
 		posx = classmap.listmap[ele].x
 		posy = classmap.listmap[ele].y
-		#print(Classmap.listmap[ele].type, Classmap.listmap[ele].x, Classmap.listmap[ele].y)
+		idtuile = posx + (option.mapx*posy)
 		# On affiche le village
-		classmap.mapcanv.create_image((posx*ts)+(ts/2), (posy*ts)+(ts/2), tags = ["village","build","tuile","img", posx, posy], image = gamedata.atlas["settlement.png"].image)
+		classmap.mapcanv.create_image((posx*ts)+(ts/2), (posy*ts)+(ts/2), tags = ["village","build","tuile","img", idtuile], image = asset.atlas.dico["settlement.png"].image)
 
 		# On affiche en dessous le nom du village
-		classmap.mapcanv.create_text((posx*ts)+(ts/2), (posy*ts), text = classmap.listmap[ele].village.name,tags = ["label","village","tuile", posx, posy], activefill = "Black")
+		classmap.mapcanv.create_text((posx*ts)+(ts/2), (posy*ts), text = classmap.listmap[ele].village.name,tags = ["label","village","tuile", idtuile], activefill = "Black")
 
 
 	# On ajoute lie au tag village la fonction pour ouvrir l'interface des villages
@@ -44,40 +45,46 @@ def printvillageunit(gamedata, classmap, option, coordmap):
 
 	ts = gamedata.tuilesize
 	# On vérifie que la texture est en mémoire
-	gamedata.loadtextureatlas("settlement.png", "build")
+	asset.atlas.loadtextureatlas(asset.dico_file, ts, "settlement.png", "build")
 
 	# On affiche le village
-	classmap.mapcanv.create_image((posx*ts)+(ts/2), (posy*ts)+(ts/2), tags = ["village","build","tuile","img", posx, posy], image = gamedata.atlas["settlement.png"].image)
+	classmap.mapcanv.create_image((posx*ts)+(ts/2), (posy*ts)+(ts/2), tags = ["village","build","tuile","img", idtuile], image = asset.atlas.dico["settlement.png"].image)
 
 	# On affiche en dessous le nom du village
-	classmap.mapcanv.create_text((posx*ts)+(ts/2), (posy*ts), text = classmap.listmap[idtuile].village.name,tags = ["label","village","tuile", posx, posy], activefill = "Black")
+	classmap.mapcanv.create_text((posx*ts)+(ts/2), (posy*ts), text = classmap.listmap[idtuile].village.name,tags = ["label","village","tuile", idtuile], activefill = "Black")
 
 	# On ajoute lie au village la fonction pour ouvrir l'interface
 	classmap.mapcanv.tag_bind("village","<Button-1>", lambda event, opt = option, gd = gamedata, cm = classmap: interfacegame.villageinterface(event, gd, cm, opt))
 
-def delvillageunit(mapcanv, village):
+def delvillageunit(mapcanv, idvillage):
 	########
 	# Fonction pour supprimer l'affichage d'un village
 	########
 	# On récup une liste de tout les objets du canvas qui ont le tag village, cela prend en compte les village et leur tags
 	# On à 2 objet à détruire
 	lcanvvillage = mapcanv.find_withtag("village")
+	print(lcanvvillage)
+	print(idvillage)
 	i = 0
 	for objet in lcanvvillage:
 		if i == 2:
 			return
 		ltag = mapcanv.gettags(objet)
+		print(ltag)
 		# Si on à trouvé l'image village
-		if ((ltag[4] == village.x) and (ltag[5] == village.y)):
-			mapcanv.delete(objet)
-			i += 1
-		# Si on à trouvé le label village
-		elif ((ltag[3] == village.x) and (ltag[4] == village.y)):
-			mapcanv.delete(objet)
-			i += 1
-
-
-
+		# Si Objet Village
+		if len(ltag) > 4:
+			if ((int(ltag[4]) == idvillage)):
+				log.log.printinfo(f"Objet Village trouvé pour {idvillage}")
+				mapcanv.delete(objet)
+				i += 1
+		# Si Objet Label
+		else:
+			# Si on à trouvé le label village
+			if (int(ltag[3]) == idvillage):
+				log.log.printinfo(f"Objet Label trouvé pour {idvillage}")
+				mapcanv.delete(objet)
+				i += 1
 
 def bordervillage(gamedata, classmap, option):
 	##################
@@ -140,8 +147,6 @@ def bordervillage(gamedata, classmap, option):
 		# On convertit les Coordonnées Map en Coordonnées Canvas
 		coord0 = common.coordmaptocanvas(gamedata, classmap, option, [posx, posy], False)
 		coord1 = common.coordmaptocanvas(gamedata, classmap, option, [posx2, posy2], False)
-		log.log.printinfo(f"coord0: ,{coord0}")
-		log.log.printinfo(f"coord1: ,{coord1}")
 		classmap.mapcanv.create_rectangle( coord0[0], coord0[1], coord1[0], coord1[1], tags = ["tuile", "border", village.name], outline = color)
 
 def bordervillageunit(gamedata, classmap, option, village):
@@ -226,13 +231,13 @@ def printarmy(gamedata, classmap, option, army):
 	else:
 		unit = "soldier"
 	# On prend une texture aléatoire
-	texture_name = data.randomtexturefromdico(gamedata.dico_file, unit)
+	texture_name = asset.randomtexturefromdico(asset.dico_file, unit)
 	# On assigne dans l'armée la texture
 	army.texture = texture_name
 	# On charge dans l'atlas la texture préparer avec une taille qui correspond à la moitier d'une tuile
-	gamedata.loadtextureatlassize(texture_name, unit, ts/2)
+	asset.atlas.loadtextureatlassize(asset.dico_file, texture_name, unit, ts/2)
 	# On créer à l'emplacement voulu
-	army.idCanv = classmap.mapcanv.create_image((posx*ts)+(ts/2), (posy*ts)+(ts/2), tags = ["army","tuile","img", army.name], image = gamedata.atlas[texture_name].image)
+	army.idCanv = classmap.mapcanv.create_image((posx*ts)+(ts/2), (posy*ts)+(ts/2), tags = ["army","tuile","img", army.name], image = asset.atlas.dico[texture_name].image)
 
 	# On bind l'interface
 	classmap.mapcanv.tag_bind("army", "<Button-1>", lambda event: interfacegame.armyinterface(event, gamedata, classmap, option))
@@ -252,11 +257,11 @@ def printupdatearmy(gamedata, classmap, army):
 	# On la stocke dans la class
 	army.texture = texture_name
 	# On la charge dans l'atlas
-	gamedata.loadtextureatlassize(texture_name, unit, ts/2)
+	asset.atlas.loadtextureatlassize(asset.dico_file, texture_name, unit, ts/2)
 	# On recup le Canvas Id de l'armée
 	armyId = army.idCanv
 	# On update l'image
-	classmap.mapcanv.itemconfigure(armyId, image = gamedata.atlas[texture_name].image)
+	classmap.mapcanv.itemconfigure(armyId, image = asset.atlas.dico[texture_name].image)
 
 def sequencemoveunit(gamedata, classmap, option, army, coordObjectif):
 	##################
@@ -593,6 +598,10 @@ def armymoveoneturn(gamedata, classmap, option, itinéraire, army):
 	return True
 
 
-
+def bezier():
+	#####
+	# Fonction qui gère l'affichage de la courbe de Bézier
+	#####
+	pass
 
 

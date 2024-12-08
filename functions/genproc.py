@@ -2,6 +2,7 @@ import sys
 import random
 
 import functions.log as log
+import functions.asset as asset
 import functions.gameclass as gameclass
 
 import matplotlib.pyplot as plt
@@ -156,14 +157,14 @@ def genpopidvillage(gamedata, classmap, option, idvillage, nbpaysan, nbartisan):
     # On ajoute les paysans
     for x in range(nbpaysan):
         # On créer le paysan
-        pop = gameclass.ClassRoturier(gamedata.randomnametype("Nom"), "paysan", False)
+        pop = gameclass.ClassRoturier(asset.dico_name.randomnametype("Nom"), "paysan", False)
         # On l'ajoute
         village.addpopulation(pop)
 
     # On ajoute les Artisans
     for x in range(nbartisan):
         # On créer l'artisan
-        pop = gameclass.ClassRoturier(gamedata.randomnametype("Nom"), "artisan", False)
+        pop = gameclass.ClassRoturier(asset.dico_name.randomnametype("Nom"), "artisan", False)
         # On l'ajoute
         village.addpopulation(pop)
         
@@ -175,14 +176,14 @@ def genpopvillage(gamedata, classmap, option, village, nbpaysan, nbartisan):
     # On ajoute les paysans
     for x in range(nbpaysan):
         # On créer le paysan
-        pop = gameclass.ClassRoturier(gamedata.randomnametype("Nom"), "paysan", False)
+        pop = gameclass.ClassRoturier(asset.dico_name.randomnametype("Nom"), "paysan", False)
         # On l'ajoute
         village.addpopulation(pop)
 
     # On ajoute les Artisans
     for x in range(nbartisan):
         # On créer l'artisan
-        pop = gameclass.ClassRoturier(gamedata.randomnametype("Nom"), "artisan", False)
+        pop = gameclass.ClassRoturier(asset.dico_name.randomnametype("Nom"), "artisan", False)
         # On l'ajoute
         village.addpopulation(pop)
 

@@ -2,9 +2,11 @@ import tkinter
 import random
 
 import functions.log as log
+import functions.asset as asset
 import functions.common as common
 import functions.genproc as genproc
 import functions.moveview as moveview
+import functions.gameclass as gameclass
 import functions.affichage as affichage
 import functions.warfunctions as warfunctions
 
@@ -463,19 +465,11 @@ def buttoncreatearmy(gamedata, classmap, option, lc_interface_army):
 	if player.verifcost(2,2) == True:
 		log.log.printinfo("Le Joueur Créer une armée")
 
-		village = player.fief[0]
-		# On recup la 1er position libre
-		coord = searchposition(gamedata, classmap, option, village)
-		# On créer la nouvelle armée
-		player.createarmy(village.name, coord[0], coord[1])
-		idvillage = common.coordmaptoidtuile(option, coord)
-		classmap.listmap[idvillage].setarmyinplace(player.army[lastarmy])
+		createarmy(gamedata, classmap, option, player, 1, 0)
+
 		# On ajoute 1 Soldat
 		player.sub_money(2)
 		player.sub_ressource(2)
-		player.army[lastarmy].recruitsoldier(gamedata.randomnametype("Nom"))
-		# On affiche la nouvelle armée
-		affichage.printarmy(gamedata, classmap, option, player.army[lastarmy])
 		# On update l'interface de la listbox
 		lc_interface_army.insert(tkinter.END, player.army[lastarmy].name)
 		# On update l'interface entête
@@ -589,7 +583,7 @@ def button_recruit(gamedata, classmap, tkvar_list, army, unit):
 	if (unit == "knight") and (type(tkvar_list[1].get()) != str):
 		# On verif que le joueur possède les ressources
 		if player.verifcost(10,10) == True:
-			army.recruitknight(gamedata.randomnametype("Surnom"))
+			army.recruitknight(asset.dico_name.randomnametype("Surnom"))
 			tkvar_list[1].set(army.knight.name)
 			player.sub_money(10)
 			player.sub_ressource(10)
@@ -599,7 +593,7 @@ def button_recruit(gamedata, classmap, tkvar_list, army, unit):
 
 	elif unit == "soldier":
 		if player.verifcost(2,2) == True:
-			army.recruitsoldier(gamedata.randomnametype("Nom"))
+			army.recruitsoldier(asset.dico_name.randomnametype("Nom"))
 			tkvar_list[2].set(len(army.unit))
 			player.sub_money(2)
 			player.sub_ressource(2)			
@@ -609,6 +603,30 @@ def button_recruit(gamedata, classmap, tkvar_list, army, unit):
 	tkvar_list[0].set(army.power)
 	# On update l'interface de l'entête
 	updateinterface(gamedata, classmap)
+
+
+
+def createarmy(gamedata, classmap, option, lord, nbsoldat, knight):
+	#####
+	# Fonction pour créer une armée pour le Seigneur lord avec nb soldat et 0 ou 1 knight
+	# On ne prend pas en compte le cout de création
+	#####
+	village = lord.fief[0]
+	idvillage = common.coordmaptoidtuile(option, [village.x, village.y])
+	# Récupère les coord de la 1er cases libres
+	coord = searchposition(gamedata, classmap, option, village)
+	i = len(lord.army)
+	# Créer l'armée
+	lord.createarmy(village.name, coord[0], coord[1])
+	classmap.listmap[idvillage].setarmyinplace(lord.army[i])
+	# Recrute Soldat
+	for x in range(nbsoldat):
+		lord.army[i].recruitsoldier(asset.dico_name.randomnametype("Nom"))
+	if knight == 1:
+		lord.army[i].recruitknight(asset.dico_name.randomnametype("Surnom"))
+	# Affiche l'armée
+	affichage.printarmy(gamedata, classmap, option, lord.army[i])
+	log.log.printinfo(f"{lord.lordname} A créer l'armée {lord.army[i].name}")
 
 
 ############################################# War #############################################
@@ -629,15 +647,16 @@ def statewar(gamedata, classmap, option):
 	#################
 
 	if gamedata.changenewstate("interface_war") == True :
+
+		ts = gamedata.tuilesize
 		# Tant que la carte n'est pas dezoom à 10
-		while gamedata.tuilesize != 10:
-			if gamedata.tuilesize > 10:
+		while ts != 10:
+			if ts > 10:
 				moveview.moveviewzcenter(gamedata, classmap, option, -2)
 			else:
 				moveview.moveviewzcenter(gamedata, classmap, option, 2)
 
 		player = gamedata.list_lord[gamedata.playerid]
-		ts = gamedata.tuilesize
 		xorigine = classmap.mapcanv.canvasx(0)
 		yorigine = classmap.mapcanv.canvasy(0)
 
@@ -786,13 +805,10 @@ def buttonwardeclaration(gamedata, classmap, option, list_LC, player, lord):
 	list_LC[1].insert(tkinter.END, lordname)
 
 	# On change l'affichage du territoire pour indiquer qu'il est en guerre
-	# On supprimer l'affichage des anciens territoire du Seigneurs
-	classmap.mapcanv.delete(["tuile", "border", lord.lordname])
 	# Village gérer directement par le seigneur Ennemie
 	for village in lord.fief:
 		affichage.bordervillageunit(gamedata, classmap, option, village)
 	for vassal in lord.vassal:
-		classmap.mapcanv.delete(["tuile", "border", vassal.lordname])
 		for vassal_village in vassal.fief:
 			affichage.bordervillageunit(gamedata, classmap, option, vassal_village)
 
@@ -995,12 +1011,14 @@ def triggerbuildchurch(event, gamedata, classmap, option):
 	village = classmap.listmap[idvillage].village
 	player = gamedata.list_lord[gamedata.playerid]
 
+	ts = gamedata.tuilesize
+
 	# On vérife que le village appartient au joueur
 	if village in player.fief:
 		# On Verfie que le joueur possède l'argent nécessaire
 		if ((player.verifcost(10,10)) or (player.freechurch >= 1)):
 			# On construit
-			village.buildchurch(gamedata.randomnametype("Nom"))
+			village.buildchurch(asset.dico_name.randomnametype("Nom"))
 
 			# Si on à une église gratuite On ne perd pas de ressource
 			if player.freechurch >= 1:
@@ -1012,13 +1030,14 @@ def triggerbuildchurch(event, gamedata, classmap, option):
 
 			# On update l'interface
 			updateinterface(gamedata, classmap)
-			# On retire le carrer
-			deltuilecoordcanvas(gamedata, classmap, option, "buildchurch", [coord[0] - (gamedata.tuilesize//2), coord[1] - (gamedata.tuilesize//2)])
+			# On retire le carré
+			deltuilecoordcanvas(gamedata, classmap, option, "buildchurch", [coord[0] - (ts//2), coord[1] - (ts//2)])
 		else:
 			#print("Pas de Ressource")
 			#print("x,y: ",canvas.canvasx(event.x), canvas.canvasx(event.y))
-			#canvas.create_text(canvas.canvasx(event.x), canvas.canvasx(event.y), text = "Pas Assez de Ressource ou d'Écu", fill = "red")
+			#text = canvas.create_text(canvas.canvasx(event.x), canvas.canvasx(event.y), text = "Pas Assez de Ressource ou d'Écu", fill = "red")
 			#wait()
+			#canvas.delete(text)
 			pass
 
 def deltuilecoordcanvas(gamedata, classmap, option, tag, coord):
@@ -1312,26 +1331,30 @@ def button_add_population(gamedata, classmap, option, village, role, tkvar_list)
 		if player.verifcost(1, 1) == True:
 			# On ajoute la pop
 			genproc.genpopvillage(gamedata, classmap, option, village, 1, 0)
-			tkvar_list[1].set(f"Nb Paysan: {village.nb_paysan}")
 			# On retire au joueur
 			player.sub_ressource(1)
 			player.sub_money(1)
+			if village.priest != 0:
+				if village.priest.ability == "Bonus_Immigration":
+					log.log.printinfo(f"la Capacité {village.priest.ability} de {village.priest.name} s'active !")
+					genproc.genpopvillage(gamedata, classmap, option, village, 1, 0)
+
 
 	elif role == "artisan":
 		if player.verifcost(4, 4) == True:
 			genproc.genpopvillage(gamedata, classmap, option, village, 0, 1)
-			tkvar_list[2].set(f"Nb artisan: {village.nb_artisan}")
 			player.sub_ressource(4)
 			player.sub_money(4)
+			if village.priest != 0:
+				if village.priest.ability == "Bonus_Immigration":
+					log.log.printinfo(f"la Capacité {village.priest.ability} de {village.priest.name} s'active !")
+					genproc.genpopvillage(gamedata, classmap, option, village, 1, 0)
 
-	if village.priest != 0:
-		if village.priest.ability == "Bonus_Immigration":
-			log.log.printinfo(f"la Capacité {village.priest.ability} de {village.priest.name} s'active !")
-			pop = gameclass.ClassRoturier(gamedata.randomnametype("Nom"), "paysan", False)
-			village.addpopulation(pop)
 
 	# On update l'interface Immigration
 	tkvar_list[0].set(f"Nb Pop: {len(village.population)}")
+	tkvar_list[1].set(f"Nb Paysan: {village.nb_paysan}")
+	tkvar_list[2].set(f"Nb artisan: {village.nb_artisan}")
 	# On update l'interface Entête
 	updateinterface(gamedata, classmap)
 
@@ -1351,23 +1374,18 @@ def villageinterface(event, gamedata, classmap, option):
 	# Si le joueur est dans un état ou il a déjà l'interface d'un village ouvert on ne fait rien
 	if gamedata.changenewstate("interface_village") == True :
 
-		# On recup l'idée du canvas de la tuile que l'on vient de sélectionner
-		idcanvasvillage = event.widget.find_withtag("current")[0]
 		# On recup les coord-canvas du village
-		coordcanv = event.widget.coords(idcanvasvillage)
-		# On recup la pos x et y du village dans la map
-		log.log.printinfo(f"{event.widget.gettags(idcanvasvillage)}")
-		# Si on à cliqué sur le village
-		if event.widget.gettags(idcanvasvillage)[0] == "village":
-			posx = event.widget.gettags(idcanvasvillage)[4]
-			posy = event.widget.gettags(idcanvasvillage)[5]
-		# Sinon on à cliqué sur le label
+		coordcanv = event.widget.coords("current")
+		print(classmap.mapcanv.gettags("current"))
+		print(len(classmap.mapcanv.gettags("current")))
+		# On recup l'idMapvillage
+		# Si objet village
+		if (len(classmap.mapcanv.gettags("current")) > 5):
+			idmapvillage = int(classmap.mapcanv.gettags("current")[4])
+		# Si objet Label
 		else:
-			posx = event.widget.gettags(idcanvasvillage)[3]
-			posy = event.widget.gettags(idcanvasvillage)[4]
-		# On calcul l'id map du village
-		idmapvillage = int(posx)+(option.mapx*int(posy))
-		log.log.printinfo(f"{idmapvillage}")
+			idmapvillage = int(classmap.mapcanv.gettags("current")[3])
+		log.log.printinfo(f"idvillage : {idmapvillage}")
 
 		####################\ Comment j'ai fait ???? \########################
 		# On place le village au centre de l'écran
@@ -1524,27 +1542,29 @@ def armyinterface(event, gamedata, classmap, option):
 		posy = classmap.mapcanv.coords(classmap.mapcanv.find_withtag("current"))[1]
 		# On recup l'objet army
 		army = gamedata.coordtoarmy(gamedata.playerid, [int((posx-ts/2)/ts), int((posy-ts/2)/ts)])
+		if army != False:
+			# On affiche le nom
+			tkinter.Label(frame_interface_army, text = army.name).grid(row = 0, column = 0)
+			# On affiche la puissance
+			tkinter.Label(frame_interface_army, text = "Puissance: ").grid(row = 0, column = 1)
+			tkinter.Label(frame_interface_army, text = army.power).grid(row = 0, column = 2)
 
-		# On affiche le nom
-		tkinter.Label(frame_interface_army, text = army.name).grid(row = 0, column = 0)
-		# On affiche la puissance
-		tkinter.Label(frame_interface_army, text = "Puissance: ").grid(row = 0, column = 1)
-		tkinter.Label(frame_interface_army, text = army.power).grid(row = 0, column = 2)
+			tkinter.Label(frame_interface_army, text = "Movement").grid(row = 0, column = 3)
+			# On affiche la capacité de déplacement max
+			tkinter.Label(frame_interface_army, text = army.movecapacity).grid(row = 0, column = 4)
+			# On affiche la capacité de déplacement possible
+			tkinter.Label(frame_interface_army, text = army.moveturn).grid(row = 0, column = 5)
 
-		tkinter.Label(frame_interface_army, text = "Movement").grid(row = 0, column = 3)
-		# On affiche la capacité de déplacement max
-		tkinter.Label(frame_interface_army, text = army.movecapacity).grid(row = 0, column = 4)
-		# On affiche la capacité de déplacement possible
-		tkinter.Label(frame_interface_army, text = army.moveturn).grid(row = 0, column = 5)
+			# On créer le bouton pour se déplacer
+			Button_move_army = tkinter.Button(frame_interface_army, text = "Déplacement", command = lambda: statemovearmy(gamedata, classmap, option, army, window_interface_army))
+			Button_move_army.grid(row = 0, column = 6)
 
-		# On créer le bouton pour se déplacer
-		Button_move_army = tkinter.Button(frame_interface_army, text = "Déplacement", command = lambda: statemovearmy(gamedata, classmap, option, army, window_interface_army))
-		Button_move_army.grid(row = 0, column = 6)
+			# Si on clique droit sur une armée non allié alors que l'on à selectionner une armée on attaque
 
-		# Si on clique droit sur une armée non allié alors que l'on à selectionner une armée on attaque
-
-		# Si on clique sur autre chose on quitte l'interface
-		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], [window_interface_army]))
+			# Si on clique sur autre chose on quitte l'interface
+			classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], [window_interface_army]))
+		else:
+			exitstate(gamedata, classmap, option, [], [], [window_interface_army])
 
 
 
@@ -1917,10 +1937,7 @@ def TakeVillage(gamedata, classmap, option, lord, army, village, subjugate):
 		lord.addfief(village)
 
 	# On update l'affichage du territoire
-	# On supp
-	classmap.mapcanv.delete("border")
-	# On recréer
-	affichage.bordervillage(gamedata, classmap, option)
+	bordervillageunit(gamedata, classmap, option, village)
 	# On update l'affichage de l'entête
 	updateinterface(gamedata, classmap)
 

@@ -1,467 +1,59 @@
-[18:47:31]Info: Hauteur de l'écran:  900
-[18:47:31]Info: Largeur de l'écran: 1440
-[18:47:31]Info: Initialisation log terminé
-[18:47:31]Info: 1200x1200+150+150
-[18:47:31]Info: Initialisation de l'application terminé
-[18:47:31]Info: taille écran x,y: 1440, 900
-[18:47:31]Info: Taille de la Frame du Canvas: 1, 1
-[18:47:31]Info: Taille de la Frame du top: 1, 1
-[18:47:31]Info: Taille de la Frame du bas: 1, 1
-[18:47:31]Info: Taille du Canvas:1, 1
-[18:47:31]Info: coord0: ,[800, 900]
-[18:47:31]Info: coord1: ,[900, 1000]
-[18:47:31]Info: coord0: ,[120, 1440]
-[18:47:31]Info: coord1: ,[220, 1540]
-[18:47:31]Info: coord0: ,[340, 360]
-[18:47:31]Info: coord1: ,[440, 460]
-[18:47:31]Info: coord0: ,[1320, 1420]
-[18:47:31]Info: coord1: ,[1420, 1520]
-[18:47:31]Info: coord0: ,[1320, 1540]
-[18:47:31]Info: coord1: ,[1420, 1640]
-[18:47:31]Info: coord0: ,[160, 800]
-[18:47:31]Info: coord1: ,[260, 900]
-[18:47:31]Info: coord0: ,[540, 120]
-[18:47:31]Info: coord1: ,[640, 220]
-[18:47:31]Info: coord0: ,[1900, 1400]
-[18:47:31]Info: coord1: ,[2000, 1500]
-[18:47:31]Info: coord0: ,[340, 780]
-[18:47:31]Info: coord1: ,[440, 880]
-[18:47:31]Info: déplacement de x,y: , 250.0, 590.0
-[18:47:31]Info: village name Winston
-[18:47:31]Info: village lord:  test
-[18:47:31]Info: village priest: 0
-[18:47:31]Info: village global joy: 50.0
-[18:47:31]Info: village ressource, money:  10, 2
-[18:47:31]Info: village name Bearholde
-[18:47:31]Info: village lord:  lord Rewis Gedde
-[18:47:31]Info: village priest: 0
-[18:47:31]Info: village global joy: 50.0
-[18:47:31]Info: village ressource, money:  10, 2
-[18:47:31]Info: village name Hamoor
-[18:47:31]Info: village lord:  lord Ó Seanáini
-[18:47:31]Info: village priest: 0
-[18:47:31]Info: village global joy: 50.0
-[18:47:31]Info: village ressource, money:  10, 2
-[18:47:31]Info: village name Seford
-[18:47:31]Info: village lord:  lord Mccoys
-[18:47:31]Info: village priest: 0
-[18:47:31]Info: village global joy: 50.0
-[18:47:31]Info: village ressource, money:  10, 2
-[18:47:31]Info: village name Seminster
-[18:47:31]Info: village lord: 0
-[18:47:31]Info: village priest: 0
-[18:47:31]Info: village global joy: 50.0
-[18:47:31]Info: village ressource, money:  10, 2
-[18:47:31]Info: village name Easgrove
-[18:47:31]Info: village lord: 0
-[18:47:31]Info: village priest: 0
-[18:47:31]Info: village global joy: 50.0
-[18:47:31]Info: village ressource, money:  10, 2
-[18:47:31]Info: village name Kewood
-[18:47:31]Info: village lord: 0
-[18:47:31]Info: village priest: 0
-[18:47:31]Info: village global joy: 50.0
-[18:47:31]Info: village ressource, money:  10, 2
-[18:47:31]Info: village name Newcall
-[18:47:31]Info: village lord: 0
-[18:47:31]Info: village priest: 0
-[18:47:31]Info: village global joy: 50.0
-[18:47:31]Info: village ressource, money:  10, 2
-[18:47:31]Info: village name Goldtable
-[18:47:31]Info: village lord: 0
-[18:47:31]Info: village priest: 0
-[18:47:31]Info: village global joy: 50.0
-[18:47:31]Info: village ressource, money:  10, 2
-[18:47:33]Info: fin de tour 
-[18:47:33]Info: Player hit end of turn button
-[18:47:33]Info: tour de: lord Rewis Gedde, 1
-[18:47:33]Info: lord Rewis Gedde Fait venir 1 paysan et 0 artisan
-[18:47:33]Info: lord Rewis Gedde Peut Créer une Armée
-[18:47:33]Info: On créer une armée dans le village: Bearholde
-[18:47:33]Info: lord Rewis Gedde A créer l'armée unit Bearholde
-[18:47:33]Info: lord Rewis Gedde à 1.0% de chance de Vassaliser: lord Ó Seanáini
-[18:47:33]Info: pos Objet1: 19, 20
-[18:47:33]Info: pos Objet2: 8, 74
-[18:47:33]Info: distance:  65
-[18:47:33]Info: menace:  -1
-[18:47:33]Info: lord Rewis Gedde à 1.0% de chance de Vassaliser: lord Mccoys
-[18:47:33]Info: pos Objet1: 68, 73
-[18:47:33]Info: pos Objet2: 8, 74
-[18:47:33]Info: distance:  61
-[18:47:33]Info: menace:  -1
-[18:47:33]Info: lord Rewis Gedde liste de Menace: [[2, -1], [3, -1]]
-[18:47:33]Info: tour de: lord Ó Seanáini, 2
-[18:47:33]Info: lord Ó Seanáini Fait venir 1 paysan et 0 artisan
-[18:47:33]Info: lord Ó Seanáini Peut Créer une Armée
-[18:47:33]Info: On créer une armée dans le village: Hamoor
-[18:47:33]Info: lord Ó Seanáini A créer l'armée unit Hamoor
-[18:47:33]Info: lord Ó Seanáini à 0.0% de chance de Vassaliser: lord Rewis Gedde
-[18:47:33]Info: pos Objet1: 8, 74
-[18:47:33]Info: pos Objet2: 19, 20
-[18:47:33]Info: distance:  65
-[18:47:33]Info: menace:  0
-[18:47:33]Info: lord Ó Seanáini à 1.0% de chance de Vassaliser: lord Mccoys
-[18:47:33]Info: pos Objet1: 68, 73
-[18:47:33]Info: pos Objet2: 19, 20
-[18:47:33]Info: distance:  102
-[18:47:33]Info: menace:  -1
-[18:47:33]Info: lord Ó Seanáini liste de Menace: [[1, 0], [3, -1]]
-[18:47:33]Info: tour de: lord Mccoys, 3
-[18:47:33]Info: lord Mccoys Fait venir 1 paysan et 0 artisan
-[18:47:33]Info: lord Mccoys Peut Créer une Armée
-[18:47:33]Info: On créer une armée dans le village: Seford
-[18:47:33]Info: lord Mccoys A créer l'armée unit Seford
-[18:47:33]Info: lord Mccoys à 0.0% de chance de Vassaliser: lord Rewis Gedde
-[18:47:33]Info: pos Objet1: 8, 74
-[18:47:33]Info: pos Objet2: 68, 73
-[18:47:33]Info: distance:  61
-[18:47:33]Info: menace:  0
-[18:47:33]Info: lord Mccoys à 0.0% de chance de Vassaliser: lord Ó Seanáini
-[18:47:33]Info: pos Objet1: 19, 20
-[18:47:33]Info: pos Objet2: 68, 73
-[18:47:33]Info: distance:  102
-[18:47:33]Info: menace:  0
-[18:47:33]Info: lord Mccoys liste de Menace: [[1, 0], [2, 0]]
-[18:47:33]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
-[18:47:33]Info: On éxécute toute les actions qui reste en 0
-[18:47:33]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
-[18:47:33]Info: Toute les piles actions ont était déplacer fin de eotactionfile
-[18:47:33]Info: file action après fin de tour: []
-[18:47:33]Info: félicitation, Tani(22) et Dobharcu(26) ont donné naissance à Wulfa
-[18:47:33]Info: félicitation, Sigeweard(30) et Caitlín(30) ont donné naissance à Gauwis Sone
-[18:47:33]Info: félicitation, Gràinne(20) et Athol(28) ont donné naissance à Langley
-[18:47:33]Info: félicitation, Dolag(21) et Scotaidh(21) ont donné naissance à Caitlín
-[18:47:33]Info: félicitation, Cyne(30) et Gràinne(17) ont donné naissance à Conchar
-[18:47:33]Info: félicitation, Gràinne(19) et Còmhan(29) ont donné naissance à Eadan
-[18:47:33]Info: félicitation, Ælfstan(18) et Gràinne(26) ont donné naissance à Ealasaid
-[18:47:33]Info: félicitation, Naomh(27) et Tani(30) ont donné naissance à Ælfstan
-[18:47:33]Info: félicitation, Langley(19) et Gràinne(22) ont donné naissance à Beorne
-[18:47:33]Info: félicitation, Wystan(21) et Naomh(26) ont donné naissance à Athol
-[18:47:33]Info: félicitation, Gràinne(30) et Eadburg(17) ont donné naissance à Wulfa
-[18:47:33]Info: félicitation, Eadan(17) et Wystan(23) ont donné naissance à Fricio
-[18:47:33]Info: test: 65 à était tiré:
-[18:47:33]Info: Rien à était tiré:
-[18:47:33]Info: lord Rewis Gedde: 11 à était tiré:
-[18:47:33]Info: Un Événement Positive à donc était tiré:
-[18:47:33]Info: lord Rewis Gedde, Événement: Des Immigrés
-[18:47:33]Info: Bearholde ciblé
-[18:47:33]Info: 2 paysan et 2 artisan arrive dans le village Bearholde
-[18:47:33]Info: lord Ó Seanáini: 96 à était tiré:
-[18:47:33]Info: Rien à était tiré:
-[18:47:33]Info: lord Mccoys: 38 à était tiré:
-[18:47:33]Info: Un Événement Neutre à donc était tiré:
-[18:47:33]Info: lord Mccoys, Événement: une Troupe de Mercenaire
-[18:47:33]Info: coord0: ,[800, 900]
-[18:47:33]Info: coord1: ,[900, 1000]
-[18:47:33]Info: coord0: ,[120, 1440]
-[18:47:33]Info: coord1: ,[220, 1540]
-[18:47:33]Info: coord0: ,[340, 360]
-[18:47:33]Info: coord1: ,[440, 460]
-[18:47:33]Info: coord0: ,[1320, 1420]
-[18:47:33]Info: coord1: ,[1420, 1520]
-[18:47:33]Info: coord0: ,[1320, 1540]
-[18:47:33]Info: coord1: ,[1420, 1640]
-[18:47:33]Info: coord0: ,[160, 800]
-[18:47:33]Info: coord1: ,[260, 900]
-[18:47:33]Info: coord0: ,[540, 120]
-[18:47:33]Info: coord1: ,[640, 220]
-[18:47:33]Info: coord0: ,[1900, 1400]
-[18:47:33]Info: coord1: ,[2000, 1500]
-[18:47:33]Info: coord0: ,[340, 780]
-[18:47:33]Info: coord1: ,[440, 880]
-[18:47:48]Info: fin de tour 
-[18:47:48]Info: Player hit end of turn button
-[18:47:48]Info: tour de: lord Rewis Gedde, 1
-[18:47:48]Info: lord Rewis Gedde Éxige une tax aux village Bearholde de Ressource:False, d'Écus:True
-[18:47:48]Info: lord Rewis Gedde possède dans ses caisses: 15 ressource,8 écus
-[18:47:48]Info: lord Rewis Gedde Fait venir 1 paysan et 1 artisan
-[18:47:48]Info: lord Rewis Gedde à 6.0% de chance de Vassaliser: lord Ó Seanáini
-[18:47:48]Info: pos Objet1: 19, 20
-[18:47:48]Info: pos Objet2: 8, 74
-[18:47:48]Info: distance:  65
-[18:47:48]Info: menace:  -1
-[18:47:48]Info: lord Rewis Gedde à 12.0% de chance de Vassaliser: lord Mccoys
-[18:47:48]Info: pos Objet1: 68, 73
-[18:47:48]Info: pos Objet2: 8, 74
-[18:47:48]Info: distance:  61
-[18:47:48]Info: menace:  -1
-[18:47:48]Info: lord Rewis Gedde liste de Menace: [[2, -1], [3, -1]]
-[18:47:48]Info: tour de: lord Ó Seanáini, 2
-[18:47:48]Info: lord Ó Seanáini Éxige une tax aux village Hamoor de Ressource:False, d'Écus:True
-[18:47:48]Info: lord Ó Seanáini possède dans ses caisses: 15 ressource,8 écus
-[18:47:48]Info: lord Ó Seanáini Fait venir 1 paysan et 0 artisan
-[18:47:48]Info: lord Ó Seanáini à -4.0% de chance de Vassaliser: lord Rewis Gedde
-[18:47:48]Info: pos Objet1: 8, 74
-[18:47:48]Info: pos Objet2: 19, 20
-[18:47:48]Info: distance:  65
-[18:47:48]Info: menace:  0
-[18:47:48]Info: lord Ó Seanáini à 8.0% de chance de Vassaliser: lord Mccoys
-[18:47:48]Info: pos Objet1: 68, 73
-[18:47:48]Info: pos Objet2: 19, 20
-[18:47:48]Info: distance:  102
-[18:47:48]Info: menace:  -1
-[18:47:48]Info: lord Ó Seanáini liste de Menace: [[1, 0], [3, -1]]
-[18:47:48]Info: tour de: lord Mccoys, 3
-[18:47:48]Info: lord Mccoys Éxige une tax aux village Seford de Ressource:False, d'Écus:True
-[18:47:48]Info: lord Mccoys possède dans ses caisses: 15 ressource,8 écus
-[18:47:48]Info: lord Mccoys Fait venir 1 paysan et 0 artisan
-[18:47:48]Info: lord Mccoys à -10.0% de chance de Vassaliser: lord Rewis Gedde
-[18:47:48]Info: pos Objet1: 8, 74
-[18:47:48]Info: pos Objet2: 68, 73
-[18:47:48]Info: distance:  61
-[18:47:48]Info: menace:  0
-[18:47:48]Info: lord Mccoys à -6.0% de chance de Vassaliser: lord Ó Seanáini
-[18:47:48]Info: pos Objet1: 19, 20
-[18:47:48]Info: pos Objet2: 68, 73
-[18:47:48]Info: distance:  102
-[18:47:48]Info: menace:  0
-[18:47:48]Info: lord Mccoys liste de Menace: [[1, 0], [2, 0]]
-[18:47:48]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
-[18:47:48]Info: On éxécute toute les actions qui reste en 0
-[18:47:48]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
-[18:47:48]Info: Toute les piles actions ont était déplacer fin de eotactionfile
-[18:47:48]Info: file action après fin de tour: []
-[18:47:48]Info: félicitation, Aered(30) et Bláthnaid(30) ont donné naissance à Ælfstan
-[18:47:48]Info: félicitation, Caitlín(17) et Cyne(28) ont donné naissance à Ames
-[18:47:48]Info: félicitation, Ames(18) et Dolag(18) ont donné naissance à Gauwis Sone
-[18:47:48]Info: félicitation, Rodaidh(18) et Dolag(16) ont donné naissance à Athol
-[18:47:48]Info: félicitation, Ames(27) et Conchar(23) ont donné naissance à Dobharcu
-[18:47:48]Info: félicitation, Aered(27) et Gauwis Sone(29) ont donné naissance à Cyne
-[18:47:48]Info: félicitation, Wystan(23) et Aithne(30) ont donné naissance à Tephye
-[18:47:48]Info: félicitation, Beorne(18) et Gauwis Sone(25) ont donné naissance à Eadan
-[18:47:48]Info: félicitation, Caitlín(19) et Eadburg(27) ont donné naissance à Ealasaid
-[18:47:48]Info: félicitation, Bláthnaid(28) et Bláthnaid(30) ont donné naissance à Eadan
-[18:47:48]Info: félicitation, Eadburg(19) et Gibson(29) ont donné naissance à Bláthnaid
-[18:47:48]Info: félicitation, Eadburg(28) et Còmhan(24) ont donné naissance à Tephye
-[18:47:48]Info: félicitation, Wystan(28) et Langley(23) ont donné naissance à Beorne
-[18:47:48]Info: test: 63 à était tiré:
-[18:47:48]Info: Rien à était tiré:
-[18:47:48]Info: lord Rewis Gedde: 36 à était tiré:
-[18:47:48]Info: Un Événement Neutre à donc était tiré:
-[18:47:48]Info: lord Ó Seanáini: 57 à était tiré:
-[18:47:48]Info: Rien à était tiré:
-[18:47:48]Info: lord Mccoys: 92 à était tiré:
-[18:47:48]Info: Rien à était tiré:
-[18:47:48]Info: coord0: ,[800, 900]
-[18:47:48]Info: coord1: ,[900, 1000]
-[18:47:48]Info: coord0: ,[120, 1440]
-[18:47:48]Info: coord1: ,[220, 1540]
-[18:47:48]Info: coord0: ,[340, 360]
-[18:47:48]Info: coord1: ,[440, 460]
-[18:47:48]Info: coord0: ,[1320, 1420]
-[18:47:48]Info: coord1: ,[1420, 1520]
-[18:47:48]Info: coord0: ,[1320, 1540]
-[18:47:48]Info: coord1: ,[1420, 1640]
-[18:47:48]Info: coord0: ,[160, 800]
-[18:47:48]Info: coord1: ,[260, 900]
-[18:47:48]Info: coord0: ,[540, 120]
-[18:47:48]Info: coord1: ,[640, 220]
-[18:47:48]Info: coord0: ,[1900, 1400]
-[18:47:48]Info: coord1: ,[2000, 1500]
-[18:47:48]Info: coord0: ,[340, 780]
-[18:47:48]Info: coord1: ,[440, 880]
-[18:47:53]Info: fin de tour 
-[18:47:53]Info: Player hit end of turn button
-[18:47:53]Info: tour de: lord Rewis Gedde, 1
-[18:47:53]Info: lord Rewis Gedde Éxige une tax aux village Bearholde de Ressource:False, d'Écus:True
-[18:47:53]Info: lord Rewis Gedde possède dans ses caisses: 21 ressource,9 écus
-[18:47:53]Info: lord Rewis Gedde Construit une Église dans Bearholde
-[18:47:53]Info: Le prêtre Naomh à comme capacité: Bonus_Joy
-[18:47:53]Info: lord Rewis Gedde Peut Construire un Village
-[18:47:53]Info: lord Rewis Gedde à 10.0% de chance de Vassaliser: lord Ó Seanáini
-[18:47:53]Info: pos Objet1: 19, 20
-[18:47:53]Info: pos Objet2: 8, 74
-[18:47:53]Info: distance:  65
-[18:47:53]Info: menace:  -1
-[18:47:53]Info: lord Rewis Gedde à 14.000000000000002% de chance de Vassaliser: lord Mccoys
-[18:47:53]Info: pos Objet1: 68, 73
-[18:47:53]Info: pos Objet2: 8, 74
-[18:47:53]Info: distance:  61
-[18:47:53]Info: menace:  -1
-[18:47:53]Info: lord Rewis Gedde liste de Menace: [[2, -1], [3, -1]]
-[18:47:53]Info: tour de: lord Ó Seanáini, 2
-[18:47:53]Info: lord Ó Seanáini Éxige une tax aux village Hamoor de Ressource:False, d'Écus:True
-[18:47:53]Info: lord Ó Seanáini possède dans ses caisses: 23 ressource,8 écus
-[18:47:53]Info: lord Ó Seanáini Fait venir 1 paysan et 0 artisan
-[18:47:53]Info: lord Ó Seanáini à -8.0% de chance de Vassaliser: lord Rewis Gedde
-[18:47:53]Info: pos Objet1: 8, 74
-[18:47:53]Info: pos Objet2: 19, 20
-[18:47:53]Info: distance:  65
-[18:47:53]Info: menace:  0
-[18:47:53]Info: lord Ó Seanáini à 6.0% de chance de Vassaliser: lord Mccoys
-[18:47:53]Info: pos Objet1: 68, 73
-[18:47:53]Info: pos Objet2: 19, 20
-[18:47:53]Info: distance:  102
-[18:47:53]Info: menace:  -1
-[18:47:53]Info: lord Ó Seanáini liste de Menace: [[1, 0], [3, -1]]
-[18:47:53]Info: tour de: lord Mccoys, 3
-[18:47:53]Info: lord Mccoys Éxige une tax aux village Seford de Ressource:False, d'Écus:True
-[18:47:53]Info: lord Mccoys possède dans ses caisses: 23 ressource,8 écus
-[18:47:53]Info: lord Mccoys Fait venir 1 paysan et 0 artisan
-[18:47:53]Info: lord Mccoys à -12.0% de chance de Vassaliser: lord Rewis Gedde
-[18:47:53]Info: pos Objet1: 8, 74
-[18:47:53]Info: pos Objet2: 68, 73
-[18:47:53]Info: distance:  61
-[18:47:53]Info: menace:  0
-[18:47:53]Info: lord Mccoys à -4.0% de chance de Vassaliser: lord Ó Seanáini
-[18:47:53]Info: pos Objet1: 19, 20
-[18:47:53]Info: pos Objet2: 68, 73
-[18:47:53]Info: distance:  102
-[18:47:53]Info: menace:  0
-[18:47:53]Info: lord Mccoys liste de Menace: [[1, 0], [2, 0]]
-[18:47:53]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
-[18:47:53]Info: On éxécute toute les actions qui reste en 0
-[18:47:53]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
-[18:47:53]Info: Toute les piles actions ont était déplacer fin de eotactionfile
-[18:47:53]Info: file action après fin de tour: []
-[18:47:53]Info: félicitation, Caitlín(18) et Cyne(29) ont donné naissance à Wystan
-[18:47:53]Info: félicitation, Aering(20) et Scotaidh(24) ont donné naissance à Dolag
-[18:47:53]Info: félicitation, Aering(22) et Rodaidh(19) ont donné naissance à Gibson
-[18:47:53]Info: félicitation, Dolag(17) et Ames(28) ont donné naissance à Conchar
-[18:47:53]Info: félicitation, Aered(28) et Gauwis Sone(30) ont donné naissance à Athol
-[18:47:53]Info: félicitation, Caitlín(19) et Ælfstan(26) ont donné naissance à Tani
-[18:47:53]Info: félicitation, Rodaidh(28) et Fricio(30) ont donné naissance à Còmhan
-[18:47:53]Info: félicitation, Naomh(24) et Aithne(26) ont donné naissance à Eadan
-[18:47:53]Info: félicitation, Wystan(24) et Beorne(19) ont donné naissance à Gibson
-[18:47:53]Info: félicitation, Eadburg(28) et Tani(25) ont donné naissance à Gràinne
-[18:47:53]Info: félicitation, Ealasaid(23) et Teàrlach(29) ont donné naissance à Ealasaid
-[18:47:53]Info: test: 51 à était tiré:
-[18:47:53]Info: Rien à était tiré:
-[18:47:53]Info: lord Rewis Gedde: 73 à était tiré:
-[18:47:53]Info: Rien à était tiré:
-[18:47:53]Info: lord Ó Seanáini: 93 à était tiré:
-[18:47:53]Info: Rien à était tiré:
-[18:47:53]Info: lord Mccoys: 90 à était tiré:
-[18:47:53]Info: Rien à était tiré:
-[18:47:53]Info: coord0: ,[800, 900]
-[18:47:53]Info: coord1: ,[900, 1000]
-[18:47:53]Info: coord0: ,[120, 1440]
-[18:47:53]Info: coord1: ,[220, 1540]
-[18:47:53]Info: coord0: ,[340, 360]
-[18:47:53]Info: coord1: ,[440, 460]
-[18:47:53]Info: coord0: ,[1320, 1420]
-[18:47:53]Info: coord1: ,[1420, 1520]
-[18:47:53]Info: coord0: ,[1320, 1540]
-[18:47:53]Info: coord1: ,[1420, 1640]
-[18:47:53]Info: coord0: ,[160, 800]
-[18:47:53]Info: coord1: ,[260, 900]
-[18:47:53]Info: coord0: ,[540, 120]
-[18:47:53]Info: coord1: ,[640, 220]
-[18:47:53]Info: coord0: ,[1900, 1400]
-[18:47:53]Info: coord1: ,[2000, 1500]
-[18:47:53]Info: coord0: ,[340, 780]
-[18:47:53]Info: coord1: ,[440, 880]
-[18:47:57]Info: fin de tour 
-[18:47:57]Info: Player hit end of turn button
-[18:47:57]Info: tour de: lord Rewis Gedde, 1
-[18:47:57]Info: lord Rewis Gedde Éxige une tax aux village Bearholde de Ressource:False, d'Écus:True
-[18:47:57]Info: lord Rewis Gedde possède dans ses caisses: 22 ressource,0 écus
-[18:47:57]Info: lord Rewis Gedde Peut Construire un Village
-[18:47:57]Info: lord Rewis Gedde à 14.000000000000002% de chance de Vassaliser: lord Ó Seanáini
-[18:47:57]Info: pos Objet1: 19, 20
-[18:47:57]Info: pos Objet2: 8, 74
-[18:47:57]Info: distance:  65
-[18:47:57]Info: menace:  -1
-[18:47:57]Info: lord Rewis Gedde à 10.0% de chance de Vassaliser: lord Mccoys
-[18:47:57]Info: pos Objet1: 68, 73
-[18:47:57]Info: pos Objet2: 8, 74
-[18:47:57]Info: distance:  61
-[18:47:57]Info: menace:  -1
-[18:47:57]Info: lord Rewis Gedde liste de Menace: [[2, -1], [3, -1]]
-[18:47:57]Info: tour de: lord Ó Seanáini, 2
-[18:47:57]Info: lord Ó Seanáini Éxige une tax aux village Hamoor de Ressource:False, d'Écus:True
-[18:47:57]Info: lord Ó Seanáini possède dans ses caisses: 32 ressource,6 écus
-[18:47:57]Info: lord Ó Seanáini Fait venir 1 paysan et 0 artisan
-[18:47:57]Info: lord Ó Seanáini à -12.0% de chance de Vassaliser: lord Rewis Gedde
-[18:47:57]Info: pos Objet1: 8, 74
-[18:47:57]Info: pos Objet2: 19, 20
-[18:47:57]Info: distance:  65
-[18:47:57]Info: menace:  0
-[18:47:57]Info: lord Ó Seanáini à -2.0% de chance de Vassaliser: lord Mccoys
-[18:47:57]Info: pos Objet1: 68, 73
-[18:47:57]Info: pos Objet2: 19, 20
-[18:47:57]Info: distance:  102
-[18:47:57]Info: menace:  0
-[18:47:57]Info: lord Ó Seanáini liste de Menace: [[1, 0], [3, 0]]
-[18:47:57]Info: tour de: lord Mccoys, 3
-[18:47:57]Info: lord Mccoys Éxige une tax aux village Seford de Ressource:False, d'Écus:True
-[18:47:57]Info: lord Mccoys possède dans ses caisses: 32 ressource,6 écus
-[18:47:57]Info: lord Mccoys Fait venir 1 paysan et 0 artisan
-[18:47:57]Info: lord Mccoys à -8.0% de chance de Vassaliser: lord Rewis Gedde
-[18:47:57]Info: pos Objet1: 8, 74
-[18:47:57]Info: pos Objet2: 68, 73
-[18:47:57]Info: distance:  61
-[18:47:57]Info: menace:  0
-[18:47:57]Info: lord Mccoys à 4.0% de chance de Vassaliser: lord Ó Seanáini
-[18:47:57]Info: pos Objet1: 19, 20
-[18:47:57]Info: pos Objet2: 68, 73
-[18:47:57]Info: distance:  102
-[18:47:57]Info: menace:  -1
-[18:47:57]Info: lord Mccoys liste de Menace: [[1, 0], [2, -1]]
-[18:47:57]Info: Il ne reste plus de Seigneur qui doit Jouer, Fin du tour
-[18:47:57]Info: On éxécute toute les actions qui reste en 0
-[18:47:57]Info: Toute les actions ont été éxécuter, On déplace les piles actions vers la gauche 0<--1, 1<--2
-[18:47:57]Info: Toute les piles actions ont était déplacer fin de eotactionfile
-[18:47:57]Info: file action après fin de tour: []
-[18:47:57]Info: félicitation, Tani(25) et Dobharcu(29) ont donné naissance à Eadan
-[18:47:57]Info: félicitation, Caitlín(19) et Cyne(30) ont donné naissance à Nilidh
-[18:47:57]Info: félicitation, Wystan(29) et Sigeweard(19) ont donné naissance à Dobharcu
-[18:47:57]Info: félicitation, Còmhan(20) et Cyne(20) ont donné naissance à Wulfa
-[18:47:57]Info: félicitation, Aering(23) et Rodaidh(20) ont donné naissance à Naomh
-[18:47:57]Info: félicitation, Aering(26) et Aered(29) ont donné naissance à Conchar
-[18:47:57]Info: félicitation, Gauwis Sone(24) et Sigeweard(24) ont donné naissance à Sigeweard
-[18:47:57]Info: félicitation, Caitlín(20) et Ælfstan(27) ont donné naissance à Eadan
-[18:47:57]Info: félicitation, Rodaidh(29) et Naomh(25) ont donné naissance à Conchar
-[18:47:57]Info: félicitation, Eadburg(29) et Tani(26) ont donné naissance à Teàrlach
-[18:47:57]Info: félicitation, Rodaidh(28) et Bláthnaid(30) ont donné naissance à Wystan
-[18:47:57]Info: félicitation, Rodaidh(23) et Eadan(22) ont donné naissance à Ælfstan
-[18:47:57]Info: félicitation, Eadburg(21) et Beorne(23) ont donné naissance à Bláthnaid
-[18:47:57]Info: félicitation, Tephye(22) et Caitlín(19) ont donné naissance à Wulfsige
-[18:47:57]Info: félicitation, Naomh(30) et Langley(22) ont donné naissance à Naomh
-[18:47:57]Info: félicitation, Naomh(29) et Eadburg(20) ont donné naissance à Ealasaid
-[18:47:57]Info: félicitation, Eadan(20) et Wystan(26) ont donné naissance à Naomh
-[18:47:57]Info: félicitation, Eadburg(30) et Còmhan(26) ont donné naissance à Bláthnaid
-[18:47:57]Info: test: 42 à était tiré:
-[18:47:57]Info: Un Événement Neutre à donc était tiré:
-[18:47:57]Info: test, Événement: un nouveau village Indépendant
-[18:47:57]Info: Le village Tafalls à était créer à la position 26, 77
-[18:47:57]Info: lord Rewis Gedde: 81 à était tiré:
-[18:47:57]Info: Rien à était tiré:
-[18:47:57]Info: lord Ó Seanáini: 65 à était tiré:
-[18:47:57]Info: Rien à était tiré:
-[18:47:57]Info: lord Mccoys: 36 à était tiré:
-[18:47:57]Info: Un Événement Neutre à donc était tiré:
-[18:47:57]Info: lord Mccoys, Événement: une Troupe de Mercenaire
-[18:47:57]Info: coord0: ,[800, 900]
-[18:47:57]Info: coord1: ,[900, 1000]
-[18:47:57]Info: coord0: ,[120, 1440]
-[18:47:57]Info: coord1: ,[220, 1540]
-[18:47:57]Info: coord0: ,[340, 360]
-[18:47:57]Info: coord1: ,[440, 460]
-[18:47:57]Info: coord0: ,[1320, 1420]
-[18:47:57]Info: coord1: ,[1420, 1520]
-[18:47:57]Info: coord0: ,[1320, 1540]
-[18:47:57]Info: coord1: ,[1420, 1640]
-[18:47:57]Info: coord0: ,[160, 800]
-[18:47:57]Info: coord1: ,[260, 900]
-[18:47:57]Info: coord0: ,[540, 120]
-[18:47:57]Info: coord1: ,[640, 220]
-[18:47:57]Info: coord0: ,[1900, 1400]
-[18:47:57]Info: coord1: ,[2000, 1500]
-[18:47:57]Info: coord0: ,[340, 780]
-[18:47:57]Info: coord1: ,[440, 880]
-[18:47:57]Info: coord0: ,[480, 1500]
-[18:47:57]Info: coord1: ,[580, 1600]
-[18:48:04]Info: coord de la tuile 0,0 Canvas: , [10.0, 10.0]
-[18:48:04]Info: coordonnées window de la souris: , 885, 1086
-[18:48:04]Info: -1
-[18:48:04]Info: DeZoom
-[18:48:04]Info: déplacement de x,y: , -155.0, 185.0
-[18:48:04]Info: taille Atlas: 7
-[18:48:07]Info: entre dans un état interface_village
-[18:48:07]Info: ('label', 'village', 'tuile', '26', '77', 'current')
-[18:48:07]Info: 7726
-[18:48:07]Info: déplacement de x,y: , -335.0, 410.0
-[18:48:07]Info: On affiche l'interface du village
-[18:48:07]Info: Tafalls
-[18:48:09]Info: On quitte l'état interface_village
+[18:55:21]Info: Dico des Noms chargés
+[18:55:21]Info: Dico des Assets chargés
+[18:55:21]Info: Atlas Créer
+[18:55:22]Info: Hauteur de l'écran:  900
+[18:55:22]Info: Largeur de l'écran: 1440
+[18:55:22]Info: Initialisation log terminé
+[18:55:22]Info: 1200x1200+150+150
+[18:55:22]Info: Initialisation de l'application terminé
+[18:55:22]Info: taille écran x,y: 1440, 900
+[18:55:22]Info: Taille de la Frame du Canvas: 1, 1
+[18:55:22]Info: Taille de la Frame du top: 1, 1
+[18:55:22]Info: Taille de la Frame du bas: 1, 1
+[18:55:22]Info: Taille du Canvas:1, 1
+[18:55:22]Info: déplacement de x,y: , -550.0, 1270.0
+[18:55:22]Info: village name Stagdale
+[18:55:22]Info: village lord:  test
+[18:55:22]Info: village priest: 0
+[18:55:22]Info: village global joy: 50.0
+[18:55:22]Info: village ressource, money:  10, 2
+[18:55:22]Info: village name Shuydon
+[18:55:22]Info: village lord:  lord Wyny
+[18:55:22]Info: village priest: 0
+[18:55:22]Info: village global joy: 50.0
+[18:55:22]Info: village ressource, money:  10, 2
+[18:55:22]Info: village name Northrest
+[18:55:22]Info: village lord:  lord Erard
+[18:55:22]Info: village priest: 0
+[18:55:22]Info: village global joy: 50.0
+[18:55:22]Info: village ressource, money:  10, 2
+[18:55:22]Info: village name Hamoor
+[18:55:22]Info: village lord:  lord Phomas
+[18:55:22]Info: village priest: 0
+[18:55:22]Info: village global joy: 50.0
+[18:55:22]Info: village ressource, money:  10, 2
+[18:55:22]Info: village name Kewood
+[18:55:22]Info: village lord: Indépendant
+[18:55:22]Info: village priest: 0
+[18:55:22]Info: village global joy: 50.0
+[18:55:22]Info: village ressource, money:  10, 2
+[18:55:22]Info: village name Bearholde
+[18:55:22]Info: village lord: Indépendant
+[18:55:22]Info: village priest: 0
+[18:55:22]Info: village global joy: 50.0
+[18:55:22]Info: village ressource, money:  10, 2
+[18:55:22]Info: village name Mag an Gáire
+[18:55:22]Info: village lord: Indépendant
+[18:55:22]Info: village priest: 0
+[18:55:22]Info: village global joy: 50.0
+[18:55:22]Info: village ressource, money:  10, 2
+[18:55:22]Info: village name Hoemoor
+[18:55:22]Info: village lord: Indépendant
+[18:55:22]Info: village priest: 0
+[18:55:22]Info: village global joy: 50.0
+[18:55:22]Info: village ressource, money:  10, 2
+[18:55:22]Info: village name Tír an Fás
+[18:55:22]Info: village lord: Indépendant
+[18:55:22]Info: village priest: 0
+[18:55:22]Info: village global joy: 50.0
+[18:55:22]Info: village ressource, money:  10, 2

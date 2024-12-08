@@ -5,6 +5,7 @@ import tkinter
 
 import functions.log as log
 import functions.data as data
+import functions.asset as asset
 import functions.cheat as cheat
 import functions.ailord as ailord
 import functions.genproc as genproc
@@ -99,10 +100,6 @@ from time import time
 # - Suprimmer le carrer du village ou l'église a était construite
 # - Léger décalage sur la droite lorsqu'on centre la vue
 #
-
-# Data:
-#
-#
 # Moveview: 
 #	- Implémenter une limite sur le déplacement de la vue pour ne pas aller plus loin que nécessaires
 #
@@ -117,12 +114,6 @@ from time import time
 
 # - Ajouter Gestion des couleurs à PlayMenu
 
-# - Implémenter Tout les Event prévu x
-# - Implémenter Event Positif 3/4
-# - Implémenter Event Neutre 1/2
-
-# - Implémenter Tout les Event prévu
-# - Implémenter l'affichage de l'event pour le Joueur
 #########################################################
 
 
@@ -139,12 +130,10 @@ from time import time
 
 # -> Fix Build Church
 #	--> Aucun retour quand on construit une église
+#	--> Améliorer la sélection des villages
 
-# -> Revoir la destruction de village
 # -> Refactoriser le code pour réduire la réutilisation de même code pour a la place utilisr une fonction commune liée a l'objet utiliser
-#	--> Voir la récupération de village selon la position x,y via Classmap
 # -> Refactorisation tout les calculs de Coordonnées pour utiliser les fonctions Commune
-# -> Peut être utiliser Bezier pour l'affichage du Pathfinding
 
 # -> Fix la possetion de multiple armé
 #	-->Faire poper aux alentour de la ville la nouvelle armée si la case de la ville est déjà occupé par une armée
@@ -153,7 +142,7 @@ from time import time
 
 #####
 
-# - La trajectoire d'une armée doit s'afficher quand on clique dessus
+# - La trajectoire Actuelle d'une armée doit s'afficher quand on clique dessus
 
 # - Fix différence click droit Mac/Linux
 # - Besoin d'un Retour utilisateur Quand Action Impossible
@@ -199,8 +188,6 @@ from time import time
 
 # - Bloquer la vue Pour le Déplacement avec la Souris
 
-
-
 # - Retravailler Menu Déplacement Unité
 # - AJouter affichage Victoire ou défaite aux combat d'armée
 # - Remplir le Menu Cheat
@@ -220,39 +207,32 @@ from time import time
 # -> Ajouter Bouton Pour annuler Si on déplace une armée mais que l'on veut annuler son déplacement au tour prochain
 #	--> Annuler retire l'action en cour dans la pile 1 ou 0
 
-# - Vérifier Pour l'initialisation de la map la différence entre X et Y
-
-#https://www.aimosta.com/Blogt/blogt-16.html
-
 # - Réaction au Bonheur
 # --> Si le Bonheur d'un vassaux est trop bas alors il tente une révolte
 
+# - Changer stat pour contenir le nom et la couleur des Seigneurs
 
 # - Déplacer les différentes fonctions dans common
 # - Déplacer les différentes fonctions dans warfunctions
-# - Réorganiser interfacemenu
-# - Réorganiser le Projet en Transformant des Fonctions en Methode
-# - Changer Fonctionnement Dico_file pour qu'il soit séparer de Gamedata
-# - Changer Fonctionnement Dico_name pour qu'il soit séparer de Gamedata
-# - Refactoriser Fonction qui change la Bordure d'un Unique Village pour utiliser PrintvillageBorderunit
 # - Refactoriser Classmap
 # --> Changer le lien entre les objets villages et les tuiles
 # --> Changer lvillage pour un Dico qui contient pour l'id l'objet Village
 # - Refactoriser la Création de Village
+# - Changer le fonctionnement des noms lors de la création d'armée
+# - Changer Frame de l'atlas pour le lier à la root ?
+
+# - Interface Sauvegarde de Données
+# - Interface Chargement de Données
 #####
 
 #### Objectif Week-End:
 # - Réaction Bonheur Vassaux
-# - Event
 # - Fix, Optimisation et Refactorisation
 # - Pop-Up --> Event.Enter, Event.Leave
 # - Graphe Stats
 ####
 
-
-
 ######## Fonctionnalité Principale à Implémenter
-# - Implémenter Event
 # - Implémenter Résolutions Dynamique
 # - Implémenter les Réactions
 # - Implémenter les Différents Comportement de l'IA
@@ -281,7 +261,6 @@ from time import time
 # - Changer interface entête pour afficher icône boufe et money
 # - Implémenter une interface plus pousser d'attaque de village
 # - Implémenter une interface plus pousser d'attaque d'armée
-# - Améliorer le réaffichage d'une bordure
 # - Refactoriser le Code
 ########
 

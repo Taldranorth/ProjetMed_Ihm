@@ -1,8 +1,9 @@
 import tkinter
 
-
 import functions.log as log
 import functions.game as game
+import functions.common as common
+import functions.affichage as affichage
 import functions.interfacemenu as interfacemenu
 
 
@@ -23,6 +24,9 @@ def cheat_menu(gamedata, classmap, option, root):
 	button_victory = tkinter.Button(cheat_menu_frame, text = "Victoire", command = lambda: cheat_victory(gamedata, classmap, option))
 	button_victory.grid(row = 1, column = 0)
 
+	button_destroy = tkinter.Button(cheat_menu_frame, text = "Détruire Capitale", command = lambda: cheat_destroy(gamedata, classmap, option, gamedata.list_lord[gamedata.playerid]))
+	button_destroy.grid(row = 2, column = 0)
+
 
 def cheat_victory(gamedata, classmap, option):
 	#####
@@ -31,4 +35,17 @@ def cheat_victory(gamedata, classmap, option):
 
 	gamedata.victory = "Victoire"
 	game.endofgame(gamedata, classmap, option)
+
+def cheat_destroy(gamedata, classmap, option, lord):
+	#####
+	# Fonction pour cheat et détruire le village principale du  Seigneur donné
+	#####
+	log.log.printinfo(f"On supprime la capitale du Seigneur {lord.lordname}")
+	village = lord.fief[0]
+	# On supprime sa Bordure
+	affichage.delborder(classmap, village)
+	idvillage = common.coordmaptoidtuile(option, [village.x, village.y])
+	lord.removefief(village)
+	classmap.removeidvillage(idvillage)
+
 

@@ -1,10 +1,12 @@
 
-
 import random
+import tkinter
+
 import functions.log as log
 import functions.common as common
 import functions.genproc as genproc
 import functions.affichage as affichage
+import functions.interfacegame as interfacegame
 
 ######################### Description du fichier	#########################
 # 
@@ -24,10 +26,10 @@ import functions.affichage as affichage
 #		--> Récupère un Nombre aléatoires de Soldat
 
 # Neutre:
-#	armé de Mercenaire:
+#	Armé de Mercenaire:
 #		--> Une armée indépendante apparait
 #
-#	Un nouveau Village:
+#	Un Nouveau Village:
 #		--> Un nouveau Village indépendant apparait
 #
 #
@@ -70,7 +72,7 @@ class ClassEvent:
 	def __init__(self):
 		# Contient la liste des evenement
 		self.listpositifevent = ["abundant_harvest", "clergy_donation", "free_immigration", "free_army"]
-		self.listneutralevent = ["new_village", "mercenary_army", "Nothing"]
+		self.listneutralevent = ["new_village", "mercenary_army", "nothing"]
 		self.listnegatifevent = ["plague", "famine", "mildiou", "newfaith", "fire", "bandit"]
 
 	def randomevent(self, gamedata, classmap, option):
@@ -102,15 +104,18 @@ class ClassEvent:
 		r = random.randrange(len(self.listpositifevent))
 		event = self.listpositifevent[r]
 		
-		if event == "abundant_harvest":
-			self.abundant_harvest(gamedata, lord)
-		elif event == "clergy_donation":
-			self.clergy_donation(lord)
-		elif event == "free_immigration":
-			self.free_immigration(gamedata, classmap, option, lord)
-		elif event == "free_army":
-			self.free_army(lord)
-
+		# Si joueur on affiche l'event
+		if lord.idlord == gamedata.playerid:
+			eventscreen(gamedata, classmap, option, event)
+		else:
+			if event == "abundant_harvest":
+				self.abundant_harvest(gamedata, lord)
+			elif event == "clergy_donation":
+				self.clergy_donation(lord)
+			elif event == "free_immigration":
+				self.free_immigration(gamedata, classmap, option, lord)
+			elif event == "free_army":
+				self.free_army(gamedata, classmap, option, lord)
 
 
 	def abundant_harvest(self, gamedata, lord):
@@ -157,12 +162,20 @@ class ClassEvent:
 		log.log.printinfo(f"{free_paysan} paysan et {free_artisan} artisan arrive dans le village {village.name}")
 		genproc.genpopvillage(gamedata, classmap, option, village, free_paysan, free_artisan)
 
-	def free_army(self, lord):
+	def free_army(self, gamedata, classmap, option, lord):
 		######
 		# Method Appeler pour appliquer au Seigneur lord l'event Armée Volontaire
 		######
+		# - Une Armée Volontaire et une armée qui spawn gratuitement dans la Capitale du Seigneur
+		# - Elle ne Peut être composé que de 4-8 soldat
+		######
 		log.log.printinfo(f"{lord.lordname}, Événement: Une Armée Volontaire")
-		pass
+		# On tire le nombre de Soldat
+		nbsoldat = random.randrange(4,8)
+		# On créer l'armée
+		interfacegame.createarmy(gamedata, classmap, option, lord, nbsoldat, 0)
+		# On change le nom
+		lord.army[len(lord.army)-1].setname("Armée Volontaire")
 
 
 
@@ -171,11 +184,15 @@ class ClassEvent:
 		r = random.randrange(len(self.listneutralevent))
 		event = self.listneutralevent[r]
 		
-		if event == "new_village":
-			self.new_village(gamedata, classmap, option, lord)
-		elif event == "mercenary_army":
-			self.mercenary_army(gamedata, lord)
 
+		# Si joueur on affiche l'event
+		if lord.idlord == gamedata.playerid:
+			eventscreen(gamedata, classmap, option, event)
+		else:
+			if event == "new_village":
+				self.new_village(gamedata, classmap, option, lord)
+			elif event == "mercenary_army":
+				self.mercenary_army(gamedata, classmap, option, lord, True)
 
 	def new_village(self, gamedata ,classmap, option, lord):
 		######
@@ -201,15 +218,34 @@ class ClassEvent:
 		# On affiche sa Bordure
 		affichage.bordervillageunit(gamedata, classmap, option, village)
 
-	def mercenary_army(self, gamedata, lord):
+	def mercenary_army(self, gamedata, classmap, option, lord, accept: bool):
 		######
 		# Method Appeler pour appliquer au Seigneur lord l'event Armée de Mercenaire
 		######
+		# - Fait Apparaitre une Armée Si le Seigneur accepte de payer en écus la demande
+		# - le prix de la demande est calculer sur le nombre de soldat qui oscille entre 5-10 + le Chevalier
+		# - Si joueur alors la fonction est appelé avec la variable accept qui correspond à son choix
+		######
 		log.log.printinfo(f"{lord.lordname}, Événement: une Troupe de Mercenaire")
-		# On vérifie que le Seigneur ciblé soit le Joueur
-		if lord.idlord == gamedata.playerid:
-			pass
-		pass
+
+		nbsoldat = random.randrange(5,10)
+		knight = random.randrange(0,1)
+
+		# On calul le prix
+		price = (nbsoldat*2) + (4 * knight)
+		# On vérifie que le Seigneur possède les ressource
+		if lord.verifcost(0,price) == True:
+			# On vérifie que le Seigneur ciblé soit le Joueur
+			if lord.idlord == gamedata.playerid:
+				if accept == True:
+					interfacegame.createarmy(gamedata, classmap, option, lord, nbsoldat, knight)
+					lord.army[len(lord.army)-1].setname("unit mercenary")
+			else:
+				# Si le prix est inférieur au quart de se que possède le seigneurs IA alors il accepte
+				if (price < int(lord.nb_money*1/4)):
+					interfacegame.createarmy(gamedata, classmap, option, lord, nbsoldat, knight)
+					lord.army[len(lord.army)-1].setname("unit mercenary")
+			
 
 	##### Négatif ######
 	def negatif_event(self, gamedata, classmap, option, lord):
@@ -217,18 +253,22 @@ class ClassEvent:
 		r = random.randrange(len(self.listnegatifevent))
 		event = self.listnegatifevent[r]
 
-		if event == "plague":
-			self.plague(lord)
-		elif event == "famine":
-			self.famine(gamedata, lord)
-		elif event == "mildiou":
-			self.mildiou(gamedata, lord)
-		elif event == "newfaith":
-			self.newfaith(gamedata, lord)
-		elif event == "fire":
-			self.fire(classmap, option, lord)
-		elif event == "bandit":
-			self.bandit(lord)
+		# Si joueur on affiche l'event
+		if lord.idlord == gamedata.playerid:
+			eventscreen(gamedata, classmap, option, event)
+		else:
+			if event == "plague":
+				self.plague(lord)
+			elif event == "famine":
+				self.famine(gamedata, lord)
+			elif event == "mildiou":
+				self.mildiou(gamedata, lord)
+			elif event == "newfaith":
+				self.newfaith(gamedata, lord)
+			elif event == "fire":
+				self.fire(classmap, option, lord)
+			elif event == "bandit":
+				self.bandit(lord)
 
 	def plague(self, lord):
 		######
@@ -375,7 +415,7 @@ class ClassEvent:
 		# On calcul l'id du village
 		idvillage = common.coordmaptoidtuile(option, [village.x, village.y])
 		# On le delete
-		classmap.removeidvillage(village)
+		classmap.removeidvillage(idvillage)
 
 
 	def bandit(self, lord):
@@ -386,7 +426,7 @@ class ClassEvent:
 		# - Entre 0-25% Ressource de Chaque Roturier sont retirer
 		# - Entre 0-25% Écus de Chaque Roturier sont retirer
 		######
-		log.log.printinfo(f"{lord.lordname}, Événement: Des Pilliards")
+		log.log.printinfo(f"{lord.lordname}, Événement: Des Pillard")
 		# On sélectionne un Village aléatoire du Seigneurs
 		r = random.randrange(len(lord.fief))
 		village = lord.fief[r]
@@ -395,13 +435,174 @@ class ClassEvent:
 		# Les Pillars Pille entre 0-25% des Ressources et/ou 0-25% des Écus du Village
 		ressourcetaken = random.randrange(0, 25)
 		moneytaken = random.randrange(0, 25)
-		log.log.printinfo(f"{ressourcetaken/100}% Ressource et {moneytaken/100}% Écus sont retiré à chaque Roturier")
+		log.log.printinfo(f"{ressourcetaken}% Ressource et {moneytaken}% Écus sont retiré à chaque Roturier")
 		# Pour chaque Roturier du Village
 		for pop in village.population:
 			# On retire le % de Ressource
 			pop.ressource -= int(pop.ressource*(ressourcetaken/100))
 			# On retire le % d'Écus
 			pop.money -= int(pop.money*(moneytaken/100))
+
+
+def eventscreen(gamedata, classmap, option, event):
+	######
+	# Fonction qui gère l'affichage de la fenêtre d'event pour le joueur
+	######
+	# On vérifie que l'event soit utile
+	if event != "nothing":
+		player = gamedata.list_lord[gamedata.playerid]
+
+
+		# On céer l'interface
+		window_interface_event = tkinter.Frame(classmap.framecanvas)
+		window_interface_event.place(x = (option.widthWindow/5), y = (option.heightWindow/10))
+
+		# On créer la frame
+		frame_interface_event = tkinter.Frame(window_interface_event)
+		frame_interface_event.grid()
+
+		# On applique l'event
+		############### Positif ###############
+		if event == "abundant_harvest":
+			# On mets en place le titre
+			tkinter.Label(frame_interface_event, text = f"Evénement: Récolte Abondante").grid(row = 0, column = 1)
+
+			# On mets en place l'image
+
+			# On mets en place le texte
+
+			Eventsystem.abundant_harvest(gamedata, player)
+			# On mets en place le boutton ok
+			tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok").grid(row = 1, column = 1)
+		elif event == "clergy_donation":
+			# On mets en place le titre
+			tkinter.Label(frame_interface_event, text = f"Evénement: Subvention du Clergé").grid(row = 0, column = 1)
+
+			# On mets en place l'image
+
+			# On mets en place le texte
+			Eventsystem.clergy_donation(player)
+			# On mets en place le boutton ok
+			tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok").grid(row = 1, column = 1)
+		elif event == "free_immigration":
+			# On mets en place le titre
+			tkinter.Label(frame_interface_event, text = f"Evénement: Immigration").grid(row = 0, column = 1)
+
+			# On mets en place l'image
+
+			# On mets en place le texte
+			Eventsystem.free_immigration(gamedata, classmap, option, player)
+			# On mets en place le boutton ok
+			tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok").grid(row = 1, column = 1)
+		elif event == "free_army":
+			# On mets en place le titre
+			tkinter.Label(frame_interface_event, text = f"Evénement: Armée Volontaires").grid(row = 0, column = 1)
+
+			# On mets en place l'image
+
+			# On mets en place le texte
+			Eventsystem.free_army(gamedata, classmap, option, player)
+			# On mets en place le boutton ok
+			tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok").grid(row = 1, column = 1)
+		############### Neutre ###############
+		elif event == "new_village":
+			# On mets en place le titre
+			tkinter.Label(frame_interface_event, text = f"Evénement: Un Nouveau Village Indépendant").grid(row = 0, column = 1)
+
+			# On mets en place l'image
+
+			# On mets en place le texte
+			Eventsystem.new_village(gamedata, classmap, option, player)
+			# On mets en place le boutton ok
+			tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok").grid(row = 1, column = 1)
+		elif event == "mercenary_army":
+			# On mets en place le titre
+			tkinter.Label(frame_interface_event, text = f"Evénement: Armé de Mercenaire").grid(row = 0, column = 1)
+
+			# On mets en place l'image
+
+			# On mets en place le texte
+			# On mets en place les Bouttons
+			tkinter.Button(frame_interface_event, command = lambda:  b_mercenary_army(gamedata, classmap, option, True, window_interface_event), text = "Oui").grid(row = 2, column = 1)
+			tkinter.Button(frame_interface_event, command = lambda:  b_mercenary_army(gamedata, classmap, option, False, window_interface_event), text = "Non").grid(row = 3, column = 1)
+		############### Négatif ###############
+		elif event == "plague":
+			# On mets en place le titre
+			tkinter.Label(frame_interface_event, text = f"Événement: Peste").grid(row = 0, column = 1)
+
+			# On mets en place l'image
+
+			# On mets en place le texte
+			Eventsystem.plague(player)
+			# On mets en place le boutton ok
+			tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok").grid(row = 1, column = 1)
+		elif event == "famine":
+			# On mets en place le titre
+			tkinter.Label(frame_interface_event, text = f"Evénement: Famine").grid(row = 0, column = 1)
+
+			# On mets en place l'image
+
+			# On mets en place le texte
+			Eventsystem.famine(gamedata, player)
+			# On mets en place le boutton ok
+			tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok").grid(row = 1, column = 1)
+		elif event == "mildiou":
+			# On mets en place le titre
+			tkinter.Label(frame_interface_event, text = f"Événement: mildiou").grid(row = 0, column = 1)
+
+			# On mets en place l'image
+
+			# On mets en place le texte
+			Eventsystem.mildiou(gamedata, player)
+			# On mets en place le boutton ok
+			tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok").grid(row = 1, column = 1)
+		elif event == "newfaith":
+			# On mets en place le titre
+			tkinter.Label(frame_interface_event, text = f"Événement: Nouvelle Foi").grid(row = 0, column = 1)
+
+			# On mets en place l'image
+
+			# On mets en place le texte
+			Eventsystem.newfaith(gamedata, player)
+			# On mets en place le boutton ok
+			tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok").grid(row = 1, column = 1)
+		elif event == "fire":
+			# On mets en place le titre
+			tkinter.Label(frame_interface_event, text = f"Événement: Un Incendie").grid(row = 0, column = 1)
+
+			# On mets en place l'image
+
+			# On mets en place le texte
+			Eventsystem.fire(classmap, option, player)
+			# On mets en place le boutton ok
+			tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok").grid(row = 1, column = 1)
+		elif event == "bandit":
+			# On mets en place le titre
+			tkinter.Label(frame_interface_event, text = f"Événement: Des Pillard").grid(row = 0, column = 1)
+
+			# On mets en place l'image
+
+			# On mets en place le texte
+			Eventsystem.bandit(player)
+			# On mets en place le boutton ok
+			tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok").grid(row = 1, column = 1)
+
+def b_mercenary_army(gamedata, classmap, option, accept, wie):
+	#####
+	# Fonction pour gèrer le Choix du Joueur vis à vis de l'armée de Mecenaire
+	#####
+	if accept == True:
+		Eventsystem.mercenary_army(gamedata, classmap, option, player, True)
+
+	b_exit(wie)
+
+
+
+def b_exit(wie):
+	#####
+	# Fonction pour détruire l'interface
+	#####
+	wie.destroy()
 
 
 ######## Main ########

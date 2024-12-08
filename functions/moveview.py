@@ -2,6 +2,7 @@
 
 import functions.log as log
 import functions.data as data
+import functions.asset as asset
 import functions.common as common
 
 #########################
@@ -200,7 +201,7 @@ def moveviewz(event, gamedata, classmap, option):
 	####################\ 5°) \#########################################
 	# Recalcul des images
 	# On Update l'atlas pour prendre en compte la nouvelle taille des textures
-	gamedata.resizeatlas(x)
+	asset.atlas.resizeatlas(asset.dico_file, x)
 	#Tuile graphique:
 	for imgid in event.widget.find_withtag("img"):
 
@@ -225,9 +226,9 @@ def moveviewz(event, gamedata, classmap, option):
 			texture = classmap.listmap[imgid-1].texture_name
 
 		# On change la texture lié
-		event.widget.itemconfigure(imgid, image = gamedata.atlas[texture].image)
+		event.widget.itemconfigure(imgid, image = asset.atlas.dico[texture].image)
 	############################################################
-	log.log.printinfo(f"taille Atlas: {len(gamedata.atlas)}")
+	log.log.printinfo(f"taille Atlas: {len(asset.atlas.dico)}")
 	############################################################
 
 def moveviewzcenter(gamedata, classmap, option, delta):
@@ -292,9 +293,9 @@ def moveviewzcenter(gamedata, classmap, option, delta):
 
 
 		# On change la texture lié
-		classmap.mapcanv.itemconfigure(imgid, image = gamedata.atlas[texture].image)
+		classmap.mapcanv.itemconfigure(imgid, image = asset.atlas.dico[texture].image)
 	############################################################
-	log.log.printinfo(f"taille Atlas: {len(gamedata.atlas)}")
+	log.log.printinfo(f"taille Atlas: {len(asset.atlas.dico)}")
 
 ###########################################################################
 

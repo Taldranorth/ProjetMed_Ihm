@@ -3,6 +3,7 @@ import random
 
 
 import functions.log as log
+import functions.asset as asset
 import functions.common as common
 
 
@@ -562,9 +563,9 @@ class Classvillage:
 				# Prend le Rang le plus faible des 2 parents
 				# Afin d'éviter une sur-apparition des Artisan
 				if (self.population[couple[0]].role == "paysan") or (self.population[couple[1]].role == "paysan"):
-					pop = ClassRoturier(gamedata.randomnametype("Nom"), "paysan", True)
+					pop = ClassRoturier(asset.dico_name.randomnametype("Nom"), "paysan", True)
 				else:
-					pop = ClassRoturier(gamedata.randomnametype("Nom"), "artisan", True)
+					pop = ClassRoturier(asset.dico_name.randomnametype("Nom"), "artisan", True)
 				log.log.printinfo(f"félicitation, {self.population[couple[0]].name}({self.population[couple[0]].age}) et {self.population[couple[1]].name}({self.population[couple[1]].age}) ont donné naissance à {pop.name}")
 				self.addpopulation(pop)
 					
@@ -744,6 +745,14 @@ class Classarmy:
 
 		# Texture de l'armée
 		self.texture = 0
+
+	def setname(self, name:chr):
+		#####
+		# Methode pour changer le nom de l'armée
+		#####
+		self.name = name
+
+
 
 	def recruitknight(self, name:chr):
 		#######

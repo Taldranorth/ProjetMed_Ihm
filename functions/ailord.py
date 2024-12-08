@@ -2,6 +2,7 @@ import time
 import random
 
 import functions.log as log
+import functions.asset as asset
 import functions.common as common
 import functions.genproc as genproc
 import functions.moveview as moveview
@@ -116,7 +117,7 @@ def mainai(gamedata, classmap, option):
 		if village.priest == 0:
 			if ((lord.verifcost(10,10)) or (lord.freechurch >= 1)):
 				log.log.printinfo(f"{lord.lordname} Construit une Église dans {village.name}")
-				village.buildchurch(gamedata.randomnametype("Nom"))
+				village.buildchurch(asset.dico_name.randomnametype("Nom"))
 				if lord.freechurch >= 1:
 					lord.freechurch -= 1
 				else:
@@ -134,28 +135,16 @@ def mainai(gamedata, classmap, option):
 	if canrecruitarmy(gamedata, classmap, option, lord) == True:
 		log.log.printinfo(f"{lord.lordname} Peut Créer une Armée")
 		if lord.verifcost(2,2) == True:
-			village = lord.fief[0]
-			idvillage = common.coordmaptoidtuile(option, [village.x, village.y])
-			# Récupère les coord de la 1er cases libres
-			coord = interfacegame.searchposition(gamedata, classmap, option, village)
-			i = len(lord.army)
-			# Créer l'armée
-			lord.createarmy(village.name, coord[0], coord[1])
-			classmap.listmap[idvillage].setarmyinplace(lord.army[i])
-			# Recrute un Soldat
-			lord.army[i].recruitsoldier(gamedata.randomnametype("Nom"))
-			# Affiche l'armée
-			affichage.printarmy(gamedata, classmap, option, lord.army[i])
+			interfacegame.createarmy(gamedata, classmap, option, lord, 1, 0)
 			lord.sub_money(2)
 			lord.sub_ressource(2)
-			log.log.printinfo(f"{lord.lordname} A créer l'armée {lord.army[i].name}")
 
 	# 2°) Recrutement Soldat/ Chevalier
 	for army in lord.army:
 		# Recrutement Soldat
 		efficiency = lord.total_efficiency()
 		if (lord.verifcost(4,4) == True) and ((efficiency[0] > 2) and (efficiency[1] > 2)):
-			army.recruitsoldier(gamedata.randomnametype("Nom"))
+			army.recruitsoldier(asset.dico_name.randomnametype("Nom"))
 			lord.sub_money(2)
 			lord.sub_ressource(2)
 			efficiency = lord.total_efficiency()
@@ -164,7 +153,7 @@ def mainai(gamedata, classmap, option):
 		# Recrutement Chevalier
 		if army.knight == 0:
 			if (lord.verifcost(20, 20) == True) and ((efficiency[0] > 8) and (efficiency[1] > 8)):
-				army.recruitknight(gamedata.randomnametype("Surnom"))
+				army.recruitknight(asset.dico_name.randomnametype("Surnom"))
 				affichage.printupdatearmy(gamedata, classmap, army)
 
 				lord.sub_money(10)
@@ -187,7 +176,7 @@ def mainai(gamedata, classmap, option):
 			dist = common.distance(otherlord.fief[0], lord.fief[0])
 			menace = (otherlord.score()-lord.score())//dist
 			# On ajoute la menace du Seigneur dans la liste de menace
-			log.log.printinfo(f"menace:  {menace}")
+			log.log.printinfo(f"{otherlord.lordname} menace {menace}  le {lord.lordname}")
 			list_lord_menace += [[otherlord.idlord, menace]]
 			if succes >= 75:
 				log.log.printinfo(f"{lord.lordname} tente de Vassaliser: {otherlord.lordname}")
@@ -340,22 +329,28 @@ def actiontaxVillage(gamedata, classmap, option, lord, village, ressource:bool, 
 def actionimmigration(gamedata, classmap, option, lord, village, nbpaysan, nbartisan):
 	log.log.printinfo(f"{lord.lordname} Fait venir {nbpaysan} paysan et {nbartisan} artisan")
 	for x in range(nbpaysan):
-		pop = gameclass.ClassRoturier(gamedata.randomnametype("Nom"), "paysan", False)
+		pop = gameclass.ClassRoturier(asset.dico_name.randomnametype("Nom"), "paysan", False)
 		village.addpopulation(pop)
 		lord.sub_ressource(1)
 		lord.sub_money(1)
+		if village.priest != 0:
+			if village.priest.ability == "Bonus_Immigration":
+				log.log.printinfo(f"la Capacité {village.priest.ability} de {village.priest.name} s'active !")
+				pop = gameclass.ClassRoturier(asset.dico_name.randomnametype("Nom"), "paysan", False)
+				village.addpopulation(pop)
+
 
 	for x in range(nbartisan):
-		pop = gameclass.ClassRoturier(gamedata.randomnametype("Nom"), "artisan", False)
+		pop = gameclass.ClassRoturier(asset.dico_name.randomnametype("Nom"), "artisan", False)
 		village.addpopulation(pop)
 		lord.sub_ressource(4)
 		lord.sub_money(4)
 
-	if village.priest != 0:
-		if village.priest.ability == "Bonus_Immigration":
-			log.log.printinfo(f"la Capacité {village.priest.ability} de {village.priest.name} s'active !")
-			pop = gameclass.ClassRoturier(gamedata.randomnametype("Nom"), "paysan", False)
-			village.addpopulation(pop)
+		if village.priest != 0:
+			if village.priest.ability == "Bonus_Immigration":
+				log.log.printinfo(f"la Capacité {village.priest.ability} de {village.priest.name} s'active !")
+				pop = gameclass.ClassRoturier(asset.dico_name.randomnametype("Nom"), "paysan", False)
+				village.addpopulation(pop)
 
 
 def actionwar(gamedata, classmap, option, lord):
