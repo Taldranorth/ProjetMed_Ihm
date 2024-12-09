@@ -23,6 +23,7 @@ from time import time
 
 def mainmenu(gamedata, classmap, option, root):
 	# Création de la fenêtre
+	global mainmenuwin
 	mainmenuwin = tkinter.Toplevel(root, height = option.heightWindow, width = option.widthWindow)
 	# On centre la fenêtre
 	# Pourquoi ?
@@ -45,7 +46,8 @@ def mainmenu(gamedata, classmap, option, root):
 	Button_mainm_QuickPlay = tkinter.Button(fmainm, command = lambda: initgame(mainmenuwin, gamedata, classmap, option, root), text = "Partie Rapide")
 
 	# Button Load
-	Button_mainm_load = tkinter.Button(fmainm, command = lambda: save.load_game(gamedata, classmap),text="Load")
+	Button_mainm_load = tkinter.Button(fmainm, command=lambda: save.load_game_and_start(gamedata, classmap, option, root, mainmenuwin), text="Load")
+
 
 	#Button Options
 	Button_mainm_option = tkinter.Button(fmainm, text = "Options")

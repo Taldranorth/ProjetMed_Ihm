@@ -586,6 +586,10 @@ class Classmap:
 		#	--> Plaines
 		self.lvillages = []
 		self.lplaines = []
+		
+		# Ajouter l'attribut map_seed pour stocker la seed de la carte
+		self.map_seed = None  # Initialisation de la seed (peut être définie lors de la création de la carte)
+    
 
 	def addtuileinlist(self, tuile):
 		self.listmap[self.nbtuile] = tuile
