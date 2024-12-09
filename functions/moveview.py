@@ -204,12 +204,12 @@ def moveviewz(event, gamedata, classmap, option):
 	asset.atlas.resizeatlas(asset.dico_file, x)
 	#Tuile graphique:
 	for imgid in event.widget.find_withtag("img"):
-
+		ltag = classmap.mapcanv.gettags(imgid)
 		# Si c'est un village on assigne directiement la variable texture
-		if "village" in event.widget.gettags(imgid):
+		if "village" in ltag:
 			texture = "settlement.png"
 		# Si c'est une armée
-		elif "army" in event.widget.gettags(imgid):
+		elif "army" in ltag:
 			# On recup les coordonnées canvas
 			coord = classmap.mapcanv.coords(imgid)
 			# On transforme en coordonnées Map
@@ -221,9 +221,12 @@ def moveviewz(event, gamedata, classmap, option):
 				# Si la fonction n'a pas renvoyé False on a trouvé l'armée
 				if army != False:
 					texture = army.texture
+		# Si Background
+		elif "bg" in ltag:
+			texture = "plains.png"
 		else:
 			# Sinon On vient recup la texture stocker dans la Classtuile
-			texture = classmap.listmap[imgid-1].texture_name
+			texture = classmap.listmap[int(ltag[7])].texture_name
 
 		# On change la texture lié
 		event.widget.itemconfigure(imgid, image = asset.atlas.dico[texture].image)
@@ -268,11 +271,12 @@ def moveviewzcenter(gamedata, classmap, option, delta):
 	gamedata.resizeatlas(x)
 	#Tuile graphique:
 	for imgid in classmap.mapcanv.find_withtag("img"):
+		ltag = classmap.mapcanv.gettags(imgid)
 		# Si c'est un village on assigne directiement la variable texture
-		if "village" in classmap.mapcanv.gettags(imgid):
+		if "village" in ltag:
 			texture = "settlement.png"
 		# Si c'est une armée
-		elif "army" in classmap.mapcanv.gettags(imgid):
+		elif "army" in ltag:
 			# On recup les coordonnées canvas
 			coord = classmap.mapcanv.coords(imgid)
 			# On transforme en coordonnées Map
@@ -284,12 +288,14 @@ def moveviewzcenter(gamedata, classmap, option, delta):
 				# Si la fonction n'a pas renvoyé False on a trouvé l'armée
 				if army != False:
 					texture = army.texture
-
-
+		# Si Background
+		elif "bg" in ltag:
+			texture = "plains.png"
 
 		else:
 			# Sinon On vient recup la texture stocker dans la Classtuile
-			texture = classmap.listmap[imgid-1].texture_name
+			print("idtuile: ", ltag[7])
+			texture = classmap.listmap[int(ltag[7])].texture_name
 
 
 		# On change la texture lié

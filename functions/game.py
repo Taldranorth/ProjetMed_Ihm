@@ -139,11 +139,17 @@ def notplayerturn(gamedata, classmap, option):
 	######
 	# Fonction qui gère le Tour de l'IA
 	######
-	# On affiche la banderole
+	# On prend les clés de la maison
 	gamedata.semaphore = True
-	log.log.printinfo(f"tour de: {gamedata.list_lord[gamedata.Nb_toplay].lordname}, {gamedata.Nb_toplay}")
-	# L'ia Joue
-	ailord.mainai(gamedata, classmap, option)
+	log.log.printinfo(f"tour de: {gamedata.list_lord[gamedata.Nb_toplay].lordname}, {gamedata.Nb_toplay}, Vaincu: {gamedata.list_lord[gamedata.Nb_toplay].isdefeated}")
+	# SI l'ia n'est pas vaincu
+	if gamedata.list_lord[gamedata.Nb_toplay].isdefeated == False:
+		# L'ia Joue
+		ailord.mainai(gamedata, classmap, option)
+	# Une fois que l'ia à terminé on incrémente Nb_toplay
+	gamedata.Nb_toplay += 1
+	# Et On rend les clés de la Maison,le sémaphore
+	gamedata.semaphore = False
 
 # after(time, function)
 
@@ -154,6 +160,10 @@ def victoryordefeat(gamedata, classmap, option):
 	# Return un Bool et modifie une variable dans gamedata
 
 	player = gamedata.list_lord[gamedata.playerid]
+	# Si le joueur possède le Status defeated Alots Défaite
+	if player.isdefeated == True:
+		gamedata.victory = "Défaite"
+		return True
 
 	# Si le joueur ne Possède plus de village Alors Défaite
 	if len(player.fief) == 0:
@@ -169,6 +179,11 @@ def victoryordefeat(gamedata, classmap, option):
 	# Sinon si le joueur possède un Nombre de Vassaux = Nombre de Seigneur-1
 	# Alors Victoire
 	if len(player.vassal) == (gamedata.Nb_lord - 1):
+		gamedata.victory = "Victoire"
+		return True
+
+	# Sinon si le Joueur est le Dernier Seigneur en Vie
+	if gamedata.notdefeatedlord() == 1:
 		gamedata.victory = "Victoire"
 		return True
 

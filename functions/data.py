@@ -137,6 +137,16 @@ class ClassGameData:
 		for x in range(3):
 			self.createlord()
 
+	def notdefeatedlord(self):
+		#####
+		# Methode qui retourne le Nombre de seigneur Non Vaincu
+		#####
+		i = 0
+		for lord in self.list_lord:
+			if lord.isdefeated == False:
+				i += 1
+		return i
+
 	#tuile: Classtuiles
 	def addtuile(self, tuile):
 		self.list_tuile += [tuile]
@@ -605,4 +615,12 @@ class Classtuiles:
 		self.village.setnamevillage(asset.dico_name.randomnametype("Village"))
 
 ###########################################################################
+
+
+######## Main #########
+#option = ClassOptions()
+#gamedata = ClassGameData()
+#Map = Classmap()
+
+
 

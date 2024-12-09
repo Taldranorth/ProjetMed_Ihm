@@ -3,9 +3,11 @@ import tkinter
 import functions.log as log
 import functions.game as game
 import functions.common as common
+import functions.genproc as genproc
 import functions.affichage as affichage
 import functions.interfacemenu as interfacemenu
 
+import matplotlib.pyplot as plt
 
 
 ######################### Menu Cheat #########################
@@ -27,6 +29,8 @@ def cheat_menu(gamedata, classmap, option, root):
 	button_destroy = tkinter.Button(cheat_menu_frame, text = "Détruire Capitale", command = lambda: cheat_destroy(gamedata, classmap, option, gamedata.list_lord[gamedata.playerid]))
 	button_destroy.grid(row = 2, column = 0)
 
+	button_plotlibpic = tkinter.Button(cheat_menu_frame, text = "afficher NoiseMap Plotlib", command = lambda: plotlib(gamedata, option))
+	button_plotlibpic.grid(row = 3, column = 0)
 
 def cheat_victory(gamedata, classmap, option):
 	#####
@@ -47,5 +51,14 @@ def cheat_destroy(gamedata, classmap, option, lord):
 	idvillage = common.coordmaptoidtuile(option, [village.x, village.y])
 	lord.removefief(village)
 	classmap.removeidvillage(idvillage)
+
+
+def plotlib(gamedata, option):
+	#####
+	# Fonction pour cheat qui affiche la noise map via Plotlib
+	#####
+	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, option.mapx, option.mapy)
+	plt.imshow(pic, cmap='gray')
+	plt.show()
 
 

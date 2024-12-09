@@ -9,6 +9,7 @@ import functions.moveview as moveview
 import functions.gameclass as gameclass
 import functions.affichage as affichage
 import functions.warfunctions as warfunctions
+import functions.interfacemenu as interfacemenu
 
 ######################### Fonction Interface ############################
 
@@ -63,7 +64,7 @@ def gameinterface(gamedata, classmap, option, win):
 	#Nb_tour
 	tkvar_nb_turn = tkinter.StringVar()
 
-	classmap.tkvar_list +=[tkvar_nb_ressource, tkvar_nb_money, tkvar_global_joy, tkvar_nb_turn]	
+	classmap.tkvar_list +=[tkvar_nb_ressource, tkvar_nb_money, tkvar_global_joy, tkvar_nb_turn]
 
 	player = gamedata.list_lord[gamedata.playerid]
 	prod_g = player.prod_global()
@@ -94,6 +95,10 @@ def gameinterface(gamedata, classmap, option, win):
 	nb_turn_label = tkinter.Label(topframe, textvariable = classmap.tkvar_list[3])
 	nb_turn_label.pack(side = 'left')
 
+	# On Bind tooltip
+	lvariable = [player.prod_global(), player.total_salaryarmy()]
+	interfacemenu.tooltip(ressource_label, ["Produit: ", lvariable[0][0], "\nConsommé: ", lvariable[1][0]], lvariable)
+	interfacemenu.tooltip(money_label, ["Produit: ", lvariable[0][0], "\nConsommé: ", lvariable[1][0]], lvariable)
 
 	# Liste de Bouton Bas
 
@@ -388,7 +393,7 @@ def vassal_offer(gamedata, classmap, option, lord, lord2, succes):
 			# On retire de la liste des Vassaux du Seigneur les vassaux qu'il possède
 			lord2.removevassal(vassal)
 			lord.addvassal(vassal)
-		log.log.printinfo("Liste des vassaux du Joueurs: ", lord.vassal)
+		log.log.printinfo(f"Liste des vassaux du Joueurs: {lord.vassal}")
 	# Sinon on déclare la guerre
 	else:
 		log.log.printinfo("Echecs")
@@ -1696,9 +1701,9 @@ def startsequencemovefight(event, gamedata, classmap, option, army):
 	# On recupère les coord
 	posx = event.widget.canvasx(event.x)
 	posy = event.widget.canvasy(event.y)
-	log.log.printinfo("pos: ", posx, posy)
+	log.log.printinfo(f"pos:  {posx}, {posy}")
 	coord1 = common.coordcanvastomap(gamedata, classmap, option, [posx, posy])
-	log.log.printinfo("coord: ", coord1)
+	log.log.printinfo(f"coord:  {coord1}")
 	# On récupère l'armée adverse
 	army2 = 0
 	i = 0
@@ -1805,11 +1810,11 @@ def startsequencemovetakevillage(event, gamedata, classmap, option, army):
 	# On recup les coord Canvas de la tuile 
 	posx = event.widget.canvasx(event.x)
 	posy = event.widget.canvasy(event.y)
-	log.log.printinfo("pos:", posx, posy)
+	log.log.printinfo(f"pos: {posx}, {posy}")
 	# On transforme en coord Map
 	coord = common.coordcanvastomap(gamedata, classmap, option, [posx, posy])
 	idvillage = common.coordmaptoidtuile(option, coord)
-	log.log.printinfo("idvillage: ",idvillage)
+	log.log.printinfo(f"idvillage: {idvillage}")
 	# On recup l'objet village
 	village = classmap.idtovillage(idvillage)
 	log.log.printinfo(f"Objet village trouvé pour les coord({coord}): {village}")
@@ -1831,7 +1836,7 @@ def sequencemovetakevillage(gamedata, classmap, option, lord, army, village):
 
 		# On récupère l'itinéraire la plus efficace
 		itinéraire = affichage.pathfinding(gamedata, classmap, option, [army.x, army.y], coord1, 45)
-		log.log.printinfo("itinéraire: ",itinéraire)
+		log.log.printinfo(f"itinéraire: {itinéraire}")
 
 		# On déplace autant que l'on peut
 		i = 0
@@ -1930,9 +1935,7 @@ def TakeVillage(gamedata, classmap, option, lord, army, village, subjugate):
 				lord.addfief(village)
 				log.log.printinfo(f"{Ennemielord.lordname} ANÉANTIE")
 				# ON LE DELETE NIARK NIARK NIARK NIARK
-				# On vérifie que se n'est pas le joueur
-				if Ennemielord != gamedata.list_lord[gamedata.playerid]:
-					gamedata.deletelord(Ennemielord.idlord)
+				Ennemielord.defeated()
 	else:
 		lord.addfief(village)
 

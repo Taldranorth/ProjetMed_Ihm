@@ -29,17 +29,22 @@ class ClassDicoStat:
 
 	def init_dico_stat(self, gamedata):
 		######
-		# Methode pour initialiser le dico des tats
+		# Methode pour initialiser le dico des stats
 		######
 		# On créer les clés
 		for lord in gamedata.list_lord:
 			self.dico_stat[lord.lordname] = []
+			turn = self.turn_dico(lord, 0)
+			self.dico_stat[lord.lordname] += [[0, turn]]
 
-	def add_lord_dico(self, lord):
+
+	def add_lord_dico(self, lord, nb_turn):
 		######
 		# Methode pour ajouter un Nouveaux Seigneur au dico
 		######
 		self.dico_stat[lord.lordname] = []
+		turn = self.turn_dico(lord, nb_turn)
+		self.dico_stat[lord.lordname] += [[nb_turn, turn]]
 
 	def turnend(self, gamedata):
 		#####
@@ -49,6 +54,10 @@ class ClassDicoStat:
 		for lord in gamedata.list_lord:
 			turn = self.turn_dico(lord, nb_turn)
 			self.dico_stat[lord.lordname] += [[nb_turn, turn]]
+			# On stocker incrémente les morts précédants
+			turn_dico = self.dico_stat[lord.lordname][nb_turn-1][1]
+			nb_death =  turn_dico["Death"]
+			self.adddeath(lord, nb_death)
 
 	def turn_dico(self, lord, nb_turn):
 		######
@@ -83,15 +92,26 @@ class ClassDicoStat:
 		# On ajoute Les Morts
 
 
-		turn_dico["Death"] = []
+		turn_dico["Death"] = 0
 
 		return turn_dico
+
+	def adddeath(self, lord, nbdeath):
+		#####
+		# Methode Pour incrémenter de nbdeath le compteur de mort du Seigneur dans le dernier dico turn
+		#####
+		nb_dico = len(self.dico_stat[lord.lordname])
+		turn_dico = self.dico_stat[lord.lordname][len(self.dico_stat[lord.lordname])-1][1]
+		turn_dico["Death"] += nbdeath
 
 	def printdico(self):
 		#####
 		# Methode pour afficher le Contenu du dico
 		#####
-		print(self.dico_stat)
+		for lord_dico in self.dico_stat:
+			print(lord_dico)
+			print(self.dico_stat[lord_dico])
+
 
 ###### Main #######
 dico_stat = ClassDicoStat()

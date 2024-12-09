@@ -63,8 +63,8 @@ def delvillageunit(mapcanv, idvillage):
 	# On récup une liste de tout les objets du canvas qui ont le tag village, cela prend en compte les village et leur tags
 	# On à 2 objet à détruire
 	lcanvvillage = mapcanv.find_withtag("village")
-	print(lcanvvillage)
-	print(idvillage)
+	#print(lcanvvillage)
+	#print(idvillage)
 	i = 0
 	for objet in lcanvvillage:
 		if i == 2:

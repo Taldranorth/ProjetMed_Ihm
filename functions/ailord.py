@@ -167,7 +167,7 @@ def mainai(gamedata, classmap, option):
 	# 3°) Vassalisation/Menace
 	for otherlord in gamedata.list_lord:
 		# Si le seigneur selectionner n'est pas le Seigneurs qui joue
-		if (otherlord != lord) and (otherlord != player):
+		if ((otherlord != lord) and (otherlord != player)) and (otherlord.isdefeated == False):
 			# On calcul la réussite
 			succes = interfacegame.vassal_try(gamedata, lord, otherlord)
 			log.log.printinfo(f"{lord.lordname} à {succes}% de chance de Vassaliser: {otherlord.lordname}")
@@ -218,15 +218,8 @@ def mainai(gamedata, classmap, option):
 					nbarmy += 1
 			nblord += 1
 
-
-
-
-	# Une fois que l'ia à terminé on incrémente Nb_toplay
-	gamedata.Nb_toplay += 1
 	# Supprime la banderole
 	interfacegame.destroybanderole(gamedata, classmap, banderole_window)
-	# Et On rend les clés de la Maison,le sémaphore
-	gamedata.semaphore = False
 
 def canbuildvillage(gamedata, classmap, option, lord):
 	####

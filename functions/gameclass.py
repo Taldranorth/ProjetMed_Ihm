@@ -4,8 +4,8 @@ import random
 
 import functions.log as log
 import functions.asset as asset
+import functions.stats as stats
 import functions.common as common
-
 
 
 ####################
@@ -82,7 +82,7 @@ class Classlord:
 
 		self.lordname = lordname
 		self.player = player
-		self.color = "black" 
+		self.color = "black"
 
 		# liste des vassaux
 		# d'autre seigneurs
@@ -105,6 +105,14 @@ class Classlord:
 
 		# Variable qui vient contenir le Nombre d'église que peut construire le Seigneur Gratuitement
 		self.freechurch = 0
+		# Variale Booléene qui vient indiquer si le Seigneur à était vaincu
+		self.isdefeated = False
+
+	def defeated(self):
+		####
+		# Method pour Indiquer que le Seigneur est Vaincu
+		####
+		self.isdefeated = True
 
 	def setcolor(self, color):
 		####
@@ -154,6 +162,10 @@ class Classlord:
 
 
 	def removefief(self, village):
+		######
+		# Fonction pour retirer un Village au Seigneur
+		# Si c'est le dernier alors le Seigneurs se met en état Vaincu
+		######
 		# On Unbind le seigneur de l'objet village
 		village.lord = 0
 		# On retire le village de la liste des fief
@@ -165,9 +177,9 @@ class Classlord:
 					# On renvoit True pour indiquer que l'éxécution est correcte
 					return True
 		elif len(self.fief) == 1:
-			if self.fief[0] == village:
-				self.fief = []
-				return True
+			self.fief = []
+			self.defeated()
+			return True
 		return False
 
 	def addwar(self, lord):
@@ -235,7 +247,6 @@ class Classlord:
 		for village in self.fief:
 			prod_money += village.prod_money
 			prod_ressource += village.prod_ressource
-
 
 		return [prod_ressource, prod_money]
 
@@ -372,7 +383,10 @@ class Classlord:
 		for village in self.fief:
 			temp_joy += village.global_joy
 
-		self.global_joy = temp_joy/(len(self.vassal)+len(self.fief))
+		if (len(self.vassal)+len(self.fief)) != 0:
+			self.global_joy = temp_joy/(len(self.vassal)+len(self.fief))
+		else:
+			self.global_joy = 0
 
 		# On calcule les troupes
 		for army in self.army:
@@ -607,6 +621,9 @@ class Classvillage:
 		if self.lord != 0:
 			self.lord.nb_money += pop.money
 			self.lord.nb_ressource += pop.ressource
+			# On incrémente la stat de mort
+			stats.dico_stat.adddeath(self.lord, 1)
+
 
 		# On le retire des liste du villages
 		if pop.role == "artisan":

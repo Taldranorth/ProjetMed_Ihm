@@ -3,10 +3,12 @@ import random
 import tkinter
 
 import functions.log as log
+import functions.stats as stats
 import functions.common as common
 import functions.genproc as genproc
 import functions.affichage as affichage
 import functions.interfacegame as interfacegame
+import functions.interfacemenu as interfacemenu
 
 ######################### Description du fichier	#########################
 # 
@@ -78,25 +80,26 @@ class ClassEvent:
 	def randomevent(self, gamedata, classmap, option):
 
 		# Pour Chaque Seigneur
-		for lord in gamedata.list_lord:	
-			# On tire un Chiffre aléatoire
-			r = random.randrange(100)
-			log.log.printinfo(f"{lord.lordname}: {r} à était tiré:")
-			# Si entre 0-15 Alors Effet Positif
-			if (r <= 15):
-				log.log.printinfo(f"Un Événement Positive à donc était tiré:")
-				self.positif_event(gamedata, classmap, option, lord)
-			# Si entre 16-30 Alors Effet Négatif
-			elif ((r > 15) and (r <= 30)):
-				log.log.printinfo(f"Un Événement Negative à donc était tiré:")
-				self.negatif_event(gamedata, classmap, option, lord)
-			# Si entre 31-45 Alors Effet Neutre
-			elif ((r>30) and (r<=45)):
-				log.log.printinfo(f"Un Événement Neutre à donc était tiré:")
-				self.neutral_event(gamedata, classmap, option, lord)
-			# Sinon Rien
-			else:
-				log.log.printinfo(f"Rien à était tiré:")
+		for lord in gamedata.list_lord:
+			if lord.isdefeated == False:
+				# On tire un Chiffre aléatoire
+				r = random.randrange(100)
+				log.log.printinfo(f"{lord.lordname}: {r} à était tiré:")
+				# Si entre 0-15 Alors Effet Positif
+				if (r <= 15):
+					log.log.printinfo(f"Un Événement Positive à donc était tiré:")
+					self.positif_event(gamedata, classmap, option, lord)
+				# Si entre 16-30 Alors Effet Négatif
+				elif ((r > 15) and (r <= 30)):
+					log.log.printinfo(f"Un Événement Negative à donc était tiré:")
+					self.negatif_event(gamedata, classmap, option, lord)
+				# Si entre 31-45 Alors Effet Neutre
+				elif ((r>30) and (r<=45)):
+					log.log.printinfo(f"Un Événement Neutre à donc était tiré:")
+					self.neutral_event(gamedata, classmap, option, lord)
+				# Sinon Rien
+				else:
+					log.log.printinfo(f"Rien à était tiré:")
 
 
 	##### Positive #####
@@ -137,6 +140,7 @@ class ClassEvent:
 				pop.addcpbonus(pop.cp)
 				# On retire le bonus après 1 tour
 				gamedata.addactionfile(["subcpbonus", pop, pop.cp], 1)
+		return [village.name]
 
 	def clergy_donation(self, lord):
 		######
@@ -161,6 +165,7 @@ class ClassEvent:
 		free_artisan = random.randrange(0,3)
 		log.log.printinfo(f"{free_paysan} paysan et {free_artisan} artisan arrive dans le village {village.name}")
 		genproc.genpopvillage(gamedata, classmap, option, village, free_paysan, free_artisan)
+		return [village.name, free_paysan, free_artisan]
 
 	def free_army(self, gamedata, classmap, option, lord):
 		######
@@ -176,6 +181,7 @@ class ClassEvent:
 		interfacegame.createarmy(gamedata, classmap, option, lord, nbsoldat, 0)
 		# On change le nom
 		lord.army[len(lord.army)-1].setname("Armée Volontaire")
+		return [lord.fief[0].name, nbsoldat]
 
 
 
@@ -217,6 +223,8 @@ class ClassEvent:
 		affichage.printvillageunit(gamedata, classmap, option, [village.x, village.y])
 		# On affiche sa Bordure
 		affichage.bordervillageunit(gamedata, classmap, option, village)
+
+		return [village.name, village.x, village.y]
 
 	def mercenary_army(self, gamedata, classmap, option, lord, accept: bool):
 		######
@@ -295,6 +303,7 @@ class ClassEvent:
 				village.killpop(pop)
 				i += 1
 		log.log.printinfo(f"La peste à fait un total de {i} victime dans le village {village.name}")
+		return [village.name, i]
 
 	def plagueunit(self, pop):
 		#####
@@ -331,6 +340,7 @@ class ClassEvent:
 			pop.addcpmalus(malus)
 			# Après 1 tour on retire le Malus
 			gamedata.addactionfile(["subcpmalus", pop, malus], 1)
+		return [village.name]
 
 	def mildiou(self, gamedata, lord):
 		######
@@ -349,6 +359,7 @@ class ClassEvent:
 			pop.addcpmalus(2)
 			# Après 1 tour on retire le Malus
 			gamedata.addactionfile(["subcpmalus", pop, 2], 1)
+		return [village.name]
 
 
 	def newfaith(self, gamedata, lord):
@@ -374,7 +385,7 @@ class ClassEvent:
 			village.subpriestcapacity()
 			# On ajoute dans la file la réaplication de l'effet du Prêtre après 1 tour
 			gamedata.addactionfile(["addpriestcapacity", village], 1)
-
+		return [village.name]
 
 	def fire(self, classmap, option, lord):
 		######
@@ -388,10 +399,15 @@ class ClassEvent:
 		# On sélectionne un Village aléatoire du Seigneurs
 		r = random.randrange(len(lord.fief))
 		village = lord.fief[r]
+		name = village.name
+		x = village.x
+		y = village.y
 		log.log.printinfo(f"{village.name} ciblé")
 		# On rase le Village
 		# détruit toute la Population
 		for pop in village.population:
+			# On incrémente le compteur de Mort
+			stats.dico_stat.adddeath(lord, 1)
 			# On retire la pop du village
 			if pop.role == "artisan":
 				village.nb_artisan -= 1
@@ -416,6 +432,7 @@ class ClassEvent:
 		idvillage = common.coordmaptoidtuile(option, [village.x, village.y])
 		# On le delete
 		classmap.removeidvillage(idvillage)
+		return [name, x, y]
 
 
 	def bandit(self, lord):
@@ -442,7 +459,7 @@ class ClassEvent:
 			pop.ressource -= int(pop.ressource*(ressourcetaken/100))
 			# On retire le % d'Écus
 			pop.money -= int(pop.money*(moneytaken/100))
-
+		return [village.name, ressourcetaken, moneytaken]
 
 def eventscreen(gamedata, classmap, option, event):
 	######
@@ -469,41 +486,59 @@ def eventscreen(gamedata, classmap, option, event):
 
 			# On mets en place l'image
 
-			# On mets en place le texte
+			# On applique l'event
+			stat = Eventsystem.abundant_harvest(gamedata, player)
 
-			Eventsystem.abundant_harvest(gamedata, player)
+			# On mets en place le texte
+			tkinter.Label(frame_interface_event, text = f"Mon Seigneur,\n les récoltes ont été abondante dans le village {stat[0]}").grid(row = 1, column = 1)		
+
 			# On mets en place le boutton ok
-			tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok").grid(row = 1, column = 1)
+			But = tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok")
+			But.grid(row = 2, column = 1)
+			interfacemenu.tooltip(But, "Production doublé pour 1 tour", [])
 		elif event == "clergy_donation":
 			# On mets en place le titre
 			tkinter.Label(frame_interface_event, text = f"Evénement: Subvention du Clergé").grid(row = 0, column = 1)
 
 			# On mets en place l'image
 
-			# On mets en place le texte
+			# On applique l'event
 			Eventsystem.clergy_donation(player)
+
+			# On mets en place le texte
+			tkinter.Label(frame_interface_event, text = f"Quelle Joie Mon Seigneur,\nLe Clergé a décidé de vous subventionner une Église gratuitement !").grid(row = 1, column = 1)
 			# On mets en place le boutton ok
-			tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok").grid(row = 1, column = 1)
+			But = tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok")
+			But.grid(row = 2, column = 1)
 		elif event == "free_immigration":
 			# On mets en place le titre
 			tkinter.Label(frame_interface_event, text = f"Evénement: Immigration").grid(row = 0, column = 1)
 
 			# On mets en place l'image
 
+			# On applique l'event
+			stat = Eventsystem.free_immigration(gamedata, classmap, option, player)
+
 			# On mets en place le texte
-			Eventsystem.free_immigration(gamedata, classmap, option, player)
+			tkinter.Label(frame_interface_event, text = f"Mon Seigneur,\nUn grand nombre de Plébéiens ont décidé de s'installer par eux-mêmes à {stat[0]}").grid(row = 1, column = 1)		
 			# On mets en place le boutton ok
-			tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok").grid(row = 1, column = 1)
+			But = tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok")
+			But.grid(row = 2, column = 1)
+			interfacemenu.tooltip(But, f"{stat[1]} paysan, {stat[2]} artisan rejoignent {stat[0]}", [])
 		elif event == "free_army":
 			# On mets en place le titre
 			tkinter.Label(frame_interface_event, text = f"Evénement: Armée Volontaires").grid(row = 0, column = 1)
 
 			# On mets en place l'image
 
+			# On applique l'event
+			stat = Eventsystem.free_army(gamedata, classmap, option, player)
+
 			# On mets en place le texte
-			Eventsystem.free_army(gamedata, classmap, option, player)
+			tkinter.Label(frame_interface_event, text = f"Mon Seigneur,\nDans un Élan National une armée de Volontaire c'est formé gratuitement\nElle à rejoint notre Capitale {stat[0]} et compte {stat[1]} loyaux Soldat").grid(row = 1, column = 1)
 			# On mets en place le boutton ok
-			tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok").grid(row = 1, column = 1)
+			But = tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok")
+			But.grid(row = 2, column = 1)
 		############### Neutre ###############
 		elif event == "new_village":
 			# On mets en place le titre
@@ -511,10 +546,15 @@ def eventscreen(gamedata, classmap, option, event):
 
 			# On mets en place l'image
 
+			# On applique l'event
+			stat = Eventsystem.new_village(gamedata, classmap, option, player)
+
 			# On mets en place le texte
-			Eventsystem.new_village(gamedata, classmap, option, player)
+			tkinter.Label(frame_interface_event, text = f"Mon Seigneur,\nUn Groupe de piètre Plébéiens à décidé de fondé par eux-mêmes un nouveau village nommé {stat[0]}").grid(row = 1, column = 1)
 			# On mets en place le boutton ok
-			tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok").grid(row = 1, column = 1)
+			But = tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok")
+			But.grid(row = 2, column = 1)
+			interfacemenu.tooltip(But, f"{stat[0]} fondé en {stat[1]}, {stat[2]}", [])
 		elif event == "mercenary_army":
 			# On mets en place le titre
 			tkinter.Label(frame_interface_event, text = f"Evénement: Armé de Mercenaire").grid(row = 0, column = 1)
@@ -522,9 +562,11 @@ def eventscreen(gamedata, classmap, option, event):
 			# On mets en place l'image
 
 			# On mets en place le texte
+			tkinter.Label(frame_interface_event, text = "Mon Seigneur,\nDes mercenaires proposent leur Service !").grid(row = 1, column = 1)
+
 			# On mets en place les Bouttons
-			tkinter.Button(frame_interface_event, command = lambda:  b_mercenary_army(gamedata, classmap, option, True, window_interface_event), text = "Oui").grid(row = 2, column = 1)
-			tkinter.Button(frame_interface_event, command = lambda:  b_mercenary_army(gamedata, classmap, option, False, window_interface_event), text = "Non").grid(row = 3, column = 1)
+			tkinter.Button(frame_interface_event, command = lambda:  b_mercenary_army(gamedata, classmap, option, True, window_interface_event), text = "Oui").grid(row = 3, column = 1)
+			tkinter.Button(frame_interface_event, command = lambda:  b_mercenary_army(gamedata, classmap, option, False, window_interface_event), text = "Non").grid(row = 4, column = 1)
 		############### Négatif ###############
 		elif event == "plague":
 			# On mets en place le titre
@@ -532,65 +574,105 @@ def eventscreen(gamedata, classmap, option, event):
 
 			# On mets en place l'image
 
+			# On applique l'event
+			stat = Eventsystem.plague(player)
+
 			# On mets en place le texte
-			Eventsystem.plague(player)
+			tkinter.Label(frame_interface_event, text = f"Ho Quelle Tragédie Mon Seigneur,\nNotre village de {stat[0]} à était frappé par une Épidémie !\n").grid(row = 1, column = 1)
 			# On mets en place le boutton ok
-			tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok").grid(row = 1, column = 1)
+			But = tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok")
+			But.grid(row = 2, column = 1)
+			interfacemenu.tooltip(But, f"{stat[0]} perd {stat[1]} roturier", [])
 		elif event == "famine":
 			# On mets en place le titre
 			tkinter.Label(frame_interface_event, text = f"Evénement: Famine").grid(row = 0, column = 1)
 
 			# On mets en place l'image
 
+			# On applique l'event
+			stat = Eventsystem.famine(gamedata, player)
+
 			# On mets en place le texte
-			Eventsystem.famine(gamedata, player)
+			tkinter.Label(frame_interface_event, text = f"Ho Quelle Drame Mon Seigneur,\nNotre village de {stat[0]} se voit actuellement frappé par une Famine !").grid(row = 1, column = 1)
+
 			# On mets en place le boutton ok
-			tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok").grid(row = 1, column = 1)
+			But = tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok")
+			But.grid(row = 2, column = 1)
+			interfacemenu.tooltip(But, "Production coupé pour 1 tour", [])
 		elif event == "mildiou":
 			# On mets en place le titre
 			tkinter.Label(frame_interface_event, text = f"Événement: mildiou").grid(row = 0, column = 1)
 
 			# On mets en place l'image
 
+			# On applique l'event
+			stat = Eventsystem.mildiou(gamedata, player)
+
 			# On mets en place le texte
-			Eventsystem.mildiou(gamedata, player)
+			tkinter.Label(frame_interface_event, text = f"Quelle Coup du Sort Mon Seigneur,\nNotre village de {stat[0]} à vue une parti de ces champs être attaqué par le Mildiou !").grid(row = 1, column = 1)
+
 			# On mets en place le boutton ok
-			tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok").grid(row = 1, column = 1)
+			But = tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok")
+			But.grid(row = 2, column = 1)
+			interfacemenu.tooltip(But, "Production réduite pour 1 tour", [])
 		elif event == "newfaith":
 			# On mets en place le titre
 			tkinter.Label(frame_interface_event, text = f"Événement: Nouvelle Foi").grid(row = 0, column = 1)
 
 			# On mets en place l'image
 
+			# On applique l'event
+			stat = Eventsystem.newfaith(gamedata, player)
+
 			# On mets en place le texte
+			tkinter.Label(frame_interface_event, text = f"Quelle Trahison Mon Seigneur,\n C'est pouileux de {stat[0]} osent remettre en question Notre foi divine\n pour se tourné vers un culte locale!\n").grid(row = 1, column = 1)
+
+			# On applique l'event
 			Eventsystem.newfaith(gamedata, player)
+
 			# On mets en place le boutton ok
-			tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok").grid(row = 1, column = 1)
+			But = tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok")
+			But.grid(row = 2, column = 1)
+			interfacemenu.tooltip(But, "Capacité du Prêtre Annulé pour 1 tour\nLe Bonheur Baisse", [])
 		elif event == "fire":
 			# On mets en place le titre
 			tkinter.Label(frame_interface_event, text = f"Événement: Un Incendie").grid(row = 0, column = 1)
 
 			# On mets en place l'image
 
+			# On applique l'event
+			stat = Eventsystem.fire(classmap, option, player)
+
 			# On mets en place le texte
-			Eventsystem.fire(classmap, option, player)
+			tkinter.Label(frame_interface_event, text = f"Ho Quel désespoir Mon Seigneur,\n, Notre Village de {stat[0]} est parti en fumé dans un Incendie Ravageur").grid(row = 1, column = 1)
+
 			# On mets en place le boutton ok
-			tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok").grid(row = 1, column = 1)
+			But = tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok")
+			But.grid(row = 2, column = 1)
+			interfacemenu.tooltip(But, f"{stat[0]} détruit en {stat[1]},{stat[2]}", [])
 		elif event == "bandit":
 			# On mets en place le titre
 			tkinter.Label(frame_interface_event, text = f"Événement: Des Pillard").grid(row = 0, column = 1)
 
 			# On mets en place l'image
 
+			# On applique l'event
+			stat = Eventsystem.bandit(player)
+
 			# On mets en place le texte
-			Eventsystem.bandit(player)
+			tkinter.Label(frame_interface_event, text = f"Ho Maleur Mon Seigneur,\nDes Bandit on attaqué notre village de {stat[0]}\n Ils ont pillé pour {stat[1]}% de Ressource et {stat[2]}% d'écu").grid(row = 1, column = 1)
+
 			# On mets en place le boutton ok
-			tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok").grid(row = 1, column = 1)
+			But = tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok")
+			But.grid(row = 2, column = 1)
+
+
 
 def b_mercenary_army(gamedata, classmap, option, accept, wie):
 	#####
 	# Fonction pour gèrer le Choix du Joueur vis à vis de l'armée de Mecenaire
 	#####
+	player = gamedata.list_lord[gamedata.playerid]
 	if accept == True:
 		Eventsystem.mercenary_army(gamedata, classmap, option, player, True)
 

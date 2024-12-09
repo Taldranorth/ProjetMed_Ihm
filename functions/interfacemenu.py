@@ -44,7 +44,7 @@ def mainmenu(gamedata, classmap, option, root):
 	Button_mainm_QuickPlay = tkinter.Button(fmainm, command = lambda: game.initgame(mainmenuwin, gamedata, classmap, option, root), text = "Partie Rapide")
 
 	# Button Load
-	Button_mainm_load = tkinter.Button(fmainm, text = "Load")
+	Button_mainm_load = tkinter.Button(fmainm, command = lambda: loadmenu(mainmenuwin, gamedata, classmap, option, root) , text = "Load")
 
 	#Button Options
 	Button_mainm_option = tkinter.Button(fmainm, text = "Options")
@@ -58,6 +58,8 @@ def mainmenu(gamedata, classmap, option, root):
 	Button_mainm_load.pack()
 	Button_mainm_option.pack()
 	Button_mainm_exit.pack()
+
+	tooltip(Button_mainm_Play, "Menu Partie", [])
 
 
 ###########################################################################
@@ -75,7 +77,6 @@ def mainmenu(gamedata, classmap, option, root):
 ##################
 
 def playmenu(mainmenuwin, gamedata, classmap, option, root):
-
 
 	# On suprime le frame du menu principale
 	mainmenuwin.winfo_children()[0].destroy()
@@ -168,7 +169,7 @@ def playmenu(mainmenuwin, gamedata, classmap, option, root):
 	Button_playmenu_play.grid(columnspan = 5)
 
 	# Boutton pour revenir en arrière
-	Button_playmenu_return = tkinter.Button(fplaymenu, command = lambda: playmenutomainmenu(gamedata, classmap, option, mainmenuwin, root),text = "Retour")
+	Button_playmenu_return = tkinter.Button(fplaymenu, command = lambda: returntomainmenu(gamedata, classmap, option, mainmenuwin, root),text = "Retour")
 	Button_playmenu_return.grid(columnspan = 5)
 
 def validate_entry_map(entrymapx, entrymapy, option, gamedata, tkvar_mapx, tkvar_mapy, mapcanv):
@@ -222,15 +223,10 @@ def previewmap(mapcanv, pic, mapx, mapy):
 		for x in range(mapx):
 			log.log.printinfo(f"picx, picy: {len(pic[0])}, {len(pic)}")
 			log.log.printinfo(f"x,y: {x},{y}")
-			tl = tuile(pic[y][x])[0]
+			tl = tuilesquare(pic[y][x])
 			mapcanv.create_rectangle((x*2), y*2, (x*2)+2, (y*2)+2, fill=tl, tags = "minimap", outline='black')
 
 	mapcanv.pack(expand = "True",fill="both")
-
-def playmenutomainmenu(gamedata, classmap, option, menu, root):
-	mainmenu(gamedata, classmap, option, root)
-	menu.destroy()
-
 
 def playmenucreatelord(gamedata, frame_listlord):
 	####################
@@ -259,6 +255,17 @@ def playmenudeletelord(gamedata, frame_listlord):
 	else:
 		log.log.printerror("Il ne reste plus que le joueur")
 
+
+
+
+def returntomainmenu(gamedata, classmap, option, menu, root):
+	######
+	# Fonction Global Pour retourner sur le Menu principale
+	######
+	mainmenu(gamedata, classmap, option, root)
+	menu.destroy()
+
+
 ###########################################################################
 
 
@@ -284,13 +291,57 @@ def savemenu():
 
 
 
-def loadmenu():
+def loadmenu(mainmenuwin, gamedata, classmap, option, root):
+	######
+	# Fonction pour gèrer l'affichage du Menu de Chargement de Données
+	######
+	# Affiche dans une Listbox toute les Saves trouvés
+	# - Un fichier Save porte l'extension .save
+	#
+	######
+
 	# On suprime le frame du menu principale
 	mainmenuwin.winfo_children()[0].destroy()
+	c_d = os.getcwd()
+	p_f = c_d + "/user/save"
+
+	# On met en place l'interface
+	floadmenu = tkinter.Frame(mainmenuwin, height = option.heightWindow, width = option.widthWindow)
+	floadmenu.grid()
+
+	tkinter.Label(floadmenu, text = "Charger Une Sauvegarde").grid(row = 0, column = 0)
+
+	# On setup la Scrollbar de la listbox
+	yscrollbar = tkinter.Scrollbar(floadmenu, orient = tkinter.VERTICAL)
+	yscrollbar.grid(row = 1, column = 1, sticky= tkinter.W+ tkinter.N + tkinter.S)
+
+	# On setup la Listbox
+	lbsave = tkinter.Listbox(floadmenu, yscrollcommand = yscrollbar.set)
+	lbsave.grid(row = 1, column = 0)
+
+	yscrollbar["command"] = lbsave.yview
+
+	i = 2
+	for file in os.listdir(p_f):
+		# Si le Fichier est bien une save
+		if file[-5:] == ".save":
+			# On insert la save dans le Label
+			# [NomSave, DateSauvegarde, NomSeigneurJoueur]
+			lbsave.insert(tkinter.END, f"{file[:-5]}, , ")
+			i += 1
+
+	# On met en place les bouttons
+	Bload = tkinter.Button(floadmenu, text = "Charger la Sauvegarde")
+	Bload.grid(row = i, column = 0)
+	# On met en place le Bouttons de Retour
+	Breturn = tkinter.Button(floadmenu, text = "Retour", command = lambda: returntomainmenu(gamedata, classmap, option, mainmenuwin, root))
+	Breturn.grid(row = i+1, column = 0)
 
 
-
-
+def loadmenu_load():
+	#####
+	# Fonction Pour gérer le Chargement de la Save Selon la listbox
+	####
 	pass
 
 
@@ -307,11 +358,9 @@ def loadmenu():
 
 
 
-
 def optionmenu(gamedata, classmap, option):
 	# On suprime le frame du menu principale
 	mainmenuwin.winfo_children()[0].destroy()
-
 	# On créer le nouveaux frame
 
 
@@ -426,21 +475,51 @@ def eof_military_graph(gamedata, classmap, option, frame_eof_screen_up):
 	# Label de la Fenêtre
 	tkinter.Label(frame_eof_screen_up_child, text = f"").grid(row = 0,column = 3)
 
+
+	# On créer le Canvas
+	canvas = tkinter.Canvas(frame_eof_screen_up_child, height = (0.4* option.heightWindow)+10, width = (0.6*option.widthWindow))
+	canvas.grid(row = 2, column = 0, columnspan = len(gamedata.list_lord))
+
 	i = 0
 	for lord in gamedata.list_lord:
 		# On Met en place bouton pour pouvoir désactiver l'affichage de la courbe du Seigneur
-		tkinter.Button(frame_eof_screen_up_child, text = lord.lordname, fg = lord.color).grid(row = 1, column = i)
-
+		tkinter.Button(frame_eof_screen_up_child, text = lord.lordname, fg = lord.color, command = lambda name = lord.lordname: disablegraph(canvas, name)).grid(row = 1, column = i)
 		i +=1
 
 	# Label de la Fenêtre
 	tkinter.Label(frame_eof_screen_up_child, text = f"Croissance Militaire").grid(row = 0,column = 0, columnspan = i)
 
-	# On créer le Canvas
-	canvas = tkinter.Canvas(frame_eof_screen_up_child)
-	canvas.grid(row = 2, column = 0, columnspan = i)
+	# On récupère le nbmax de tour
+	# Histoire d'avoir un graphe qui apparait un minimum on Prend en compte un nbminimum
+	if gamedata.nb_turn > 20:
+		turnmax = gamedata.nb_turn
+	else:
+		turnmax = 20
 
-	pass
+	# ON prend pour taille d'une case 20*20
+	# On créer un Cadre
+	canvas.create_rectangle(10, 10,(0.6*option.widthWindow), (0.4* option.heightWindow)-10)
+
+	# On créer l'échelle bas
+
+	# On créer l'échelle haut
+	for x in range(1, turnmax+1):
+		canvas.create_text(((x)*20)  , (0.4* option.heightWindow), text = x)
+
+	for lord in gamedata.list_lord:
+		color = lord.color
+		for turn in stats.dico_stat.dico_stat[lord.lordname]:
+			#print("turn: ",turn)
+			# On recup le tour
+			t = turn[0]
+			# On recup la stat Militaire du tour
+			power = turn[1]["Military"][0]
+			nbarmy = turn[1]["Military"][1]
+			x = 10+((t)*20)
+			y = (0.4* option.heightWindow)-10
+			x2 = 10+(t*20)+20
+			y2 = ((0.4* option.heightWindow)-10) - ((power*20) + 10)
+			square = canvas.create_rectangle( x, y, x2, y2, outline = color, tags = [lord.lordname])
 
 def eof_demography_graph(gamedata, classmap, option, frame_eof_screen_up):
 	#######
@@ -460,20 +539,50 @@ def eof_demography_graph(gamedata, classmap, option, frame_eof_screen_up):
 	# Label de la Fenêtre
 	tkinter.Label(frame_eof_screen_up_child, text = f"").grid(row = 0,column = 3)
 
+
+	# On créer le Canvas
+	canvas = tkinter.Canvas(frame_eof_screen_up_child, height = (0.4* option.heightWindow)+10, width = (0.6*option.widthWindow))
+	canvas.grid(row = 2, column = 0, columnspan = len(gamedata.list_lord))
+
 	i = 0
 	for lord in gamedata.list_lord:
 		# On Met en place bouton pour pouvoir désactiver l'affichage de la courbe du Seigneur
-		tkinter.Button(frame_eof_screen_up_child, text = lord.lordname, fg = lord.color).grid(row = 1, column = i)
-
+		tkinter.Button(frame_eof_screen_up_child, text = lord.lordname, fg = lord.color, command = lambda name = lord.lordname: disablegraph(canvas, name)).grid(row = 1, column = i)
 		i +=1
 
 	# Label de la Fenêtre
 	tkinter.Label(frame_eof_screen_up_child, text = f"Croissance Démographique").grid(row = 0,column = 0, columnspan = i)
 
-	# On créer le Canvas
-	canvas = tkinter.Canvas(frame_eof_screen_up_child)
-	canvas.grid(row = 2, column = 0, columnspan = i)
-	pass
+	# On récupère le nbmax de tour
+	# Histoire d'avoir un graphe qui apparait un minimum on Prend en compte un nbminimum
+	if gamedata.nb_turn > 20:
+		turnmax = gamedata.nb_turn
+	else:
+		turnmax = 20
+
+	# ON prend pour taille d'une case 20*20
+	# On créer un Cadre
+	canvas.create_rectangle(10, 10,(0.6*option.widthWindow), (0.4* option.heightWindow)-10)
+
+	# On créer l'échelle bas
+
+	# On créer l'échelle haut
+	for x in range(1, turnmax+1):
+		canvas.create_text(((x)*20)  , (0.4* option.heightWindow), text = x)
+
+	for lord in gamedata.list_lord:
+		color = lord.color
+		for turn in stats.dico_stat.dico_stat[lord.lordname]:
+			#print("turn: ",turn)
+			# On recup le tour
+			t = turn[0]
+			# On recup la stat Militaire du tour
+			nbpop = turn[1]["Demography"][0]
+			x = 10+((t)*20)
+			y = (0.4* option.heightWindow)-10
+			x2 = 10+(t*20)+20
+			y2 = ((0.4* option.heightWindow)-10) - ((nbpop*20) + 10)
+			square = canvas.create_rectangle( x, y, x2, y2, outline = color, tags = [lord.lordname])
 
 def eof_economy_graph(gamedata, classmap, option, frame_eof_screen_up):
 	#######
@@ -493,20 +602,51 @@ def eof_economy_graph(gamedata, classmap, option, frame_eof_screen_up):
 	# Label de la Fenêtre
 	tkinter.Label(frame_eof_screen_up_child, text = f"").grid(row = 0,column = 3)
 
+
+	# On créer le Canvas
+	canvas = tkinter.Canvas(frame_eof_screen_up_child, height = (0.4* option.heightWindow)+10, width = (0.6*option.widthWindow))
+	canvas.grid(row = 2, column = 0, columnspan = len(gamedata.list_lord))
+
 	i = 0
 	for lord in gamedata.list_lord:
 		# On Met en place bouton pour pouvoir désactiver l'affichage de la courbe du Seigneur
-		tkinter.Button(frame_eof_screen_up_child, text = lord.lordname, fg = lord.color).grid(row = 1, column = i)
-
+		tkinter.Button(frame_eof_screen_up_child, text = lord.lordname, fg = lord.color, command = lambda name = lord.lordname: disablegraph(canvas, name)).grid(row = 1, column = i)
 		i +=1
 
 	# Label de la Fenêtre
 	tkinter.Label(frame_eof_screen_up_child, text = f"Croissance Économique").grid(row = 0,column = 0, columnspan = i)
 
-	# On créer le Canvas
-	canvas = tkinter.Canvas(frame_eof_screen_up_child)
-	canvas.grid(row = 2, column = 0, columnspan = i)
-	pass
+	# On récupère le nbmax de tour
+	# Histoire d'avoir un graphe qui apparait un minimum on Prend en compte un nbminimum
+	if gamedata.nb_turn > 20:
+		turnmax = gamedata.nb_turn
+	else:
+		turnmax = 20
+
+	# ON prend pour taille d'une case 20*20
+	# On créer un Cadre
+	canvas.create_rectangle(10, 10,(0.6*option.widthWindow), (0.4* option.heightWindow)-10)
+
+	# On créer l'échelle bas
+
+	# On créer l'échelle haut
+	for x in range(1, turnmax+1):
+		canvas.create_text(((x)*20)  , (0.4* option.heightWindow), text = x)
+
+	for lord in gamedata.list_lord:
+		color = lord.color
+		for turn in stats.dico_stat.dico_stat[lord.lordname]:
+			#print("turn: ",turn)
+			# On recup le tour
+			t = turn[0]
+			# On recup la stat Militaire du tour
+			power = turn[1]["Military"][0]
+			nbarmy = turn[1]["Military"][1]
+			x = 10+((t)*20)
+			y = (0.4* option.heightWindow)-10
+			x2 = 10+(t*20)+20
+			y2 = ((0.4* option.heightWindow)-10) - ((power*20) + 10)
+			square = canvas.create_rectangle( x, y, x2, y2, outline = color, tags = [lord.lordname])
 
 def eof_score_graph(gamedata, classmap, option, frame_eof_screen_up):
 	#######
@@ -526,20 +666,50 @@ def eof_score_graph(gamedata, classmap, option, frame_eof_screen_up):
 	# Label de la Fenêtre
 	tkinter.Label(frame_eof_screen_up_child, text = f"").grid(row = 0,column = 3)
 
+
+	# On créer le Canvas
+	canvas = tkinter.Canvas(frame_eof_screen_up_child, height = (0.4* option.heightWindow)+10, width = (0.6*option.widthWindow))
+	canvas.grid(row = 2, column = 0, columnspan = len(gamedata.list_lord))
+
 	i = 0
 	for lord in gamedata.list_lord:
 		# On Met en place bouton pour pouvoir désactiver l'affichage de la courbe du Seigneur
-		tkinter.Button(frame_eof_screen_up_child, text = lord.lordname, fg = lord.color).grid(row = 1, column = i)
-
+		tkinter.Button(frame_eof_screen_up_child, text = lord.lordname, fg = lord.color, command = lambda name = lord.lordname: disablegraph(canvas, name)).grid(row = 1, column = i)
 		i +=1
 
 	# Label de la Fenêtre
 	tkinter.Label(frame_eof_screen_up_child, text = f"Score").grid(row = 0,column = 0, columnspan = i)
 
-	# On créer le Canvas
-	canvas = tkinter.Canvas(frame_eof_screen_up_child)
-	canvas.grid(row = 2, column = 0, columnspan = i)
-	pass
+	# On récupère le nbmax de tour
+	# Histoire d'avoir un graphe qui apparait un minimum on Prend en compte un nbminimum
+	if gamedata.nb_turn > 20:
+		turnmax = gamedata.nb_turn
+	else:
+		turnmax = 20
+
+	# ON prend pour taille d'une case 20*20
+	# On créer un Cadre
+	canvas.create_rectangle(10, 10,(0.6*option.widthWindow), (0.4* option.heightWindow)-10)
+
+	# On créer l'échelle bas
+
+	# On créer l'échelle haut
+	for x in range(1, turnmax+1):
+		canvas.create_text(((x)*20)  , (0.4* option.heightWindow), text = x)
+
+	for lord in gamedata.list_lord:
+		color = lord.color
+		for turn in stats.dico_stat.dico_stat[lord.lordname]:
+			#print("turn: ",turn)
+			# On recup le tour
+			t = turn[0]
+			# On recup la stat Militaire du tour
+			score = turn[1]["Score"][0]
+			x = 10+((t)*20)
+			y = (0.4* option.heightWindow)-10
+			x2 = 10+(t*20)+20
+			y2 = ((0.4* option.heightWindow)-10) - ((score*20) + 10)
+			square = canvas.create_rectangle( x, y, x2, y2, outline = color, tags = [lord.lordname])
 
 def eof_death_graph(gamedata, classmap, option, frame_eof_screen_up):
 	#######
@@ -559,20 +729,64 @@ def eof_death_graph(gamedata, classmap, option, frame_eof_screen_up):
 	# Label de la Fenêtre
 	tkinter.Label(frame_eof_screen_up_child, text = f"").grid(row = 0,column = 3)
 
+
+	# On créer le Canvas
+	canvas = tkinter.Canvas(frame_eof_screen_up_child, height = (0.4* option.heightWindow)+10, width = (0.6*option.widthWindow))
+	canvas.grid(row = 2, column = 0, columnspan = len(gamedata.list_lord))
+
 	i = 0
 	for lord in gamedata.list_lord:
 		# On Met en place bouton pour pouvoir désactiver l'affichage de la courbe du Seigneur
-		tkinter.Button(frame_eof_screen_up_child, text = lord.lordname, fg = lord.color).grid(row = 1, column = i)
-
+		tkinter.Button(frame_eof_screen_up_child, text = lord.lordname, fg = lord.color, command = lambda name = lord.lordname: disablegraph(canvas, name)).grid(row = 1, column = i)
 		i +=1
 
 	# Label de la Fenêtre
 	tkinter.Label(frame_eof_screen_up_child, text = f"Mort").grid(row = 0,column = 0, columnspan = i)
 
-	# On créer le Canvas
-	canvas = tkinter.Canvas(frame_eof_screen_up_child)
-	canvas.grid(row = 2, column = 0, columnspan = i)
-	pass
+	# On récupère le nbmax de tour
+	# Histoire d'avoir un graphe qui apparait un minimum on Prend en compte un nbminimum
+	if gamedata.nb_turn > 20:
+		turnmax = gamedata.nb_turn
+	else:
+		turnmax = 20
+
+	# ON prend pour taille d'une case 20*20
+	# On créer un Cadre
+	canvas.create_rectangle(10, 10,(0.6*option.widthWindow), (0.4* option.heightWindow)-10)
+
+	# On créer l'échelle bas
+
+	# On créer l'échelle haut
+	for x in range(1, turnmax+1):
+		canvas.create_text(((x)*20)  , (0.4* option.heightWindow), text = x)
+
+	for lord in gamedata.list_lord:
+		color = lord.color
+		for turn in stats.dico_stat.dico_stat[lord.lordname]:
+			#print("turn: ",turn)
+			# On recup le tour
+			t = turn[0]
+			# On recup la stat Militaire du tour
+			death = turn[1]["Death"]
+			x = 10+((t)*20)
+			y = (0.4* option.heightWindow)-10
+			x2 = 10+(t*20)+20
+			y2 = ((0.4* option.heightWindow)-10) - ((death*20) + 10)
+			square = canvas.create_rectangle( x, y, x2, y2, outline = color, tags = [lord.lordname])
+
+def disablegraph(canvas, lordname):
+	######
+	# Fonction pour désactiver, réactiver le graphe du Seigneur
+	######
+	lcanvasobject = canvas.find_withtag(lordname)
+	#print("lcanvasobject:", lcanvasobject)
+	#print(lordname)
+	for ele in lcanvasobject:
+		if canvas.itemcget(ele,"state") == "hidden":
+			canvas.itemconfigure(ele, state = tkinter.NORMAL)
+		else:
+			canvas.itemconfigure(ele, state = tkinter.HIDDEN)
+
 
 def exit_mainmenu(gamedata, classmap, option):
 	#######
@@ -663,52 +877,29 @@ def createmap(gamedata, classmap, option, pic, win1):
 	for y in range(option.mapy):
 		for x in range(option.mapx):
 
-			# On utilise la valeur de la case pour définir la tuile que l'on va créer
-			tl = tuile(pic[y][x])
-
-			# Création de la carte avec Rectangle
-			#mapcanv.create_rectangle((x*ts), (y*ts), (x*ts)+ts, (y*ts)+ts, fill = tl[0], tags = ["click","tuile",x,y,pic[x][y], tl[1]], outline='black')
-			
 			##### Version Non-Aléatoire Dico Avec Atlas #####
-			
-			if tl[1] == "mountains":
-				asset.atlas.loadtextureatlas(asset.dico_file, ts, "mountains_inner.png", tl[1])
-				texture_name = "mountains_inner.png"
-			elif tl[1] == "forest":
-				asset.atlas.loadtextureatlas(asset.dico_file, ts, "conifer_forest_inner.png", tl[1])
-				texture_name = "conifer_forest_inner.png"
-			elif tl[1] == "plains":
-				asset.atlas.loadtextureatlas(asset.dico_file, ts, "plains.png", tl[1])
-				texture_name = "plains.png"
-			elif tl[1] == "ocean":
-				asset.atlas.loadtextureatlas(asset.dico_file, ts, "ocean_inner.png", tl[1])
-				texture_name = "ocean_inner.png"
+			#'''
+			tl = no_random_tuile(option ,pic, x, y, ts)
 
-			mcanvt = mapcanv.create_image((x*ts)+(ts/2), (y*ts)+(ts/2), image = asset.atlas.dico[texture_name].image, tags = ["img",tl[1],"tuile","click", x, y, pic[y][x], idtuile])
-			
+			mcanvt = mapcanv.create_image((x*ts)+(ts/2), (y*ts)+(ts/2), image = asset.atlas.dico[tl[0]].image, tags = ["img",tl[1],"tuile","click", x, y, pic[y][x], idtuile])
+			#'''
 			################################
+			##### Version Pseudo-Aléatoire Dico Avec Atlas #####
+			'''
+			tl = pseudo_random_tuile(option, pic, x, y, ts)
+			if tl[1] not in ["mountains_inner.png", "conifer_forest_inner.png", "plains.png", "ocean_inner.png"]:
+				asset.atlas.loadtextureatlas(asset.dico_file, ts, "plains.png", "plains")
+				mapcanv.create_image((x*ts)+(ts/2), (y*ts)+(ts/2), image = asset.atlas.dico["plains.png"].image, tags = ["img","plains","tuile","click", x, y, pic[y][x], idtuile, "bg"])
 
-			"""
-			##### Version Aléatoire Dico #####
-			texture_name = data.randomtexturefromdico(gamedata.dico_file, tl[1])
-			# Si la texture afficher n'est pas une texture compléte est que ce n'est pas un ocean
-			if tl[1] != "ocean":
-				if texture_name not in ["mountains_inner.png", "conifer_forest_inner.png", "ocean_inner.png", "plains.png"]:
-					# On affiche en arrière plans une texture background
-					gamedata.loadtextureatlas("plains.png", "plains")
-					mapcanv.create_image((x*ts)+(ts/2), (y*ts)+(ts/2), image = gamedata.atlas["plains.png"].image, tags = ["img",tl[1],"tuile","click", x, y, pic[x][y], idtuile])
-			
-			gamedata.loadtextureatlas(texture_name, tl[1])
-			mcanvt = mapcanv.create_image((x*ts)+(ts/2), (y*ts)+(ts/2), image = gamedata.atlas[texture_name].image, tags = ["img",tl[1],"tuile","click", x, y, pic[x][y], idtuile])
-			"""
+			mcanvt = mapcanv.create_image((x*ts)+(ts/2), (y*ts)+(ts/2), image = asset.atlas.dico[tl[0]].image, tags = ["img",tl[1],"tuile","click", x, y, pic[y][x], idtuile])
+			'''
 			################################
 
 			# On créer une nouvelle instance de la classe tuiles
-			instancetuile = data.Classtuiles(texture_name, tl[1], x, y, mcanvt)
+			instancetuile = data.Classtuiles(tl[0], tl[1], x, y, mcanvt)
 			# On le stocker dans la ClassMap
 			classmap.addtuileinlist(instancetuile)
 			idtuile += 1
-
 	#On lie Command+molette aux zoom/dézoom
 	# Sur Mac/Windows
 	mapcanv.bind("<MouseWheel>", lambda event: moveview.moveviewz(event, gamedata, classmap, option))
@@ -740,7 +931,7 @@ def createmap(gamedata, classmap, option, pic, win1):
 ####################################################################################################
 
 
-######################### Fonction Secondaire ############################
+######################### Fonction Création Tuile ############################
 def tuile(nb):
 	####################
 	# 1er Version qui lier la valeur d'une case à une Couleur,
@@ -751,14 +942,167 @@ def tuile(nb):
 	#	grey, mountain
 	####################
 	if(nb <= -0.25):
-		return ("grey", "mountains")
+		return "mountains"
 	elif(nb>-0.25 and nb <=0):
-		return ("green", "forest")
+		return "forest"
 	elif(nb>0 and nb <= 0.25):
-		return ("yellow", "plains")
+		return "plains"
 	else:
-		return ("blue", "ocean")
+		return "ocean"
 
+def tuilesquare(nb):
+	#####
+	# Version qui retourne la carré de la tule
+	#####
+	if(nb <= -0.25):
+		return "grey"
+	elif(nb>-0.25 and nb <=0):
+		return "green"
+	elif(nb>0 and nb <= 0.25):
+		return "yellow"
+	else:
+		return "blue"
+
+def no_random_tuile(option, pic, x, y, ts):
+	######
+	# Fonction qui charge en mémoire et renvoit la texture de la tuile ciblé + son type
+	######
+
+	# On utilise la valeur de la case pour définir la tuile que l'on va créer
+	tl = tuile(pic[y][x])
+
+	if tl == "mountains":
+		asset.atlas.loadtextureatlas(asset.dico_file, ts, "mountains_inner.png", tl)
+		return ["mountains_inner.png", "mountains"]
+	elif tl == "forest":
+		asset.atlas.loadtextureatlas(asset.dico_file, ts, "conifer_forest_inner.png", tl)
+		return ["conifer_forest_inner.png", "forest"]
+	elif tl == "plains":
+		asset.atlas.loadtextureatlas(asset.dico_file, ts, "plains.png", "plains")
+		return ["plains.png", "plains"]
+	elif tl == "ocean":
+		asset.atlas.loadtextureatlas(asset.dico_file, ts, "ocean_inner.png", tl)
+		return ["ocean_inner.png", "ocean"]
+
+
+
+def pseudo_random_tuile(option, pic, x, y, ts):
+	######
+	# Fonction qui charge en mémoire et renvoit la texture de la tuile ciblé + son type
+	######
+
+	# On utilise la valeur de la case pour définir la tuile que l'on va créer
+	tl = tuile(pic[y][x])
+
+	if tl == "mountains":
+		asset.atlas.loadtextureatlas(asset.dico_file, ts, "mountains_inner.png", tl)
+		return ["mountains_inner.png", "mountains"]
+	elif tl == "forest":
+		lntype = neightbours_tuile(option, pic, x, y)
+		print(len(lntype[1]))
+		print("voisin foret:", lntype[1])
+		# Si l'ensemble des coord sont dans forêt alors tout les voisins sont des forêts
+		if len(lntype[1]) == (len(lntype[0])+ len(lntype[1]) + len(lntype[2]) + len(lntype[3])):
+			asset.atlas.loadtextureatlas(asset.dico_file, ts, "conifer_forest_inner.png", tl)
+			return ["conifer_forest_inner.png", "forest"]
+		else:
+			texture_name = neighbourstotexture(option, x, y, "forest", lntype)
+			print("texture: ",texture_name)
+			asset.atlas.loadtextureatlas(asset.dico_file, ts, texture_name, "forest")
+			return [texture_name, "forest"]
+	elif tl == "plains":
+		asset.atlas.loadtextureatlas(asset.dico_file, ts, "plains.png", "plains")
+		return ["plains.png", "plains"]
+	elif tl == "ocean":
+		asset.atlas.loadtextureatlas(asset.dico_file, ts, "ocean_inner.png", tl)
+		return ["ocean_inner.png", "ocean"]
+
+
+def neightbours_tuile(option, pic, x, y):
+	#####
+	# Fonction qui renvoit un tuple qui contient les types des voisin
+	# 0 1 2
+	# 3   4
+	# 5 6 7
+	#####
+	lntype = [[],[],[],[]]
+	for yn in range(-1,2):
+		for xn in range(-1,2):
+			# On s'assure que les coord ne soit pas hors de la carte
+			if(((x+xn) >= 0) and ((x+xn)<option.mapx)):
+				if(((y+yn) >= 0) and ((y+yn)<option.mapy)):
+					if ((xn == 0) and (yn == 0)):
+						pass
+					else:
+						#print("x,y: ",xn, yn)
+						#print(y+yn, x+xn)
+						tl = tuile(pic[y+yn][x+xn])
+						if tl == "mountains":
+							lntype[0] += [[x+xn,y+yn]]
+						elif tl == "forest":
+							lntype[1] += [[x+xn,y+yn]]
+						elif tl == "plains":
+							lntype[2] += [[x+xn,y+yn]]
+						elif tl == "ocean":
+							lntype[3] += [[x+xn,y+yn]]
+	return lntype
+
+def neighbourstotexture(option, x, y , type, lntype):
+	#####
+	# Fonction qui renvoit une texture selon les voisin et le type
+	#####
+	# V1: Prend en compte seulement les foret est seulement dans les 4 directions cardinal
+	#
+	#
+	####
+	print(x,y)
+	print(type)
+	print(lntype)
+	# Si pour forêt
+	if type == "forest":
+		print("Type Forêt trouvé")
+		# Cardinal North
+		if ((y-1) >= 0):
+			if [x, y-1] not in lntype[1]:
+				print("cardinal North")
+				return "conifer_forest_north_1.png"
+		# Cardinal Ouest
+		if((x-1)>=0):
+			if [x-1, y] not in lntype[1]:
+				print("cardinal Ouest")
+				return "conifer_forest_west_1.png"
+		# Cardinal Est
+		if ((x+1) < option.mapx):
+			if [x+1, y] not in lntype[1]:
+				print("cardinal Est")
+				return "conifer_forest_east_1.png"
+		# Cardinal Sud
+		if((y+1) < option.mapy):
+			if [x, y+1] not in lntype[1]:
+				print("cardinal Sud")
+				return "conifer_forest_south_1.png"
+		# Sinon on affiche forêt normal
+		print("pas de cardinal trouvé")
+		return "conifer_forest_inner.png"
+
+
+def cardinal(option, x, y, lntype):
+	######
+	# Fonction qui renvoit une liste contenant les cardinal manquant
+	######
+	lcardinal = [0,0,0,0,0,0,0,0]
+	for yn in range(-1,2):
+		for xn in range(-1, 2):
+			if((xn== 0) and (yn == 0)):
+				pass
+			else:
+				if (((x+xn)< option.mapx) and (x+xn >= 0)):
+					if (((y+yn)< option.mapy) and (y+yn >= 0)):
+						if [x+xn, y+yn] not in lntype:
+							pass
+
+
+######################################################################
 
 
 def typetoimg(type, ts):
@@ -801,6 +1145,78 @@ def typetoimgdico(dico_file, type, ts):
 ###########################################################################
 
 ######################### Autre Fonction #########################
+
+
+
+################## Fonction Pop Up ##################
+def tooltip(widget, text, lvariable):
+	####
+	# Fonction Pour Gérer un tooltip
+	####
+	# On recup la Top Window
+	top_window = widget.winfo_toplevel()
+	#print("top_window trouvé:", top_window)
+	widget.bind("<Enter>", lambda event: tooltip_create(event, widget, top_window, text, lvariable))
+
+def tooltip_create(event, widget, top_window, text, lvariable):
+	####
+	# Fonction pour gérer la Création de la fenêtre
+	####
+	#print("On créer le Pop-Up")
+	# On recup les coord de la souris
+	posmouse = event.widget.winfo_pointerxy()
+	#print(text)
+	#print(lvariable)
+	# On créer la fenêtre
+	windowtooltip = tkinter.Toplevel()
+	# On la place
+	windowtooltip.geometry(f"+{posmouse[0]+5}+{posmouse[1]+5}")
+	# On la rend Transient
+	windowtooltip.transient(top_window)
+	# On l'overrid
+	windowtooltip.overrideredirect(True)
+	# On créer le frame dans lequel on ajoute le text
+	frame = tkinter.Frame(windowtooltip)
+	frame.pack()
+	# On traite le texte
+	if type(text) == str:
+		ch = text
+	else:
+		ch = ""
+		for ele in text:
+			if type(ele) == str:
+				ch += ele
+			else:
+				ch += f"{ele}"
+
+	# On y ajoute le texte
+	tkinter.Label(frame, text = ch).pack()
+	# On bind la destruction quand la souris quitte le widget
+	widget.bind("<Leave>", lambda event: tooltip_destroy(event, widget, windowtooltip))
+	# On bind la destruction quand le widget est détruit
+	widget.bind("<Destroy>", lambda event: tooltip_destroy(event, widget, windowtooltip))
+
+def tooltip_destroy(event, widget, window_tooltip):
+	####
+	# Fonction pour gérer la destruction de la fenêtre
+	####
+	#print("On détruit le tooltip")
+	window_tooltip.destroy()
+	# On retire le Bind
+	widget.unbind_all("<Leave>")
+
+def convertposgraph(coord, heightgraph, widthgraph):
+	####
+	# Fonction pour obtenir les coordonnés pour afficher sur un Graphe
+	####
+	posx = coord[0] + 10
+	posy = heightgraph - coord[1]
+
+
+	return [posx,posy]
+
+
+######################################################
 def infovillage(village):
 	log.log.printinfo(f"village name {village.name}")
 	if village.lord != 0:
