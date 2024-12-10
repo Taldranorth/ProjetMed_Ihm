@@ -62,6 +62,11 @@ def save_game(gamedata, classmap, filename="savegame.json"):
                 "global_joy": village.global_joy,
                 "has_church": village.church,
             }
+            tile_id = (village.y * classmap.mapsize_x) + village.x
+            if tile_id in classmap.listmap:
+            	classmap.listmap[tile_id].village = village
+            	print(f"Village {new_village.name} enregistré à la tuile ID {tile_id} avec coordonnées ({village.x}, {village.y})")
+            
             lord_data["villages"].append(village_data)
         print(f"Village {village.name} sauvegardé avec coordonnées : ({village.x}, {village.y})")
 
