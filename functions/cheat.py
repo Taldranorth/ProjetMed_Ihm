@@ -29,7 +29,7 @@ def cheat_menu(gamedata, classmap, option, root):
 	button_destroy = tkinter.Button(cheat_menu_frame, text = "Détruire Capitale", command = lambda: cheat_destroy(gamedata, classmap, option, gamedata.list_lord[gamedata.playerid]))
 	button_destroy.grid(row = 2, column = 0)
 
-	button_plotlibpic = tkinter.Button(cheat_menu_frame, text = "afficher NoiseMap Plotlib", command = lambda: plotlib(gamedata, option))
+	button_plotlibpic = tkinter.Button(cheat_menu_frame, text = "afficher NoiseMap Plotlib", command = lambda: plotlib(gamedata, classmap, option))
 	button_plotlibpic.grid(row = 3, column = 0)
 
 def cheat_victory(gamedata, classmap, option):
@@ -48,16 +48,16 @@ def cheat_destroy(gamedata, classmap, option, lord):
 	village = lord.fief[0]
 	# On supprime sa Bordure
 	affichage.delborder(classmap, village)
-	idvillage = common.coordmaptoidtuile(option, [village.x, village.y])
+	idvillage = common.coordmaptoidtuile(classmap, [village.x, village.y])
 	lord.removefief(village)
 	classmap.removeidvillage(idvillage)
 
 
-def plotlib(gamedata, option):
+def plotlib(gamedata, classmap, option):
 	#####
 	# Fonction pour cheat qui affiche la noise map via Plotlib
 	#####
-	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, option.mapx, option.mapy)
+	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, classmap.mapx, classmap.mapy)
 	plt.imshow(pic, cmap='gray')
 	plt.show()
 

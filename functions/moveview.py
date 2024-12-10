@@ -55,9 +55,9 @@ def moveviewxy(event, deltax, deltay, gamedata, classmap, option):
 		classmap.mapcanv.scan_dragto(movex, movey, gain = 1)
 	elif ((y - movey)< 0) and (yorigine > - 10):
 		classmap.mapcanv.scan_dragto(movex, movey, gain = 1)
-	elif ((x - movex)> 0) and (xf < (ts*option.mapx)):
+	elif ((x - movex)> 0) and (xf < (ts*classmap.mapx)):
 		classmap.mapcanv.scan_dragto(movex, movey, gain = 1)
-	elif ((y - movey)> 0) and (yf < (ts*option.mapy)):
+	elif ((y - movey)> 0) and (yf < (ts*classmap.mapy)):
 		classmap.mapcanv.scan_dragto(movex, movey, gain = 1)
 
 	#classmap.mapcanv.scan_dragto(movex, movey, gain = 1)
@@ -110,9 +110,9 @@ def moveviewmouse(event, gamedata, classmap, option):
 	if (yorigine < - 10):
 		event.widget.scan_dragto(event.x,int(-yorigine), gain = 1)
 
-	elif (xf > (ts*option.mapx)):
+	elif (xf > (ts*classmap.mapx)):
 		event.widget.scan_dragto(event.x, event.y, gain = 1)
-	elif (yf > (ts*option.mapy)):
+	elif (yf > (ts*classmap.mapy)):
 		event.widget.scan_dragto(event.x, event.y, gain = 1)
 	'''
 

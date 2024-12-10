@@ -86,7 +86,7 @@ def listidplaines(Classmap):
 
     return lplaines
 
-def buildvillagepossible(options, Classmap, idtuile):
+def buildvillagepossible(options, classmap, idtuile):
     ####################
     # Fonction pour vérifier qu'il n'y a pas de villages déjà construit dans les zones voisines
     # Utiliser lplaines pour réduire le temps de calcul
@@ -100,23 +100,23 @@ def buildvillagepossible(options, Classmap, idtuile):
     #   Returne False Si il y a un village dans la zone
     ####################
     #On recup la taille max de X
-    xmax = options.mapx
+    xmax = classmap.mapx
     #On calcule les coords X,Y de l'idtuile
-    coord = common.idtuiletocoordmap(options, idtuile)
+    coord = common.idtuiletocoordmap(classmap, idtuile)
     xidtuile = coord[0]
     yidtuile = coord[1]
 
     # On Vérifier que la tuile sélectionner n'est pas en bord de map
     if (xidtuile == 0) or (yidtuile == 0):
         return False
-    elif (xidtuile == (options.mapx-1)) or (yidtuile == (options.mapy-1)):
+    elif (xidtuile == (classmap.mapx-1)) or (yidtuile == (classmap.mapy-1)):
         return False
     elif(xidtuile == 1) or (yidtuile == 1):
         return False
-    elif (xidtuile == (options.mapx-2)) or (yidtuile == (options.mapy-2)):
+    elif (xidtuile == (classmap.mapx-2)) or (yidtuile == (classmap.mapy-2)):
         return False
     # On vérifie que c'est une plaines
-    if Classmap.listmap[idtuile].type != "plains":
+    if classmap.listmap[idtuile].type != "plains":
         return False
 
     for x in range(-5,5):
@@ -124,7 +124,7 @@ def buildvillagepossible(options, Classmap, idtuile):
             idtemp = (xidtuile+x)+(xmax*(yidtuile+y))
             #print("idtemp: ", idtemp)
             #On verifie qu'il n'y a pas de villages dans un rayon de 2 cases
-            if idtemp in Classmap.lvillages:
+            if idtemp in classmap.lvillages:
                 return False
 
     return True

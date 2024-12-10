@@ -18,7 +18,6 @@ import functions.interfacemenu as interfacemenu
 
 from time import time
 
-
 # Objectif:
 #
 #	- Refactoriser le Code
@@ -58,6 +57,7 @@ from time import time
 #
 # Moveview: 
 #	- Implémenter une limite sur le déplacement de la vue pour ne pas aller plus loin que nécessaires
+#		--> Implémenter pour Déplacement avec Souris
 #
 # Interface:
 # - Recalculer toute les positions d'interfaces
@@ -68,18 +68,16 @@ from time import time
 #	--> Si souris sur village Ennemies alors affiche icône Pillage
 
 
-# - Refaire Interface Déplacement d'armée pour update les Pm √
-# - Fix Movement Army √
-# - Changer Pathfinding Pour être séparer de l'event de tkinter √
-# - Faire le point sur les calculs de coordonnées, utiliser les fonctions Commune √
-# - Déplacer dans Warfunctions TakeVillage/fight Army et les autres fonctions à la con √
-# - Améliorer Interface Village Stat √
+# - Implémenter Affichage du Nom des Armées Par Tooltipe √
+# - Implémenter Couleur aux log √
+# - Implémenter Nom Armées Selon Nb Armée du Seigneur √
+# - Implémenter placement Aléatoire des villages par l'ia √
+# - Implémenter Bordure Couleur Seigneur à l'armée  √
+# - Implémenter Déplacement Bordure √
+# - Refactoriser Classmap pour y stocker la taille de la carte/ retirer la taille de la carte d'option √
+# - Fix la Création d'armée qui ne place pas au bon endroit quand on a plus de 2 armée √
 
 #########################################################
-
-# -> Fix Build Church
-#	--> Aucun retour quand on construit une église
-#	--> Améliorer la sélection des villages
 
 # -> Refactoriser le code pour réduire la réutilisation de même code pour a la place utilisr une fonction commune liée a l'objet utiliser
 # -> Refactorisation tout les calculs de Coordonnées pour utiliser les fonctions Commune
@@ -107,6 +105,7 @@ from time import time
 # - LVL 0: On affiche seulement les critique dans la Console
 # - LVL 1: On affiche les critiques et les important dans la Console
 # - LVL 2: On affiche tout dans la Console
+# - Ajouter Couleur au Log
 
 # - Rendre aléatoire le placement des villages par l'Ia
 #	--> Pré-Remplir une liste de coord entre [0-5] ou il va tirer aléatoirement ?
@@ -151,9 +150,6 @@ from time import time
 # - Changer le fonctionnement des noms lors de la création d'armée
 # - Changer Frame de l'atlas pour le lier à la root ?
 
-
-# - Trouvé un Moyen de Center les fenêtre
-
 # - Interface Sauvegarde de Données
 # - Changer Fonctionnement Event mercenary_army Pour pouvoir afficher le prix de l'armée de mercenaire et sa troupe
 
@@ -163,14 +159,32 @@ from time import time
 #			--> Il faut envoyé une variable dynamique et non statique
 #				--> Putain python fait chier
 
-# - Ajouter ToolTipe sur Graphe
+# - Mettre en Place Fonctions ListBox qui disparait
+
+# -> Fix Build Church
+#	--> Aucun retour quand on construit une église
+#	--> Améliorer la sélection des villages
+
 #####
 
-#### Objectif Ce soir: ####
+#### Objectif Restant: ####
 # - Refactorisation Option/classmap et Gamedata pour être défini dans data et accéder à partir d'un appel du fichier
 # - Implémenter Résolution Dynamique
-# - Refactoriser le Code
-####
+# - Améliorer Selection de Village Pour la Construction d'église
+# - Implémenter Retour Utilisateur Impossibilité de Construire Un village
+# - Implémenter Retour Utilisateur Impossibilité de Construire Une Église
+# - Optimiser et Refactoriser
+# - Implémenter Réactions Armées et Vassaux
+# - Implémenter Comportement de l'IA
+# - Terminé Graphe Stat
+# - Implémenter ToolTip sur Graphe Stat
+# - Trouvé un Moyen de Centré les fenêtre d'interfaces
+# - Implémenter Image Event
+# - Implémenter Options
+# - Implémente Gestion de la population par case
+######
+
+
 
 ######## Fonctionnalité Principale à Implémenter
 # - Implémenter Résolutions Dynamique
@@ -208,9 +222,12 @@ from time import time
 # --> Repasser un coup de Noise map dans le groupe de Terrain qui vient définir les tuiles
 
 
+# Pour régler le problème de la taille d'écran
+#https://pypi.org/project/screeninfo/
+
 ######################### Main #########################
 if __name__ == '__main__':
-	
+
 	#Init de la fenêtre
 	root = tkinter.Tk()
 	log.log.printinfo(f"Hauteur de l'écran:  {root.winfo_screenheight()}")

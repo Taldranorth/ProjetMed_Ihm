@@ -33,20 +33,20 @@ def coordmaptocanvas(gamedata, classmap, option, coord, decalage:bool):
 
 	return [xcanvas, ycanvas]
 
-def coordmaptoidtuile(option, coord):
+def coordmaptoidtuile(classmap, coord):
 	##################
 	# Fonction pour traduire les coordonnées map en idtuile √
 	##################
 
-	idtuile = coord[0] + (option.mapx*coord[1])
+	idtuile = coord[0] + (classmap.mapx*coord[1])
 	return idtuile
 
-def idtuiletocoordmap(option, idtuile):
+def idtuiletocoordmap(classmap, idtuile):
 	######
 	# Fonction pour traduire l'idtuile en Coordonnées √
 	######
-	posx = idtuile%option.mapx
-	posy = idtuile//option.mapx
+	posx = idtuile%classmap.mapx
+	posy = idtuile//classmap.mapx
 
 	return [posx, posy]
 

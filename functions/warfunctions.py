@@ -1,9 +1,6 @@
 
 import functions.log as log
 
-
-
-
 def fight(gamedata, classmap, army1, army2):
 	##################
 	# Fonction pour gérer le combat entre 2 armée

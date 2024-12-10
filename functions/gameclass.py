@@ -6,6 +6,7 @@ import functions.log as log
 import functions.asset as asset
 import functions.stats as stats
 import functions.common as common
+import functions.affichage as affichage
 
 
 ####################
@@ -123,7 +124,8 @@ class Classlord:
 	def createarmy(self, name, x, y):
 		# On vérifie qu'il n'y a pas déjà une armée à cette position
 		log.log.printinfo(f"On créer une armée dans le village: {name}")
-		self.army += [Classarmy(x, y, ("unit " + name))]
+		nb = len(self.army)
+		self.army += [Classarmy(x, y, ("Armée " + name + f"{nb}"))]
 
 	def removearmy(self, army):
 		####
@@ -763,10 +765,15 @@ class Classarmy:
 		# Texture de l'armée
 		self.texture = 0
 
-	def setname(self, name:chr):
+	def setname(self, canvas, name:chr):
 		#####
 		# Methode pour changer le nom de l'armée
 		#####
+		# On change le tag de la bordure
+		border = (affichage.getborderarmy(canvas, self.name))
+		canvas.dtag(border, self.name)
+		canvas.addtag_withtag(name, border)
+		# On change le nom
 		self.name = name
 
 

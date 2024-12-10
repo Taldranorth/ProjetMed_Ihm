@@ -3,9 +3,10 @@ import tkinter
 import functions.log as log
 import functions.data as data
 import functions.asset as asset
-import functions.interfacegame as interfacegame
-import functions.moveview as moveview
 import functions.common as common
+import functions.moveview as moveview
+import functions.interfacemenu as interfacemenu
+import functions.interfacegame as interfacegame
 
 #########################
 # Fichier qui vient contenir les fonctions liées à l'affichage
@@ -22,7 +23,7 @@ def printvillage(gamedata, classmap, option, frame):
 		#On recup la position en x et y 
 		posx = classmap.listmap[ele].x
 		posy = classmap.listmap[ele].y
-		idtuile = posx + (option.mapx*posy)
+		idtuile = posx + (classmap.mapx*posy)
 		# On affiche le village
 		classmap.mapcanv.create_image((posx*ts)+(ts/2), (posy*ts)+(ts/2), tags = ["village","build","tuile","img", idtuile], image = asset.atlas.dico["settlement.png"].image)
 
@@ -41,7 +42,7 @@ def printvillageunit(gamedata, classmap, option, coordmap):
 
 	posx = coordmap[0]
 	posy = coordmap[1]
-	idtuile = posx + (option.mapx*posy)
+	idtuile = posx + (classmap.mapx*posy)
 
 	ts = gamedata.tuilesize
 	# On vérifie que la texture est en mémoire
@@ -126,8 +127,8 @@ def bordervillage(gamedata, classmap, option):
 		else:
 			posx = village.x - border
 
-		if (village.x + border) >= option.mapx:
-			posx2 = option.mapx-1
+		if (village.x + border) >= classmap.mapx:
+			posx2 = classmap.mapx-1
 		else:
 			posx2 = village.x + border + 1 
 
@@ -137,8 +138,8 @@ def bordervillage(gamedata, classmap, option):
 		else:
 			posy = village.y - border
 
-		if (village.y + border) >= option.mapy:
-			posy2 = option.mapy-1
+		if (village.y + border) >= classmap.mapy:
+			posy2 = classmap.mapy-1
 		else:
 			posy2 = village.y + border + 1 
 
@@ -180,8 +181,8 @@ def bordervillageunit(gamedata, classmap, option, village):
 	else:
 		posx = village.x - border
 
-	if (village.x + border) >= option.mapx:
-		posx2 = option.mapx-1
+	if (village.x + border) >= classmap.mapx:
+		posx2 = classmap.mapx-1
 	else:
 		posx2 = village.x + border + 1 
 
@@ -191,8 +192,8 @@ def bordervillageunit(gamedata, classmap, option, village):
 	else:
 		posy = village.y - border
 
-	if (village.y + border) >= option.mapy:
-		posy2 = option.mapy-1
+	if (village.y + border) >= classmap.mapy:
+		posy2 = classmap.mapy-1
 	else:
 		posy2 = village.y + border + 1 
 
@@ -215,7 +216,7 @@ def delborder(classmap, village):
 			classmap.mapcanv.delete(ele)
 			return
 
-def printarmy(gamedata, classmap, option, army):
+def printarmy(gamedata, classmap, option, army, lord):
 	##################
 	# Fonction pour afficher une armée 
 	##################
@@ -238,9 +239,13 @@ def printarmy(gamedata, classmap, option, army):
 	asset.atlas.loadtextureatlassize(asset.dico_file, texture_name, unit, ts/2)
 	# On créer à l'emplacement voulu
 	army.idCanv = classmap.mapcanv.create_image((posx*ts)+(ts/2), (posy*ts)+(ts/2), tags = ["army","tuile","img", army.name], image = asset.atlas.dico[texture_name].image)
+	# On créer la Bordure
+	classmap.mapcanv.create_rectangle((posx*ts)+(ts//4), (posy*ts)+(ts//4), (posx*ts)+ts-(ts//4), (posy*ts)+ts-(ts//4), tags = ["borderArmy", "tuile",army.name], outline = lord.color, width = 2)
 
 	# On bind l'interface
 	classmap.mapcanv.tag_bind("army", "<Button-1>", lambda event: interfacegame.armyinterface(event, gamedata, classmap, option))
+	# On bind le Tootipe
+	interfacemenu.tooltipcanvas(classmap.mapcanv, army.idCanv,f"{army.name}\nPuissance:{army.power}", [])
 
 def printupdatearmy(gamedata, classmap, army):
 	##################
@@ -274,17 +279,17 @@ def sequencemoveunit(gamedata, classmap, option, army, coordObjectif):
 	log.log.printinfo("On calcul les déplacement nécessaire")
 	log.log.printinfo(f"coord0, coord1: {army.x, army.y}, {coordObjectif}")
 	# Brensenham
-	lmovement = brensenham([army.x, army.y], coordObjectif)
+	#lmovement = brensenham([army.x, army.y], coordObjectif)
 	# Pathfinding
 	lmovement = pathfinding(gamedata, classmap, option, [army.x, army.y], coordObjectif, 45)
 	log.log.printinfo(f"lmovement: {lmovement}")
 
-	idtuile0 = common.coordmaptoidtuile(option, [army.x, army.y])
+	idtuile0 = common.coordmaptoidtuile(classmap, [army.x, army.y])
 	# Une fois la liste rempli ont éxécute autant que l'on peut
 	i = 0
-	idtuile = lmovement[i][0]+(option.mapx*lmovement[i][1])
+	idtuile = lmovement[i][0]+(classmap.mapx*lmovement[i][1])
 	while (army.moveturn - classmap.listmap[idtuile].movementcost >=0) and (i < len(lmovement)):
-		idtuile = lmovement[i][0]+(option.mapx*lmovement[i][1])
+		idtuile = lmovement[i][0]+(classmap.mapx*lmovement[i][1])
 		moveunit(gamedata, classmap, option, army, lmovement[i])
 		i += 1
 	classmap.listmap[idtuile0].removearmyinplace()
@@ -302,26 +307,44 @@ def moveunit(gamedata, classmap, option, army, coord):
 	##################
 
 	# On calcul l'id de la tuile
-	idtuile = common.coordmaptoidtuile(option, coord)
+	idtuile = common.coordmaptoidtuile(classmap, coord)
+
+	ts = gamedata.tuilesize
 
 	# On calcul les nouvelles coord
 	x = coord[0] - army.x
 	y = coord[1] - army.y
 	coord = common.coordmaptocanvas(gamedata, classmap, option, [x, y], True)
+	# On récupère la bordure
+	border = getborderarmy(classmap.mapcanv, army.name)
 	log.log.printinfo(f"Unité déplacement vers coord Canvas : {coord}")
 	log.log.printinfo(f"On déplace l'armée {army.name} avec l'id Canvas: {army.idCanv} de: {x}x,{y}y ")
-	# On déplace l'objet
-	classmap.mapcanv.move(army.idCanv, coord[0]- (gamedata.tuilesize/2), coord[1]-(gamedata.tuilesize/2))
+	# On déplace l'objet Armé
+	classmap.mapcanv.move(army.idCanv, coord[0]- (ts/2), coord[1]-(ts/2))
+	print(border)
+	# On déplace sa Bordure
+	classmap.mapcanv.move(border, coord[0]- (ts/2), coord[1]-(ts/2))
 
-	# On change les coord de l'armée
+	# On change les coord stocker dans l'armée
 	army.x += x
 	army.y += y
-
 
 	# On réduit la capacité de mouvement du tour
 	army.moveturn -= classmap.listmap[idtuile].movementcost
 
-
+def getborderarmy(canvas, armyname):
+	#####
+	# FOnction pour récupérer la Bordure d'une armée
+	####
+	# On récupère la liste des Objet
+	lobject = canvas.find_withtag("borderArmy")
+	# On se balade dedans
+	for ele in lobject:
+		# on récupère la liste des tags
+		ltag = canvas.gettags(ele)
+		if ltag[2] == armyname:
+			return ele
+	return 0
 
 def brensenham(coord0, coord1):
 	##################
@@ -574,13 +597,13 @@ def costsequ(gamedata, classmap, option, itinéraire):
 	cost = 0
 	for cases in itinéraire:
 		# Si la position x ou y de la cases est supérieur ou inférieur à la longueur de la carte alors invalide
-		if (cases[0] >= option.mapx) or (cases[1] >= option.mapy):
+		if (cases[0] >= classmap.mapx) or (cases[1] >= classmap.mapy):
 			return False
 		elif(cases[0] < 0) or (cases[1] < 0):
 			return False
 		else:
 			# Sinon on calcule le cout de la case
-			idtuile = common.coordmaptoidtuile(option, cases)
+			idtuile = common.coordmaptoidtuile(classmap, cases)
 			cost += classmap.listmap[idtuile].movementcost
 
 	return cost
@@ -591,7 +614,7 @@ def armymoveoneturn(gamedata, classmap, option, itinéraire, army):
 	#####
 	cost = 0
 	for cases in itinéraire:
-		idtuile = common.coordmaptoidtuile(option, cases)
+		idtuile = common.coordmaptoidtuile(classmap, cases)
 		cost += classmap.listmap[idtuile].movementcost
 		if cost > army.moveturn:
 			return False

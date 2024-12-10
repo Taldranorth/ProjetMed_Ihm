@@ -487,17 +487,33 @@ def searchposition(gamedata, classmap, option, village):
 	#####
 	xvill = village.x
 	yvill = village.y
-	idvillage = common.coordmaptoidtuile(option, [xvill, yvill])
+	idvillage = common.coordmaptoidtuile(classmap, [xvill, yvill])
 	# On teste sur la case du village
 	if classmap.listmap[idvillage].armyintuile == 0:
 		return [village.x, village.y]
 
 	# on test dans un rayon de 1 cases autour du village
-	for x in range(-1,1):
-		for y in range(-1,1):
-			idtuile = common.coordmaptoidtuile(option, [xvill + x, yvill + y])
-			if classmap.listmap[idtuile].armyintuile == 0:
-				return [xvill + x, yvill + y]
+	lcase = []
+	# On rempli une liste de coord
+	for x in range(-1, 1):
+		for y in range(-1, 1):
+			# On vérifie que les coordonnées sont dans la carte
+			if ((xvill+x) > 0) and ((xvill+x) < classmap.mapx):
+				if ((yvill+y) > 0) and ((yvill+y) < classmap.mapy):
+					lcase += [[xvill + x, yvill + y]]
+
+
+	# On tire aléatoirement les coord
+	r = random.randrange(len(lcase))
+	idtuile = common.coordmaptoidtuile(classmap,lcase[r])
+	# On vérifie que les coord soit correctes
+	while((classmap.listmap[idtuile].armyintuile != 0) and (len(lcase)>0)):
+		lcase = lcase[:r] + lcase[r+1:]
+		r = random.randrange(len(lcase))
+		idtuile = common.coordmaptoidtuile(classmap, lcase[r])
+	# Si Correcte alors ont renvoit
+	if (classmap.listmap[idtuile].armyintuile == 0):
+		return lcase[r]
 
 
 	return 0
@@ -617,21 +633,27 @@ def createarmy(gamedata, classmap, option, lord, nbsoldat, knight):
 	# On ne prend pas en compte le cout de création
 	#####
 	village = lord.fief[0]
-	idvillage = common.coordmaptoidtuile(option, [village.x, village.y])
+	idvillage = common.coordmaptoidtuile(classmap, [village.x, village.y])
 	# Récupère les coord de la 1er cases libres
 	coord = searchposition(gamedata, classmap, option, village)
-	i = len(lord.army)
-	# Créer l'armée
-	lord.createarmy(village.name, coord[0], coord[1])
-	classmap.listmap[idvillage].setarmyinplace(lord.army[i])
-	# Recrute Soldat
-	for x in range(nbsoldat):
-		lord.army[i].recruitsoldier(asset.dico_name.randomnametype("Nom"))
-	if knight == 1:
-		lord.army[i].recruitknight(asset.dico_name.randomnametype("Surnom"))
-	# Affiche l'armée
-	affichage.printarmy(gamedata, classmap, option, lord.army[i])
-	log.log.printinfo(f"{lord.lordname} A créer l'armée {lord.army[i].name}")
+	if coord != 0:
+		i = len(lord.army)
+		# Créer l'armée
+		lord.createarmy(village.name, coord[0], coord[1])
+		classmap.listmap[idvillage].setarmyinplace(lord.army[i])
+		# Recrute Soldat
+		for x in range(nbsoldat):
+			lord.army[i].recruitsoldier(asset.dico_name.randomnametype("Nom"))
+		if knight == 1:
+			lord.army[i].recruitknight(asset.dico_name.randomnametype("Surnom"))
+		idtuile = common.coordmaptoidtuile(classmap, coord)
+		# On indique qu'une armée est présente sur la tuile
+		classmap.listmap[idtuile].setarmyinplace(lord.army[i])
+		# Affiche l'armée
+		affichage.printarmy(gamedata, classmap, option, lord.army[i], lord)
+		log.log.printinfo(f"{lord.lordname} A créer l'armée {lord.army[i].name} à la position {lord.army[i].x}, {lord.army[i].y}")
+	else:
+		log.log.printerror(f"{lord.lordname} N'a pas de place libre autour de {village.name} pour créer une armée")
 
 
 ############################################# War #############################################
@@ -666,7 +688,7 @@ def statewar(gamedata, classmap, option):
 		yorigine = classmap.mapcanv.canvasy(0)
 
 		# On se place au centre
-		moveview.centerviewcanvas(gamedata, classmap, option, [(option.mapx/2)*ts, (option.mapy/2)*ts])
+		moveview.centerviewcanvas(gamedata, classmap, option, [(classmap.mapx/2)*ts, (classmap.mapy/2)*ts])
 
 		# On affiche les territoire 
 		# On se balade dans la liste des territoire
@@ -859,16 +881,14 @@ def statebuildvillage(gamedata, classmap, option):
 		for idtuile in classmap.lplaines:
 			# Si on peut constuire un village
 			if genproc.buildvillagepossible(option, classmap, idtuile) == True:
-				coord = idtuiletocoordmap(option, idtuile)
+				coord = common.idtuiletocoordmap(classmap, idtuile)
 				# On calcul les coord x et y
 				x = coord[0]
 				y = coord[1]
 				# On créer un carrer clickable avec un bord vert
-				#print(xorigine,yorigine)
-				#print("coord: ", (x*ts) + xorigine, (y*ts) + yorigine, (x*ts)+ts + xorigine, (y*ts)+ts + yorigine)
 				classmap.mapcanv.create_rectangle(originecanvas[0]+(x*ts)-(ts/2), originecanvas[1]+(y*ts)-(ts/2), originecanvas[0]+(x*ts)+ts-(ts/2), originecanvas[1]+(y*ts)+ts-(ts/2), tag = ["buildvillage","tuile", x, y], fill = "green",outline = "green")
 
-		# On tag au carrer 
+		# On tag au square
 		classmap.mapcanv.tag_bind("buildvillage", "<Button-1>", lambda event: buildvillage(event, gamedata, classmap, option))
 		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], ["buildvillage"]))
 
@@ -884,7 +904,7 @@ def buildvillage(event, gamedata, classmap, option):
 	# On calcul l'id de la tuile
 	xpos = int(event.widget.gettags("current")[2])
 	ypos = int(event.widget.gettags("current")[3])
-	idtuile = xpos + (option.mapx*ypos)
+	idtuile = xpos + (classmap.mapx*ypos)
 
 	if player.verifcost(15,15) == True:
 		# On retire
@@ -915,6 +935,8 @@ def buildvillage(event, gamedata, classmap, option):
 
 		# On update l'entête
 		updateinterface(gamedata, classmap)
+	else:
+		log.log.printinfo(f"Pas assez de Ressource")
 
 def updatestatbuildvillage(classmap, option):
 	############
@@ -925,7 +947,7 @@ def updatestatbuildvillage(classmap, option):
 		# On calcul l'id
 		xpos = int(classmap.mapcanv.gettags(tuile)[2])
 		ypos = int(classmap.mapcanv.gettags(tuile)[3])
-		idtuile = xpos + (option.mapx*ypos)
+		idtuile = xpos + (classmap.mapx*ypos)
 
 		# On test si la tuile est toujours valable
 		# Si elle ne l'est pas on la suicide
@@ -966,18 +988,18 @@ def statebuildchurch(gamedata, classmap, option):
 		for village in player.fief:
 			if village.church == 0:
 				lc_interface_church.insert(tkinter.END, village.name)
+				# On affiche en vert tout les villages ou on peut construire une église
+				x = village.x
+				y = village.y
+				classmap.mapcanv.create_rectangle(originecanvas[0]+(x*ts)-(ts/2), originecanvas[1]+(y*ts)-(ts/2), originecanvas[0]+(x*ts)+ts-(ts/2), originecanvas[1]+(y*ts)+ts-(ts/2), tags = ["buildchurch","tuile"], outline = "green", width = 2)
 		# Quand un village est double click on appele la fonction pour centrer la vue sur le village
 		lc_interface_church.bind("<Double-Button-1>", lambda event: centervillagechurch(event, gamedata, classmap, option))
 
-		# On affiche en vert tout les villages ou on peut construire une église
-		for village in player.fief:
-			if village.church == 0:
-				x = village.x
-				y = village.y
-				classmap.mapcanv.create_rectangle(originecanvas[0]+(x*ts)-(ts/2), originecanvas[1]+(y*ts)-(ts/2), originecanvas[0]+(x*ts)+ts-(ts/2), originecanvas[1]+(y*ts)+ts-(ts/2), tags = ["buildchurch","tuile"], outline = "green")
-
 		# On bind la fonction buildchurch à la tuile du village
 		idbuildchurch = classmap.mapcanv.tag_bind("village", "<Button-1>", lambda event: triggerbuildchurch(event, gamedata, classmap, option), add = "+")
+		# On bind la fonction buildchurch au squre
+		classmap.mapcanv.tag_bind("buildchurch", "<Button-1>",lambda event: triggerbuildchurch(event, gamedata, classmap, option))
+
 
 		# On bind la fonction d'exit à tout ce qui n'est pas un village
 		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event, lsequ = [["village","<Button-1>"]], lf = [idbuildchurch], lidw = [window_interface_church, "buildchurch"]: exitstate(gamedata, classmap, option, lsequ, lf, lidw))
@@ -1008,12 +1030,12 @@ def triggerbuildchurch(event, gamedata, classmap, option):
 	############
 	canvas = event.widget
 
-	# On recup les coord de la tuile:
+	# On recup les coord Canvas de la tuile:
 	coord = classmap.mapcanv.coords("current")
 	# On les transforme en coord map
 	coordmap = common.coordcanvastomap(gamedata, classmap, option, coord)
 
-	idvillage = common.coordmaptoidtuile(option, coordmap)
+	idvillage = common.coordmaptoidtuile(classmap, coordmap)
 	village = classmap.listmap[idvillage].village
 	player = gamedata.list_lord[gamedata.playerid]
 
@@ -1645,8 +1667,8 @@ def showpathfindingCoord(coord1, gamedata, classmap, option, army):
 			classmap.mapcanv.create_oval((sequ[i][0]*ts), (sequ[i][1]*ts), (sequ[i][0]*ts)+ts, (sequ[i][1]*ts)+ts, width = 2, tags = "path", outline = color)
 		else:
 			#On calcule la tuile à partir des coord Map
-			idtuile = common.coordmaptoidtuile(option, sequ[i])
-			idtuile2 = common.coordmaptoidtuile(option, sequ[i+1])
+			idtuile = common.coordmaptoidtuile(classmap, sequ[i])
+			idtuile2 = common.coordmaptoidtuile(classmap, sequ[i+1])
 			if color == "green":
 				if(move - classmap.listmap[idtuile2].movementcost) < 0:
 					classmap.mapcanv.create_oval((sequ[i][0]*ts), (sequ[i][1]*ts), (sequ[i][0]*ts)+ts, (sequ[i][1]*ts)+ts, width = 2, tags = "path", outline = color)
@@ -1757,10 +1779,10 @@ def sequencemovefight(gamedata, classmap, option, army1, army2):
 
 		# On déplace autant que l'on peut
 		i = 0
-		idtuile = common.coordmaptoidtuile(option, itinéraire[0])
+		idtuile = common.coordmaptoidtuile(classmap, itinéraire[0])
 		idtuile0 = idtuile
 		while (army1.moveturn - classmap.listmap[idtuile].movementcost >=0) and (i < len(itinéraire)):
-			idtuile = common.coordmaptoidtuile(option, itinéraire[i])
+			idtuile = common.coordmaptoidtuile(classmap, itinéraire[i])
 			affichage.moveunit(gamedata, classmap, option, army1, itinéraire[i])
 			i += 1
 		classmap.listmap[idtuile0].removearmyinplace()
@@ -1836,7 +1858,7 @@ def startsequencemovetakevillage(event, gamedata, classmap, option, army):
 	log.log.printinfo(f"pos: {posx}, {posy}")
 	# On transforme en coord Map
 	coord = common.coordcanvastomap(gamedata, classmap, option, [posx, posy])
-	idvillage = common.coordmaptoidtuile(option, coord)
+	idvillage = common.coordmaptoidtuile(classmap, coord)
 	log.log.printinfo(f"idvillage: {idvillage}")
 	# On recup l'objet village
 	village = classmap.idtovillage(idvillage)
@@ -1863,10 +1885,10 @@ def sequencemovetakevillage(gamedata, classmap, option, lord, army, village):
 
 		# On déplace autant que l'on peut
 		i = 0
-		idtuile = common.coordmaptoidtuile(option, itinéraire[0])
+		idtuile = common.coordmaptoidtuile(classmap, itinéraire[0])
 		idtuile0 = idtuile
 		while (army.moveturn - classmap.listmap[idtuile].movementcost >=0) and (i < len(itinéraire)):
-			idtuile = common.coordmaptoidtuile(option, itinéraire[i])
+			idtuile = common.coordmaptoidtuile(classmap, itinéraire[i])
 			affichage.moveunit(gamedata, classmap, option, army, itinéraire[i])
 			i += 1
 		classmap.listmap[idtuile0].removearmyinplace()

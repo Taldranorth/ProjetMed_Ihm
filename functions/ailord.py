@@ -291,14 +291,27 @@ def searchvillage(gamedata, classmap, option, village):
 	xvill = village.x
 	yvill = village.y
 
+	lcase = []
+	# On rempli une liste de coord
 	for x in range(-5, 5):
 		for y in range(-5, 5):
 			# On vérifie que les coordonnées sont dans la carte
-			if ((xvill+x) > 0) and ((xvill+x) < option.mapx):
-				if ((yvill+y) > 0) and ((yvill+y) < option.mapy):
-					idtuile = common.coordmaptoidtuile(option,[xvill + x, yvill + y])
-					if genproc.buildvillagepossible(option, classmap, idtuile) == True:
-						return idtuile
+			if ((xvill+x) > 0) and ((xvill+x) < classmap.mapx):
+				if ((yvill+y) > 0) and ((yvill+y) < classmap.mapy):
+					lcase += [[xvill + x, yvill + y]]
+
+	# On tire aléatoirement les coord
+	r = random.randrange(len(lcase))
+	idtuile = common.coordmaptoidtuile(classmap,lcase[r])
+	# On vérifie que les coord soit correctes
+	while((genproc.buildvillagepossible(option, classmap, idtuile) == False) and (len(lcase)>0)):
+		lcase = lcase[:r] + lcase[r+1:]
+		r = random.randrange(len(lcase))
+		idtuile = common.coordmaptoidtuile(classmap, lcase[r])
+	# Si Correcte alors ont renvoit
+	if (genproc.buildvillagepossible(option, classmap, idtuile) == True):
+		return idtuile
+
 	return 0
 
 def actionbuildchurch(gamedata, classmap, option, lord):

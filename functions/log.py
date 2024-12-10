@@ -17,7 +17,7 @@ class Classlog:
 
 		ch = "Erreur: " + ch
 		ch = self.formatlog(ch)
-		print(ch)
+		print(f"\033[0;31m{ch}")
 		self.file.write(ch+"\n")
 		self.file.flush()
 
@@ -25,7 +25,7 @@ class Classlog:
 
 		ch = "Info: " +ch
 		ch = self.formatlog(ch)
-		print(ch)
+		print(f"\033[0;37m{ch}")
 		self.file.write(ch+"\n")
 		self.file.flush()
 

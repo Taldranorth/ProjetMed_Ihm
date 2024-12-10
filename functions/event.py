@@ -180,7 +180,7 @@ class ClassEvent:
 		# On créer l'armée
 		interfacegame.createarmy(gamedata, classmap, option, lord, nbsoldat, 0)
 		# On change le nom
-		lord.army[len(lord.army)-1].setname("Armée Volontaire")
+		lord.army[len(lord.army)-1].setname(classmap.mapcanv, "Armée Volontaire")
 		return [lord.fief[0].name, nbsoldat]
 
 
@@ -247,12 +247,12 @@ class ClassEvent:
 			if lord.idlord == gamedata.playerid:
 				if accept == True:
 					interfacegame.createarmy(gamedata, classmap, option, lord, nbsoldat, knight)
-					lord.army[len(lord.army)-1].setname("unit mercenary")
+					lord.army[len(lord.army)-1].setname(classmap.mapcanv, "unit mercenary")
 			else:
 				# Si le prix est inférieur au quart de se que possède le seigneurs IA alors il accepte
 				if (price < int(lord.nb_money*1/4)):
 					interfacegame.createarmy(gamedata, classmap, option, lord, nbsoldat, knight)
-					lord.army[len(lord.army)-1].setname("unit mercenary")
+					lord.army[len(lord.army)-1].setname(classmap.mapcanv, "unit mercenary")
 			
 
 	##### Négatif ######
@@ -429,7 +429,7 @@ class ClassEvent:
 		# On retire le Village du fief du Seigneurs
 		lord.removefief(village)
 		# On calcul l'id du village
-		idvillage = common.coordmaptoidtuile(option, [village.x, village.y])
+		idvillage = common.coordmaptoidtuile(classmap, [village.x, village.y])
 		# On le delete
 		classmap.removeidvillage(idvillage)
 		return [name, x, y]

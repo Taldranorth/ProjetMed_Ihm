@@ -46,7 +46,7 @@ def initgame(mainmenuwin, gamedata, classmap, option, root):
 	# Fonction Pour initialiser la game
 	######
 	# on générer la Carte
-	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, option.mapx, option.mapy)
+	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, classmap.mapx, classmap.mapy)
 	# On lance la création de la fenêtre du Jeu
 	interfacemenu.mainscreen(gamedata, classmap, option, root, pic)
 

@@ -94,9 +94,9 @@ def playmenu(mainmenuwin, gamedata, classmap, option, root):
 	# Canvas de la minimap
 	mapcanv = tkinter.Canvas(canvasframeminimap)
 
-	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, option.mapx, option.mapy)
+	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, classmap.mapx, classmap.mapy)
 	# Fonction qui gen la mini carte
-	previewmap(mapcanv, pic, option.mapx, option.mapy)
+	previewmap(mapcanv, pic, classmap.mapx, classmap.mapy)
 	##################################################################
 
 	########################\ Seed \##################################
@@ -105,22 +105,22 @@ def playmenu(mainmenuwin, gamedata, classmap, option, root):
 	tkvar_seed.set(gamedata.seed)
 
 	# Button pour générer un nouveau seed ce qui vient update automatiquement la carte
-	Button_playmenu_newseed = tkinter.Button(fplaymenu ,command = lambda: regenseed(gamedata, option,tkvar_seed, mapcanv), text = "Genérer nouvelle Seed")
+	Button_playmenu_newseed = tkinter.Button(fplaymenu ,command = lambda: regenseed(gamedata, classmap, option,tkvar_seed, mapcanv), text = "Genérer nouvelle Seed")
 	Button_playmenu_newseed.grid(row = 1, columnspan = 5)
 
 	# Entry widget qui affiche la seed, permet de la modif et de la copier
 	entryseed = tkinter.Entry(fplaymenu, textvariable = tkvar_seed)
 	entryseed.grid(row = 2, column = 1, columnspan = 2)
-	button_entryseed = tkinter.Button(fplaymenu, command = lambda: validate_entry_seed(entryseed, option, gamedata, tkvar_seed, mapcanv), text = "change")
+	button_entryseed = tkinter.Button(fplaymenu, command = lambda: validate_entry_seed(entryseed, gamedata, classmap, option, tkvar_seed, mapcanv), text = "change")
 	button_entryseed.grid(row = 2, column = 2, columnspan = 2)
 	##################################################################
 
 	########################\ Map Size \##############################
 	#txt variable mapx mapy
 	tkvar_mapx = tkinter.IntVar()
-	tkvar_mapx.set(option.mapx)
+	tkvar_mapx.set(classmap.mapx)
 	tkvar_mapy = tkinter.IntVar()
-	tkvar_mapy.set(option.mapy)
+	tkvar_mapy.set(classmap.mapy)
 
 	# Label
 	tkinter.Label(fplaymenu, text = "largeur: ").grid(row = 3, column = 0)
@@ -130,7 +130,7 @@ def playmenu(mainmenuwin, gamedata, classmap, option, root):
 	tkinter.Label(fplaymenu, text = "hauteur: ").grid(row = 3, column = 2)
 	entrymapy = tkinter.Entry(fplaymenu, textvariable = tkvar_mapy)
 	entrymapy.grid(row = 3, column = 3)
-	button_entrymap = tkinter.Button(fplaymenu, command = lambda: validate_entry_map(entrymapx, entrymapy, option, gamedata, tkvar_mapx, tkvar_mapy, mapcanv), text = "change")
+	button_entrymap = tkinter.Button(fplaymenu, command = lambda: validate_entry_map(entrymapx, entrymapy, gamedata, classmap, option, tkvar_mapx, tkvar_mapy, mapcanv), text = "change")
 	button_entrymap.grid(row = 3, column = 4)
 	##################################################################
 
@@ -171,25 +171,25 @@ def playmenu(mainmenuwin, gamedata, classmap, option, root):
 	Button_playmenu_return = tkinter.Button(fplaymenu, command = lambda: returntomainmenu(gamedata, classmap, option, mainmenuwin, root),text = "Retour")
 	Button_playmenu_return.grid(columnspan = 5)
 
-def validate_entry_map(entrymapx, entrymapy, option, gamedata, tkvar_mapx, tkvar_mapy, mapcanv):
-	option.mapx = int(entrymapx.get())
-	option.mapy = int(entrymapy.get())
+def validate_entry_map(entrymapx, entrymapy, gamedata, classmap, option, tkvar_mapx, tkvar_mapy, mapcanv):
+	classmap.mapx = int(entrymapx.get())
+	classmap.mapy = int(entrymapy.get())
 
-	tkvar_mapx.set(option.mapx)
-	tkvar_mapy.set(option.mapy)
+	tkvar_mapx.set(classmap.mapx)
+	tkvar_mapy.set(classmap.mapy)
 
-	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, option.mapx, option.mapy)
-	previewmap(mapcanv, pic, option.mapx, option.mapy)
+	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, classmap.mapx, classmap.mapy)
+	previewmap(mapcanv, pic, classmap.mapx, classmap.mapy)
 
 
-def validate_entry_seed(entryseed, option, gamedata, tkvar_seed, mapcanv):
+def validate_entry_seed(entryseed, gamedata, classmap, option, tkvar_seed, mapcanv):
 	####################
 	# Fonction pour changer automatiquement la seed stocker dans gamedata, tkvar_seed et la minimap
 	####################
 	gamedata.seed = float(entryseed.get())
 	tkvar_seed.set(gamedata.seed)
-	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, option.mapx, option.mapy)
-	previewmap(mapcanv, pic, option.mapx, option.mapy)
+	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, classmap.mapx, classmap.mapy)
+	previewmap(mapcanv, pic, classmap.mapx, classmap.mapy)
 
 def validate_entry_lordname(gamedata, tkvar_playername):
 	####################
@@ -198,15 +198,15 @@ def validate_entry_lordname(gamedata, tkvar_playername):
 	gamedata.list_lord[gamedata.playerid].lordname = tkvar_playername.get()
 
 
-def regenseed(gamedata, option, tkvar_seed, mapcanv):
+def regenseed(gamedata, classmap, option, tkvar_seed, mapcanv):
 	####################
 	# Fonction associer à un bouton pour random la seed et changer la minimap
 	####################
 
 	gamedata.seed = random.random()*time()
 	tkvar_seed.set(gamedata.seed)
-	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, option.mapx, option.mapy)
-	previewmap(mapcanv, pic, option.mapx, option.mapy)
+	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, classmap.mapx, classmap.mapy)
+	previewmap(mapcanv, pic, classmap.mapx, classmap.mapy)
 
 
 def previewmap(mapcanv, pic, mapx, mapy):
@@ -923,8 +923,8 @@ def createmap(gamedata, classmap, option, pic, win1):
 	# !!!!!!
 	# Différence position entre map texture et map carré causer par le fait que la map texture utilise les coordonnées donnés comme point centrale et non point en haut à gauche
 	# !!!!!!
-	for y in range(option.mapy):
-		for x in range(option.mapx):
+	for y in range(classmap.mapy):
+		for x in range(classmap.mapx):
 
 			##### Version Non-Aléatoire Dico Avec Atlas #####
 			#'''
@@ -1078,8 +1078,8 @@ def neightbours_tuile(option, pic, x, y):
 	for yn in range(-1,2):
 		for xn in range(-1,2):
 			# On s'assure que les coord ne soit pas hors de la carte
-			if(((x+xn) >= 0) and ((x+xn)<option.mapx)):
-				if(((y+yn) >= 0) and ((y+yn)<option.mapy)):
+			if(((x+xn) >= 0) and ((x+xn)<classmap.mapx)):
+				if(((y+yn) >= 0) and ((y+yn)<classmap.mapy)):
 					if ((xn == 0) and (yn == 0)):
 						pass
 					else:
@@ -1121,12 +1121,12 @@ def neighbourstotexture(option, x, y , type, lntype):
 				print("cardinal Ouest")
 				return "conifer_forest_west_1.png"
 		# Cardinal Est
-		if ((x+1) < option.mapx):
+		if ((x+1) < classmap.mapx):
 			if [x+1, y] not in lntype[1]:
 				print("cardinal Est")
 				return "conifer_forest_east_1.png"
 		# Cardinal Sud
-		if((y+1) < option.mapy):
+		if((y+1) < classmap.mapy):
 			if [x, y+1] not in lntype[1]:
 				print("cardinal Sud")
 				return "conifer_forest_south_1.png"
@@ -1145,8 +1145,8 @@ def cardinal(option, x, y, lntype):
 			if((xn== 0) and (yn == 0)):
 				pass
 			else:
-				if (((x+xn)< option.mapx) and (x+xn >= 0)):
-					if (((y+yn)< option.mapy) and (y+yn >= 0)):
+				if (((x+xn)< classmap.mapx) and (x+xn >= 0)):
+					if (((y+yn)< classmap.mapy) and (y+yn >= 0)):
 						if [x+xn, y+yn] not in lntype:
 							pass
 
@@ -1204,7 +1204,6 @@ def tooltip(widget, text, lvariable):
 	####
 	# On recup la Top Window
 	top_window = widget.winfo_toplevel()
-	#print("top_window trouvé:", top_window)
 	widget.bind("<Enter>", lambda event: tooltip_create(event, widget, top_window, text, lvariable))
 
 def tooltip_create(event, widget, top_window, text, lvariable):
@@ -1253,6 +1252,65 @@ def tooltip_destroy(event, widget, window_tooltip):
 	window_tooltip.destroy()
 	# On retire le Bind
 	widget.unbind_all("<Leave>")
+
+def tooltipcanvas(canvas, idobject, text, lvariable):
+	#####
+	# Fonction Pour gérer un tooltip Vis à Vis d'un objet
+	#####
+	# On recup la Top Window
+	top_window = canvas.winfo_toplevel()
+	canvas.tag_bind(idobject, "<Enter>", lambda event: tooltipcanvas_create(event, canvas, idobject, top_window, text, lvariable))
+
+def tooltipcanvas_create(event, canvas, idobject, top_window, text, lvariable):
+	####
+	# Fonction pour gérer la Création de la fenêtre
+	####
+	#print("On créer le Pop-Up")
+	# On recup les coord de la souris
+	posmouse = event.widget.winfo_pointerxy()
+	#print(text)
+	#print(lvariable)
+	# On créer la fenêtre
+	windowtooltip = tkinter.Toplevel()
+	# On la place
+	windowtooltip.geometry(f"+{posmouse[0]+5}+{posmouse[1]+5}")
+	# On la rend Transient
+	windowtooltip.transient(top_window)
+	# On l'overrid
+	windowtooltip.overrideredirect(True)
+	# On créer le frame dans lequel on ajoute le text
+	frame = tkinter.Frame(windowtooltip)
+	frame.pack()
+	# On traite le texte
+	if type(text) == str:
+		ch = text
+	else:
+		ch = ""
+		for ele in text:
+			if type(ele) == str:
+				ch += ele
+			else:
+				ch += f"{ele}"
+
+	# On y ajoute le texte
+	tkinter.Label(frame, text = ch).pack()
+	# On bind la destruction quand la souris quitte le widget
+	canvas.tag_bind(idobject, "<Leave>", lambda event: tooltipcanvas_destroy(event, canvas, idobject, windowtooltip))
+
+def tooltipcanvas_destroy(event, canvas, idobject, window_tooltip):
+	####
+	# Fonction pour gérer la destruction de la fenêtre
+	####
+	#print("On détruit le tooltip")
+	window_tooltip.destroy()
+	# On retire le Bind
+	canvas.tag_unbind(idobject, "<Leave>")
+
+
+######################################################
+
+
+
 
 def convertposgraph(coord, heightgraph, widthgraph):
 	####

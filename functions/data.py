@@ -436,9 +436,6 @@ class ClassOptions:
 
 		#self.listResolutionWindow = []
 		#self.listResolutionWindow += 
-		# Définition de la carte
-		self.mapx = 100
-		self.mapy = 100
 
 		# Octaves utilisés pour la gen de la carte
 		self.octaves = 10
@@ -478,6 +475,10 @@ class Classmap:
 		#	--> Plaines
 		self.lvillages = []
 		self.lplaines = []
+
+		# Définition de la carte
+		self.mapx = 100
+		self.mapy = 100
 
 	def addtuileinlist(self, tuile):
 		self.listmap[self.nbtuile] = tuile
