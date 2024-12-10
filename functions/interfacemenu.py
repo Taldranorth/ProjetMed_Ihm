@@ -108,7 +108,6 @@ def playmenu(mainmenuwin, gamedata, classmap, option, root):
 	Button_playmenu_newseed = tkinter.Button(fplaymenu ,command = lambda: regenseed(gamedata, option,tkvar_seed, mapcanv), text = "Genérer nouvelle Seed")
 	Button_playmenu_newseed.grid(row = 1, columnspan = 5)
 
-
 	# Entry widget qui affiche la seed, permet de la modif et de la copier
 	entryseed = tkinter.Entry(fplaymenu, textvariable = tkvar_seed)
 	entryseed.grid(row = 2, column = 1, columnspan = 2)
@@ -475,10 +474,20 @@ def eof_military_graph(gamedata, classmap, option, frame_eof_screen_up):
 	# Label de la Fenêtre
 	tkinter.Label(frame_eof_screen_up_child, text = f"").grid(row = 0,column = 3)
 
+	# On setup la Scrollbar Vertical du Canvas
+	yscrollbar = tkinter.Scrollbar(frame_eof_screen_up_child, orient = tkinter.VERTICAL)
+	yscrollbar.grid(row = 2, column = 5, sticky= tkinter.W+ tkinter.N + tkinter.S)
+
+	# On setup la Scrollbar Horizontal du Canvas
+	xscrollbar = tkinter.Scrollbar(frame_eof_screen_up_child, orient = tkinter.HORIZONTAL)
+	xscrollbar.grid(row = 3, column = 0, columnspan = 5,sticky= tkinter.W+ tkinter.N + tkinter.E)
 
 	# On créer le Canvas
-	canvas = tkinter.Canvas(frame_eof_screen_up_child, height = (0.4* option.heightWindow)+10, width = (0.6*option.widthWindow))
+	canvas = tkinter.Canvas(frame_eof_screen_up_child, height = (0.4* option.heightWindow)+10, width = (0.6*option.widthWindow), xscrollcommand = xscrollbar.set, yscrollcommand = yscrollbar.set)
 	canvas.grid(row = 2, column = 0, columnspan = len(gamedata.list_lord))
+
+	yscrollbar["command"] = canvas.yview
+	xscrollbar["command"] = canvas.xview
 
 	i = 0
 	for lord in gamedata.list_lord:
@@ -539,10 +548,20 @@ def eof_demography_graph(gamedata, classmap, option, frame_eof_screen_up):
 	# Label de la Fenêtre
 	tkinter.Label(frame_eof_screen_up_child, text = f"").grid(row = 0,column = 3)
 
+	# On setup la Scrollbar Vertical du Canvas
+	yscrollbar = tkinter.Scrollbar(frame_eof_screen_up_child, orient = tkinter.VERTICAL)
+	yscrollbar.grid(row = 2, column = 5, sticky= tkinter.W+ tkinter.N + tkinter.S)
+
+	# On setup la Scrollbar Horizontal du Canvas
+	xscrollbar = tkinter.Scrollbar(frame_eof_screen_up_child, orient = tkinter.HORIZONTAL)
+	xscrollbar.grid(row = 3, column = 0, columnspan = 5,sticky= tkinter.W+ tkinter.N + tkinter.E)
 
 	# On créer le Canvas
-	canvas = tkinter.Canvas(frame_eof_screen_up_child, height = (0.4* option.heightWindow)+10, width = (0.6*option.widthWindow))
+	canvas = tkinter.Canvas(frame_eof_screen_up_child, height = (0.4* option.heightWindow)+10, width = (0.6*option.widthWindow), xscrollcommand = xscrollbar.set, yscrollcommand = yscrollbar.set)
 	canvas.grid(row = 2, column = 0, columnspan = len(gamedata.list_lord))
+
+	yscrollbar["command"] = canvas.yview
+	xscrollbar["command"] = canvas.xview
 
 	i = 0
 	for lord in gamedata.list_lord:
@@ -602,10 +621,20 @@ def eof_economy_graph(gamedata, classmap, option, frame_eof_screen_up):
 	# Label de la Fenêtre
 	tkinter.Label(frame_eof_screen_up_child, text = f"").grid(row = 0,column = 3)
 
+	# On setup la Scrollbar Vertical du Canvas
+	yscrollbar = tkinter.Scrollbar(frame_eof_screen_up_child, orient = tkinter.VERTICAL)
+	yscrollbar.grid(row = 2, column = 5, sticky= tkinter.W+ tkinter.N + tkinter.S)
+
+	# On setup la Scrollbar Horizontal du Canvas
+	xscrollbar = tkinter.Scrollbar(frame_eof_screen_up_child, orient = tkinter.HORIZONTAL)
+	xscrollbar.grid(row = 3, column = 0, columnspan = 5,sticky= tkinter.W+ tkinter.N + tkinter.E)
 
 	# On créer le Canvas
-	canvas = tkinter.Canvas(frame_eof_screen_up_child, height = (0.4* option.heightWindow)+10, width = (0.6*option.widthWindow))
+	canvas = tkinter.Canvas(frame_eof_screen_up_child, height = (0.4* option.heightWindow)+10, width = (0.6*option.widthWindow), xscrollcommand = xscrollbar.set, yscrollcommand = yscrollbar.set)
 	canvas.grid(row = 2, column = 0, columnspan = len(gamedata.list_lord))
+
+	yscrollbar["command"] = canvas.yview
+	xscrollbar["command"] = canvas.xview
 
 	i = 0
 	for lord in gamedata.list_lord:
@@ -666,10 +695,20 @@ def eof_score_graph(gamedata, classmap, option, frame_eof_screen_up):
 	# Label de la Fenêtre
 	tkinter.Label(frame_eof_screen_up_child, text = f"").grid(row = 0,column = 3)
 
+	# On setup la Scrollbar Vertical du Canvas
+	yscrollbar = tkinter.Scrollbar(frame_eof_screen_up_child, orient = tkinter.VERTICAL)
+	yscrollbar.grid(row = 2, column = 5, sticky= tkinter.W+ tkinter.N + tkinter.S)
+
+	# On setup la Scrollbar Horizontal du Canvas
+	xscrollbar = tkinter.Scrollbar(frame_eof_screen_up_child, orient = tkinter.HORIZONTAL)
+	xscrollbar.grid(row = 3, column = 0, columnspan = 5,sticky= tkinter.W+ tkinter.N + tkinter.E)
 
 	# On créer le Canvas
-	canvas = tkinter.Canvas(frame_eof_screen_up_child, height = (0.4* option.heightWindow)+10, width = (0.6*option.widthWindow))
+	canvas = tkinter.Canvas(frame_eof_screen_up_child, height = (0.4* option.heightWindow)+10, width = (0.6*option.widthWindow), xscrollcommand = xscrollbar.set, yscrollcommand = yscrollbar.set)
 	canvas.grid(row = 2, column = 0, columnspan = len(gamedata.list_lord))
+
+	yscrollbar["command"] = canvas.yview
+	xscrollbar["command"] = canvas.xview
 
 	i = 0
 	for lord in gamedata.list_lord:
@@ -729,10 +768,20 @@ def eof_death_graph(gamedata, classmap, option, frame_eof_screen_up):
 	# Label de la Fenêtre
 	tkinter.Label(frame_eof_screen_up_child, text = f"").grid(row = 0,column = 3)
 
+	# On setup la Scrollbar Vertical du Canvas
+	yscrollbar = tkinter.Scrollbar(frame_eof_screen_up_child, orient = tkinter.VERTICAL)
+	yscrollbar.grid(row = 2, column = 5, sticky= tkinter.W+ tkinter.N + tkinter.S)
+
+	# On setup la Scrollbar Horizontal du Canvas
+	xscrollbar = tkinter.Scrollbar(frame_eof_screen_up_child, orient = tkinter.HORIZONTAL)
+	xscrollbar.grid(row = 3, column = 0, columnspan = 5,sticky= tkinter.W+ tkinter.N + tkinter.E)
 
 	# On créer le Canvas
-	canvas = tkinter.Canvas(frame_eof_screen_up_child, height = (0.4* option.heightWindow)+10, width = (0.6*option.widthWindow))
+	canvas = tkinter.Canvas(frame_eof_screen_up_child, height = (0.4* option.heightWindow)+10, width = (0.6*option.widthWindow), xscrollcommand = xscrollbar.set, yscrollcommand = yscrollbar.set)
 	canvas.grid(row = 2, column = 0, columnspan = len(gamedata.list_lord))
+
+	yscrollbar["command"] = canvas.yview
+	xscrollbar["command"] = canvas.xview
 
 	i = 0
 	for lord in gamedata.list_lord:

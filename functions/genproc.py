@@ -3,10 +3,12 @@ import random
 
 import functions.log as log
 import functions.asset as asset
+import functions.common as common
 import functions.gameclass as gameclass
 
-import matplotlib.pyplot as plt
+
 from time import time
+import matplotlib.pyplot as plt
 import perlin_noise.perlin_noise as Perlin_noise
 
 #########################
@@ -23,19 +25,6 @@ def genNoiseMap(octaves, seed, mapx, mapy):
     #print(len(pic))
     #print(pic)
     return pic
-
-
-
-
-######################### Fonction Gen Détail #########################
-#
-# Comment Gérer cela ? À qu'elle étape ?
-#       - En utilisant la Noise map ?
-#       - Après avoir utiliser la map du Canvas ?
-#
-#
-#
-
 
 def genVillage(gamedata, classmap, options):
 
@@ -86,17 +75,13 @@ def listidplaines(Classmap):
     # Fonction pour recuperer l'id des plaines
     #   --> Voir pour remplacer cette fonction par une liste dans Classmap qui est incrémenté automatiquement
     #       --> Est t'il judicieux de garder le compte des différents types outre pour la génération des villages ?
-    #
     ####################
-
 
     lplaines = []
     tmap = len(Classmap.listmap)
 
     for idtuile in range(tmap):
-        #print(Classmap.listmap[idtuile].type)
         if Classmap.listmap[idtuile].type == "plains":
-            #Classmap.mapcanv.create_rectangle(Classmap.listmap[idtuile].x*20, Classmap.listmap[idtuile].y*20, (Classmap.listmap[idtuile].x*20)+20, (Classmap.listmap[idtuile].y*20)+20)
             lplaines += [idtuile]
 
     return lplaines
@@ -113,14 +98,13 @@ def buildvillagepossible(options, Classmap, idtuile):
     #   Calcul de la position selon l'id de la tuile sur la carte: x = id%Xmax, y = id//Xmax
     #
     #   Returne False Si il y a un village dans la zone
-    #
-    #
     ####################
     #On recup la taille max de X
     xmax = options.mapx
     #On calcule les coords X,Y de l'idtuile
-    xidtuile = idtuile%xmax
-    yidtuile = idtuile//xmax
+    coord = common.idtuiletocoordmap(options, idtuile)
+    xidtuile = coord[0]
+    yidtuile = coord[1]
 
     # On Vérifier que la tuile sélectionner n'est pas en bord de map
     if (xidtuile == 0) or (yidtuile == 0):

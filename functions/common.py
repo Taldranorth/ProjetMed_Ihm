@@ -22,18 +22,14 @@ def coordmaptocanvas(gamedata, classmap, option, coord, decalage:bool):
 	# Fonction pour traduire les coordonnées map en coordonnées du canvas centrer ou non √
 	##################
 
-	#log.log.printinfo(f"Pour coord map: {coord[0]}, {coord[1]}")
-
 	ts = gamedata.tuilesize
-
 	if decalage == True:
 		# calcul de base
 		xcanvas = (coord[0]*ts)+(ts/2)
 		ycanvas = (coord[1]*ts)+(ts/2)
 	else:
 		xcanvas = (coord[0]*ts)
-		ycanvas = (coord[1]*ts)		
-	#log.log.printinfo(f"coordcanv: {xcanvas}, {ycanvas}")
+		ycanvas = (coord[1]*ts)
 
 	return [xcanvas, ycanvas]
 
@@ -44,6 +40,15 @@ def coordmaptoidtuile(option, coord):
 
 	idtuile = coord[0] + (option.mapx*coord[1])
 	return idtuile
+
+def idtuiletocoordmap(option, idtuile):
+	######
+	# Fonction pour traduire l'idtuile en Coordonnées √
+	######
+	posx = idtuile%option.mapx
+	posy = idtuile//option.mapx
+
+	return [posx, posy]
 
 ##########################################################################################
 

@@ -53,7 +53,7 @@ from time import time
 #
 # Interface:
 # - Améliorer l'interface
-# - Suprimmer le carrer du village ou l'église a était construite
+# - Suprimer le carrer du village ou l'église a était construite
 # - Léger décalage sur la droite lorsqu'on centre la vue
 #
 # Moveview: 
@@ -67,19 +67,15 @@ from time import time
 #	--> Si souris sur armée ennemie alors affiche icône Combat
 #	--> Si souris sur village Ennemies alors affiche icône Pillage
 
+
+# - Refaire Interface Déplacement d'armée pour update les Pm √
+# - Fix Movement Army √
+# - Changer Pathfinding Pour être séparer de l'event de tkinter √
+# - Faire le point sur les calculs de coordonnées, utiliser les fonctions Commune √
+# - Déplacer dans Warfunctions TakeVillage/fight Army et les autres fonctions à la con √
+# - Améliorer Interface Village Stat √
+
 #########################################################
-
-
-# Il y a 2 décalage possible:
-#	- c'elle causer par moveviewxy
-#		--> décalage de l'affichage sur le canvas
-#			--> Réglable par l'utilisation des coord du point d'origine de la map_canvas
-#	- c'elle causer par moveviewmouse
-#		--> décalage du canvas sur la fenêtre
-#			--> Je ne sais pas, je ne vois pas comment la régler
-
-# Décider d'adapter moveviewxy pour utiliser scan_dragto
-#	--> Plus performant car liés à l'afichage des coord et non le changement des coord de tout les objets du canvas comme move()
 
 # -> Fix Build Church
 #	--> Aucun retour quand on construit une église
@@ -131,19 +127,10 @@ from time import time
 
 # - Bloquer la vue Pour le Déplacement avec la Souris
 
-# - Retravailler Menu Déplacement Unité
 # - AJouter affichage Victoire ou défaite aux combat d'armée
 # - Remplir le Menu Cheat
 
-# - Améliorer Interface Village Stat
-#	--> Empécher de quitter l'interface Village quand on est dedans
-#	--> Ajouter ScrollBar
-
 # - Améliorer Création de Seigneur en ajoutant une Scrollbar
-
-# - Ajouter texture Pseudo-Aléatoire
-
-# - Ajouter Rebellion Vassaux Contre Seigneur
 
 # - Pousser la Gestion de la Menace
 
@@ -152,6 +139,8 @@ from time import time
 
 # - Réaction au Bonheur
 # --> Si le Bonheur d'un vassaux est trop bas alors il tente une révolte
+# --> Si le Bonheur d'une armée est trop basse alors elle se révolte
+# --> Ajouter Rebellion Vassaux Contre Seigneur
 
 # - Déplacer les différentes fonctions dans common
 # - Déplacer les différentes fonctions dans warfunctions
@@ -174,18 +163,13 @@ from time import time
 #			--> Il faut envoyé une variable dynamique et non statique
 #				--> Putain python fait chier
 
-
 # - Ajouter ToolTipe sur Graphe
 #####
 
-#### Objectif Week-End:
-# - Réaction Bonheur Vassaux
-# - Fix, Optimisation et Refactorisation
-# - Graphe Stats
-####
-
-#### Obejectif Ce soir: ####
-# - Refactorisation Option/Déplacement hors de data ?
+#### Objectif Ce soir: ####
+# - Refactorisation Option/classmap et Gamedata pour être défini dans data et accéder à partir d'un appel du fichier
+# - Implémenter Résolution Dynamique
+# - Refactoriser le Code
 ####
 
 ######## Fonctionnalité Principale à Implémenter

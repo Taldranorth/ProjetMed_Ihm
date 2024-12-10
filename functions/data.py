@@ -323,7 +323,7 @@ class ClassGameData:
 
 		i = 0
 		while (i< len(self.actionlist)):
-			self.removeactionfileturn(searchobject, turn)
+			self.removeactionfileturn(searchobject, i)
 			i += 1
 
 
@@ -596,8 +596,8 @@ class Classtuiles:
 			self.moneyield = 0
 			self.movementcost = 10
 
-	def setidtuile(self, id):
-		self.id = id
+	def setidtuile(self, idt):
+		self.id = idt
 
 	def setpossesor(self, possesor):
 		self.possesor = possesor
