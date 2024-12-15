@@ -184,13 +184,14 @@ def moveviewz(event, gamedata, classmap, option):
 	if (x<320) and (delta == 2):
 		log.log.printinfo("Zoom")
 		event.widget.scale("tuile", 0, 0, delta, delta)
-		x = x*delta
+		x = int(x*delta)
 	#Dezoom
 	elif(x>5) and (delta == -2):
 		log.log.printinfo("DeZoom")
 		#On rend positive le delta sinon il inverse le sens de la carte
 		event.widget.scale("tuile", 0, 0, -1/(delta), -1/(delta))
-		x = x*(-1/(delta))
+		x = int(x*(-1/(delta)))
+	log.log.printinfo(f"newsizetuile: {x}")
 	#On recup les nouvelles coord du pointeur de la souris
 	coordcanv = event.widget.coords(idtuile)
 	centerviewcanvas(gamedata, classmap, option, coordcanv)
@@ -242,10 +243,6 @@ def moveviewzcenter(gamedata, classmap, option, delta):
 	####################\ 1°) \####################
 	# On recup la taille d'une tuile et définit le delta
 	x = gamedata.tuilesize
-	if delta < 0:
-		delta = -2
-	else:
-		delta = 2
 	############################################################
 
 	####################\ 2°) \####################
@@ -253,11 +250,11 @@ def moveviewzcenter(gamedata, classmap, option, delta):
 	canvasgooriginewindow(classmap)
 	if delta < 0:
 		classmap.mapcanv.scale("tuile", 0, 0, -1/(delta), -1/(delta))
-		x = x*(-1/(delta))
+		x = int(x*(-1/(delta)))
 	else:
 		classmap.mapcanv.scale("tuile", 0, 0, (delta), (delta))
-		x = x*delta
-	log.log.printinfo(f"{x}")
+		x = int(x*delta)
+	log.log.printinfo(f"newsizetuile: {x}")
 	# Place au centre de l'écran
 	coordcanv = [classmap.mapcanv.canvasx(option.widthWindow//2), classmap.mapcanv.canvasx((option.heightWindow*0.6)//2)]
 	centerviewcanvas(gamedata, classmap, option, coordcanv)
@@ -268,7 +265,7 @@ def moveviewzcenter(gamedata, classmap, option, delta):
 	####################\ 5°) \#########################################
 	# Recalcul des images
 	# On Update l'atlas pour prendre en compte la nouvelle taille des textures
-	gamedata.resizeatlas(x)
+	asset.atlas.resizeatlas(asset.dico_file,x)
 	#Tuile graphique:
 	for imgid in classmap.mapcanv.find_withtag("img"):
 		ltag = classmap.mapcanv.gettags(imgid)

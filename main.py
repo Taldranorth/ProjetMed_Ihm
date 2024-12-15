@@ -66,17 +66,6 @@ from time import time
 # - Ajouter la prise de village et le combat d'armée à l'interface de déplacement d'armée
 #	--> Si souris sur armée ennemie alors affiche icône Combat
 #	--> Si souris sur village Ennemies alors affiche icône Pillage
-
-
-# - Implémenter Affichage du Nom des Armées Par Tooltipe √
-# - Implémenter Couleur aux log √
-# - Implémenter Nom Armées Selon Nb Armée du Seigneur √
-# - Implémenter placement Aléatoire des villages par l'ia √
-# - Implémenter Bordure Couleur Seigneur à l'armée  √
-# - Implémenter Déplacement Bordure √
-# - Refactoriser Classmap pour y stocker la taille de la carte/ retirer la taille de la carte d'option √
-# - Fix la Création d'armée qui ne place pas au bon endroit quand on a plus de 2 armée √
-
 #########################################################
 
 # -> Refactoriser le code pour réduire la réutilisation de même code pour a la place utilisr une fonction commune liée a l'objet utiliser
@@ -96,10 +85,6 @@ from time import time
 #####
 
 ####
-# - Retravailler Interface Village
-# - Retravailler Menu Jouer
-#	--> Doit permettre de Définir les Villages Indépendants
-#	--> Doit Afficher sur la minimap les villages de départs
 
 # - Mettre en place un level Log Erreur
 # - LVL 0: On affiche seulement les critique dans la Console
@@ -146,7 +131,7 @@ from time import time
 # - Refactoriser Classmap
 # --> Changer le lien entre les objets villages et les tuiles
 # --> Changer lvillage pour un Dico qui contient pour l'id l'objet Village
-# - Refactoriser la Création de Village
+# - Refactoriser la Création de Village 
 # - Changer le fonctionnement des noms lors de la création d'armée
 # - Changer Frame de l'atlas pour le lier à la root ?
 
@@ -160,20 +145,43 @@ from time import time
 #				--> Putain python fait chier
 
 # - Mettre en Place Fonctions ListBox qui disparait
+#####
 
+#### Objectif Samedi/Dimanche:
 # -> Fix Build Church
 #	--> Aucun retour quand on construit une église
 #	--> Améliorer la sélection des villages
+# -> Fix l'imposibilité de Zoomer quand on est dans l'état Build Church
+# - Refactoriser Moveviewz/MoveviewZcenter
 
-#####
+# - Retravailler Interface Village
+#	--> Compléter Fonctionnalité
 
-#### Objectif Restant: ####
+# - Implémenter Interface Option
+####
+
+
+#### Fait:
+"""
+Implémenter:
+ - Implémenter la Possibilité de Définir les Villages Indépendants dans PlayMenu √
+ - Implémenter Retour Utilisateur Impossibilité de Construire Une Église √
+ - Implémenter Retour Utilisateur Impossibilité de Construire Un village √
+ - Refactoriser le Calcul et l'affichage des Graphes
+
+Refactoriser:
+
+Fix:
+ - Fix ZoomCenterWar √
+ - Fix delvillageunit √
+
+"""
+####
+
+#### Objectif Restant ####
 # - Refactorisation Option/classmap et Gamedata pour être défini dans data et accéder à partir d'un appel du fichier
 # - Implémenter Résolution Dynamique
 # - Améliorer Selection de Village Pour la Construction d'église
-# - Implémenter Retour Utilisateur Impossibilité de Construire Un village
-# - Implémenter Retour Utilisateur Impossibilité de Construire Une Église
-# - Optimiser et Refactoriser
 # - Implémenter Réactions Armées et Vassaux
 # - Implémenter Comportement de l'IA
 # - Terminé Graphe Stat
@@ -182,6 +190,8 @@ from time import time
 # - Implémenter Image Event
 # - Implémenter Options
 # - Implémente Gestion de la population par case
+# - Optimiser et Refactoriser
+# - Graphe Stats par Bezier
 ######
 
 

@@ -64,8 +64,6 @@ def delvillageunit(mapcanv, idvillage):
 	# On récup une liste de tout les objets du canvas qui ont le tag village, cela prend en compte les village et leur tags
 	# On à 2 objet à détruire
 	lcanvvillage = mapcanv.find_withtag("village")
-	#print(lcanvvillage)
-	#print(idvillage)
 	i = 0
 	for objet in lcanvvillage:
 		if i == 2:
@@ -73,19 +71,9 @@ def delvillageunit(mapcanv, idvillage):
 		ltag = mapcanv.gettags(objet)
 		print(ltag)
 		# Si on à trouvé l'image village
-		# Si Objet Village
-		if len(ltag) > 4:
-			if ((int(ltag[4]) == idvillage)):
-				log.log.printinfo(f"Objet Village trouvé pour {idvillage}")
-				mapcanv.delete(objet)
-				i += 1
-		# Si Objet Label
-		else:
-			# Si on à trouvé le label village
-			if (int(ltag[3]) == idvillage):
-				log.log.printinfo(f"Objet Label trouvé pour {idvillage}")
-				mapcanv.delete(objet)
-				i += 1
+		if str(idvillage) in ltag:
+			mapcanv.delete(objet)
+			i += 1
 
 def bordervillage(gamedata, classmap, option):
 	##################

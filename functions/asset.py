@@ -75,7 +75,7 @@ class ClassAtlas:
 		if self.checkAtlas(texture_name) == False:
 			# On prépare la texture à la taille voulu
 			tk_img = loadtexturefromdico(dico_file, texture_name, type, int(size))
-			print(tk_img)
+			#print(tk_img)
 			# On créer le label associer
 			label = tkinter.Label(self.lframe, image = tk_img[1])
 			label.image = tk_img[1]
@@ -87,9 +87,9 @@ class ClassAtlas:
 		######
 		# Methode pour resize toute les textures de l'atlas à la valeur indiqué
 		######
-
 		# Pour le tuple stocker dans l'atlas
 		for key_atlas in self.dico.keys():
+			#print(key_atlas)
 			# on cherche le type du fichier de l'atlas
 			type = self.searchtexturetypeindico(dico_file, key_atlas)
 
@@ -274,10 +274,13 @@ def loadtexturefromdico(dico_file, filename, type, sizetuile):
 	# sizetuile 	--> la taille voulu
 	####################
 	try:
-
+		if sizetuile < 1:
+			sizetuile = 1
 		# On cherche l'image dans le dico
 		index = -1
 		for ele in range(len(dico_file[type])):
+			#print("filename, dico_file[type][ele]: ",filename,dico_file[type][ele][0])
+			#print(dico_file[type][ele][0] == filename)
 			if dico_file[type][ele][0] == filename:
 				index = ele
 
@@ -288,8 +291,9 @@ def loadtexturefromdico(dico_file, filename, type, sizetuile):
 				l = [filename, ImageTk.PhotoImage(img)]
 				img.close()
 				return l
-	except:
-		log.log.printerror(f"erreur fichier {filename} non trouvé dans registre {type}")
+
+	except BaseException as error:
+		log.log.printerror(f"{error}")
 
 ################################################################################################
 

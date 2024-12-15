@@ -41,14 +41,14 @@ import functions.interfacemenu as interfacemenu
 
 ######################### Initiation de la partie #########################
 
-def initgame(mainmenuwin, gamedata, classmap, option, root):
+def initgame(mainmenuwin, gamedata, classmap, option, root, NeutralVill):
 	######
 	# Fonction Pour initialiser la game
 	######
-	# on générer la Carte
+	# On génére La NoiseMap
 	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, classmap.mapx, classmap.mapy)
 	# On lance la création de la fenêtre du Jeu
-	interfacemenu.mainscreen(gamedata, classmap, option, root, pic)
+	interfacemenu.mainscreen(gamedata, classmap, option, root, pic, NeutralVill)
 
 	# Une fois l'initialisation lancé on détruit la fenêtre du menu principale
 	mainmenuwin.destroy()

@@ -26,7 +26,7 @@ def genNoiseMap(octaves, seed, mapx, mapy):
     #print(pic)
     return pic
 
-def genVillage(gamedata, classmap, options):
+def genVillage(gamedata, classmap, options, NeutralVill):
 
     ####################
     # Fonction pour Gen les villages
@@ -42,13 +42,10 @@ def genVillage(gamedata, classmap, options):
 
     # On recup la liste des Plaines
     classmap.lplaines = listidplaines(classmap)
-    #print(Classmap.listmap)
-
-    nb_neutral_village = 5
 
     # On en gen 10 
     # Valeur Test
-    for x in range(len(gamedata.list_lord) + nb_neutral_village):
+    for x in range(len(gamedata.list_lord) +NeutralVill):
         # On choisit une plaines aléatoire
         # On vient selectionner un id aléatoire présent dans lplaines
         r = classmap.lplaines[random.randrange(len(classmap.lplaines))]

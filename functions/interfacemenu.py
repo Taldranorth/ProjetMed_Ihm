@@ -41,7 +41,7 @@ def mainmenu(gamedata, classmap, option, root):
 
 	# Button Quickplay
 	# !!! A CORRIGER !!!
-	Button_mainm_QuickPlay = tkinter.Button(fmainm, command = lambda: game.initgame(mainmenuwin, gamedata, classmap, option, root), text = "Partie Rapide")
+	Button_mainm_QuickPlay = tkinter.Button(fmainm, command = lambda: game.initgame(mainmenuwin, gamedata, classmap, option, root, 5), text = "Partie Rapide")
 
 	# Button Load
 	Button_mainm_load = tkinter.Button(fmainm, command = lambda: loadmenu(mainmenuwin, gamedata, classmap, option, root) , text = "Load")
@@ -134,12 +134,24 @@ def playmenu(mainmenuwin, gamedata, classmap, option, root):
 	button_entrymap.grid(row = 3, column = 4)
 	##################################################################
 
+	########################\ Village Neutre \########################
+
+	tkvar_neutralvill = tkinter.IntVar()
+	tkvar_neutralvill.set(5)
+	#Label
+	tkinter.Label(fplaymenu, text = "Nb Village Neutre: ").grid(row = 4, column = 1)
+	# Entry
+	entryneutralvill = tkinter.Entry(fplaymenu, textvariable = tkvar_neutralvill)
+	entryneutralvill.grid(row = 4, column = 2)
+
+	##################################################################
+
 	########################\ Liste Seigneurs \#######################
 	# On affiche la liste des seigneurs actuellement créer
-	tkinter.Label(fplaymenu, text = "liste des Seigneur: ").grid(row = 4, columnspan = 5)
+	tkinter.Label(fplaymenu, text = "liste des Seigneur: ").grid(row = 5, columnspan = 5)
 
 	fplaymenu_frame_listlord = tkinter.Frame(fplaymenu)
-	fplaymenu_frame_listlord.grid(row = 6, columnspan = 5)
+	fplaymenu_frame_listlord.grid(row = 7, columnspan = 5)
 
 	#txt variable nom joueur
 	tkvar_playername = tkinter.StringVar()
@@ -147,10 +159,10 @@ def playmenu(mainmenuwin, gamedata, classmap, option, root):
 	for lord in gamedata.list_lord:
 		# Si c'est le joueur on met affiche un label Player est on met en place un Entry afin de pouvoir modifier le nom du Seigneur
 		if lord.player == True:
-			tkinter.Label(fplaymenu, text = "Player:").grid(row = 5, column = 1)
+			tkinter.Label(fplaymenu, text = "Player:").grid(row = 6, column = 1)
 			entryplayername = tkinter.Entry(fplaymenu, textvariable = tkvar_playername)
-			entryplayername.grid(row = 5, column = 2)
-			tkinter.Button(fplaymenu, text = "change", command = lambda: validate_entry_lordname(gamedata, tkvar_playername)).grid(row = 5, column = 3)
+			entryplayername.grid(row = 6, column = 2)
+			tkinter.Button(fplaymenu, text = "change", command = lambda: validate_entry_lordname(gamedata, tkvar_playername)).grid(row = 6, column = 3)
 		else:
 			tkinter.Label(fplaymenu_frame_listlord, text = lord.lordname, fg = lord.color).grid(columnspan = 5)
 	##################################################################
@@ -164,7 +176,7 @@ def playmenu(mainmenuwin, gamedata, classmap, option, root):
 	button_deletelastlord.grid(columnspan = 5)
 
 	# Button pour lancer une nouvelle partie
-	Button_playmenu_play = tkinter.Button(fplaymenu, command = lambda: game.initgame(mainmenuwin, gamedata, classmap, option, root),text = "Jouer")
+	Button_playmenu_play = tkinter.Button(fplaymenu, command = lambda: game.initgame(mainmenuwin, gamedata, classmap, option, root, int(tkvar_neutralvill.get())),text = "Jouer")
 	Button_playmenu_play.grid(columnspan = 5)
 
 	# Boutton pour revenir en arrière
@@ -180,7 +192,6 @@ def validate_entry_map(entrymapx, entrymapy, gamedata, classmap, option, tkvar_m
 
 	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, classmap.mapx, classmap.mapy)
 	previewmap(mapcanv, pic, classmap.mapx, classmap.mapy)
-
 
 def validate_entry_seed(entryseed, gamedata, classmap, option, tkvar_seed, mapcanv):
 	####################
@@ -474,20 +485,9 @@ def eof_military_graph(gamedata, classmap, option, frame_eof_screen_up):
 	# Label de la Fenêtre
 	tkinter.Label(frame_eof_screen_up_child, text = f"").grid(row = 0,column = 3)
 
-	# On setup la Scrollbar Vertical du Canvas
-	yscrollbar = tkinter.Scrollbar(frame_eof_screen_up_child, orient = tkinter.VERTICAL)
-	yscrollbar.grid(row = 2, column = 5, sticky= tkinter.W+ tkinter.N + tkinter.S)
-
-	# On setup la Scrollbar Horizontal du Canvas
-	xscrollbar = tkinter.Scrollbar(frame_eof_screen_up_child, orient = tkinter.HORIZONTAL)
-	xscrollbar.grid(row = 3, column = 0, columnspan = 5,sticky= tkinter.W+ tkinter.N + tkinter.E)
-
 	# On créer le Canvas
-	canvas = tkinter.Canvas(frame_eof_screen_up_child, height = (0.4* option.heightWindow)+10, width = (0.6*option.widthWindow), xscrollcommand = xscrollbar.set, yscrollcommand = yscrollbar.set)
+	canvas = tkinter.Canvas(frame_eof_screen_up_child, height = (0.4* option.heightWindow)+10, width = (0.6*option.widthWindow)+10)
 	canvas.grid(row = 2, column = 0, columnspan = len(gamedata.list_lord))
-
-	yscrollbar["command"] = canvas.yview
-	xscrollbar["command"] = canvas.xview
 
 	i = 0
 	for lord in gamedata.list_lord:
@@ -499,36 +499,42 @@ def eof_military_graph(gamedata, classmap, option, frame_eof_screen_up):
 	tkinter.Label(frame_eof_screen_up_child, text = f"Croissance Militaire").grid(row = 0,column = 0, columnspan = i)
 
 	# On récupère le nbmax de tour
-	# Histoire d'avoir un graphe qui apparait un minimum on Prend en compte un nbminimum
 	if gamedata.nb_turn > 20:
 		turnmax = gamedata.nb_turn
 	else:
 		turnmax = 20
-
-	# ON prend pour taille d'une case 20*20
-	# On créer un Cadre
-	canvas.create_rectangle(10, 10,(0.6*option.widthWindow), (0.4* option.heightWindow)-10)
-
-	# On créer l'échelle bas
+	# On calcul la taille d'une case en X
+	sqx = ((0.6*option.widthWindow))//turnmax
+	print("sizesquarex: ", sqx)
+	# échelle 5
+	# On calcul la taille d'une case en Y
+	sqy = (0.4* option.heightWindow)//100
 
 	# On créer l'échelle haut
 	for x in range(1, turnmax+1):
-		canvas.create_text(((x)*20)  , (0.4* option.heightWindow), text = x)
+		canvas.create_text(x*sqx, (0.4* option.heightWindow), text = x)
+
+	# On créer l'échelle bas
+	for y in range(5,100,5):
+		canvas.create_text(10, ((0.4* option.heightWindow)-10)-(y*sqy), text = y)
 
 	for lord in gamedata.list_lord:
 		color = lord.color
 		for turn in stats.dico_stat.dico_stat[lord.lordname]:
-			#print("turn: ",turn)
 			# On recup le tour
 			t = turn[0]
 			# On recup la stat Militaire du tour
 			power = turn[1]["Military"][0]
 			nbarmy = turn[1]["Military"][1]
-			x = 10+((t)*20)
+			x = (t*sqx)+20
 			y = (0.4* option.heightWindow)-10
-			x2 = 10+(t*20)+20
-			y2 = ((0.4* option.heightWindow)-10) - ((power*20) + 10)
+			x2 = (t*sqx)+sqx+20
+			print(x,x2)
+			y2 = ((0.4* option.heightWindow)-20) - ((power*sqy) + 20)
 			square = canvas.create_rectangle( x, y, x2, y2, outline = color, tags = [lord.lordname])
+
+	# On créer un Cadre
+	canvas.create_rectangle(20, 20,(0.6*option.widthWindow), (0.4* option.heightWindow)-10)
 
 def eof_demography_graph(gamedata, classmap, option, frame_eof_screen_up):
 	#######
@@ -548,20 +554,9 @@ def eof_demography_graph(gamedata, classmap, option, frame_eof_screen_up):
 	# Label de la Fenêtre
 	tkinter.Label(frame_eof_screen_up_child, text = f"").grid(row = 0,column = 3)
 
-	# On setup la Scrollbar Vertical du Canvas
-	yscrollbar = tkinter.Scrollbar(frame_eof_screen_up_child, orient = tkinter.VERTICAL)
-	yscrollbar.grid(row = 2, column = 5, sticky= tkinter.W+ tkinter.N + tkinter.S)
-
-	# On setup la Scrollbar Horizontal du Canvas
-	xscrollbar = tkinter.Scrollbar(frame_eof_screen_up_child, orient = tkinter.HORIZONTAL)
-	xscrollbar.grid(row = 3, column = 0, columnspan = 5,sticky= tkinter.W+ tkinter.N + tkinter.E)
-
 	# On créer le Canvas
-	canvas = tkinter.Canvas(frame_eof_screen_up_child, height = (0.4* option.heightWindow)+10, width = (0.6*option.widthWindow), xscrollcommand = xscrollbar.set, yscrollcommand = yscrollbar.set)
+	canvas = tkinter.Canvas(frame_eof_screen_up_child, height = (0.4* option.heightWindow)+10, width = (0.6*option.widthWindow)+10)
 	canvas.grid(row = 2, column = 0, columnspan = len(gamedata.list_lord))
-
-	yscrollbar["command"] = canvas.yview
-	xscrollbar["command"] = canvas.xview
 
 	i = 0
 	for lord in gamedata.list_lord:
@@ -573,21 +568,24 @@ def eof_demography_graph(gamedata, classmap, option, frame_eof_screen_up):
 	tkinter.Label(frame_eof_screen_up_child, text = f"Croissance Démographique").grid(row = 0,column = 0, columnspan = i)
 
 	# On récupère le nbmax de tour
-	# Histoire d'avoir un graphe qui apparait un minimum on Prend en compte un nbminimum
 	if gamedata.nb_turn > 20:
 		turnmax = gamedata.nb_turn
 	else:
 		turnmax = 20
-
-	# ON prend pour taille d'une case 20*20
-	# On créer un Cadre
-	canvas.create_rectangle(10, 10,(0.6*option.widthWindow), (0.4* option.heightWindow)-10)
-
-	# On créer l'échelle bas
+	# On calcul la taille d'une case en X
+	sqx = ((0.6*option.widthWindow))//turnmax
+	print("sizesquarex: ", sqx)
+	# échelle 5
+	# On calcul la taille d'une case en Y
+	sqy = (0.4* option.heightWindow)//100
 
 	# On créer l'échelle haut
 	for x in range(1, turnmax+1):
-		canvas.create_text(((x)*20)  , (0.4* option.heightWindow), text = x)
+		canvas.create_text(x*sqx, (0.4* option.heightWindow), text = x)
+
+	# On créer l'échelle bas
+	for y in range(5,100,5):
+		canvas.create_text(10, ((0.4* option.heightWindow)-20)-(y*sqy), text = y)
 
 	for lord in gamedata.list_lord:
 		color = lord.color
@@ -597,11 +595,16 @@ def eof_demography_graph(gamedata, classmap, option, frame_eof_screen_up):
 			t = turn[0]
 			# On recup la stat Militaire du tour
 			nbpop = turn[1]["Demography"][0]
-			x = 10+((t)*20)
+			x = (t*sqx)+20
 			y = (0.4* option.heightWindow)-10
-			x2 = 10+(t*20)+20
-			y2 = ((0.4* option.heightWindow)-10) - ((nbpop*20) + 10)
+			x2 = (t*sqx)+sqx+20
+			print(x,x2)
+			y2 = ((0.4* option.heightWindow)-20) - ((nbpop*sqy) + 20)
 			square = canvas.create_rectangle( x, y, x2, y2, outline = color, tags = [lord.lordname])
+
+	# On créer un Cadre
+	canvas.create_rectangle(20, 20,(0.6*option.widthWindow), (0.4* option.heightWindow)-10)
+
 
 def eof_economy_graph(gamedata, classmap, option, frame_eof_screen_up):
 	#######
@@ -621,20 +624,9 @@ def eof_economy_graph(gamedata, classmap, option, frame_eof_screen_up):
 	# Label de la Fenêtre
 	tkinter.Label(frame_eof_screen_up_child, text = f"").grid(row = 0,column = 3)
 
-	# On setup la Scrollbar Vertical du Canvas
-	yscrollbar = tkinter.Scrollbar(frame_eof_screen_up_child, orient = tkinter.VERTICAL)
-	yscrollbar.grid(row = 2, column = 5, sticky= tkinter.W+ tkinter.N + tkinter.S)
-
-	# On setup la Scrollbar Horizontal du Canvas
-	xscrollbar = tkinter.Scrollbar(frame_eof_screen_up_child, orient = tkinter.HORIZONTAL)
-	xscrollbar.grid(row = 3, column = 0, columnspan = 5,sticky= tkinter.W+ tkinter.N + tkinter.E)
-
 	# On créer le Canvas
-	canvas = tkinter.Canvas(frame_eof_screen_up_child, height = (0.4* option.heightWindow)+10, width = (0.6*option.widthWindow), xscrollcommand = xscrollbar.set, yscrollcommand = yscrollbar.set)
+	canvas = tkinter.Canvas(frame_eof_screen_up_child, height = (0.4* option.heightWindow)+10, width = (0.6*option.widthWindow)+10)
 	canvas.grid(row = 2, column = 0, columnspan = len(gamedata.list_lord))
-
-	yscrollbar["command"] = canvas.yview
-	xscrollbar["command"] = canvas.xview
 
 	i = 0
 	for lord in gamedata.list_lord:
@@ -646,21 +638,24 @@ def eof_economy_graph(gamedata, classmap, option, frame_eof_screen_up):
 	tkinter.Label(frame_eof_screen_up_child, text = f"Croissance Économique").grid(row = 0,column = 0, columnspan = i)
 
 	# On récupère le nbmax de tour
-	# Histoire d'avoir un graphe qui apparait un minimum on Prend en compte un nbminimum
 	if gamedata.nb_turn > 20:
 		turnmax = gamedata.nb_turn
 	else:
 		turnmax = 20
-
-	# ON prend pour taille d'une case 20*20
-	# On créer un Cadre
-	canvas.create_rectangle(10, 10,(0.6*option.widthWindow), (0.4* option.heightWindow)-10)
-
-	# On créer l'échelle bas
+	# On calcul la taille d'une case en X
+	sqx = ((0.6*option.widthWindow))//turnmax
+	print("sizesquarex: ", sqx)
+	# échelle 5
+	# On calcul la taille d'une case en Y
+	sqy = (0.4* option.heightWindow)//100
 
 	# On créer l'échelle haut
 	for x in range(1, turnmax+1):
-		canvas.create_text(((x)*20)  , (0.4* option.heightWindow), text = x)
+		canvas.create_text(x*sqx, (0.4* option.heightWindow), text = x)
+
+	# On créer l'échelle bas
+	for y in range(5,100,5):
+		canvas.create_text(10, ((0.4* option.heightWindow)-20)-(y*sqy), text = y)
 
 	for lord in gamedata.list_lord:
 		color = lord.color
@@ -671,11 +666,15 @@ def eof_economy_graph(gamedata, classmap, option, frame_eof_screen_up):
 			# On recup la stat Militaire du tour
 			power = turn[1]["Military"][0]
 			nbarmy = turn[1]["Military"][1]
-			x = 10+((t)*20)
+			x = (t*sqx)+20
 			y = (0.4* option.heightWindow)-10
-			x2 = 10+(t*20)+20
-			y2 = ((0.4* option.heightWindow)-10) - ((power*20) + 10)
+			x2 = (t*sqx)+sqx+20
+			print(x,x2)
+			y2 = ((0.4* option.heightWindow)-20) - ((power*sqy) + 20)
 			square = canvas.create_rectangle( x, y, x2, y2, outline = color, tags = [lord.lordname])
+
+	# On créer un Cadre
+	canvas.create_rectangle(20, 20,(0.6*option.widthWindow), (0.4* option.heightWindow)-10)
 
 def eof_score_graph(gamedata, classmap, option, frame_eof_screen_up):
 	#######
@@ -695,20 +694,9 @@ def eof_score_graph(gamedata, classmap, option, frame_eof_screen_up):
 	# Label de la Fenêtre
 	tkinter.Label(frame_eof_screen_up_child, text = f"").grid(row = 0,column = 3)
 
-	# On setup la Scrollbar Vertical du Canvas
-	yscrollbar = tkinter.Scrollbar(frame_eof_screen_up_child, orient = tkinter.VERTICAL)
-	yscrollbar.grid(row = 2, column = 5, sticky= tkinter.W+ tkinter.N + tkinter.S)
-
-	# On setup la Scrollbar Horizontal du Canvas
-	xscrollbar = tkinter.Scrollbar(frame_eof_screen_up_child, orient = tkinter.HORIZONTAL)
-	xscrollbar.grid(row = 3, column = 0, columnspan = 5,sticky= tkinter.W+ tkinter.N + tkinter.E)
-
 	# On créer le Canvas
-	canvas = tkinter.Canvas(frame_eof_screen_up_child, height = (0.4* option.heightWindow)+10, width = (0.6*option.widthWindow), xscrollcommand = xscrollbar.set, yscrollcommand = yscrollbar.set)
+	canvas = tkinter.Canvas(frame_eof_screen_up_child, height = (0.4* option.heightWindow)+10, width = (0.6*option.widthWindow)+10)
 	canvas.grid(row = 2, column = 0, columnspan = len(gamedata.list_lord))
-
-	yscrollbar["command"] = canvas.yview
-	xscrollbar["command"] = canvas.xview
 
 	i = 0
 	for lord in gamedata.list_lord:
@@ -720,21 +708,24 @@ def eof_score_graph(gamedata, classmap, option, frame_eof_screen_up):
 	tkinter.Label(frame_eof_screen_up_child, text = f"Score").grid(row = 0,column = 0, columnspan = i)
 
 	# On récupère le nbmax de tour
-	# Histoire d'avoir un graphe qui apparait un minimum on Prend en compte un nbminimum
 	if gamedata.nb_turn > 20:
 		turnmax = gamedata.nb_turn
 	else:
 		turnmax = 20
-
-	# ON prend pour taille d'une case 20*20
-	# On créer un Cadre
-	canvas.create_rectangle(10, 10,(0.6*option.widthWindow), (0.4* option.heightWindow)-10)
-
-	# On créer l'échelle bas
+	# On calcul la taille d'une case en X
+	sqx = ((0.6*option.widthWindow))//turnmax
+	print("sizesquarex: ", sqx)
+	# échelle 5
+	# On calcul la taille d'une case en Y
+	sqy = (0.4* option.heightWindow)//100
 
 	# On créer l'échelle haut
 	for x in range(1, turnmax+1):
-		canvas.create_text(((x)*20)  , (0.4* option.heightWindow), text = x)
+		canvas.create_text(x*sqx, (0.4* option.heightWindow), text = x)
+
+	# On créer l'échelle bas
+	for y in range(5,100,5):
+		canvas.create_text(10, ((0.4* option.heightWindow)-20)-(y*sqy), text = y)
 
 	for lord in gamedata.list_lord:
 		color = lord.color
@@ -744,11 +735,15 @@ def eof_score_graph(gamedata, classmap, option, frame_eof_screen_up):
 			t = turn[0]
 			# On recup la stat Militaire du tour
 			score = turn[1]["Score"][0]
-			x = 10+((t)*20)
+			x = (t*sqx)+20
 			y = (0.4* option.heightWindow)-10
-			x2 = 10+(t*20)+20
-			y2 = ((0.4* option.heightWindow)-10) - ((score*20) + 10)
+			x2 = (t*sqx)+sqx+20
+			print(x,x2)
+			y2 = ((0.4* option.heightWindow)-20) - ((score*sqy) + 20)
 			square = canvas.create_rectangle( x, y, x2, y2, outline = color, tags = [lord.lordname])
+
+	# On créer un Cadre
+	canvas.create_rectangle(20, 20,(0.6*option.widthWindow), (0.4* option.heightWindow)-10)
 
 def eof_death_graph(gamedata, classmap, option, frame_eof_screen_up):
 	#######
@@ -768,20 +763,9 @@ def eof_death_graph(gamedata, classmap, option, frame_eof_screen_up):
 	# Label de la Fenêtre
 	tkinter.Label(frame_eof_screen_up_child, text = f"").grid(row = 0,column = 3)
 
-	# On setup la Scrollbar Vertical du Canvas
-	yscrollbar = tkinter.Scrollbar(frame_eof_screen_up_child, orient = tkinter.VERTICAL)
-	yscrollbar.grid(row = 2, column = 5, sticky= tkinter.W+ tkinter.N + tkinter.S)
-
-	# On setup la Scrollbar Horizontal du Canvas
-	xscrollbar = tkinter.Scrollbar(frame_eof_screen_up_child, orient = tkinter.HORIZONTAL)
-	xscrollbar.grid(row = 3, column = 0, columnspan = 5,sticky= tkinter.W+ tkinter.N + tkinter.E)
-
 	# On créer le Canvas
-	canvas = tkinter.Canvas(frame_eof_screen_up_child, height = (0.4* option.heightWindow)+10, width = (0.6*option.widthWindow), xscrollcommand = xscrollbar.set, yscrollcommand = yscrollbar.set)
+	canvas = tkinter.Canvas(frame_eof_screen_up_child, height = (0.4* option.heightWindow)+10, width = (0.6*option.widthWindow)+10)
 	canvas.grid(row = 2, column = 0, columnspan = len(gamedata.list_lord))
-
-	yscrollbar["command"] = canvas.yview
-	xscrollbar["command"] = canvas.xview
 
 	i = 0
 	for lord in gamedata.list_lord:
@@ -793,21 +777,24 @@ def eof_death_graph(gamedata, classmap, option, frame_eof_screen_up):
 	tkinter.Label(frame_eof_screen_up_child, text = f"Mort").grid(row = 0,column = 0, columnspan = i)
 
 	# On récupère le nbmax de tour
-	# Histoire d'avoir un graphe qui apparait un minimum on Prend en compte un nbminimum
 	if gamedata.nb_turn > 20:
 		turnmax = gamedata.nb_turn
 	else:
 		turnmax = 20
-
-	# ON prend pour taille d'une case 20*20
-	# On créer un Cadre
-	canvas.create_rectangle(10, 10,(0.6*option.widthWindow), (0.4* option.heightWindow)-10)
-
-	# On créer l'échelle bas
+	# On calcul la taille d'une case en X
+	sqx = ((0.6*option.widthWindow))//turnmax
+	print("sizesquarex: ", sqx)
+	# échelle 5
+	# On calcul la taille d'une case en Y
+	sqy = (0.4* option.heightWindow)//100
 
 	# On créer l'échelle haut
 	for x in range(1, turnmax+1):
-		canvas.create_text(((x)*20)  , (0.4* option.heightWindow), text = x)
+		canvas.create_text(x*sqx, (0.4* option.heightWindow), text = x)
+
+	# On créer l'échelle bas
+	for y in range(5,100,5):
+		canvas.create_text(10, ((0.4* option.heightWindow)-20)-(y*sqy), text = y)
 
 	for lord in gamedata.list_lord:
 		color = lord.color
@@ -817,11 +804,15 @@ def eof_death_graph(gamedata, classmap, option, frame_eof_screen_up):
 			t = turn[0]
 			# On recup la stat Militaire du tour
 			death = turn[1]["Death"]
-			x = 10+((t)*20)
+			x = (t*sqx)+20
 			y = (0.4* option.heightWindow)-10
-			x2 = 10+(t*20)+20
-			y2 = ((0.4* option.heightWindow)-10) - ((death*20) + 10)
+			x2 = (t*sqx)+sqx+20
+			print(x,x2)
+			y2 = ((0.4* option.heightWindow)-20) - ((death*sqy) + 20)
 			square = canvas.create_rectangle( x, y, x2, y2, outline = color, tags = [lord.lordname])
+
+	# On créer un Cadre
+	canvas.create_rectangle(20, 20,(0.6*option.widthWindow), (0.4* option.heightWindow)-10)
 
 def disablegraph(canvas, lordname):
 	######
@@ -847,7 +838,7 @@ def exit_mainmenu(gamedata, classmap, option):
 ###########################################################################
 
 ######################### Écran de Jeu #########################
-def mainscreen(gamedata, classmap, option, root, pic):
+def mainscreen(gamedata, classmap, option, root, pic, NeutralVill):
 
 	# Création de la fenêtre
 	win1 = tkinter.Toplevel(root, height = option.heightWindow, width= option.widthWindow)
@@ -871,7 +862,7 @@ def mainscreen(gamedata, classmap, option, root, pic):
 
 
 	# Genération des Villages
-	genproc.genVillage(gamedata, classmap, option)
+	genproc.genVillage(gamedata, classmap, option, NeutralVill)
 
 	# Affichage des Villages
 	affichage.printvillage(gamedata, classmap, option,fcanvas)
@@ -1210,11 +1201,8 @@ def tooltip_create(event, widget, top_window, text, lvariable):
 	####
 	# Fonction pour gérer la Création de la fenêtre
 	####
-	#print("On créer le Pop-Up")
 	# On recup les coord de la souris
 	posmouse = event.widget.winfo_pointerxy()
-	#print(text)
-	#print(lvariable)
 	# On créer la fenêtre
 	windowtooltip = tkinter.Toplevel()
 	# On la place
@@ -1309,7 +1297,43 @@ def tooltipcanvas_destroy(event, canvas, idobject, window_tooltip):
 
 ######################################################
 
+#############\ Fonction Message Temp \################
 
+def temp_message(widget, text, time, coord, color):
+	####
+	# Fonction pour gérer l'affichage des messages Temporaires
+	####
+	top_window = widget.winfo_toplevel()
+	create_temp_message(widget, top_window, text, time, coord, color)
+
+def create_temp_message(widget, top_window, text, time, coord, color):
+	####
+	# Fonction Pour créer le Message Temporaire
+	####
+	# On créer la fenêtre
+	window_message = tkinter.Toplevel()
+	# On la positionne
+	window_message.geometry(f"+{coord[0]}+{coord[1]}")
+	# On la transforme en fenêtre Transiant
+	window_message.transient(top_window)
+	# On override
+	window_message.overrideredirect(True)
+
+	frame = tkinter.Frame(window_message)
+	frame.pack()
+	tkinter.Label(frame, text = text, fg = color).pack()
+
+	# On détruit après X temps
+	widget.after(time, lambda: destroy_temp_message(window_message))
+
+def destroy_temp_message(window_message):
+	####
+	# Fonction Pour détruire le message temp
+	####
+	window_message.destroy()
+
+
+######################################################
 
 
 def convertposgraph(coord, heightgraph, widthgraph):

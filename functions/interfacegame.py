@@ -682,6 +682,7 @@ def statewar(gamedata, classmap, option):
 				moveview.moveviewzcenter(gamedata, classmap, option, -2)
 			else:
 				moveview.moveviewzcenter(gamedata, classmap, option, 2)
+			ts = gamedata.tuilesize
 
 		player = gamedata.list_lord[gamedata.playerid]
 		xorigine = classmap.mapcanv.canvasx(0)
@@ -936,7 +937,8 @@ def buildvillage(event, gamedata, classmap, option):
 		# On update l'entête
 		updateinterface(gamedata, classmap)
 	else:
-		log.log.printinfo(f"Pas assez de Ressource")
+		coord = [option.widthWindow//2, option.heightWindow//8]
+		interfacemenu.temp_message(event.widget, "Pas Assez de Ressource", 2000, coord, "red")
 
 def updatestatbuildvillage(classmap, option):
 	############
@@ -997,7 +999,7 @@ def statebuildchurch(gamedata, classmap, option):
 
 		# On bind la fonction buildchurch à la tuile du village
 		idbuildchurch = classmap.mapcanv.tag_bind("village", "<Button-1>", lambda event: triggerbuildchurch(event, gamedata, classmap, option), add = "+")
-		# On bind la fonction buildchurch au squre
+		# On bind la fonction buildchurch au square
 		classmap.mapcanv.tag_bind("buildchurch", "<Button-1>",lambda event: triggerbuildchurch(event, gamedata, classmap, option))
 
 
@@ -1043,30 +1045,33 @@ def triggerbuildchurch(event, gamedata, classmap, option):
 
 	# On vérife que le village appartient au joueur
 	if village in player.fief:
-		# On Verfie que le joueur possède l'argent nécessaire
-		if ((player.verifcost(10,10)) or (player.freechurch >= 1)):
-			# On construit
-			village.buildchurch(asset.dico_name.randomnametype("Nom"))
+		if village.church == 0:
+			# On Verifie que le joueur possède l'argent nécessaire
+			if ((player.verifcost(10,10)) or (player.freechurch >= 1)):
+				# On construit
+				village.buildchurch(asset.dico_name.randomnametype("Nom"))
 
-			# Si on à une église gratuite On ne perd pas de ressource
-			if player.freechurch >= 1:
-				player.freechurch -= 1
+				# Si on à une église gratuite On ne perd pas de ressource
+				if player.freechurch >= 1:
+					player.freechurch -= 1
+				else:
+				# On retire l'argent Si on à pas d'église gratuite
+					player.sub_money(10)
+					player.sub_ressource(10)
+
+				# On update l'interface
+				updateinterface(gamedata, classmap)
+				# On retire le carré
+				deltuilecoordcanvas(gamedata, classmap, option, "buildchurch", [coord[0] - (ts//2), coord[1] - (ts//2)])
 			else:
-			# On retire l'argent Si on à pas d'église gratuite
-				player.sub_money(10)
-				player.sub_ressource(10)
-
-			# On update l'interface
-			updateinterface(gamedata, classmap)
-			# On retire le carré
-			deltuilecoordcanvas(gamedata, classmap, option, "buildchurch", [coord[0] - (ts//2), coord[1] - (ts//2)])
+				coord = [option.widthWindow//2, option.heightWindow//8]
+				interfacemenu.temp_message(event.widget, "Pas Assez de Ressource", 2000, coord, "red")
 		else:
-			#print("Pas de Ressource")
-			#print("x,y: ",canvas.canvasx(event.x), canvas.canvasx(event.y))
-			#text = canvas.create_text(canvas.canvasx(event.x), canvas.canvasx(event.y), text = "Pas Assez de Ressource ou d'Écu", fill = "red")
-			#wait()
-			#canvas.delete(text)
-			pass
+			coord = [option.widthWindow//2, option.heightWindow//8]
+			interfacemenu.temp_message(event.widget, "Ce Village possède déjà Une église", 2000, coord, "red")		
+	else:
+		coord = [option.widthWindow//2, option.heightWindow//8]
+		interfacemenu.temp_message(event.widget, "Va te faire foutre c'est pas ton Village !", 2000, coord, "red")
 
 def deltuilecoordcanvas(gamedata, classmap, option, tag, coord):
 	############
