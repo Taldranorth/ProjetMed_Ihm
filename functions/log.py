@@ -9,7 +9,7 @@ class Classlog:
 
 	def __init__(self):
 
-		self.file = open("user/log.txt", "w")
+		self.file = open("user/log.log", "w")
 		self.loglevel = 0
 
 

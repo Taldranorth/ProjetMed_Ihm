@@ -1,4 +1,3 @@
-
 import os
 import sys
 import random
@@ -108,11 +107,12 @@ def playmenu(mainmenuwin, gamedata, classmap, option, root):
 	Button_playmenu_newseed = tkinter.Button(fplaymenu ,command = lambda: regenseed(gamedata, classmap, option,tkvar_seed, mapcanv), text = "Genérer nouvelle Seed")
 	Button_playmenu_newseed.grid(row = 1, columnspan = 5)
 
+	tkinter.Label(fplaymenu, text = "Seed: ").grid(row = 2, column = 1, columnspan = 2)
 	# Entry widget qui affiche la seed, permet de la modif et de la copier
 	entryseed = tkinter.Entry(fplaymenu, textvariable = tkvar_seed)
-	entryseed.grid(row = 2, column = 1, columnspan = 2)
+	entryseed.grid(row = 2, column = 2, columnspan = 2)
 	button_entryseed = tkinter.Button(fplaymenu, command = lambda: validate_entry_seed(entryseed, gamedata, classmap, option, tkvar_seed, mapcanv), text = "change")
-	button_entryseed.grid(row = 2, column = 2, columnspan = 2)
+	button_entryseed.grid(row = 2, column = 3, columnspan = 2)
 	##################################################################
 
 	########################\ Map Size \##############################
@@ -1186,8 +1186,6 @@ def typetoimgdico(dico_file, type, ts):
 
 ######################### Autre Fonction #########################
 
-
-
 ################## Fonction Pop Up ##################
 def tooltip(widget, text, lvariable):
 	####
@@ -1241,6 +1239,7 @@ def tooltip_destroy(event, widget, window_tooltip):
 	# On retire le Bind
 	widget.unbind_all("<Leave>")
 
+################## Fonction Pop Up Canvas ##################
 def tooltipcanvas(canvas, idobject, text, lvariable):
 	#####
 	# Fonction Pour gérer un tooltip Vis à Vis d'un objet
@@ -1329,6 +1328,43 @@ def create_temp_message(widget, top_window, text, time, coord, color):
 def destroy_temp_message(window_message):
 	####
 	# Fonction Pour détruire le message temp
+	####
+	window_message.destroy()
+
+#############\ Fonction Validation Message \################
+
+def validation_message(widget, text, coord, color):
+	####
+	# Fonction pour gérer l'affichage des messages Temporaires
+	####
+	# Prend en Paramètre un tuple tooltip composé du text et des variables utilisé par le text
+	#####
+	top_window = widget.winfo_toplevel()
+	create_validation_message(widget, top_window, text, coord, color)
+
+def create_validation_message(widget, top_window, text, coord, color):
+	####
+	# Fonction Pour créer le Message à Valider
+	####
+	# On créer la fenêtre
+	window_message = tkinter.Toplevel()
+	# On la positionne
+	window_message.geometry(f"+{coord[0]}+{coord[1]}")
+	# On la transforme en fenêtre Transiant
+	window_message.transient(top_window)
+	# On override
+	window_message.overrideredirect(True)
+	# On affiche le Message
+	frame = tkinter.Frame(window_message)
+	frame.grid()
+	tkinter.Label(frame, text = text, fg = color).grid(row = 0, column = 0)
+	# On ajoute le Bouton pour valider le Message
+	button = tkinter.Button(frame, text = "ok", command = lambda:destroy_validation_message(window_message))
+	button.grid(row = 1, column = 0)
+
+def destroy_validation_message(window_message):
+	####
+	# Fonction Pour détruire le message à Valider
 	####
 	window_message.destroy()
 

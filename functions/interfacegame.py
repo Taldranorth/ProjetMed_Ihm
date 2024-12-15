@@ -133,7 +133,7 @@ def gameinterface(gamedata, classmap, option, win):
 
 	# Buton pour quitter(A remplacer par un listbutton)
 	# Exit, Option, Load, Sauvegarder
-	Button_exit = tkinter.Button(bottomFrame, command = exit, text = "Quitter")
+	Button_exit = tkinter.Button(bottomFrame, command = lambda: exitwindow(classmap, option), text = "Quitter")
 	# Button pour acceder à la vue générale
 	Button_globalview = tkinter.Button(bottomFrame, command = lambda: globalviewmenu(gamedata, classmap, option), text = "Vue Générale")
 
@@ -161,6 +161,33 @@ def updateinterface(gamedata, classmap):
 	classmap.tkvar_list[1].set(f"Argent : {player.nb_money} ({efficiency[1]})")
 	classmap.tkvar_list[2].set(f"Bonheur: {int(player.global_joy)}%")
 	classmap.tkvar_list[3].set(f"Tour N°: {gamedata.nb_turn}")
+
+
+def exitwindow(classmap, option):
+	#####
+	# Fonction pour afficher la boite de dialogue afin de valider l'exit
+	#####
+	# On créer la boite 
+	top_window = classmap.mapcanv.winfo_toplevel()
+	# On créer la fenêtre
+	window_exit = tkinter.Toplevel()
+	# On la positionne
+	window_exit.geometry(f"+{option.widthWindow//2}+{option.heightWindow//3}")
+	# On la rend Transient
+	window_exit.transient(top_window)
+	# On retire le contour
+	window_exit.overrideredirect(True)
+	# On Créer le frame
+	frame = tkinter.Frame(window_exit)
+	frame.grid()
+	# On affiche le Message
+	tkinter.Label(frame, text = "Voulez-vous Quitter l'application ?").grid(row = 0, column = 0, columnspan = 2)
+	# On créer les boutons
+	tkinter.Button(frame, text = "Oui", command = exit).grid(row = 1, column = 0)
+	tkinter.Button(frame, text = "Non", command = lambda: exitwindow_destroy(window_exit)).grid(row = 1, column = 1)
+
+def exitwindow_destroy(window):
+	window.destroy()
 
 ######################### Menu Vue Globale #########################
 
@@ -363,19 +390,28 @@ def b_vassal_offer(gamedata, classmap, option, lc, lord, lord2, frame, succes):
 	################
 
 	# On appel la fonction qui gérer l'envoit et les répercusion
-	vassal_offer(gamedata, classmap, option, lord, lord2, succes)
+	result =  vassal_offer(gamedata, classmap, option, lord, lord2, succes)
 
 	# On update la Listbox
 	lc.delete(lc.curselection()[0])
 
 	# On détruit la fenêtre Une fois la demande faite
 	frame.destroy()
+	if result == True:
+		coord = [option.widthWindow//2, option.heightWindow//4]
+		interfacemenu.validation_message(classmap.mapcanv, f"{lord2.lordname} A accepté notre Demande de Vassalisation !", coord, "green")
+	else:
+		coord = [option.widthWindow//2, option.heightWindow//4]
+		interfacemenu.validation_message(classmap.mapcanv, f"{lord2.lordname} A refusé notre demande de Vassalisation !\n Il nous a déclaré la guerre !", coord, "red")
 
 def vassal_offer(gamedata, classmap, option, lord, lord2, succes):
 	################
 	# Fonction pour gérer l'envoit d'une demande de Vassalisation et l'affichage des répercution
 	################
-
+	# Return True Si c'est une réussite
+	# Return False Si c'est un Échec
+	#######
+	result = False
 	# On teste la probabilité
 	# On genère un chiffre entre 1 et 100
 	r = random.randrange(0,100)
@@ -394,6 +430,7 @@ def vassal_offer(gamedata, classmap, option, lord, lord2, succes):
 			lord2.removevassal(vassal)
 			lord.addvassal(vassal)
 		log.log.printinfo(f"Liste des vassaux du Joueurs: {lord.vassal}")
+		result = True
 	# Sinon on déclare la guerre
 	else:
 		log.log.printinfo("Echecs")
@@ -405,7 +442,7 @@ def vassal_offer(gamedata, classmap, option, lord, lord2, succes):
 
 	# On update l'entête
 	updateinterface(gamedata, classmap)
-
+	return result
 
 
 def vassal_try(gamedata, lord, lord2):
@@ -887,7 +924,8 @@ def statebuildvillage(gamedata, classmap, option):
 				x = coord[0]
 				y = coord[1]
 				# On créer un carrer clickable avec un bord vert
-				classmap.mapcanv.create_rectangle(originecanvas[0]+(x*ts)-(ts/2), originecanvas[1]+(y*ts)-(ts/2), originecanvas[0]+(x*ts)+ts-(ts/2), originecanvas[1]+(y*ts)+ts-(ts/2), tag = ["buildvillage","tuile", x, y], fill = "green",outline = "green")
+				idobject = classmap.mapcanv.create_rectangle(originecanvas[0]+(x*ts)-(ts/2), originecanvas[1]+(y*ts)-(ts/2), originecanvas[0]+(x*ts)+ts-(ts/2), originecanvas[1]+(y*ts)+ts-(ts/2), tag = ["buildvillage","tuile", x, y], fill = "green",outline = "green")
+				interfacemenu.tooltipcanvas(classmap.mapcanv, idobject, f"Emplacement Constructible",[])
 
 		# On tag au square
 		classmap.mapcanv.tag_bind("buildvillage", "<Button-1>", lambda event: buildvillage(event, gamedata, classmap, option))
@@ -938,7 +976,7 @@ def buildvillage(event, gamedata, classmap, option):
 		updateinterface(gamedata, classmap)
 	else:
 		coord = [option.widthWindow//2, option.heightWindow//8]
-		interfacemenu.temp_message(event.widget, "Pas Assez de Ressource", 2000, coord, "red")
+		interfacemenu.temp_message(event.widget, "Pas Assez de Ressource\n Besoin de 15 R,15 Écus", 2000, coord, "red")
 
 def updatestatbuildvillage(classmap, option):
 	############
@@ -1063,6 +1101,8 @@ def triggerbuildchurch(event, gamedata, classmap, option):
 				updateinterface(gamedata, classmap)
 				# On retire le carré
 				deltuilecoordcanvas(gamedata, classmap, option, "buildchurch", [coord[0] - (ts//2), coord[1] - (ts//2)])
+				coord = [option.widthWindow//2, option.heightWindow//8]
+				interfacemenu.temp_message(event.widget, "Église Construite", 2000, coord, "green")
 			else:
 				coord = [option.widthWindow//2, option.heightWindow//8]
 				interfacemenu.temp_message(event.widget, "Pas Assez de Ressource", 2000, coord, "red")
@@ -1488,8 +1528,8 @@ def villageinterface(event, gamedata, classmap, option):
 		tkinter.Label(frame_info, text = f"Produit: {village.prod_ressource} ressource").grid(row = 4, column = 0)
 		# l'argent du village
 		tkinter.Label(frame_info, text = f"Produit: {village.prod_money} écus").grid(row = 5, column = 0)
-		# Boutton Vue détaillé
-		tkinter.Button(frame_info, text = "Vue détaillé", command = lambda: b_village_stat(gamedata, classmap, option, village, frame_info)).grid(row = 6, column = 0)
+		# Boutton Vue détaillée
+		tkinter.Button(frame_info, text = "Vue détaillée", command = lambda: b_village_stat(gamedata, classmap, option, village, frame_info)).grid(row = 6, column = 0)
 
 		######################################################################
 
@@ -1498,7 +1538,7 @@ def villageinterface(event, gamedata, classmap, option):
 
 def b_village_stat(gamedata, classmap, option, village, frame_info):
 	################
-	# Fonction créer pour afficher la Fenêtre de Vue détaillé du village
+	# Fonction créer pour afficher la Fenêtre de Vue détaillée du village
 	################
 	# On créer la fenêtre
 	window_village_stat = tkinter.Frame(classmap.framecanvas, pady = (option.heightWindow/20))

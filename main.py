@@ -164,16 +164,12 @@ from time import time
 #### Fait:
 """
 Implémenter:
- - Implémenter la Possibilité de Définir les Villages Indépendants dans PlayMenu √
- - Implémenter Retour Utilisateur Impossibilité de Construire Une Église √
- - Implémenter Retour Utilisateur Impossibilité de Construire Un village √
  - Refactoriser le Calcul et l'affichage des Graphes
 
 Refactoriser:
 
 Fix:
- - Fix ZoomCenterWar √
- - Fix delvillageunit √
+
 
 """
 ####
