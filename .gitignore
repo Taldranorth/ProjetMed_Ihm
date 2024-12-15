@@ -9,7 +9,7 @@
 
 # Python #
 ###########
-.pyc
+*.pyc
 
 # Packages #
 ############
