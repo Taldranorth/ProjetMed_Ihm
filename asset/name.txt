@@ -1,0 +1,111 @@
+Nom:
+Cyne
+Beorne
+Aered
+Ames
+Wulfa
+Tephye
+Fricio
+Gauwis Sone
+Tani
+Aering
+Scotaidh
+Teàrlach
+Caitlín
+Dobharcu
+Eadan
+Conchar
+Rodaidh
+Gràinne
+Ealasaid
+Dolag
+Còmhan
+Naomh
+Athol
+Bláthnaid
+Aithne
+Nilidh
+Sigeweard
+Ælfstan
+Langley
+Gibson
+Eadburg
+Wulfsige
+Wystan
+Surnom:
+Phomas
+Erard
+Warder
+Tomart
+Gauwalt
+Rancent Arret
+Tiny
+Rewis Gedde
+Broge Halley
+Wyny
+Mccoys
+Mcclellani
+Llewellynw
+O'Connelli
+Ó Caoimh
+Ó Faoláini
+Ó Nualláini
+O'Brien
+Ó Seanáini
+Ó Haodhai
+Zargothrax
+Village:
+Teestead
+Tibrook
+Waystone
+Mestone
+Heawich
+Seminster
+Camoor
+Easgrove
+Stewood
+Esdale
+Woobluff
+Booford
+Hoemoor
+Tafalls
+Choofalls
+Fygrove
+Beathorp
+Fywold
+Hamoor
+Northrest
+Whitewharf
+Mightgulch
+Smallgrave
+Stagdale
+Sleetbell
+Steelpond
+Oceanbreak
+Newcall
+Bearholde
+Winston
+Hassor
+Goldtable
+Sherstones
+Nailburn
+Castle Stokecliff
+Remingborough
+Tollstow
+Halwatch
+Wembworthy
+Pemoor
+Bewood
+Shuydon
+Seford
+Hoogrove
+Beabury
+Tigrove
+Blefalls
+Kewood
+Seton
+Mag Cumhra
+Domhan an Teas
+Tír an Fás
+Mag an Gáire
+Abernethy
