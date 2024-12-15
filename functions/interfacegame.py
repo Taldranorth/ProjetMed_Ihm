@@ -8,11 +8,11 @@ import functions.moveview as moveview
 import functions.warfunctions as warfunctions
 import functions.common as common
 
-import functions.savegame as save
+
 ######################### Fonction Interface ############################
 
 def gameinterface(gamedata, classmap, option, win):
-
+	import functions.savegame as save
 	####################
 	# Fonction qui met en place l'interface en Jeu, voir l'entête
 	# HeightWindow et widthWindow sont la taille de la fenêtre de jeu
@@ -139,8 +139,8 @@ def gameinterface(gamedata, classmap, option, win):
 	Menu_Button_option["menu"] = menu_option
 
 	# On associe les Commandes Militaires
-	menu_option.add_command(label = "Load", command = lambda: save.load_game(gamedata, classmap))
-	menu_option.add_command(label = "Save", command = lambda: save.save_game(gamedata, classmap))
+	menu_option.add_command(label = "Load", command = lambda: save.load_game(gamedata, classmap, option))
+	menu_option.add_command(label = "Save", command = lambda: save.save_game(gamedata, classmap, option))
 	menu_option.add_command(label = "Quitter", command = exit)
 	
 	

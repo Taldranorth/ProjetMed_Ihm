@@ -13,8 +13,8 @@ import functions.genproc as genproc
 import functions.ailord as ailord
 import functions.cheat as cheat
 import functions.savegame as save
-
 import functions.common as common
+from functions.gameclass import Classvillage
 
 from time import time
 
@@ -484,7 +484,7 @@ def initgame(mainmenuwin, gamedata, classmap, option, root):
 ###########################################################################
 
 ######################### Écran de Jeu #########################
-def mainscreen(gamedata, classmap, option, root, pic):
+def mainscreen(gamedata, classmap, option, root, pic, upload_save = False):
 
 	# Création de la fenêtre
 	win1 = tkinter.Toplevel(root, height = option.heightWindow, width= option.widthWindow)
@@ -500,30 +500,41 @@ def mainscreen(gamedata, classmap, option, root, pic):
 
 	# Interface de Jeu
 	interfacegame.gameinterface(gamedata, classmap, option, win1)
-
 	fcanvas.pack()
 
 	# Carte de Jeu
-	createmap(gamedata, classmap, option, pic, win1)
+	createmap(gamedata, classmap, option, pic, win1, upload_save = upload_save)
+	#####LOG
+	for tile_id in classmap.lvillages:
+		village = classmap.listmap[tile_id].village
+		if isinstance(village, Classvillage):
+			print(f"Village valide après createmap : {village.name} sur la tuile {tile_id}")
+		else:
+			print(f"ERREUR : Village sur la tuile {tile_id} est invalide après createmap.")
 
 
-	# Genération des Villages
-	genproc.genVillage(gamedata, classmap, option)
 
-	# Affichage des Villages
-	affichage.printvillage(gamedata, classmap, option,fcanvas)
+    # Ne pas regénérer les villages si la partie a déjà été chargée
+	if not upload_save:
+		# Genération des Villages aléatoirement
+		genproc.genVillage(gamedata, classmap, option)
+		# Affichage des Villages
+		affichage.printvillage(gamedata, classmap, option,fcanvas)
 
-	# On rempli les villages de pop
-	# En début de Game Chaque Village est composé de 10 Pop:
-	#	- 8 Paysan
-	#	- 2 Artisan
-	for village in classmap.lvillages:
-		genproc.genpopidvillage(gamedata, classmap, option, village, 8, 2)
+		# On rempli les villages de pop
+		# En début de Game Chaque Village est composé de 10 Pop:
+		#	- 8 Paysan
+		#	- 2 Artisan
+		for village in classmap.lvillages:
+			genproc.genpopidvillage(gamedata, classmap, option, village, 8, 2)
+
+	else:
+		print("Chargement de sauvegarde: affichage des villages...	")
+		# Affichage des Villages
+		affichage.printvillage(gamedata, classmap, option,fcanvas)
 
 	# On affiche les Bordures des villages:
 	affichage.bordervillage(gamedata, classmap, option)
-
-
 
 	village = gamedata.list_lord[gamedata.playerid].fief[0]
 	coordcanvas = common.coordmaptocanvas(gamedata, classmap, option, [village.x, village.y], True)
@@ -540,8 +551,8 @@ def mainscreen(gamedata, classmap, option, root, pic):
 ####################################################################################################
 
 ######################### Creation de la Carte Canvas #######################################################
-def createmap(gamedata, classmap, option, pic, win1):
-
+def createmap(gamedata, classmap, option, pic, win1, upload_save = False):
+	
 	#Si heigthWindow/1.5 le boutton quitter disparait
 	mapcanv = tkinter.Canvas(classmap.framecanvas, height = (option.heightWindow*0.6), width= option.widthWindow)
 	gamedata.log.printinfo(f"Taille du Canvas:{mapcanv.winfo_width()}, {mapcanv.winfo_height()}")
@@ -562,9 +573,19 @@ def createmap(gamedata, classmap, option, pic, win1):
 	# !!!!!!
 	# Différence position entre map texture et map carré causer par le fait que la map texture utilise les coordonnées donnés comme point centrale et non point en haut à gauche
 	# !!!!!!
+	existing_village = None
 	for y in range(option.mapy):
 		for x in range(option.mapx):
-
+			tile_id = common.coordmaptoidtuile(option,[x,y])
+			
+			#Coservez le village existant s'il y en a un
+			existing_tile = classmap.listmap.get(tile_id, None)
+			if existing_tile:
+				existing_village = existing_tile.village	
+			else:
+				None
+			
+      
 			# On utilise la valeur de la case pour définir la tuile que l'on va créer
 			tl = tuile(pic[y][x])
 
@@ -607,6 +628,26 @@ def createmap(gamedata, classmap, option, pic, win1):
 
 			# On créer une nouvelle instance de la classe tuiles
 			instancetuile = data.Classtuiles(texture_name, tl[1], x, y, mcanvt)
+			
+			
+			# Si un village existe déjà, l'ajouter
+			if upload_save and tile_id in classmap.listmap:
+				if isinstance(classmap.listmap[tile_id].village, Classvillage):
+					instancetuile.village = classmap.listmap[tile_id].village
+			else:
+				instancetuile.village = None
+			"""
+			# Si un village existe déjà, l'ajouter
+			if upload_save and tile_id in classmap.listmap:
+				saved_tile = classmap.listmap[tile_id]
+				if isinstance(saved_tile, Classvillage):
+					instancetuile.village = saved_tile.village
+				else:
+					instancetuile.village = None
+			else:
+				instancetuile.village = None
+			"""
+
 			# On le stocker dans la ClassMap
 			#gamedata.list_tuile += [instancetuile]
 			classmap.addtuileinlist(instancetuile)
@@ -836,14 +877,15 @@ def endofgame(gamedata, classmap, option):
 
 ######################### Autre Fonction #########################
 def infovillage(village):
-	print("village name", village.name)
-	if village.lord != 0:
-		print("village lord: ", village.lord.lordname)
-	else:
-		print("village lord: ", 0)
-	if village.priest != 0:
-		print("village priest: ", village.priest.name)
-	else:
-		print("village priest: ", 0)
-	print("village global joy: ", village.global_joy)
-	print("village ressource, money: ", village.prod_ressource, village.prod_money)
+	if village != None:
+		print("\nvillage name", village.name)
+		if village.lord != 0:
+			print("village lord: ", village.lord.lordname)
+		else:
+			print("Ce village n'as pas de seigneur!")
+		if village.priest != 0:
+			print("village priest: ", village.priest.name)
+		else:
+			print("village priest: ", 0)
+		print("village global joy: ", village.global_joy)
+		print("village ressource, money: ", village.prod_ressource, village.prod_money)

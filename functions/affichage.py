@@ -4,6 +4,7 @@ import functions.data as data
 import functions.interfacegame as interfacegame
 import functions.moveview as moveview
 import functions.common as common
+from functions.gameclass import Classvillage
 
 #########################
 # Fichier qui vient contenir les fonctions liées à l'affichage
@@ -16,11 +17,21 @@ def printvillage(gamedata, classmap, option, frame):
 
 	ts = gamedata.tuilesize
 	for ele in classmap.lvillages:
+		if ele not in classmap.listmap:
+			print(f"Erreur : Tuile ID {ele} introuvable dans classmap.listmap.")
+			continue
+
+		village = classmap.listmap[ele].village
+		if not isinstance(village, Classvillage):
+			print(f"Erreur : Tuile ID {ele} ne contient pas un village valide.")
+			continue
+            
 		gamedata.loadtextureatlas("settlement.png", "build")
 		#On recup la position en x et y 
 		posx = classmap.listmap[ele].x
 		posy = classmap.listmap[ele].y
 		#print(Classmap.listmap[ele].type, Classmap.listmap[ele].x, Classmap.listmap[ele].y)
+		# Vérification que le village existe et est correctement affecté
 		# On affiche le village
 		classmap.mapcanv.create_image((posx*ts)+(ts/2), (posy*ts)+(ts/2), tags = ["village","build","tuile","img", posx, posy], image = gamedata.atlas["settlement.png"].image)
 
@@ -54,6 +65,7 @@ def printvillageunit(gamedata, classmap, option, coordmap):
 	# On ajoute lie au village la fonction pour ouvrir l'interface
 	classmap.mapcanv.tag_bind("village","<Button-1>", lambda event, opt = option, gd = gamedata, cm = classmap: interfacegame.villageinterface(event, gd, cm, opt))
 
+
 def bordervillage(gamedata, classmap, option):
 	##################
 	# Fonction pour afficher les bordures des villages
@@ -73,7 +85,9 @@ def bordervillage(gamedata, classmap, option):
 		# On Vérifier à qui appartient le village est décide de la couleur à afficher en Conséquence
 		village = classmap.listmap[idvillage].village
 		lordname = 0
-		if village.lord != 0:
+		if village is None:
+			continue
+		if village is not None and hasattr(village, 'lord') and village.lord != 0:
 			lordname = village.lord.lordname
 			if village.lord == player:
 				color = "blue"
@@ -85,8 +99,14 @@ def bordervillage(gamedata, classmap, option):
 				color = village.lord.color
 		else:
 			color = "white"
+			
 		# On calcule la Bordure
-		border = village.border
+        # On vérifie si l'attribut 'border' existe
+		if hasattr(village, 'border'):
+			border = village.border
+		# Si 'border' n'existe pas, on lui attribue une valeur par défaut
+		else:
+			border = 1
 		# On s'assure de ne pas donner des coordonnées hors de la map
 		# Pour X
 		if village.x-border < 0 :

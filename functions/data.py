@@ -4,7 +4,7 @@ import random
 
 import functions.gameclass as gameclass
 import functions.affichage as affichage
-import functions.interfacegame as interfacegame
+
 
 from datetime import datetime
 from time import time
@@ -427,6 +427,7 @@ class ClassGameData:
 		self.log.printinfo(f"file action après ajout: {self.actionlist}")
 
 	def actionfileeval(self, action):
+		import functions.interfacegame as interfacegame
 		################
 		# Méthode appeler par eotactionfile pour évaluer l'action selon une liste de fonction connu
 		################
@@ -587,10 +588,9 @@ class Classmap:
 		self.lvillages = []
 		self.lplaines = []
 		
-		# Ajouter l'attribut map_seed pour stocker la seed de la carte
-		self.map_seed = None  # Initialisation de la seed (peut être définie lors de la création de la carte)
-    
-
+		#Ajouter l'attribut map_seed pour stocker la seed de la carte
+		self.map_seed = None  	#Initialisation de la seed (peut être définie lors de la création de la carte)
+	
 	def addtuileinlist(self, tuile):
 		self.listmap[self.nbtuile] = tuile
 		tuile.setidtuile(self.nbtuile)
@@ -604,7 +604,7 @@ class Classmap:
 
 	def idtovillage(self, idvillage):
 		####################
-		# Fonction qui retoure l'objet village selon l'id de la tuile renvoyer
+		# Fonction qui retourne l'objet village selon l'id de la tuile renvoyé
 		####################
 
 		return self.listmap[idvillage].village
@@ -642,7 +642,7 @@ class Classtuiles:
 	####################
 
 	def __init__(self, texture_name, type, x, y, canvasobject):
-		# N° de la tuile, défini par classmap
+		# N° de la tuile, définie par classmap
 		self.id = 0
 		# Position de la tuile
 		self.x = x
@@ -651,22 +651,22 @@ class Classtuiles:
 		# Si une armée est présente sur la tuile
 		self.armyintuile = 0
 
-		# nom du fichier texture associé
+		# Nom du fichier texture associé
 		self.texture_name = texture_name
 		self.background = "plains.png"
 
 		# Si c'est un village
-		self.village = 0
+		self.village = None
 
-		# nom du propriétaire de la tuile
+		# Nom du propriétaire de la tuile
 		self.possesor = "wild"
 
-		# Objet du canvas associer
+		# Objet du canvas associé
 		self.canvastuiles = canvasobject
 
 		# Selon le type de la classe on définit:
 		#	- le rendement en ressource et argent
-		#	- le cout en déplacement pour traverser la tuile
+		#	- le coût en déplacement pour traverser la tuile
 
 		if type == "plains":
 

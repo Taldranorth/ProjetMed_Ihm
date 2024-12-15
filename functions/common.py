@@ -41,6 +41,7 @@ def coordmaptoidtuile(option, coord):
 	idtuile = coord[0] + (option.mapx*coord[1])
 	return idtuile
 
+
 def idtuiletocoordmap(option, idtuile):
 	######
 	# Fonction pour traduire l'idtuile en Coordonnées √

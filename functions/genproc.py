@@ -6,6 +6,7 @@ import functions.gameclass as gameclass
 import matplotlib.pyplot as plt
 from time import time
 import perlin_noise.perlin_noise as Perlin_noise
+from functions.gameclass import Classvillage
 
 #########################
 # Fichier qui vient contenir les fonctions liées à la génération procédurale et la mise en place aléatoire
@@ -47,36 +48,38 @@ def genVillage(gamedata, classmap, options):
     #       - 3-4 village Indépendant
     #       - Seulement sur des Plaines
     ####################
+	if classmap.lvillages:
+		print("Les villages existent déjà, on ne les régénére pas")
+		return
 
+	# On recup la liste des Plaines
+	classmap.lplaines = listidplaines(classmap)
+	#print(Classmap.listmap)
 
-    # On recup la liste des Plaines
-    classmap.lplaines = listidplaines(classmap)
-    #print(Classmap.listmap)
+	nb_neutral_village = 5
 
-    nb_neutral_village = 5
+	# On en gen 10 
+	# Valeur Test
+	for x in range(len(gamedata.list_lord) + nb_neutral_village):
+		# On choisit une plaines aléatoire
+		# On vient selectionner un id aléatoire présent dans lplaines
+		r = classmap.lplaines[random.randrange(len(classmap.lplaines))]
+		print("r: ",r)
+		# On verifie que la tuile est une plaines avec aucun village à proximiter
+		while buildvillagepossible(options, classmap, r) == False:
+			r = classmap.lplaines[random.randrange(len(classmap.lplaines))]
+		# On créer le village
+		classmap.listmap[r].createvillage(gamedata)
+		# On ajoute son id dans la liste
+		classmap.lvillages += [r]
+		# Si il y a un seigneur non neutre qui n'a pas encore de village on lui assigne un village
+		if x < len(gamedata.list_lord):
+			# On ajoute l'instance du village dans la liste des fief du Seigneur
+			gamedata.list_lord[x].addfief(classmap.listmap[r].village)
+			# On change le Propriétaire de la tuile du village
+			classmap.listmap[r].setpossesor(gamedata.list_lord[x].lordname)
 
-    # On en gen 10 
-    # Valeur Test
-    for x in range(len(gamedata.list_lord) + nb_neutral_village):
-        # On choisit une plaines aléatoire
-        # On vient selectionner un id aléatoire présent dans lplaines
-        r = classmap.lplaines[random.randrange(len(classmap.lplaines))]
-        print("r: ",r)
-        # On verifie que la tuile est une plaines avec aucun village à proximiter
-        while buildvillagepossible(options, classmap, r) == False:
-            r = classmap.lplaines[random.randrange(len(classmap.lplaines))]
-        # On créer le village
-        classmap.listmap[r].createvillage(gamedata)
-        # On ajoute son id dans la liste
-        classmap.lvillages += [r]
-        # Si il y a un seigneur non neutre qui n'a pas encore de village on lui assigne un village
-        if x < len(gamedata.list_lord):
-            # On ajoute l'instance du village dans la liste des fief du Seigneur
-            gamedata.list_lord[x].addfief(classmap.listmap[r].village)
-            # On change le Propriétaire de la tuile du village
-            classmap.listmap[r].setpossesor(gamedata.list_lord[x].lordname)
-
-    print("lvillage: ",classmap.lvillages)
+	print("lvillage: ",classmap.lvillages)
 
 
 def listidplaines(Classmap):
@@ -150,21 +153,26 @@ def genpopidvillage(gamedata, classmap, option, idvillage, nbpaysan, nbartisan):
     # Fonction pour ajouter de la pop dans un Village à partir de son ID
     ####################
 
-    village = classmap.listmap[idvillage].village
+	village = classmap.listmap[idvillage].village
 
-    # On ajoute les paysans
-    for x in range(nbpaysan):
-        # On créer le paysan
-        pop = gameclass.ClassRoturier(gamedata.randomnametype("Nom"), "paysan", False)
-        # On l'ajoute
-        village.addpopulation(pop)
+	#Vérifie que village est une instance de Classvillage
+	if not isinstance(village, Classvillage):
+		print(f"Erreur : La tuile {idvillage} ne contient pas un village valide.")
+		return
+		
+	# On ajoute les paysans
+	for x in range(nbpaysan):
+		# On créer le paysan
+		pop = gameclass.ClassRoturier(gamedata.randomnametype("Nom"), "paysan", False)
+		# On l'ajoute
+		village.addpopulation(pop)
 
     # On ajoute les Artisans
-    for x in range(nbartisan):
+	for x in range(nbartisan):
         # On créer l'artisan
-        pop = gameclass.ClassRoturier(gamedata.randomnametype("Nom"), "artisan", False)
+		pop = gameclass.ClassRoturier(gamedata.randomnametype("Nom"), "artisan", False)
         # On l'ajoute
-        village.addpopulation(pop)
+		village.addpopulation(pop)
         
 def genpopvillage(gamedata, classmap, option, village, nbpaysan, nbartisan):
     ####################
