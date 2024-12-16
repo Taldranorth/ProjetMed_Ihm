@@ -163,8 +163,31 @@ class ClassGameData:
 		self.list_lord[idplayer] = player
 
 	def createlord(self):
-		self.list_lord += [gameclass.Classlord(("lord "+ asset.dico_name.randomnametype("Surnom")), False, self.Nb_lord)]
-		color = f'#{random.randrange(256**3):06x}'
+		self.list_lord += [gameclass.Classlord(("lord "+self.randomnametype("Surnom")), False, self.Nb_lord)]
+		
+		#color = f'#{random.randrange(256**3):06x}'
+		#Liste des couleurs disponibles
+		colorlist = ['Yellow', 'BlueViolet' , 'DeepPink', 'Darkorange4', "Orange","Blue4", "Cyan", "LightSalmon", "Khaki1", "coral", "Yellow4", "Firebrick4", "Orange4", "Hotpink4", "Brown","magenta", "Salmon4", "SeaGreen"]
+		
+		#Trouver les couleurs déjà utilisées
+		used_colors = []
+		for lord in self.list_lord:
+			used_colors.append(lord.color)
+    		#Trouver une couleur disponible
+		available_colors = []
+		for color in colorlist:
+			if color not in used_colors:
+    				available_colors.append(color)
+    				
+		#Si plus de couleurs disponibles on affiche dans le terminal une erreur
+		if len(available_colors) == 0:
+        		raise ValueError("Toutes les couleurs disponibles ont été attribuées. Ajoutez plus de couleurs ou retirez des joueurs")
+
+    		#Choisir une couleur au hasard parmi les couleurs disponibles
+		color = random.randint(0, len(available_colors)-1)
+		color = available_colors[color]
+		
+    		#Attribuer la couleur au seigneur et incrémentation du nombre de joueurs
 		self.list_lord[self.Nb_lord].setcolor(color)
 		self.Nb_lord += 1
 
@@ -547,7 +570,7 @@ class Classtuiles:
 	####################
 
 	def __init__(self, texture_name, type, x, y, canvasobject):
-		# N° de la tuile, défini par classmap
+		# N° de la tuile, définie par classmap
 		self.id = 0
 		# Position de la tuile
 		self.x = x
@@ -561,17 +584,17 @@ class Classtuiles:
 		self.background = "plains.png"
 
 		# Si c'est un village
-		self.village = 0
+		self.village = None
 
-		# nom du propriétaire de la tuile
+		# Nom du propriétaire de la tuile
 		self.possesor = "wild"
 
-		# Objet du canvas associer
+		# Objet du canvas associé
 		self.canvastuiles = canvasobject
 
 		# Selon le type de la classe on définit:
 		#	- le rendement en ressource et argent
-		#	- le cout en déplacement pour traverser la tuile
+		#	- le coût en déplacement pour traverser la tuile
 
 		if type == "plains":
 
@@ -616,7 +639,6 @@ class Classtuiles:
 		self.village.setnamevillage(asset.dico_name.randomnametype("Village"))
 
 ###########################################################################
-
 
 ######## Main #########
 #option = ClassOptions()
