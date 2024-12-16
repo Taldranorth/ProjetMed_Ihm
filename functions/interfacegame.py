@@ -1,15 +1,18 @@
 import tkinter
 import random
 
+
 import functions.log as log
 import functions.asset as asset
 import functions.common as common
+import functions.savegame as save
 import functions.genproc as genproc
 import functions.moveview as moveview
 import functions.gameclass as gameclass
 import functions.affichage as affichage
 import functions.warfunctions as warfunctions
 import functions.interfacemenu as interfacemenu
+
 
 ######################### Fonction Interface ############################
 
@@ -130,26 +133,43 @@ def gameinterface(gamedata, classmap, option, win):
 
 
 	# Button Droit
-
+	"""
 	# Buton pour quitter(A remplacer par un listbutton)
 	# Exit, Option, Load, Sauvegarder
-	Button_exit = tkinter.Button(bottomFrame, command = lambda: exitwindow(classmap, option), text = "Quitter")
+	Button_exit = tkinter.Button(bottomFrame, command = exit, text = "Quitter")
 	# Button pour acceder à la vue générale
+	"""
+	#Lisbutton
+	Menu_Button_option = tkinter.Menubutton(bottomFrame, text= "Options")
+	menu_option = tkinter.Menu(Menu_Button_option)
+
+	#On lie les button au menu
+	Menu_Button_option["menu"] = menu_option
+
+	# On associe les Commandes Militaires
+	menu_option.add_command(label = "Load", command = lambda: save.load_game(gamedata, classmap, option))
+	menu_option.add_command(label = "Save", command = lambda: save.save_game(gamedata, classmap, option))
+	menu_option.add_command(label = "Quitter", command = lambda: exitwindow(classmap, option))
+	
+	
 	Button_globalview = tkinter.Button(bottomFrame, command = lambda: globalviewmenu(gamedata, classmap, option), text = "Info Générale")
+
 
 	# Boutton Central
 	# Bouton Fin de Tour
-	Button_endofturn = tkinter.Button(bottomFrame, command = lambda: turnend(gamedata, classmap, option), text = "Fin de Tour")
+	Button_endofturn = tkinter.Button(bottomFrame, command = lambda: turnend(gamedata, classmap), text = "Fin de Tour")
+
 
 	# On pack les Button
-	Menu_Button_gestion.pack(side="left")
-	Menu_Button_military.pack(side="left")
-	Button_exit.pack(side="right")
-	Button_globalview.pack(side="right")
-	Button_endofturn.pack()
+	Menu_Button_gestion.pack(side="left",fill='x',expand=True)
+	Menu_Button_military.pack(side="left",padx="1mm",fill='x',expand=True)
+	Button_endofturn.pack(side="left",padx='1m',fill='x',expand=True)
+	Button_globalview.pack(side="left",padx="1mm")
+	#Button_exit.pack(side="right",padx="1mm")	
+	Menu_Button_option.pack(side="right",padx="1mm")
 #########################################################################
 # Fonction lier au bouton de fin de tour
-def turnend(gamedata, classmap, option):
+def turnend(gamedata, classmap):
 	log.log.printinfo("fin de tour ")
 	coord = [option.widthWindow//2, option.heightWindow//8]
 	interfacemenu.temp_message(classmap.mapcanv, "Fin du Tour", 2000, coord, "green")
@@ -245,6 +265,7 @@ def globalviewmenu(gamedata, classmap, option):
 	# Window de la fenêtre
 	window_global_view = tkinter.Frame(classmap.framecanvas, height = option.heightWindow, width = option.widthWindow, padx = 25, pady = 25)
 	window_global_view.place(x = (option.widthWindow/5), y = (option.heightWindow/10))
+
 	player = gamedata.list_lord[gamedata.playerid]
 
 	frame_global_view = tkinter.Frame(window_global_view)
@@ -365,9 +386,6 @@ def statesubjugate(gamedata, classmap, option):
 
 	# On bind l'exit
 	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], [window_interface_subjugate]))
-
-
-
 
 
 def l_vassal_offer(event, gamedata, classmap, option, wis, lc):
@@ -689,8 +707,6 @@ def button_recruit(gamedata, classmap, tkvar_list, army, unit):
 	# On update l'interface de l'entête
 	updateinterface(gamedata, classmap)
 
-
-
 def createarmy(gamedata, classmap, option, lord, nbsoldat, knight):
 	#####
 	# Fonction pour créer une armée pour le Seigneur lord avec nb soldat et 0 ou 1 knight
@@ -718,7 +734,6 @@ def createarmy(gamedata, classmap, option, lord, nbsoldat, knight):
 		log.log.printinfo(f"{lord.lordname} A créer l'armée {lord.army[i].name} à la position {lord.army[i].x}, {lord.army[i].y}")
 	else:
 		log.log.printerror(f"{lord.lordname} N'a pas de place libre autour de {village.name} pour créer une armée")
-
 
 ############################################# War #############################################
 
@@ -1014,6 +1029,7 @@ def updatestatbuildvillage(classmap, option):
 		# On calcul l'id
 		xpos = int(classmap.mapcanv.gettags(tuile)[2])
 		ypos = int(classmap.mapcanv.gettags(tuile)[3])
+
 		idtuile = xpos + (classmap.mapx*ypos)
 
 		# On test si la tuile est toujours valable
@@ -1066,7 +1082,6 @@ def statebuildchurch(gamedata, classmap, option):
 		idbuildchurch = classmap.mapcanv.tag_bind("village", "<Button-1>", lambda event: triggerbuildchurch_statebchurch(gamedata, classmap, option), add = "+")
 		# On bind la fonction buildchurch au square
 		classmap.mapcanv.tag_bind("buildchurch", "<Button-1>",lambda event: triggerbuildchurch_statebchurch(gamedata, classmap, option))
-
 
 		# On bind la fonction d'exit à tout ce qui n'est pas un village
 		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event, lsequ = [["village","<Button-1>"]], lf = [idbuildchurch], lidw = [window_interface_church, "buildchurch"]: exitstate(gamedata, classmap, option, lsequ, lf, lidw))
@@ -1315,7 +1330,6 @@ def taxwindow_vassal(gamedata, classmap, option, wit, vassal):
 
 	button_collect_tax_money = tkinter.Button(frame_tax_collect, textvariable = tkvar_tax, command=lambda: collect_taxes_vassal(gamedata, classmap, vassal, frame_tax_collect, tkvar_tax))
 	button_collect_tax_money.grid(row = 3, column = 1)
-
 
 def collect_taxes_village(gamedata, classmap, village, type_tax, frame, tkvar_list):
 	#####
@@ -1978,7 +1992,6 @@ def sequencemovefight(gamedata, classmap, option, army1, army2):
 		elif army1 == 0:
 			log.log.printinfo(f"l'armée n'existe plus, on annule l'action")
 
-
 def startsequencemovetakevillage(event, gamedata, classmap, option, army):
 	##################
 	# Fonction qui entame le déplacement d'une armée vers la prise d'un village
@@ -2045,7 +2058,6 @@ def sequencemovetakevillage(gamedata, classmap, option, lord, army, village):
 			log.log.printinfo(f"l'armée attaquante du Seigneur {lord.lordname} à était détruite")
 		else:
 			log.log.printinfo(f"{village.name} à déjà était pris le Seigneur: {lord.lordname}")
-
 
 
 def banderole(gamedata, classmap, option):

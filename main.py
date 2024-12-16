@@ -77,7 +77,6 @@ from time import time
 #	--> Interface_Army
 
 #####
-
 # - La trajectoire Actuelle d'une armée doit s'afficher quand on clique dessus
 
 # - Fix différence click droit Mac/Linux
@@ -197,6 +196,9 @@ Fix:
 
 
 
+# -> Ajouter Bouton Pour annuler Si on déplace une armée mais que l'on veut annuler son déplacement au tour prochain
+# -> Rework Interface avec Grid
+#	--> Interface_Army
 ######## Fonctionnalité Principale à Implémenter
 # - Implémenter Résolutions Dynamique
 # - Implémenter les Réactions
