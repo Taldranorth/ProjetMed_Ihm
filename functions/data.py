@@ -163,7 +163,7 @@ class ClassGameData:
 		self.list_lord[idplayer] = player
 
 	def createlord(self):
-		self.list_lord += [gameclass.Classlord(("lord "+self.randomnametype("Surnom")), False, self.Nb_lord)]
+		self.list_lord += [gameclass.Classlord(("lord "+ asset.dico_name.randomnametype("Surnom")), False, self.Nb_lord)]
 		
 		#color = f'#{random.randrange(256**3):06x}'
 		#Liste des couleurs disponibles

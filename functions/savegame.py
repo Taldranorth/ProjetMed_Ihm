@@ -1,13 +1,14 @@
-import json
-import os
-from functions.gameclass import Classlord, Classvillage, Classarmy, ClassRoturier, ClassSoldier, ClassKnight
-import functions.interfacemenu as intermenu
-import functions.cheat as cheat
 
+import os
+import json
+
+import functions.log as log
+import functions.cheat as cheat
+import functions.common as common
 import functions.genproc as genproc
 import functions.moveview as moveview
-import functions.log as log
-import functions.common as common
+import functions.gameclass as gameclass
+import functions.interfacemenu as intermenu
 
 
 """
@@ -34,7 +35,7 @@ def save_game(gamedata, classmap, option,filename="savegame.json"):
 			"y": tile.y,
 			"type": tile.type,
 			"texture_name": tile.texture_name,
-			"has_village": isinstance(tile.village, Classvillage)
+			"has_village": isinstance(tile.village, gameclass.Classvillage)
             })
 	
     #Save des seigneurs
@@ -93,7 +94,7 @@ def save_game(gamedata, classmap, option,filename="savegame.json"):
 	#Sauvegarde des villages sans seigneurs
 	data["independent_villages"] = []
 	for tile_id,tile in classmap.listmap.items():
-		if isinstance(tile.village, Classvillage) and not tile.village.lord:
+		if isinstance(tile.village, gameclass.Classvillage) and not tile.village.lord:
 			village = tile.village
 			village_data = {"name": village.name,
 				"location": {"x": village.x, "y": village.y},  
@@ -162,7 +163,7 @@ def load_game(gamedata, classmap, option, filename="savegame.json"):
     #Restauration des seigneurs
 	gamedata.list_lord = []  	#Réinitialiser la liste actuelle
 	for lord_data in data["list_lord"]:
-		new_lord = Classlord(lord_data["name"], lord_data["player"], len(gamedata.list_lord))
+		new_lord = gameclass.Classlord(lord_data["name"], lord_data["player"], len(gamedata.list_lord))
 		new_lord.setcolor(lord_data["color"])
 		new_lord.nb_ressource = lord_data["resources"]
 		new_lord.nb_money = lord_data["money"]
@@ -171,7 +172,7 @@ def load_game(gamedata, classmap, option, filename="savegame.json"):
         #Restauration des villages du seigneur
 		new_lord.fief = []
 		for village_data in lord_data["villages"]:
-			new_village = Classvillage(x = village_data["location"]["x"], y= village_data["location"]["y"]) 
+			new_village = gameclass.Classvillage(x = village_data["location"]["x"], y= village_data["location"]["y"]) 
 			new_village.setnamevillage(village_data["name"])
 			new_village.nb_artisan = village_data["nb_artisan"]
 			new_village.nb_paysan = village_data["nb_paysan"]
@@ -182,7 +183,7 @@ def load_game(gamedata, classmap, option, filename="savegame.json"):
 
             #Restauration de la population du village
 			for pop_data in village_data["population"]:
-				new_pop = ClassRoturier(name = pop_data["name"], role = pop_data["role"], child=False)
+				new_pop = gameclass.ClassRoturier(name = pop_data["name"], role = pop_data["role"], child=False)
 				new_pop.money = pop_data["money"]
 				new_pop.ressource = pop_data["resources"]
 				new_pop.age = pop_data["age"]
@@ -213,7 +214,7 @@ def load_game(gamedata, classmap, option, filename="savegame.json"):
 	#Restauration des villages sans seigneurs
 	if "independent_villages" in data:
 		for village_data in data["independent_villages"]:
-			new_village = Classvillage(x = village_data["location"]["x"], y= village_data["location"]["y"]) 
+			new_village = gameclass.Classvillage(x = village_data["location"]["x"], y= village_data["location"]["y"]) 
 			new_village.setnamevillage(village_data["name"])
 			new_village.nb_artisan = village_data["nb_artisan"]
 			new_village.nb_paysan = village_data["nb_paysan"]
@@ -224,7 +225,7 @@ def load_game(gamedata, classmap, option, filename="savegame.json"):
 
 		    #Restauration de la population du village
 			for pop_data in village_data["population"]:
-				new_pop = ClassRoturier(name = pop_data["name"], role = pop_data["role"], child=False)
+				new_pop = gameclass.ClassRoturier(name = pop_data["name"], role = pop_data["role"], child=False)
 				new_pop.money = pop_data["money"]
 				new_pop.ressource = pop_data["resources"]
 				new_pop.age = pop_data["age"]
@@ -282,7 +283,7 @@ def load_game_and_start(gamedata, classmap, option, root, mainmenuwin, filename=
 	#Vérifie que le chargement des villages n'as pa été écrasé par autre chose
 	for tile_id in classmap.lvillages:
 		village = classmap.listmap[tile_id].village
-		if isinstance(village, Classvillage):
+		if isinstance(village, gameclass.Classvillage):
 			print(f"Village valide après chargement : {village.name} sur la tuile {tile_id}")
 		else:
 			print(f"ERREUR : Village sur la tuile {tile_id} est invalide après chargement.")
