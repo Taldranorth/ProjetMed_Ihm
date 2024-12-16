@@ -12,6 +12,7 @@ import functions.data as data
 import functions.stats as stats
 import functions.asset as asset
 import functions.common as common
+import functions.savegame as save
 import functions.genproc as genproc
 import functions.moveview as moveview
 import functions.gameclass as gameclass
@@ -45,8 +46,8 @@ def mainmenu(gamedata, classmap, option, root):
 	Button_mainm_QuickPlay = tkinter.Button(fmainm, command = lambda: game.initgame(mainmenuwin, gamedata, classmap, option, root, 5), text = "Partie Rapide")
 
 	# Button Load
-	#Button_mainm_load = tkinter.Button(fmainm, command=lambda: save.load_game_and_start(gamedata, classmap, option, root, mainmenuwin), text="Load")
-	Button_mainm_load = tkinter.Button(fmainm, command = lambda: loadmenu(mainmenuwin, gamedata, classmap, option, root) , text = "Load")
+	Button_mainm_load = tkinter.Button(fmainm, command=lambda: save.load_game_and_start(gamedata, classmap, option, root, mainmenuwin), text="Load")
+	#Button_mainm_load = tkinter.Button(fmainm, command = lambda: loadmenu(mainmenuwin, gamedata, classmap, option, root) , text = "Load")
 
 	#Button Options
 	Button_mainm_option = tkinter.Button(fmainm, text = "Options")
@@ -944,7 +945,7 @@ def createmap(gamedata, classmap, option, pic, win1, upload_save = False):
 
 			# Si un village existe déjà, l'ajouter
 			if upload_save and tile_id in classmap.listmap:
-				if isinstance(classmap.listmap[tile_id].village, Classvillage):
+				if isinstance(classmap.listmap[tile_id].village, gameclass.Classvillage):
 					instancetuile.village = classmap.listmap[tile_id].village
 			else:
 				instancetuile.village = None
