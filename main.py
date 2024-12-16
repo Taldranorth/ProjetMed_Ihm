@@ -1,51 +1,24 @@
-import tkinter
-import random
-import sys
 import os
+import sys
+import random
+import tkinter
 
+import functions.log as log
 import functions.data as data
-import functions.interfacegame as interfacegame
-import functions.interfacemenu as interfacemenu
+import functions.asset as asset
+import functions.cheat as cheat
+import functions.ailord as ailord
+import functions.genproc as genproc
+import functions.moveview as moveview
 import functions.gameclass as gameclass
 import functions.affichage as affichage
-import functions.moveview as moveview
-import functions.genproc as genproc
-import functions.ailord as ailord
-import functions.cheat as cheat
+import functions.interfacegame as interfacegame
+import functions.interfacemenu as interfacemenu
+
 
 from time import time
 
-#Doit terminé de faire un Prototype:
-# - Ajouter Un moyen de déplacer la vue √
-#	--> Doit modifier afin de prendre en compte le non focus sur le widget du canvas
-#		--> Doit appliquer le bind des touches à la root
-#		--> Doit trouver un moyen de stocker les objets dans une données facilement accesible
-#			--> Un dico ?
-#			--> Place les bases du stockage de données
-#	--> Doit modifier afin d'accèlerer le déplacement avec le maintient de la touche
-
-# !!! Attention pour une grande carte cela ram !!!
-# C'est l'affichage de plein de case qui cause la ram, voir si c'est le cache ou l'affichage
-
-# Fait un teste avec le Moniteur d'activité lancer à coté
-# L'utilisation de la ram est plutôt équilibrer, entre 130-160mo
-# Quand on déplace la vue sur une zone de la carte remplie le proc est utiliser à 70%
-
-# Trop d'appel à la fonction ? X
-# J'ai tester avec une valeur incrémenter à chaque fois que la fonction motion est appelé, l'appel à la fonction est relativement léger
-# pour une carte de 250*250 on y fait appel que 16* pour aller d'un bout à l'autre de la map
-
-# The canvas has known performance problems when you create lots of canvas items, even if you delete the canvas items.
-# Canvas item ids are not recycled, so the list of item ids that the canvas must maintain grows without bounds and makes the canvas slower on each iteration.
-#	--> Définir des marges d'id pour les différents objets du canvas
-#
-
 # Objectif:
-#	Correctif:
-#	- Faire la doc de ce qui a était fait
-#	- Réduire le lag lors de l'observation d'un grand groupe de cases
-#		--> Utilisation du processeurs importante
-#			--> Problème uniquement présent sur mac
 #
 #	- Refactoriser le Code
 #		--> Le Nettoyer
@@ -70,47 +43,21 @@ from time import time
 # Faire des fonctions de recherche optimiser
 #		--> Cela devrait permettre de réduire l'utilisation de la mémoire
 # !!!!!!
-
-
-######################### Normes #########################
-# https://peps.python.org/pep-0008/#package-and-module-names
-#	Nom de Variable:
-#
-#
-#	Nom de Class:
-#	- CapWords convention
-#
-#	Method Names and Instance Variables	
-#	- lowercase with words separated by underscores as necessary to improve readability
-#	- Use one leading underscore only for non-public methods and instance variables
-#	Ex: Pour une Class nomer Outer -> self.outer_instance
-#
-#########################################################
+####################################################################
 
 ##################\ Doit Faire: \#######################
 # Main:
 # - Déplacement en mettant la souris sur la bordure extérieur de la carte
 # - Améliorer le Zoom/Dezoom
-# - Normaliser les Tags
 #
 # Interface:
 # - Améliorer l'interface
-# - Suprimmer le carrer du village ou l'église a était construite
-# - Léger décalage sur la droite lorsque l'on centre la vue
-#
-# affichage:
-#	- Régler les labels des noms
-#		--> Actuellement ils ont tendance à ce couper quand ils sont trop long
-#			--> Le problème est dans le stockage du nom
-
-#
-# Data:
-#	- Sauvegarde des données
-#	- Faire Résolution Dynamique
-#	- Faire Placement Fenêtre Dynamique
+# - Suprimer le carrer du village ou l'église a était construite
+# - Léger décalage sur la droite lorsqu'on centre la vue
 #
 # Moveview: 
 #	- Implémenter une limite sur le déplacement de la vue pour ne pas aller plus loin que nécessaires
+#		--> Implémenter pour Déplacement avec Souris
 #
 # Interface:
 # - Recalculer toute les positions d'interfaces
@@ -119,82 +66,33 @@ from time import time
 # - Ajouter la prise de village et le combat d'armée à l'interface de déplacement d'armée
 #	--> Si souris sur armée ennemie alors affiche icône Combat
 #	--> Si souris sur village Ennemies alors affiche icône Pillage
-
-
-# - Ajouter Gestion des couleurs à PlayMenu
-
 #########################################################
 
-
-# Il y a 2 décalage possible:
-#	- c'elle causer par moveviewxy
-#		--> décalage de l'affichage sur le canvas
-#			--> Réglable par l'utilisation des coord du point d'origine de la map_canvas
-#	- c'elle causer par moveviewmouse
-#		--> décalage du canvas sur la fenêtre
-#			--> Je ne sais pas, je ne vois pas comment la régler
-
-# Décider d'adapter moveviewxy pour utiliser scan_dragto
-#	--> Plus performant car liés à l'afichage des coord et non le changement des coord de tout les objets du canvas comme move()
-
-# -> Fix Build Church
-#	--> Aucun retour quand on construit une église
-
-# -> Revoir la destruction de village
 # -> Refactoriser le code pour réduire la réutilisation de même code pour a la place utilisr une fonction commune liée a l'objet utiliser
-#	--> Voir la récupération de village selon la position x,y via Classmap
 # -> Refactorisation tout les calculs de Coordonnées pour utiliser les fonctions Commune
-# -> Peut être utiliser Bezier pour l'affichage du Pathfinding
 
 # -> Fix la possetion de multiple armé
 #	-->Faire poper aux alentour de la ville la nouvelle armée si la case de la ville est déjà occupé par une armée
-
-# -> Ajouter Bouton Pour annuler Si on déplace une armée mais que l'on veut annuler son déplacement au tour prochain
 # -> Rework Interface avec Grid
 #	--> Interface_Army
 
 #####
-# - Améliorer le calcul pour récuperer le village dans prises de village
-#		--> Cela met en avant un problème global de coord :/
-# - Gérer le Déplacement nécessaire
-
-# - Fix la création d'armée pour le nom est la position
-
-# - Changer la gestion de la population d'un village pour un dico qui vient contenir pour le role la pop
-# - Mettre en place fin de tour pour les Villages Indépendants
-
-# - La trajectoire d'une armée doit s'afficher quand on clique dessus
+# - La trajectoire Actuelle d'une armée doit s'afficher quand on clique dessus
 
 # - Fix différence click droit Mac/Linux
 # - Besoin d'un Retour utilisateur Quand Action Impossible
-
-# - Réaction au Bonheur
 #####
 
 ####
-# - Mettre en Place le Combat entre 2 armée
-# - Fix movetakevillage qui ne récupère pas à tout les coup le village voulu
-# - Retravailler Interface Village
-# - Retravailler Menu Jouer
-#	--> Doit Utiliser Grid
-#	--> Doit permettre de Définir les Villages Indépendants
-#	--> Doit Afficher sur la minimap les villages de départs
-# - Graphe de Fin de Partie
-# 	--> Comment stocker les données des  différentes étapes ?
-#		--> Une liste qui contient en 0 le tour 0 avec les données des différents Seigneur ?
-#	--> Quoi stocker qui soit suffisament pertinent ?
-#		--> Ne pas stocker des données qui soit calculable
 
 # - Mettre en place un level Log Erreur
 # - LVL 0: On affiche seulement les critique dans la Console
 # - LVL 1: On affiche les critiques et les important dans la Console
 # - LVL 2: On affiche tout dans la Console
-
-# - Au niveau Économique séparé la valeur des Ressource et des Écus
+# - Ajouter Couleur au Log
 
 # - Rendre aléatoire le placement des villages par l'Ia
 #	--> Pré-Remplir une liste de coord entre [0-5] ou il va tirer aléatoirement ?
-
 
 # - Implémenter les Différents type de Comportement pour l'IA
 
@@ -203,30 +101,105 @@ from time import time
 # - Gérer les armées ennemies quand le Seigneur n'est plus là
 #	--> On les Supprimer ou ont les ajoute à la liste des Armées Bandit ?
 
-# - Ajouter Seigneur "Wild" qui vient gérer toute les Villages, armées Indépendantes
-
-
-# - Actuellement cela bloque dans takevillage
 # - Changer les Interfaces Pour qu'elle n'utilise plus la texture de "base"
 
 # - Pour l'instant Les Seigneurs IA ne peuvent vassaliser le Joueur
 
-# --> Ajouter la gestion de la couleur aux menu Play
-# --> Déplacer les différentes fonctions dans common
-# --> Déplacer les différentes fonctions dans warfunctions
-# --> Réorganiser interfacemenu
-
-# - Réorganiser le Projet en Transformant des Fonctions en Methode
-
 # - Définir comment annuler une action ajouter dans la file d'action
+#	--> Si c'est une armée on cherche dans la file toute les actions qui ont pour paramètre l'objet Armée
 
+# - Bloquer la vue Pour le Déplacement avec la Souris
+
+# - AJouter affichage Victoire ou défaite aux combat d'armée
 # - Remplir le Menu Cheat
 
+# - Améliorer Création de Seigneur en ajoutant une Scrollbar
+
+# - Pousser la Gestion de la Menace
+
+# -> Ajouter Bouton Pour annuler Si on déplace une armée mais que l'on veut annuler son déplacement au tour prochain
+#	--> Annuler retire l'action en cour dans la pile 1 ou 0
+
+# - Réaction au Bonheur
+# --> Si le Bonheur d'un vassaux est trop bas alors il tente une révolte
+# --> Si le Bonheur d'une armée est trop basse alors elle se révolte
+# --> Ajouter Rebellion Vassaux Contre Seigneur
+
+# - Déplacer les différentes fonctions dans common
+# - Déplacer les différentes fonctions dans warfunctions
+# - Refactoriser Classmap
+# --> Changer le lien entre les objets villages et les tuiles
+# --> Changer lvillage pour un Dico qui contient pour l'id l'objet Village
+# - Refactoriser la Création de Village 
+# - Changer le fonctionnement des noms lors de la création d'armée
+# - Changer Frame de l'atlas pour le lier à la root ?
+
+# - Interface Sauvegarde de Données
+# - Changer Fonctionnement Event mercenary_army Pour pouvoir afficher le prix de l'armée de mercenaire et sa troupe
+
+# - Voir comment gérer de manière efficace le Text Tooltip pour que ce soit dynamique
+#	--> Liste qui contient des chaines de caractère avec des appels de variable ?
+#		--> Non c'est toujours le même problème, actuellement c'est les valeurs qui sont stocké et non l'adresse mémoire qui est accéder
+#			--> Il faut envoyé une variable dynamique et non statique
+#				--> Putain python fait chier
+
+# - Mettre en Place Fonctions ListBox qui disparait
 #####
 
+#### Objectif Samedi/Dimanche:
+# -> Fix Build Church
+#	--> Améliorer la sélection des villages
+# -> Fix l'imposibilité de Zoomer quand on est dans l'état Build Church
+#
+# - Implémenter Interface Option
+####
+
+
+#### Fait:
+"""
+Implémenter:
+ - Pouvoir Changer d'état d'interface sans quitter le précédent
+ 	--> Stocker dans une variable global d'interfacegame une l'exitstate en cours
+ - Améliorer Zoom/Dezoom
+ 	--> Limité à 1 zoom par action
+ - Améliorer Geule de l'Interface
+ 	--> Utiliser Texture
+ - Refactoriser le Calcul et l'affichage des Graphes
+ - Implémenter Structure Animation
+ - Implémenter Structure Notification
+ - Ajouter ToolTipe aux Graphes
+ - Refactoriser le Graphes avec Bezier
+ - Améliorer Retour Utilisateur Fin de Tour
+
+Refactoriser:
+
+Fix:
+
+"""
+####
+
+#### Objectif Restant ####
+# - Refactorisation Option/classmap et Gamedata pour être défini dans data et accéder à partir d'un appel du fichier
+# - Implémenter Résolution Dynamique
+# - Améliorer Selection de Village Pour la Construction d'église
+# - Implémenter Réactions Armées et Vassaux
+# - Implémenter Comportement de l'IA
+# - Terminé Graphe Stat
+# - Implémenter ToolTip sur Graphe Stat
+# - Trouvé un Moyen de Centré les fenêtre d'interfaces
+# - Implémenter Image Event
+# - Implémenter Menu Options
+# - Implémente Gestion de la population par case
+# - Optimiser et Refactoriser
+# - Graphe Stats par Bezier
+######
+
+
+
+# -> Ajouter Bouton Pour annuler Si on déplace une armée mais que l'on veut annuler son déplacement au tour prochain
+# -> Rework Interface avec Grid
+#	--> Interface_Army
 ######## Fonctionnalité Principale à Implémenter
-# - Implémenter Event
-# - Capacité Prêtre
 # - Implémenter Résolutions Dynamique
 # - Implémenter les Réactions
 # - Implémenter les Différents Comportement de l'IA
@@ -239,7 +212,7 @@ from time import time
 # - Implémenter marché
 # - Implémenter Landforme
 # - Gestion de la population par case
-# - Pousser le Calcule de la Menace
+# - Pousser le Calcul de la Menace
 # - Pousser le Combat entre les Armées
 # - Refactoriser le Code
 ########
@@ -249,14 +222,11 @@ from time import time
 # - Système de Pop-up d'événement en début de tour En bas à droite Comme Armée qui termine son déplacement ou village qui termine de se construire voir Civ
 # - Affiné la prise de Village pour prendre en compte le PIllage de ressource et la mort de Villageois
 # - Affiné le Combat entre 2 armée pour prendre en compte la Capture du Chevalier Ennemie et la mort des Soldats
-# - Implémenter Système de Tooltip (affichage d'info-Bulle)
 # - Implémenter à la révolte des villages la révoltes de l'armée locale si le bonheur est mauvais
 # - Implémenter la création de Bandit
 # - Changer interface entête pour afficher icône boufe et money
 # - Implémenter une interface plus pousser d'attaque de village
 # - Implémenter une interface plus pousser d'attaque d'armée
-# - Ajouter les Entrelac
-# - Améliorer le réaffichage d'une bordure
 # - Refactoriser le Code
 ########
 
@@ -265,25 +235,29 @@ from time import time
 # --> Repasser un coup de Noise map dans le groupe de Terrain qui vient définir les tuiles
 
 
+# Pour régler le problème de la taille d'écran
+#https://pypi.org/project/screeninfo/
+
 ######################### Main #########################
 if __name__ == '__main__':
 
 	#Init de la fenêtre
 	root = tkinter.Tk()
-	print("Hauteur de l'écran: ", root.winfo_screenheight())
-	print("Largeur de l'écran: ", root.winfo_screenwidth())
+	log.log.printinfo(f"Hauteur de l'écran:  {root.winfo_screenheight()}")
+	log.log.printinfo(f"Largeur de l'écran: {root.winfo_screenwidth()}")
 
 	# Chargement des Options:
 	option_instance = data.ClassOptions()
 	# Initialisation de GameData
 	gamedata_instance = data.ClassGameData()
-	gamedata_instance.log.printinfo("Initialisation log terminé")
+	log.log.printinfo("Initialisation log terminé")
 
 	# Initialisation de la Carte
 	map_instance = data.Classmap()
 
 	# Menu principale
 	interfacemenu.mainmenu(gamedata_instance, map_instance, option_instance, root)
-	gamedata_instance.log.printinfo("Initialisation de l'application terminé")
+	log.log.printinfo("Initialisation de l'application terminé")
 
 	root.mainloop()
+	
