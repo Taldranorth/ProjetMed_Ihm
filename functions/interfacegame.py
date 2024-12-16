@@ -157,7 +157,7 @@ def gameinterface(gamedata, classmap, option, win):
 
 	# Boutton Central
 	# Bouton Fin de Tour
-	Button_endofturn = tkinter.Button(bottomFrame, command = lambda: turnend(gamedata, classmap), text = "Fin de Tour")
+	Button_endofturn = tkinter.Button(bottomFrame, command = lambda: turnend(gamedata, classmap, option), text = "Fin de Tour")
 
 
 	# On pack les Button
@@ -169,7 +169,7 @@ def gameinterface(gamedata, classmap, option, win):
 	Menu_Button_option.pack(side="right",padx="1mm")
 #########################################################################
 # Fonction lier au bouton de fin de tour
-def turnend(gamedata, classmap):
+def turnend(gamedata, classmap, option):
 	log.log.printinfo("fin de tour ")
 	coord = [option.widthWindow//2, option.heightWindow//8]
 	interfacemenu.temp_message(classmap.mapcanv, "Fin du Tour", 2000, coord, "green")

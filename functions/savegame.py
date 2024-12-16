@@ -3,6 +3,7 @@ import os
 import json
 
 import functions.log as log
+import functions.game as game
 import functions.cheat as cheat
 import functions.common as common
 import functions.genproc as genproc
@@ -191,7 +192,7 @@ def load_game(gamedata, classmap, option, filename="savegame.json"):
 				new_village.addpopulation(new_pop)
 			
 			#Associer le bon village à la bonne tuile
-			tile_id = common.coordmaptoidtuile(option, [new_village.x, new_village.y])
+			tile_id = common.coordmaptoidtuile(classmap, [new_village.x, new_village.y])
 			print("numero tuile",tile_id)
 			
 			if tile_id in classmap.listmap:
@@ -233,7 +234,7 @@ def load_game(gamedata, classmap, option, filename="savegame.json"):
 				new_village.addpopulation(new_pop)
 			
 			#Associer le bon village à la bonne tuile
-			tile_id = common.coordmaptoidtuile(option, [new_village.x, new_village.y])
+			tile_id = common.coordmaptoidtuile(classmap, [new_village.x, new_village.y])
 			print("numero tuile",tile_id)
 			
 			if tile_id in classmap.listmap:
@@ -264,10 +265,10 @@ Affiche l'écran principal du jeu après le chargement de la partie.
 Copie de initgame dans interfacemenu.py
 """
 def show_game_screen(gamedata, classmap, option, root):
-    intermenu.mainscreen(gamedata, classmap, option, root, pic, upload_save = True)
+    intermenu.mainscreen(gamedata, classmap, option, root, pic, 0, upload_save = True)
 
     intermenu.mainmenuwin.destroy()
-    intermenu.gameloop(gamedata, classmap, option, root)
+    game.gameloop(gamedata, classmap, option, root)
     cheat.cheat_menu(gamedata, classmap, option, root)
     root.mainloop()
 
