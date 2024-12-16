@@ -912,7 +912,7 @@ def createmap(gamedata, classmap, option, pic, win1, upload_save = False):
 	existing_village = None
 	for y in range(classmap.mapy):
 		for x in range(classmap.mapx):
-			tile_id = common.coordmaptoidtuile(option,[x,y])
+			tile_id = common.coordmaptoidtuile(classmap,[x,y])
 			# Conservez le village existant s'il y en a un
 			existing_tile = classmap.listmap.get(tile_id, None)
 			if existing_tile:
@@ -1419,5 +1419,3 @@ def infovillage(village):
 	log.log.printinfo(f"village global joy: {village.global_joy}")
 	log.log.printinfo(f"village ressource, money:  {village.prod_ressource}, {village.prod_money}")
 
-
->>>>>>> main
