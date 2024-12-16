@@ -111,7 +111,7 @@ def playmenu(mainmenuwin, gamedata, classmap, option, root):
 	# Entry widget qui affiche la seed, permet de la modif et de la copier
 	entryseed = tkinter.Entry(fplaymenu, textvariable = tkvar_seed)
 	entryseed.grid(row = 2, column = 2, columnspan = 2)
-	button_entryseed = tkinter.Button(fplaymenu, command = lambda: validate_entry_seed(entryseed, gamedata, classmap, option, tkvar_seed, mapcanv), text = "change")
+	button_entryseed = tkinter.Button(fplaymenu, command = lambda: validate_entry_seed(entryseed, gamedata, classmap, option, tkvar_seed, mapcanv), text = "changer")
 	button_entryseed.grid(row = 2, column = 3, columnspan = 2)
 	##################################################################
 
@@ -123,14 +123,14 @@ def playmenu(mainmenuwin, gamedata, classmap, option, root):
 	tkvar_mapy.set(classmap.mapy)
 
 	# Label
-	tkinter.Label(fplaymenu, text = "largeur: ").grid(row = 3, column = 0)
+	tkinter.Label(fplaymenu, text = "Largeur Carte: ").grid(row = 3, column = 0)
 	# Entry widget qui affiche la taille en x et y 
 	entrymapx = tkinter.Entry(fplaymenu, textvariable = tkvar_mapx)
 	entrymapx.grid(row = 3, column = 1)
-	tkinter.Label(fplaymenu, text = "hauteur: ").grid(row = 3, column = 2)
+	tkinter.Label(fplaymenu, text = "Hauteur Carte: ").grid(row = 3, column = 2)
 	entrymapy = tkinter.Entry(fplaymenu, textvariable = tkvar_mapy)
 	entrymapy.grid(row = 3, column = 3)
-	button_entrymap = tkinter.Button(fplaymenu, command = lambda: validate_entry_map(entrymapx, entrymapy, gamedata, classmap, option, tkvar_mapx, tkvar_mapy, mapcanv), text = "change")
+	button_entrymap = tkinter.Button(fplaymenu, command = lambda: validate_entry_map(entrymapx, entrymapy, gamedata, classmap, option, tkvar_mapx, tkvar_mapy, mapcanv), text = "changer")
 	button_entrymap.grid(row = 3, column = 4)
 	##################################################################
 
@@ -162,7 +162,7 @@ def playmenu(mainmenuwin, gamedata, classmap, option, root):
 			tkinter.Label(fplaymenu, text = "Player:").grid(row = 6, column = 1)
 			entryplayername = tkinter.Entry(fplaymenu, textvariable = tkvar_playername)
 			entryplayername.grid(row = 6, column = 2)
-			tkinter.Button(fplaymenu, text = "change", command = lambda: validate_entry_lordname(gamedata, tkvar_playername)).grid(row = 6, column = 3)
+			tkinter.Button(fplaymenu, text = "changer", command = lambda: validate_entry_lordname(gamedata, tkvar_playername)).grid(row = 6, column = 3)
 		else:
 			tkinter.Label(fplaymenu_frame_listlord, text = lord.lordname, fg = lord.color).grid(columnspan = 5)
 	##################################################################
@@ -887,6 +887,9 @@ def mainscreen(gamedata, classmap, option, root, pic, NeutralVill):
 		infovillage(classmap.listmap[village].village)
 
 	interfacegame.updateinterface(gamedata, classmap)
+
+	# On affiche la légendes des Commandes
+	interfacegame.legendginterface(gamedata, classmap, option)
 
 
 ####################################################################################################

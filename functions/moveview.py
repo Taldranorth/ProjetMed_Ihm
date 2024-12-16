@@ -198,42 +198,7 @@ def moveviewz(event, gamedata, classmap, option):
 	# On change la taille des tuiles stocker dans les données globaux
 	gamedata.newsizetuile(x)
 	###################################################################
-
-	####################\ 5°) \#########################################
-	# Recalcul des images
-	# On Update l'atlas pour prendre en compte la nouvelle taille des textures
-	asset.atlas.resizeatlas(asset.dico_file, x)
-	#Tuile graphique:
-	for imgid in event.widget.find_withtag("img"):
-		ltag = classmap.mapcanv.gettags(imgid)
-		# Si c'est un village on assigne directiement la variable texture
-		if "village" in ltag:
-			texture = "settlement.png"
-		# Si c'est une armée
-		elif "army" in ltag:
-			# On recup les coordonnées canvas
-			coord = classmap.mapcanv.coords(imgid)
-			# On transforme en coordonnées Map
-			coord = common.coordcanvastomap(gamedata, classmap, option, coord)
-			# On cherche l'objet armée
-			# On se balade parmi les Seigneurs
-			for lord in range(gamedata.Nb_lord):
-				army = gamedata.coordtoarmy(lord, coord)
-				# Si la fonction n'a pas renvoyé False on a trouvé l'armée
-				if army != False:
-					texture = army.texture
-		# Si Background
-		elif "bg" in ltag:
-			texture = "plains.png"
-		else:
-			# Sinon On vient recup la texture stocker dans la Classtuile
-			texture = classmap.listmap[int(ltag[7])].texture_name
-
-		# On change la texture lié
-		event.widget.itemconfigure(imgid, image = asset.atlas.dico[texture].image)
-	############################################################
-	log.log.printinfo(f"taille Atlas: {len(asset.atlas.dico)}")
-	############################################################
+	zoom(gamedata, classmap, option)
 
 def moveviewzcenter(gamedata, classmap, option, delta):
 	####################
@@ -261,11 +226,15 @@ def moveviewzcenter(gamedata, classmap, option, delta):
 	# On change la taille des tuiles stocker dans les données globaux
 	gamedata.newsizetuile(x)
 	###################################################################
+	zoom(gamedata, classmap, option)
 
+def zoom(gamedata, classmap, option):
+
+	ts = gamedata.tuilesize
 	####################\ 5°) \#########################################
 	# Recalcul des images
 	# On Update l'atlas pour prendre en compte la nouvelle taille des textures
-	asset.atlas.resizeatlas(asset.dico_file,x)
+	asset.atlas.resizeatlas(asset.dico_file, ts)
 	#Tuile graphique:
 	for imgid in classmap.mapcanv.find_withtag("img"):
 		ltag = classmap.mapcanv.gettags(imgid)
@@ -294,11 +263,11 @@ def moveviewzcenter(gamedata, classmap, option, delta):
 			print("idtuile: ", ltag[7])
 			texture = classmap.listmap[int(ltag[7])].texture_name
 
-
 		# On change la texture lié
 		classmap.mapcanv.itemconfigure(imgid, image = asset.atlas.dico[texture].image)
 	############################################################
 	log.log.printinfo(f"taille Atlas: {len(asset.atlas.dico)}")
+
 
 ###########################################################################
 

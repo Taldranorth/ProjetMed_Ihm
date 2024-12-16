@@ -149,14 +149,9 @@ from time import time
 
 #### Objectif Samedi/Dimanche:
 # -> Fix Build Church
-#	--> Aucun retour quand on construit une église
 #	--> Améliorer la sélection des villages
 # -> Fix l'imposibilité de Zoomer quand on est dans l'état Build Church
-# - Refactoriser Moveviewz/MoveviewZcenter
-
-# - Retravailler Interface Village
-#	--> Compléter Fonctionnalité
-
+#
 # - Implémenter Interface Option
 ####
 
@@ -164,12 +159,24 @@ from time import time
 #### Fait:
 """
 Implémenter:
+ - Pouvoir Changer d'état d'interface sans quitter le précédent
+ 	--> Stocker dans une variable global d'interfacegame une l'exitstate en cours
+ - Améliorer Zoom/Dezoom
+ 	--> Limité à 1 zoom par action
+ - Améliorer Geule de l'Interface
+ 	--> Utiliser Texture
  - Refactoriser le Calcul et l'affichage des Graphes
+ - Implémenter Structure Animation
+ - Implémenter Structure Notification
+ - Ajouter ToolTipe aux Graphes
+ - Refactoriser le Graphes avec Bezier
+ - Améliorer Retour Utilisateur Fin de Tour
 
 Refactoriser:
 
-Fix:
 
+Fix:
+ - 
 
 """
 ####
@@ -184,7 +191,7 @@ Fix:
 # - Implémenter ToolTip sur Graphe Stat
 # - Trouvé un Moyen de Centré les fenêtre d'interfaces
 # - Implémenter Image Event
-# - Implémenter Options
+# - Implémenter Menu Options
 # - Implémente Gestion de la population par case
 # - Optimiser et Refactoriser
 # - Graphe Stats par Bezier
