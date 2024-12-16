@@ -916,7 +916,7 @@ def createmap(gamedata, classmap, option, pic, win1, upload_save = False):
 			tile_id = common.coordmaptoidtuile(classmap,[x,y])
 			# Conservez le village existant s'il y en a un
 			existing_tile = classmap.listmap.get(tile_id, None)
-			if existing_tile:
+			if existing_tile and hasattr(existing_tile, 'village'):
 				existing_village = existing_tile.village	
 			else:
 				None
@@ -944,22 +944,11 @@ def createmap(gamedata, classmap, option, pic, win1, upload_save = False):
 			instancetuile = data.Classtuiles(tl[0], tl[1], x, y, mcanvt)
 
 			# Si un village existe déjà, l'ajouter
-			if upload_save and tile_id in classmap.listmap:
-				if isinstance(classmap.listmap[tile_id].village, gameclass.Classvillage):
-					instancetuile.village = classmap.listmap[tile_id].village
+			if existing_village:
+				instancetuile.village = existing_village
+				print(f"Village {existing_village} restauré sur la tuile")
 			else:
 				instancetuile.village = None
-			"""
-			# Si un village existe déjà, l'ajouter
-			if upload_save and tile_id in classmap.listmap:
-				saved_tile = classmap.listmap[tile_id]
-				if isinstance(saved_tile, Classvillage):
-					instancetuile.village = saved_tile.village
-				else:
-					instancetuile.village = None
-			else:
-				instancetuile.village = None
-			"""
 
 			# On le stocker dans la ClassMap
 			classmap.addtuileinlist(instancetuile)

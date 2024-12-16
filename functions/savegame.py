@@ -19,25 +19,13 @@ def save_game(gamedata, classmap, option,filename="savegame.json"):
 	data = {}
     
     #Sauvegarde des paramètres globaux
-	data["Nb_tour"] = gamedata.Nb_tour
+	data["Nb_tour"] = gamedata.nb_turn
     #Taille de la carte et seed
 	data["map_seed"] = gamedata.seed
 	if hasattr(classmap, "mapsize_x") and hasattr(classmap, "mapsize_y"):
 		data["mapsize"] = {"x": classmap.mapsize_x, "y": classmap.mapsize_y}
 	else:
 		data["mapsize"] = {"x": 100, "y": 100}  # Taille par défaut
-	
-    # Sauvegarde des tuiles
-	data["tiles"] = []
-	for tile_id, tile in classmap.listmap.items():
-		data["tiles"].append({
-			"id": tile_id,
-			"x": tile.x,
-			"y": tile.y,
-			"type": tile.type,
-			"texture_name": tile.texture_name,
-			"has_village": isinstance(tile.village, gameclass.Classvillage)
-            })
 	
     #Save des seigneurs
 	data["list_lord"] = []
@@ -58,7 +46,6 @@ def save_game(gamedata, classmap, option,filename="savegame.json"):
 		for village in lord.fief:
 			village_data = {"name": village.name,
 				"location": {"x": village.x, "y": village.y},  #Emplacement sauvegardé
-				#"tuile": common.coordmaptoidtuile(option, [village.x, village.y]),   #Calcul des coordonnées de la tuile du village
 				"population": [{
 						"name": pop.name,
 						"role": pop.role,
@@ -75,7 +62,7 @@ def save_game(gamedata, classmap, option,filename="savegame.json"):
 				"has_church": village.church,
 			}
 			lord_data["villages"].append(village_data)
-			print(f"Village {village.name} enregistré à la tuile ID {common.coordmaptoidtuile(option, [village.x, village.y])} avec coordonnées ({village.x}, {village.y})")
+			print(f"Village {village.name} enregistré à la tuile ID {common.coordmaptoidtuile(classmap, [village.x, village.y])} avec coordonnées ({village.x}, {village.y})")
 		
 		#Sauvegarde des armées du seigneur
 		for army in lord.army:
@@ -99,7 +86,6 @@ def save_game(gamedata, classmap, option,filename="savegame.json"):
 			village = tile.village
 			village_data = {"name": village.name,
 				"location": {"x": village.x, "y": village.y},  
-				#"tuile": common.coordmaptoidtuile(option, [village.x, village.y]),   #Calcul des coordonnées de la tuile du village
 				"population": [{
 						"name": pop.name,
 						"role": pop.role,
@@ -116,7 +102,7 @@ def save_game(gamedata, classmap, option,filename="savegame.json"):
 				"has_church": village.church,
 			}
 			data["independent_villages"].append(village_data)
-			print(f"Village SANS SEIGNEUR {village.name} enregistré à la tuile ID {common.coordmaptoidtuile(option, [village.x, village.y])} avec coordonnées ({village.x}, {village.y})")
+			print(f"Village Indépendant {village.name} enregistré à la tuile ID {common.coordmaptoidtuile(classmap, [village.x, village.y])} avec coordonnées ({village.x}, {village.y})")
 
 	#Écriture dans un fichier JSON
 	with open(filename, "w") as file:
@@ -133,7 +119,7 @@ def load_game(gamedata, classmap, option, filename="savegame.json"):
 		data = json.load(file)
     
     #Restauration des paramètres globaux
-	gamedata.Nb_tour = data["Nb_tour"]
+	gamedata.nb_turn = data["Nb_tour"]
     #Resto de la taille et du seed de la carte
 	if "map_seed" in data:
 		gamedata.seed = data["map_seed"]
@@ -150,16 +136,19 @@ def load_game(gamedata, classmap, option, filename="savegame.json"):
     
     # Réinitialiser la liste des tuiles dans la carte
 	classmap.listmap = {}
-    # Recréer les tuiles de la carte
-	for tile_data in data["tiles"]:
-		from functions.data import Classtuiles
-		tile_id = tile_data["id"]
-		classmap.listmap[tile_id] = Classtuiles(texture_name=tile_data["texture_name"], type=tile_data["type"], x=tile_data["x"], y=tile_data["y"], canvasobject=None) 
-	
 	#Réinitialiser la liste des villages
 	classmap.lvillages = []
 	print("Listevillages avant réajustement: ",classmap.lvillages)
 	
+	#Reconstruction des tuiles de la carte
+	print("Reconstruction des tuiles...")
+	for y in range(classmap.mapsize_y):
+		for x in range(classmap.mapsize_x):
+			tile_id = common.coordmaptoidtuile(classmap, [x, y])
+			from functions.data import Classtuiles
+			classmap.listmap[tile_id] = Classtuiles(texture_name="plains.png", type="plains", x=x, y=y, canvasobject=None)
+	print(f"{len(classmap.listmap)} tuiles reconstruites.")
+
 	
     #Restauration des seigneurs
 	gamedata.list_lord = []  	#Réinitialiser la liste actuelle
@@ -182,18 +171,21 @@ def load_game(gamedata, classmap, option, filename="savegame.json"):
 			new_village.global_joy = village_data["global_joy"]
 			new_village.church = village_data["has_church"]
 
-            #Restauration de la population du village
-			for pop_data in village_data["population"]:
-				new_pop = gameclass.ClassRoturier(name = pop_data["name"], role = pop_data["role"], child=False)
-				new_pop.money = pop_data["money"]
-				new_pop.ressource = pop_data["resources"]
-				new_pop.age = pop_data["age"]
-				new_pop.joy = pop_data["joy"]
-				new_village.addpopulation(new_pop)
-			
+			if not new_village.population:
+		        #Restauration de la population du village
+				for pop_data in village_data["population"]:
+					new_pop = gameclass.ClassRoturier(name = pop_data["name"], role = pop_data["role"], child=False)
+					new_pop.money = pop_data["money"]
+					new_pop.ressource = pop_data["resources"]
+					new_pop.age = pop_data["age"]
+					new_pop.joy = pop_data["joy"]
+					new_village.addpopulation(new_pop)
+			else:
+				print("La population est déjà chargé en sauvegarde, pas de doublon")
+				
 			#Associer le bon village à la bonne tuile
 			tile_id = common.coordmaptoidtuile(classmap, [new_village.x, new_village.y])
-			print("numero tuile",tile_id)
+			print(f"ID calculé pour le village {new_village.name} : {tile_id}")
 			
 			if tile_id in classmap.listmap:
 				classmap.listmap[tile_id].village = new_village
@@ -224,18 +216,21 @@ def load_game(gamedata, classmap, option, filename="savegame.json"):
 			new_village.global_joy = village_data["global_joy"]
 			new_village.church = village_data["has_church"]
 
-		    #Restauration de la population du village
-			for pop_data in village_data["population"]:
-				new_pop = gameclass.ClassRoturier(name = pop_data["name"], role = pop_data["role"], child=False)
-				new_pop.money = pop_data["money"]
-				new_pop.ressource = pop_data["resources"]
-				new_pop.age = pop_data["age"]
-				new_pop.joy = pop_data["joy"]
-				new_village.addpopulation(new_pop)
-			
+			if not new_village.population:			
+				#Restauration de la population du village
+				for pop_data in village_data["population"]:
+					new_pop = gameclass.ClassRoturier(name = pop_data["name"], role = pop_data["role"], child=False)
+					new_pop.money = pop_data["money"]
+					new_pop.ressource = pop_data["resources"]
+					new_pop.age = pop_data["age"]
+					new_pop.joy = pop_data["joy"]
+					new_village.addpopulation(new_pop)
+			else:
+				print("La population est déjà chargé en sauvegarde, pas de doublon")
+				
 			#Associer le bon village à la bonne tuile
 			tile_id = common.coordmaptoidtuile(classmap, [new_village.x, new_village.y])
-			print("numero tuile",tile_id)
+			print(f"Village {new_village.name} assigné à la tuile ID {tile_id} avec coordonnées ({new_village.x}, {new_village.y})")
 			
 			if tile_id in classmap.listmap:
 				classmap.listmap[tile_id].village = new_village

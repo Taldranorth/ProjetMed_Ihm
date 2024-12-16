@@ -1,5 +1,6 @@
 
 import functions.log as log
+
 #################################### Fonction Calcul de coord ####################################
 
 def coordcanvastomap(gamedata, classmap, option, coord):
