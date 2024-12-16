@@ -2053,24 +2053,21 @@ def banderole(gamedata, classmap, option):
 	# Fonction pour afficher une banderole aux joueurs qui indique qu'elle AI est entrain de jouer
 	################
 
-	# On créer le Frame
-	frame_banderole = tkinter.Frame(classmap.framecanvas)
-	frame_banderole.pack()
+	# On créer la WindowFrame
+	window_banderole = tkinter.Frame(classmap.framecanvas)
+	window_banderole.place(x = option.widthWindow*0.4, y = option.heightWindow//8)
 
-	# On lie le frame au canvas principale
-	idwindow = classmap.mapcanv.create_window(option.widthWindow/2 , option.widthWindow/4, window = frame_banderole, tags = "interface")
+	# On créer le frame
+	frame = tkinter.Frame(window_banderole)
+	frame.pack()
+	# On ajoute le text
+	tkinter.Label(frame, text = f"C'est au Seigneur N°{gamedata.Nb_toplay} {gamedata.list_lord[gamedata.Nb_toplay].lordname} de jouer").pack()
 
-	# On créer le canvas utiliser pour gérer l'affichage
-	canvas_banderole = tkinter.Canvas(frame_banderole)
-	canvas_banderole.pack()
-
-	tkinter.Label(canvas_banderole, text = f"C'est au Seigneur N°{gamedata.Nb_toplay} {gamedata.list_lord[gamedata.Nb_toplay].lordname} de jouer").pack()
-
-	return idwindow
+	return window_banderole
 
 
-def destroybanderole(gamedata, classmap, idwindow):
-	classmap.mapcanv.delete(idwindow)
+def destroybanderole(gamedata, classmap, window):
+	window.destroy()
 
 def exitstate(gamedata, classmap, option, lsequbind, lfuncid, lidwindow):
 	################

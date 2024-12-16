@@ -107,7 +107,7 @@ def playmenu(mainmenuwin, gamedata, classmap, option, root):
 	Button_playmenu_newseed = tkinter.Button(fplaymenu ,command = lambda: regenseed(gamedata, classmap, option,tkvar_seed, mapcanv), text = "Genérer nouvelle Seed")
 	Button_playmenu_newseed.grid(row = 1, columnspan = 5)
 
-	tkinter.Label(fplaymenu, text = "Seed: ").grid(row = 2, column = 1, columnspan = 2)
+	tkinter.Label(fplaymenu, text = "Graine: ").grid(row = 2, column = 1, columnspan = 2)
 	# Entry widget qui affiche la seed, permet de la modif et de la copier
 	entryseed = tkinter.Entry(fplaymenu, textvariable = tkvar_seed)
 	entryseed.grid(row = 2, column = 2, columnspan = 2)
@@ -159,7 +159,7 @@ def playmenu(mainmenuwin, gamedata, classmap, option, root):
 	for lord in gamedata.list_lord:
 		# Si c'est le joueur on met affiche un label Player est on met en place un Entry afin de pouvoir modifier le nom du Seigneur
 		if lord.player == True:
-			tkinter.Label(fplaymenu, text = "Player:").grid(row = 6, column = 1)
+			tkinter.Label(fplaymenu, text = "Seigneur Joueur:").grid(row = 6, column = 1)
 			entryplayername = tkinter.Entry(fplaymenu, textvariable = tkvar_playername)
 			entryplayername.grid(row = 6, column = 2)
 			tkinter.Button(fplaymenu, text = "changer", command = lambda: validate_entry_lordname(gamedata, tkvar_playername)).grid(row = 6, column = 3)

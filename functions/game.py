@@ -76,7 +76,7 @@ def gameloop(gamedata, classmap, option, root):
 	if gamedata.semaphore == False:
 		# si on a fait le tour des joueurs
 		if gamedata.Nb_toplay == gamedata.Nb_lord:
-			endofturn(gamedata, classmap, option)
+			endofturn(gamedata, classmap, option, root)
 
 		# Si c'est au joueurs de jouer
 		if gamedata.Nb_toplay == gamedata.playerid:
@@ -92,7 +92,7 @@ def gameloop(gamedata, classmap, option, root):
 		# Si elle ne l'est pas on rapelle cette fonction dans 
 		root.after(50, lambda: gameloop(gamedata, classmap, option, root))
 
-def endofturn(gamedata, classmap, option):
+def endofturn(gamedata, classmap, option, root):
 	######
 	# Fonction Qui gère la fin de Tour
 	#####
@@ -117,6 +117,10 @@ def endofturn(gamedata, classmap, option):
 		# On affiche dans le terminal l'évolution
 		stats.dico_stat.printdico()
 
+		# On affiche la banderole qui indique que c'est aux joueur de Jouer
+		idwindow = interfacegame.banderole(gamedata, classmap, option)
+		root.after(2000, lambda: interfacegame.destroybanderole(gamedata, classmap, idwindow))
+
 		gamedata.endturn = False
 		gamedata.semaphore = False
 	else:
@@ -127,7 +131,7 @@ def playerturn(gamedata, classmap, option):
 	######
 	# Fonction qui gère le Tour du Joueur
 	######
-	# Si le joueur à appuier sur le bouton fin de tour
+	# Si le joueur à appuyer sur le bouton fin de tour
 	if gamedata.endturn == True:
 		log.log.printinfo("Player hit end of turn button")
 		# On incrémente le joueur qui doit jouer

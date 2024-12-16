@@ -174,9 +174,7 @@ Implémenter:
 
 Refactoriser:
 
-
 Fix:
- - 
 
 """
 ####
