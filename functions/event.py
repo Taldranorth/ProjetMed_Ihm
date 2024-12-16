@@ -472,7 +472,7 @@ def eventscreen(gamedata, classmap, option, event):
 
 		# On céer l'interface
 		window_interface_event = tkinter.Frame(classmap.framecanvas)
-		window_interface_event.place(x = (option.widthWindow/5), y = (option.heightWindow/10))
+		window_interface_event.place(x = option.widthWindow*0.25, y = option.heightWindow*0.25)
 
 		# On créer la frame
 		frame_interface_event = tkinter.Frame(window_interface_event)
