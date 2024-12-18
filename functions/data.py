@@ -6,6 +6,7 @@ import functions.log as log
 import functions.asset as asset
 import functions.gameclass as gameclass
 import functions.affichage as affichage
+import functions.notification as notification
 import functions.interfacegame as interfacegame
 
 from time import time
@@ -112,6 +113,9 @@ class ClassGameData:
 		# Dico contenant les effets des capacité des prêtres
 		self.dico_priest_ability = {}
 
+		# Tuple qui vient contenir les données nécessaire à l'exit de l'état actuelles
+		self.exit = []
+
 		# Variable qui vient contenir la file des actions
 		# liste de Piles
 		self.actionlist = []
@@ -133,6 +137,12 @@ class ClassGameData:
 		player = gameclass.Classlord("test", True, self.Nb_lord)
 		self.list_lord += [player]
 		self.Nb_lord += 1
+
+		# Color
+		# Liste des couleurs disponibles
+		self.colorlist = ['Yellow', 'BlueViolet' , 'DeepPink', 'Darkorange4', "Orange","Blue4", "Cyan", "LightSalmon", "Khaki1", "coral", "Yellow4", "Firebrick4", "Orange4", "Hotpink4", "Brown","magenta", "Salmon4", "SeaGreen"]
+		# Liste des couleurs disponibles
+		self.color_available = self.colorlist
 
 		for x in range(3):
 			self.createlord()
@@ -165,31 +175,27 @@ class ClassGameData:
 	def createlord(self):
 		self.list_lord += [gameclass.Classlord(("lord "+ asset.dico_name.randomnametype("Surnom")), False, self.Nb_lord)]
 		
-		#color = f'#{random.randrange(256**3):06x}'
-		#Liste des couleurs disponibles
-		colorlist = ['Yellow', 'BlueViolet' , 'DeepPink', 'Darkorange4', "Orange","Blue4", "Cyan", "LightSalmon", "Khaki1", "coral", "Yellow4", "Firebrick4", "Orange4", "Hotpink4", "Brown","magenta", "Salmon4", "SeaGreen"]
+		color = self.colorlord()
 		
-		#Trouver les couleurs déjà utilisées
-		used_colors = []
-		for lord in self.list_lord:
-			used_colors.append(lord.color)
-    		#Trouver une couleur disponible
-		available_colors = []
-		for color in colorlist:
-			if color not in used_colors:
-    				available_colors.append(color)
-    				
-		#Si plus de couleurs disponibles on affiche dans le terminal une erreur
-		if len(available_colors) == 0:
-        		raise ValueError("Toutes les couleurs disponibles ont été attribuées. Ajoutez plus de couleurs ou retirez des joueurs")
-
-    		#Choisir une couleur au hasard parmi les couleurs disponibles
-		color = random.randint(0, len(available_colors)-1)
-		color = available_colors[color]
-		
-    		#Attribuer la couleur au seigneur et incrémentation du nombre de joueurs
+    	# On set la couleur du Seigneur puis incrémente le nb de Seigneurs
 		self.list_lord[self.Nb_lord].setcolor(color)
 		self.Nb_lord += 1
+
+	def colorlord(self):
+		#color = f'#{random.randrange(256**3):06x}'
+		color = ""
+
+		#Si plus de couleurs disponibles on affiche dans le terminal une erreur
+		if len(self.color_available) == 0:
+        		raise ValueError("Toutes les couleurs disponibles ont été attribuées. Ajoutez plus de couleurs ou retirez des joueurs")
+
+    	#Choisir une couleur au hasard parmi les couleurs disponibles
+		idcolor = random.randint(0, len(self.color_available)-1)
+		color = self.color_available[idcolor]
+
+		# On retire de la liste des couleur disponible
+		self.color_available = self.color_available[:idcolor] + self.color_available[idcolor+1:]
+		return color
 
 	def lordnametoid(self, name):
 		#####
@@ -202,7 +208,6 @@ class ClassGameData:
 				return lord.idlord
 		# Si on ne trouve pas on Renvoit False
 		return False
-
 
 	def deletelord(self, idlord):
 		name = self.list_lord[idlord].lordname[5:]
@@ -221,6 +226,8 @@ class ClassGameData:
 				i += 1
 		else:
 			self.list_lord = [self.list_lord[0]]
+		# on libérer la couleur utilisé
+		self.color_available += [lord.color]
 
 		# On détruit le seigneur
 		del lord

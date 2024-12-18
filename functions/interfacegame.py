@@ -10,6 +10,7 @@ import functions.genproc as genproc
 import functions.moveview as moveview
 import functions.gameclass as gameclass
 import functions.affichage as affichage
+import functions.notification as notification
 import functions.warfunctions as warfunctions
 import functions.interfacemenu as interfacemenu
 
@@ -171,7 +172,7 @@ def gameinterface(gamedata, classmap, option, win):
 # Fonction lier au bouton de fin de tour
 def turnend(gamedata, classmap, option):
 	log.log.printinfo("fin de tour ")
-	coord = [option.widthWindow//2, option.heightWindow//8]
+	coord = [int(option.widthWindow*0.59), int(option.heightWindow*0.15)]
 	interfacemenu.temp_message(classmap.mapcanv, "Fin du Tour", 2000, coord, "green")
 	gamedata.endturn = True
 
@@ -218,7 +219,7 @@ def legendginterface(gamedata, classmap, option):
 	# On créer l'interface
 	window_interface_legend_command = tkinter.Frame(classmap.framecanvas)
 	# On la place
-	window_interface_legend_command.place(x = (option.widthWindow*0.01), y = (option.heightWindow*0.525))
+	window_interface_legend_command.place(x = (option.widthWindow*0.01), y = (option.heightWindow*0.5))
 
 	# On créer la frame
 	frame = tkinter.Frame(window_interface_legend_command)
@@ -232,6 +233,30 @@ def legendginterface(gamedata, classmap, option):
 	tkinter.Label(frame, text = "Déplacé Vue XY: SHIFT + Click DROIT").grid(row = 2, column = 0)
 	# Zoom/Dezoom
 	tkinter.Label(frame, text = "Zoom/DeZoom: Molette").grid(row = 3, column = 0)
+	tkinter.Label(frame, text = "Zoom/DeZoom").grid(row = 0, column = 1)
+	# Scale Zoom/Dezoom
+	zoomscall = tkinter.Scale(frame, orient = tkinter.VERTICAL, from_ = 0, to = 6)
+	zoomscall.grid(row = 1, column = 1, rowspan = 4, sticky = tkinter.NS)
+
+	# On configure la commande du Scall
+	zoomscall.configure(command = lambda event: scalezoom(gamedata, classmap, option, int(event)))
+
+def scalezoom(gamedata, classmap, option, scallvalue):
+	####
+	# Fonction liée aux scale pour gérer le zoom/dezoom
+	####
+	print("scallvalue: ",scallvalue)
+	# On calul le delta selon le scallvalue
+	ts = 5* (2**scallvalue)
+	print("new ts: ",ts)
+	print("ts: ", gamedata.tuilesize)
+	if ts < gamedata.tuilesize:
+		delta = -2
+	else:
+		delta = 2
+
+
+	moveview.moveviewzcenter(gamedata, classmap, option, delta)
 
 ######################### Menu Vue Globale #########################
 
@@ -359,7 +384,7 @@ def statesubjugate(gamedata, classmap, option):
 
 	# Si on est déjà dans un état
 	if gamedata.changenewstate("interface_sujugate") == False:
-		pass
+		exitstate(gamedata, classmap, option, gamedata.exit[0], gamedata.exit[1], gamedata.exit[2])
 
 	player = gamedata.list_lord[gamedata.playerid]
 
@@ -386,6 +411,7 @@ def statesubjugate(gamedata, classmap, option):
 
 	# On bind l'exit
 	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], [window_interface_subjugate]))
+	gamedata.exit = [[], [], [window_interface_subjugate]]
 
 
 def l_vassal_offer(event, gamedata, classmap, option, wis, lc):
@@ -516,31 +542,34 @@ def staterecruitarmy(gamedata, classmap, option):
 	# On créer un boutton pour en créer une
 	################
 
-	if gamedata.changenewstate("interface_recruit_army") == True:
-		player = gamedata.list_lord[gamedata.playerid]
+	if gamedata.changenewstate("interface_recruit_army") == False:
+		exitstate(gamedata, classmap, option, gamedata.exit[0], gamedata.exit[2], gamedata.exit[2])
 
-		# On créer l'interface qui va contenir le frame
-		window_interface_army = tkinter.Frame(classmap.framecanvas, height = 200, width = 300)
-		window_interface_army.place(x = (option.widthWindow/6), y = (option.heightWindow*0.2))
+	player = gamedata.list_lord[gamedata.playerid]
 
-		frame_interface_army = tkinter.Frame(window_interface_army)
-		frame_interface_army.grid()
+	# On créer l'interface qui va contenir le frame
+	window_interface_army = tkinter.Frame(classmap.framecanvas, height = 200, width = 300)
+	window_interface_army.place(x = (option.widthWindow/6), y = (option.heightWindow*0.2))
 
-		# listbox
-		lc_interface_army = tkinter.Listbox(frame_interface_army)
-		lc_interface_army.grid(row = 0, column = 0)
+	frame_interface_army = tkinter.Frame(window_interface_army)
+	frame_interface_army.grid()
 
-		# On affiche la liste des armées du Joueur uniquement
-		for army in player.army:
-			lc_interface_army.insert(tkinter.END, army.name)
-		# On bind l'objet à une fonction pour center sur l'armée selectionner
-		lc_interface_army.bind("<Double-Button-1>", lambda event: interfacerecruit(event, gamedata, classmap, option, frame_interface_army))
-		# On créer un boutton pour créer une nouvelle armée
-		button_createarmy = tkinter.Button(frame_interface_army, text= "Nouvelle Armée", command = lambda: buttoncreatearmy(gamedata, classmap, option, lc_interface_army))
-		button_createarmy.grid(row = 1, column = 0)
+	# listbox
+	lc_interface_army = tkinter.Listbox(frame_interface_army)
+	lc_interface_army.grid(row = 0, column = 0)
 
-		# On bind 
-		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], [window_interface_army]))
+	# On affiche la liste des armées du Joueur uniquement
+	for army in player.army:
+		lc_interface_army.insert(tkinter.END, army.name)
+	# On bind l'objet à une fonction pour center sur l'armée selectionner
+	lc_interface_army.bind("<Double-Button-1>", lambda event: interfacerecruit(event, gamedata, classmap, option, frame_interface_army))
+	# On créer un boutton pour créer une nouvelle armée
+	button_createarmy = tkinter.Button(frame_interface_army, text= "Nouvelle Armée", command = lambda: buttoncreatearmy(gamedata, classmap, option, lc_interface_army))
+	button_createarmy.grid(row = 1, column = 0)
+
+	# On bind 
+	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], [window_interface_army]))
+	exit = [[],[], [window_interface_army]]
 
 def buttoncreatearmy(gamedata, classmap, option, lc_interface_army):
 
@@ -752,92 +781,97 @@ def statewar(gamedata, classmap, option):
 	#
 	#################
 
-	if gamedata.changenewstate("interface_war") == True :
+	# Si on est déjà dans un état on quitte l'état
+	if gamedata.changenewstate("interface_war") == False:
+		exitstate(gamedata, classmap, option, gamedata.exit[0], gamedata.exit[1], gamedata.exit[2])
 
+	ts = gamedata.tuilesize
+	# Tant que la carte n'est pas dezoom à 10
+	while ts != 10:
+		if ts > 10:
+			moveview.moveviewzcenter(gamedata, classmap, option, -2)
+		else:
+			moveview.moveviewzcenter(gamedata, classmap, option, 2)
 		ts = gamedata.tuilesize
-		# Tant que la carte n'est pas dezoom à 10
-		while ts != 10:
-			if ts > 10:
-				moveview.moveviewzcenter(gamedata, classmap, option, -2)
+
+	player = gamedata.list_lord[gamedata.playerid]
+	xorigine = classmap.mapcanv.canvasx(0)
+	yorigine = classmap.mapcanv.canvasy(0)
+
+	# On se place au centre
+	moveview.centerviewcanvas(gamedata, classmap, option, [(classmap.mapx/2)*ts, (classmap.mapy/2)*ts])
+
+	# On affiche les territoire 
+	# On se balade dans la liste des territoire
+	for nblord in range(len(gamedata.list_lord)):
+		color = gamedata.list_lord[nblord].color
+		# Si c'est un joueur actuellement en guerre on change la couleur en rouge
+		if gamedata.list_lord[nblord] in player.war:
+			color = "red"
+		# Si c'est un vassal on affiche en vert
+		elif gamedata.list_lord[nblord] in player.vassal:
+			color = "green"
+		if nblord != gamedata.playerid:
+			for village in gamedata.list_lord[nblord].fief:
+				x = village.x
+				y = village.y
+				classmap.mapcanv.create_rectangle((x*ts), (y*ts), (x*ts)+ts, (y*ts)+ts, tag = ["interface_war","tuile", x, y], outline = color)
+				classmap.mapcanv.create_text((x*ts), (y*ts)-(3*ts), tag = ["interface_war","tuile"], text = gamedata.list_lord[nblord].lordname, fill = color)
+
+	############# Interface ############
+	frame_interface_war = tkinter.Frame(classmap.framecanvas)
+	frame_interface_war.place(x = (option.widthWindow/20), y = (option.heightWindow*0.01))
+
+	# On créer l'interface War déclaration
+	# Elle reste cacher tant qu'ont la pas appeler 
+	interface_war_declaration = tkinter.Frame(classmap.framecanvas)
+	interface_war_declaration.place(x = (option.widthWindow/1.5), y = (option.heightWindow*0.05))
+
+	# Version avec .grid
+	frame_interface_war_main = tkinter.Frame(frame_interface_war)
+	frame_interface_war_main.grid()
+	
+	frame_interface_war_list_ally = tkinter.Frame(frame_interface_war_main)
+	frame_interface_war_list_ennemy = tkinter.Frame(frame_interface_war_main)
+	frame_interface_war_list_neutral = tkinter.Frame(frame_interface_war_main)
+	frame_interface_war_list_ally.grid(row = 0, column = 0)
+	frame_interface_war_list_ennemy.grid(row = 0, column = 1)
+	frame_interface_war_list_neutral.grid(row = 0, column = 2)
+
+	tkinter.Label(frame_interface_war_list_ally, text = "Allié").grid(row = 0)
+	tkinter.Label(frame_interface_war_list_ennemy, text = "Ennemie").grid(row = 0)
+	tkinter.Label(frame_interface_war_list_neutral, text = "Neutre").grid(row = 0)
+
+	# On créer les menu déroulant
+	Lb_ally = tkinter.Listbox(frame_interface_war_list_ally)
+	Lb_ally.grid(row = 1)
+	Lb_ennemy = tkinter.Listbox(frame_interface_war_list_ennemy)
+	Lb_ennemy.grid(row = 1)
+	Lb_neutral = tkinter.Listbox(frame_interface_war_list_neutral)
+	Lb_neutral.grid(row = 1)
+	# On les remplis
+	for lord in gamedata.list_lord:
+		# On vérifie que ce soit pas le joueur:
+		if lord.player == False:
+			# Si dans la liste des Ennemies
+			if lord in player.war:
+				Lb_ennemy.insert(tkinter.END, lord.lordname)
+			# Sinon Si il est dans les liste des Vassaux
+			elif lord in player.vassal:
+				Lb_ally.insert(tkinter.END, lord.lordname)
+			# Sinon il est neutre
 			else:
-				moveview.moveviewzcenter(gamedata, classmap, option, 2)
-			ts = gamedata.tuilesize
+				Lb_neutral.insert(tkinter.END, lord.lordname)
+	list_LC = [Lb_ally, Lb_ennemy, Lb_neutral]
+	Lb_ally.bind("<Double-Button-1>", lambda event, iwd = interface_war_declaration: warcentervillage(event, gamedata, classmap, option, list_LC, iwd))
+	Lb_ennemy.bind("<Double-Button-1>", lambda event, iwd = interface_war_declaration: warcentervillage(event, gamedata, classmap, option, list_LC, iwd))
+	Lb_neutral.bind("<Double-Button-1>", lambda event, iwd = interface_war_declaration: warcentervillage(event, gamedata, classmap, option, list_LC, iwd))
 
-		player = gamedata.list_lord[gamedata.playerid]
-		xorigine = classmap.mapcanv.canvasx(0)
-		yorigine = classmap.mapcanv.canvasy(0)
+	# On bind
+	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], [frame_interface_war, interface_war_declaration, "interface_war"]))
+	gamedata.exit = [[], [], [frame_interface_war, interface_war_declaration, "interface_war"]]
 
-		# On se place au centre
-		moveview.centerviewcanvas(gamedata, classmap, option, [(classmap.mapx/2)*ts, (classmap.mapy/2)*ts])
 
-		# On affiche les territoire 
-		# On se balade dans la liste des territoire
-		for nblord in range(len(gamedata.list_lord)):
-			color = gamedata.list_lord[nblord].color
-			# Si c'est un joueur actuellement en guerre on change la couleur en rouge
-			if gamedata.list_lord[nblord] in player.war:
-				color = "red"
-			# Si c'est un vassal on affiche en vert
-			elif gamedata.list_lord[nblord] in player.vassal:
-				color = "green"
-			if nblord != gamedata.playerid:
-				for village in gamedata.list_lord[nblord].fief:
-					x = village.x
-					y = village.y
-					classmap.mapcanv.create_rectangle((x*ts), (y*ts), (x*ts)+ts, (y*ts)+ts, tag = ["interface_war","tuile", x, y], outline = color)
-					classmap.mapcanv.create_text((x*ts), (y*ts)-(3*ts), tag = ["interface_war","tuile"], text = gamedata.list_lord[nblord].lordname, fill = color)
-
-		############# Interface ############
-		frame_interface_war = tkinter.Frame(classmap.framecanvas)
-		frame_interface_war.place(x = (option.widthWindow/20), y = (option.heightWindow*0.01))
-
-		# On créer l'interface War déclaration
-		# Elle reste cacher tant qu'ont la pas appeler 
-		interface_war_declaration = tkinter.Frame(classmap.framecanvas)
-		interface_war_declaration.place(x = (option.widthWindow/1.5), y = (option.heightWindow*0.05))
-
-		# Version avec .grid
-		frame_interface_war_main = tkinter.Frame(frame_interface_war)
-		frame_interface_war_main.grid()
-		
-		frame_interface_war_list_ally = tkinter.Frame(frame_interface_war_main)
-		frame_interface_war_list_ennemy = tkinter.Frame(frame_interface_war_main)
-		frame_interface_war_list_neutral = tkinter.Frame(frame_interface_war_main)
-		frame_interface_war_list_ally.grid(row = 0, column = 0)
-		frame_interface_war_list_ennemy.grid(row = 0, column = 1)
-		frame_interface_war_list_neutral.grid(row = 0, column = 2)
-
-		tkinter.Label(frame_interface_war_list_ally, text = "Allié").grid(row = 0)
-		tkinter.Label(frame_interface_war_list_ennemy, text = "Ennemie").grid(row = 0)
-		tkinter.Label(frame_interface_war_list_neutral, text = "Neutre").grid(row = 0)
-
-		# On créer les menu déroulant
-		Lb_ally = tkinter.Listbox(frame_interface_war_list_ally)
-		Lb_ally.grid(row = 1)
-		Lb_ennemy = tkinter.Listbox(frame_interface_war_list_ennemy)
-		Lb_ennemy.grid(row = 1)
-		Lb_neutral = tkinter.Listbox(frame_interface_war_list_neutral)
-		Lb_neutral.grid(row = 1)
-		# On les remplis
-		for lord in gamedata.list_lord:
-			# On vérifie que ce soit pas le joueur:
-			if lord.player == False:
-				# Si dans la liste des Ennemies
-				if lord in player.war:
-					Lb_ennemy.insert(tkinter.END, lord.lordname)
-				# Sinon Si il est dans les liste des Vassaux
-				elif lord in player.vassal:
-					Lb_ally.insert(tkinter.END, lord.lordname)
-				# Sinon il est neutre
-				else:
-					Lb_neutral.insert(tkinter.END, lord.lordname)
-		list_LC = [Lb_ally, Lb_ennemy, Lb_neutral]
-		Lb_ally.bind("<Double-Button-1>", lambda event, iwd = interface_war_declaration: warcentervillage(event, gamedata, classmap, option, list_LC, iwd))
-		Lb_ennemy.bind("<Double-Button-1>", lambda event, iwd = interface_war_declaration: warcentervillage(event, gamedata, classmap, option, list_LC, iwd))
-		Lb_neutral.bind("<Double-Button-1>", lambda event, iwd = interface_war_declaration: warcentervillage(event, gamedata, classmap, option, list_LC, iwd))
-
-		# On bind
-		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], [frame_interface_war, interface_war_declaration, "interface_war"]))
 
 def warcentervillage(event, gamedata, classmap, option, list_LC, iwd):
 	############
@@ -950,30 +984,29 @@ def statebuildvillage(gamedata, classmap, option):
 	# On permet de sélectionner la case ou on veut constuire un village
 	#classmap.mapcanv.tag_bind("click", "Button-1", lambda event, option, gamedata: statbuildvillage(event, option, gamedata))
 
-	if gamedata.changenewstate("build_village") == True :
+	if gamedata.changenewstate("build_village") == False:
+		exitstate(gamedata, classmap, option, gamedata.exit[0], gamedata.exit[1], gamedata.exit[2])
 
-		ts = gamedata.tuilesize
-		xoriginewindow = classmap.mapcanv.canvasx(0)
-		yoriginewindow = classmap.mapcanv.canvasy(0)
-		originecanvas = classmap.mapcanv.coords(classmap.listmap[0].canvastuiles)
+	ts = gamedata.tuilesize
+	xoriginewindow = classmap.mapcanv.canvasx(0)
+	yoriginewindow = classmap.mapcanv.canvasy(0)
+	originecanvas = classmap.mapcanv.coords(classmap.listmap[0].canvastuiles)
 
-		# Pour toute les tuiles de plaines
-		for idtuile in classmap.lplaines:
-			# Si on peut constuire un village
-			if genproc.buildvillagepossible(option, classmap, idtuile) == True:
-				coord = common.idtuiletocoordmap(classmap, idtuile)
-				# On calcul les coord x et y
-				x = coord[0]
-				y = coord[1]
-				# On créer un carrer clickable avec un bord vert
-				idobject = classmap.mapcanv.create_rectangle(originecanvas[0]+(x*ts)-(ts/2), originecanvas[1]+(y*ts)-(ts/2), originecanvas[0]+(x*ts)+ts-(ts/2), originecanvas[1]+(y*ts)+ts-(ts/2), tag = ["buildvillage","tuile", x, y], fill = "green",outline = "green")
-				interfacemenu.tooltipcanvas(classmap.mapcanv, idobject, f"Emplacement Constructible",[])
+	# Pour toute les tuiles de plaines
+	for idtuile in classmap.lplaines:
+		# Si on peut constuire un village
+		if genproc.buildvillagepossible(option, classmap, idtuile) == True:
+			coord = common.idtuiletocoordmap(classmap, idtuile)
+			# On calcul les coord x et y
+			x = coord[0]
+			y = coord[1]
+			# On créer un carrer clickable avec un bord vert
+			idobject = classmap.mapcanv.create_rectangle(originecanvas[0]+(x*ts)-(ts/2), originecanvas[1]+(y*ts)-(ts/2), originecanvas[0]+(x*ts)+ts-(ts/2), originecanvas[1]+(y*ts)+ts-(ts/2), tag = ["buildvillage","tuile", x, y], fill = "green",outline = "green")
 
-		# On tag au square
-		classmap.mapcanv.tag_bind("buildvillage", "<Button-1>", lambda event: buildvillage(event, gamedata, classmap, option))
-		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], ["buildvillage"]))
-
-	# Si on appuie sur esc on quitte automatiquement le mode de construction
+	# On tag au square
+	classmap.mapcanv.tag_bind("buildvillage", "<Button-1>", lambda event: buildvillage(event, gamedata, classmap, option))
+	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], ["buildvillage"]))
+	gamedata.exit = [[], [], ["buildvillage"]]
 
 def buildvillage(event, gamedata, classmap, option):
 	############
@@ -1044,47 +1077,49 @@ def statebuildchurch(gamedata, classmap, option):
 	# Fonction Appeler par le menu pour construire une église
 	######
 
-	if gamedata.changenewstate("build_church") == True:
+	if gamedata.changenewstate("build_church") == False:
+		exitstate(gamedata, classmap, option, gamedata.exit[0], gamedata.exit[1], gamedata.exit[2])
 
-		player = gamedata.list_lord[gamedata.playerid]
-		ts = gamedata.tuilesize
-		xoriginewindow = classmap.mapcanv.canvasx(0)
-		yoriginewindow = classmap.mapcanv.canvasy(0)
-		originecanvas = classmap.mapcanv.coords(classmap.listmap[0].canvastuiles)
+	player = gamedata.list_lord[gamedata.playerid]
+	ts = gamedata.tuilesize
+	xoriginewindow = classmap.mapcanv.canvasx(0)
+	yoriginewindow = classmap.mapcanv.canvasy(0)
+	originecanvas = classmap.mapcanv.coords(classmap.listmap[0].canvastuiles)
 
-		# On affiche une interface montrant une liste des villages ou on peut construire + données du village
+	# On affiche une interface montrant une liste des villages ou on peut construire + données du village
 
-		# On créer la frame
-		window_interface_church = tkinter.Frame(classmap.framecanvas)
-		window_interface_church.place(x = (option.widthWindow/6), y = (option.heightWindow*0.2))
+	# On créer la frame
+	window_interface_church = tkinter.Frame(classmap.framecanvas)
+	window_interface_church.place(x = (option.widthWindow/6), y = (option.heightWindow*0.2))
 
-		frame_interface_church = tkinter.Frame(window_interface_church)
-		frame_interface_church.grid()
+	frame_interface_church = tkinter.Frame(window_interface_church)
+	frame_interface_church.grid()
 
-		# On créer la listbox
-		tkinter.Label(frame_interface_church, text = "Village").grid(row = 0, column = 0)
-		tkinter.Label(frame_interface_church, text = "Cout: 10 Ressource, 10 Écus").grid(row = 1, column = 0)
-		tkinter.Label(frame_interface_church, text = f"Église gratuite: {player.freechurch}").grid(row = 2, column = 0)
-		lc_interface_church = tkinter.Listbox(frame_interface_church)
-		lc_interface_church.grid(row = 3, column = 0)
-		# On créer un menu déroulant qui présente les villages éligible à la construction d'une église avec les donnés du villag
-		for village in player.fief:
-			if village.church == 0:
-				lc_interface_church.insert(tkinter.END, village.name)
-				# On affiche en vert tout les villages ou on peut construire une église
-				x = village.x
-				y = village.y
-				classmap.mapcanv.create_rectangle(originecanvas[0]+(x*ts)-(ts/2), originecanvas[1]+(y*ts)-(ts/2), originecanvas[0]+(x*ts)+ts-(ts/2), originecanvas[1]+(y*ts)+ts-(ts/2), tags = ["buildchurch","tuile"], outline = "green", width = 2)
-		# Quand un village est double click on appele la fonction pour centrer la vue sur le village
-		lc_interface_church.bind("<Double-Button-1>", lambda event: centervillagechurch(event, gamedata, classmap, option))
+	# On créer la listbox
+	tkinter.Label(frame_interface_church, text = "Village").grid(row = 0, column = 0)
+	tkinter.Label(frame_interface_church, text = "Cout: 10 Ressource, 10 Écus").grid(row = 1, column = 0)
+	tkinter.Label(frame_interface_church, text = f"Église gratuite: {player.freechurch}").grid(row = 2, column = 0)
+	lc_interface_church = tkinter.Listbox(frame_interface_church)
+	lc_interface_church.grid(row = 3, column = 0)
+	# On créer un menu déroulant qui présente les villages éligible à la construction d'une église avec les donnés du villag
+	for village in player.fief:
+		if village.church == 0:
+			lc_interface_church.insert(tkinter.END, village.name)
+			# On affiche en vert tout les villages ou on peut construire une église
+			x = village.x
+			y = village.y
+			classmap.mapcanv.create_rectangle(originecanvas[0]+(x*ts)-(ts/2), originecanvas[1]+(y*ts)-(ts/2), originecanvas[0]+(x*ts)+ts-(ts/2), originecanvas[1]+(y*ts)+ts-(ts/2), tags = ["buildchurch","tuile"], outline = "green", width = 2)
+	# Quand un village est double click on appele la fonction pour centrer la vue sur le village
+	lc_interface_church.bind("<Double-Button-1>", lambda event: centervillagechurch(event, gamedata, classmap, option))
 
-		# On bind la fonction buildchurch à la tuile du village
-		idbuildchurch = classmap.mapcanv.tag_bind("village", "<Button-1>", lambda event: triggerbuildchurch_statebchurch(gamedata, classmap, option), add = "+")
-		# On bind la fonction buildchurch au square
-		classmap.mapcanv.tag_bind("buildchurch", "<Button-1>",lambda event: triggerbuildchurch_statebchurch(gamedata, classmap, option))
+	# On bind la fonction buildchurch à la tuile du village
+	idbuildchurch = classmap.mapcanv.tag_bind("village", "<Button-1>", lambda event: triggerbuildchurch_statebchurch(gamedata, classmap, option), add = "+")
+	# On bind la fonction buildchurch au square
+	classmap.mapcanv.tag_bind("buildchurch", "<Button-1>",lambda event: triggerbuildchurch_statebchurch(gamedata, classmap, option))
 
-		# On bind la fonction d'exit à tout ce qui n'est pas un village
-		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event, lsequ = [["village","<Button-1>"]], lf = [idbuildchurch], lidw = [window_interface_church, "buildchurch"]: exitstate(gamedata, classmap, option, lsequ, lf, lidw))
+	# On bind la fonction d'exit à tout ce qui n'est pas un village
+	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event, lsequ = [["village","<Button-1>"]], lf = [idbuildchurch], lidw = [window_interface_church, "buildchurch"]: exitstate(gamedata, classmap, option, lsequ, lf, lidw))
+	gamedata.exit = [[["village","<Button-1>"]], [idbuildchurch], [window_interface_church, "buildchurch"]]
 
 
 def centervillagechurch(event, gamedata, classmap, option):
@@ -1172,43 +1207,45 @@ def deltuilecoordcanvas(gamedata, classmap, option, tag, coord):
 ################################################  Tax  #################################################
 
 def statetax(gamedata, classmap, option):
-	if gamedata.changenewstate("tax") == True:
-		player = gamedata.list_lord[gamedata.playerid]
-		# Crée la (window) frame de l'interface pour afficher les taxes
-		window_interface_tax = tkinter.Frame(classmap.framecanvas)
-		window_interface_tax.place( x=(option.widthWindow/6), y=(option.heightWindow*0.2))
+	if gamedata.changenewstate("tax") == False:
+		exitstate(gamedata, classmap, option, gamedata.exit[0], gamedata.exit[1], gamedata.exit[2])
+	player = gamedata.list_lord[gamedata.playerid]
+	# Crée la (window) frame de l'interface pour afficher les taxes
+	window_interface_tax = tkinter.Frame(classmap.framecanvas)
+	window_interface_tax.place( x=(option.widthWindow/6), y=(option.heightWindow*0.2))
 
-		# Crée la frame de l'interface
-		frame_interface_tax = tkinter.Frame(window_interface_tax)
-		frame_interface_tax.grid()
+	# Crée la frame de l'interface
+	frame_interface_tax = tkinter.Frame(window_interface_tax)
+	frame_interface_tax.grid()
 
-		# On affiche Village
-		tkinter.Label(frame_interface_tax, text = "village:").grid(row = 0)
+	# On affiche Village
+	tkinter.Label(frame_interface_tax, text = "village:").grid(row = 0)
 
-		# Crée la listbox pour afficher les villages que l'on peut taxer
-		lc_village_tax = tkinter.Listbox(frame_interface_tax)
-		lc_village_tax.grid(row = 1)
+	# Crée la listbox pour afficher les villages que l'on peut taxer
+	lc_village_tax = tkinter.Listbox(frame_interface_tax)
+	lc_village_tax.grid(row = 1)
 
-		# On affiche Vassal
-		tkinter.Label(frame_interface_tax, text = "Vassaux:").grid(row = 2)
-		# Crée la listbox pour afficher les vassaux que l'on peut taxer
-		lc_vassal_tax = tkinter.Listbox(frame_interface_tax)
-		lc_vassal_tax.grid(row = 3)
+	# On affiche Vassal
+	tkinter.Label(frame_interface_tax, text = "Vassaux:").grid(row = 2)
+	# Crée la listbox pour afficher les vassaux que l'on peut taxer
+	lc_vassal_tax = tkinter.Listbox(frame_interface_tax)
+	lc_vassal_tax.grid(row = 3)
 
-		# On affiche les taxes des villages du joueur
-		for village in player.fief:
-			lc_village_tax.insert(tkinter.END, village.name)
+	# On affiche les taxes des villages du joueur
+	for village in player.fief:
+		lc_village_tax.insert(tkinter.END, village.name)
 
-		# On affiche pour les vassaux:
-		for vassal in player.vassal:
-			lc_vassal_tax.insert(tkinter.END, vassal.lordname)
+	# On affiche pour les vassaux:
+	for vassal in player.vassal:
+		lc_vassal_tax.insert(tkinter.END, vassal.lordname)
 
-		# On bind pour les villages
-		lc_village_tax.bind("<Double-Button-1>", lambda event, wit = window_interface_tax: taxcentervillage(event, gamedata, classmap, option, wit))
-		# On bind pour les vassaux
-		lc_vassal_tax.bind("<Double-Button-1>", lambda event, wit = window_interface_tax: taxcentervassal(event, gamedata, classmap, option, wit))
-		# Exit la fonction si l'utilisateur clique ailleurs (sur la carte)
-		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], [window_interface_tax]))
+	# On bind pour les villages
+	lc_village_tax.bind("<Double-Button-1>", lambda event, wit = window_interface_tax: taxcentervillage(event, gamedata, classmap, option, wit))
+	# On bind pour les vassaux
+	lc_vassal_tax.bind("<Double-Button-1>", lambda event, wit = window_interface_tax: taxcentervassal(event, gamedata, classmap, option, wit))
+	# Exit la fonction si l'utilisateur clique ailleurs (sur la carte)
+	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], [window_interface_tax]))
+	gamedata.exit = [[], [], [window_interface_tax]]
 
 
 def calculate_tax_village(village):
@@ -1388,27 +1425,30 @@ def stateimmigration(gamedata, classmap, option):
 	#
 	######
 
-	if gamedata.changenewstate("immigration") == True:
-		player = gamedata.list_lord[gamedata.playerid]
-		#Crée la frame de l'interface pour afficher les villages
-		window_interface_immigration = tkinter.Frame(classmap.framecanvas)
-		window_interface_immigration.place(x=(option.widthWindow/6), y=(option.heightWindow* 0.2))
+	if gamedata.changenewstate("immigration") == False:
+		exitstate(gamedata, classmap, option, gamedata.exit[0], gamedata.exit[1], gamedata.exit[2])
 
-		frame_interface_immigration = tkinter.Frame(window_interface_immigration)
-		frame_interface_immigration.grid()
+	player = gamedata.list_lord[gamedata.playerid]
+	#Crée la frame de l'interface pour afficher les villages
+	window_interface_immigration = tkinter.Frame(classmap.framecanvas)
+	window_interface_immigration.place(x=(option.widthWindow/6), y=(option.heightWindow* 0.2))
 
-		# On affiche Village
-		tkinter.Label(frame_interface_immigration, text = "Village").grid(row = 0, column = 0)
-		#Crée la listbox pour afficher les villages du joueur
-		lc_interface_immigration = tkinter.Listbox(frame_interface_immigration)
-		lc_interface_immigration.grid(row = 1, column = 0)
+	frame_interface_immigration = tkinter.Frame(window_interface_immigration)
+	frame_interface_immigration.grid()
 
-        #On affiche les villages appartenant au joueur
-		for village in player.fief:
-			lc_interface_immigration.insert(tkinter.END, village.name)
-		lc_interface_immigration.bind("<Double-Button-1>", lambda event: centervillage_immigration(event, gamedata, classmap, option, window_interface_immigration))
-	        #Quitte l'interface si l'utilisateur clique ailleurs
-		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], [window_interface_immigration]))
+	# On affiche Village
+	tkinter.Label(frame_interface_immigration, text = "Village").grid(row = 0, column = 0)
+	#Crée la listbox pour afficher les villages du joueur
+	lc_interface_immigration = tkinter.Listbox(frame_interface_immigration)
+	lc_interface_immigration.grid(row = 1, column = 0)
+
+    #On affiche les villages appartenant au joueur
+	for village in player.fief:
+		lc_interface_immigration.insert(tkinter.END, village.name)
+	lc_interface_immigration.bind("<Double-Button-1>", lambda event: centervillage_immigration(event, gamedata, classmap, option, window_interface_immigration))
+        #Quitte l'interface si l'utilisateur clique ailleurs
+	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], [window_interface_immigration]))
+	gamedata.exit = [[], [], [window_interface_immigration]]
 
 def centervillage_immigration(event, gamedata, classmap, option, wii):
 	#######
@@ -1524,110 +1564,115 @@ def villageinterface(event, gamedata, classmap, option):
 	##################
 
 	# Si le joueur est dans un état ou il a déjà l'interface d'un village ouvert on ne fait rien
-	if gamedata.changenewstate("interface_village") == True :
+	#if gamedata.changenewstate("interface_village") == False:
+	#monkey patch
+	if len(gamedata.exit)>0:
+		exitstate(gamedata, classmap, option, gamedata.exit[0], gamedata.exit[1], gamedata.exit[2])
 
-		# On recup les coord-canvas du village
-		coordcanv = event.widget.coords("current")
-		print(classmap.mapcanv.gettags("current"))
-		print(len(classmap.mapcanv.gettags("current")))
-		# On recup l'idMapvillage
-		# Si objet village
-		if (len(classmap.mapcanv.gettags("current")) > 5):
-			idmapvillage = int(classmap.mapcanv.gettags("current")[4])
-		# Si objet Label
-		else:
-			idmapvillage = int(classmap.mapcanv.gettags("current")[3])
-		log.log.printinfo(f"idvillage : {idmapvillage}")
+	# On recup les coord-canvas du village
+	coordcanv = event.widget.coords("current")
+	print(classmap.mapcanv.gettags("current"))
+	print(len(classmap.mapcanv.gettags("current")))
+	# On recup l'idMapvillage
+	# Si objet village
+	if (len(classmap.mapcanv.gettags("current")) > 5):
+		idmapvillage = int(classmap.mapcanv.gettags("current")[4])
+	# Si objet Label
+	else:
+		idmapvillage = int(classmap.mapcanv.gettags("current")[3])
+	log.log.printinfo(f"idvillage : {idmapvillage}")
 
-		####################\ Comment j'ai fait ???? \########################
-		# On place le village au centre de l'écran
-		moveview.centerviewcanvas(gamedata, classmap, option, coordcanv)
-		######################################################################
+	####################\ Comment j'ai fait ???? \########################
+	# On place le village au centre de l'écran
+	moveview.centerviewcanvas(gamedata, classmap, option, coordcanv)
+	######################################################################
 
-		####################\ Affichage de l'interface \########################
+	####################\ Affichage de l'interface \########################
 
-		# On recup l'origine du canvas
-		xorigine = classmap.mapcanv.canvasx(0)
-		yorigine = classmap.mapcanv.canvasy(0)
+	# On recup l'origine du canvas
+	xorigine = classmap.mapcanv.canvasx(0)
+	yorigine = classmap.mapcanv.canvasy(0)
 
-		log.log.printinfo("On affiche l'interface du village")
-		# On fait apparaitre l'interface informative
-		# On commence par créer le frame qui vient stocker les infos
-		window_info = tkinter.Frame(classmap.framecanvas)
-		# On créer la frame qui vient contenir les actions possibles
-		window_button = tkinter.Frame(classmap.framecanvas)
-		window_info.place(x = (option.widthWindow/4), y = (option.heightWindow*0.2))
-		window_button.place(x = (option.widthWindow/1.5), y = (option.heightWindow*0.2))
+	log.log.printinfo("On affiche l'interface du village")
+	# On fait apparaitre l'interface informative
+	# On commence par créer le frame qui vient stocker les infos
+	window_info = tkinter.Frame(classmap.framecanvas)
+	# On créer la frame qui vient contenir les actions possibles
+	window_button = tkinter.Frame(classmap.framecanvas)
+	window_info.place(x = (option.widthWindow/4), y = (option.heightWindow*0.2))
+	window_button.place(x = (option.widthWindow/1.5), y = (option.heightWindow*0.2))
 
-		frame_info = tkinter.Frame(window_info)
-		frame_info.grid()
+	frame_info = tkinter.Frame(window_info)
+	frame_info.grid()
 
-		frame_button = tkinter.Frame(window_button)
-		frame_button.grid()
+	frame_button = tkinter.Frame(window_button)
+	frame_button.grid()
 
-		# On créer les fenêtre
-		# Demade un placement précis
-		canvas_window_list = [window_info, window_button]
+	# On créer les fenêtre
+	# Demade un placement précis
+	canvas_window_list = [window_info, window_button]
 
-		# On recup l'objet village
-		village = classmap.listmap[idmapvillage].village
+	# On recup l'objet village
+	village = classmap.listmap[idmapvillage].village
 
-		# On affiche les infos voulu
-		llabel_village = []
-		# Le nom du village
-		tkinter.Label(frame_info, text = village.name).grid(row = 0, column = 0)
-		log.log.printinfo(f"{village.name}")
-		# Le seigneur du village
-		if (classmap.listmap[idmapvillage].village.lord == 0):
-			lordlabel = tkinter.Label(frame_info, text = "Village Indépendant")
-			lordlabel.grid(row = 1, column = 0)
-		else:
-			lordlabel = tkinter.Label(frame_info, text = f"Seigneur: {village.lord.lordname}")
-			lordlabel.grid(row = 1, column = 0)
-		llabel_village += [lordlabel]
-		# Le prêtre du village
-		if village.priest == 0:
-			priestlabel = tkinter.Label(frame_info, text = "Prêtre: Aucun")
-			priestlabel.grid(row = 2, column = 0)
-		else:
-			priestlabel = tkinter.Label(frame_info, text = f"Prêtre: {village.priest.name}")
-			priestlabel.grid(row = 2, column = 0)
-		llabel_village += [priestlabel]
+	# On affiche les infos voulu
+	llabel_village = []
+	# Le nom du village
+	tkinter.Label(frame_info, text = village.name).grid(row = 0, column = 0)
+	log.log.printinfo(f"{village.name}")
+	# Le seigneur du village
+	if (classmap.listmap[idmapvillage].village.lord == 0):
+		lordlabel = tkinter.Label(frame_info, text = "Village Indépendant")
+		lordlabel.grid(row = 1, column = 0)
+	else:
+		lordlabel = tkinter.Label(frame_info, text = f"Seigneur: {village.lord.lordname}")
+		lordlabel.grid(row = 1, column = 0)
+	llabel_village += [lordlabel]
+	# Le prêtre du village
+	if village.priest == 0:
+		priestlabel = tkinter.Label(frame_info, text = "Prêtre: Aucun")
+		priestlabel.grid(row = 2, column = 0)
+	else:
+		priestlabel = tkinter.Label(frame_info, text = f"Prêtre: {village.priest.name}")
+		priestlabel.grid(row = 2, column = 0)
+	llabel_village += [priestlabel]
 
-		# Le bonheur global
-		joylabel = tkinter.Label(frame_info, text = f"Humeur: {village.global_joy}%")
-		joylabel.grid(row = 3, column = 0)
-		llabel_village += [joylabel]
+	# Le bonheur global
+	joylabel = tkinter.Label(frame_info, text = f"Humeur: {village.global_joy}%")
+	joylabel.grid(row = 3, column = 0)
+	llabel_village += [joylabel]
 
-		# les ressources du village
-		ressourcelabel = tkinter.Label(frame_info, text = f"Produit: {village.prod_ressource} ressources")
-		ressourcelabel.grid(row = 4, column = 0)
-		llabel_village += [ressourcelabel]
-		# l'argent du village
-		moneylabel = tkinter.Label(frame_info, text = f"Produit: {village.prod_money} écus")
-		moneylabel.grid(row = 5, column = 0)
-		llabel_village += [moneylabel]
-		# Boutton Vue détaillée
-		tkinter.Button(frame_info, text = "Vue détaillée", command = lambda: b_village_stat(gamedata, classmap, option, village, frame_info)).grid(row = 6, column = 0)
+	# les ressources du village
+	ressourcelabel = tkinter.Label(frame_info, text = f"Produit: {village.prod_ressource} ressources")
+	ressourcelabel.grid(row = 4, column = 0)
+	llabel_village += [ressourcelabel]
+	# l'argent du village
+	moneylabel = tkinter.Label(frame_info, text = f"Produit: {village.prod_money} écus")
+	moneylabel.grid(row = 5, column = 0)
+	llabel_village += [moneylabel]
+	# Boutton Vue détaillée
+	tkinter.Button(frame_info, text = "Vue détaillée", command = lambda: b_village_stat(gamedata, classmap, option, village, frame_info)).grid(row = 6, column = 0)
 
 
-		# Si le village appartient au joueur on affiche l'interface Button
-		# On vérifie que l'objet village est présent dans la liste de fief du joueur
-		if village in gamedata.list_lord[gamedata.playerid].fief:
-			tkinter.Label(frame_button, text = "Action").grid(row = 0, column = 0)
-			# On fait apparaitre les boutons
-			button_build_church = tkinter.Button(frame_button, text = "Construire Église", command = lambda: triggerbuildchurch_statevinterface(gamedata, classmap, option, village, llabel_village))
-			button_immigration = tkinter.Button(frame_button, text = "Immigration", command = lambda: immigrationwindow(gamedata, classmap, option, window_button, village))
-			button_tax = tkinter.Button(frame_button, text = "Impôt", command = lambda: taxwindow_village(gamedata, classmap, option, window_button, village))
+	# Si le village appartient au joueur on affiche l'interface Button
+	# On vérifie que l'objet village est présent dans la liste de fief du joueur
+	if village in gamedata.list_lord[gamedata.playerid].fief:
+		tkinter.Label(frame_button, text = "Action").grid(row = 0, column = 0)
+		# On fait apparaitre les boutons
+		button_build_church = tkinter.Button(frame_button, text = "Construire Église", command = lambda: triggerbuildchurch_statevinterface(gamedata, classmap, option, village, llabel_village))
+		button_immigration = tkinter.Button(frame_button, text = "Immigration", command = lambda: immigrationwindow(gamedata, classmap, option, window_button, village))
+		button_tax = tkinter.Button(frame_button, text = "Impôt", command = lambda: taxwindow_village(gamedata, classmap, option, window_button, village))
 
-			button_build_church.grid(row = 1, column = 0)
-			button_immigration.grid(row = 2, column = 0)
-			button_tax.grid(row = 3, column = 0)
+		button_build_church.grid(row = 1, column = 0)
+		button_immigration.grid(row = 2, column = 0)
+		button_tax.grid(row = 3, column = 0)
 
-		######################################################################
+	######################################################################
 
-		# Si le joueur clique autre part on sort de l'interface
-		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event, cwl = canvas_window_list: exitstate(gamedata, classmap, option, [], [], cwl))
+	# Si le joueur clique autre part on sort de l'interface
+	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event, cwl = canvas_window_list: exitstate(gamedata, classmap, option, [], [], cwl))
+	gamedata.exit = [[], [], canvas_window_list]
+
 
 def b_village_stat(gamedata, classmap, option, village, frame_info):
 	################
@@ -1703,55 +1748,56 @@ def armyinterface(event, gamedata, classmap, option):
 	# Fonction créer la fenêtre de l'interface de l'armée selectionné
 	################
 
-	if gamedata.changenewstate("interface_army") == True:
+	if gamedata.changenewstate("interface_army") == False:
+		exitstate(gamedata, classmap, option, gamedata.exit[0], gamedata.exit[1], gamedata.exit[2])
+	# On créer le frame
+	window_interface_army = tkinter.Frame(classmap.framecanvas)
+	window_interface_army.place(x = (option.widthWindow/3), y = (option.heightWindow/2))
 
-		# On créer le frame
-		window_interface_army = tkinter.Frame(classmap.framecanvas)
-		window_interface_army.place(x = (option.widthWindow/3), y = (option.heightWindow/2))
+	frame_interface_army = tkinter.Frame(window_interface_army)
+	frame_interface_army.grid()
 
-		frame_interface_army = tkinter.Frame(window_interface_army)
-		frame_interface_army.grid()
+	ts = gamedata.tuilesize
+	# on recup les coord (0,0) de la window
+	xorigine = classmap.mapcanv.canvasx(0)
+	yorigine = classmap.mapcanv.canvasy(0)
 
-		ts = gamedata.tuilesize
-		# on recup les coord (0,0) de la window
-		xorigine = classmap.mapcanv.canvasx(0)
-		yorigine = classmap.mapcanv.canvasy(0)
+	# On recup les coord canvas
+	posx = classmap.mapcanv.coords(classmap.mapcanv.find_withtag("current"))[0]
+	posy = classmap.mapcanv.coords(classmap.mapcanv.find_withtag("current"))[1]
+	# On recup l'objet army
+	army = gamedata.coordtoarmy(gamedata.playerid, [int((posx-ts/2)/ts), int((posy-ts/2)/ts)])
 
-		# On recup les coord canvas
-		posx = classmap.mapcanv.coords(classmap.mapcanv.find_withtag("current"))[0]
-		posy = classmap.mapcanv.coords(classmap.mapcanv.find_withtag("current"))[1]
-		# On recup l'objet army
-		army = gamedata.coordtoarmy(gamedata.playerid, [int((posx-ts/2)/ts), int((posy-ts/2)/ts)])
+	# Si l'armée à un déplacement en cours On affiche la Trajectoire
+	#if gamedata.inactionfile(army, "army") == True:
+	#	On recup les coord ciblé
+	#	coord = 
+	#	showpathfindingCoord(, gamedata, classmap, option, army)
 
-		# Si l'armée à un déplacement en cours On affiche la Trajectoire
-		#if gamedata.inactionfile(army, "army") == True:
-		#	On recup les coord ciblé
-		#	coord = 
-		#	showpathfindingCoord(, gamedata, classmap, option, army)
+	if army != False:
+		# On affiche le nom
+		tkinter.Label(frame_interface_army, text = army.name).grid(row = 0, column = 0)
+		# On affiche la puissance
+		tkinter.Label(frame_interface_army, text = "Puissance: ").grid(row = 0, column = 1)
+		tkinter.Label(frame_interface_army, text = army.power).grid(row = 0, column = 2)
 
-		if army != False:
-			# On affiche le nom
-			tkinter.Label(frame_interface_army, text = army.name).grid(row = 0, column = 0)
-			# On affiche la puissance
-			tkinter.Label(frame_interface_army, text = "Puissance: ").grid(row = 0, column = 1)
-			tkinter.Label(frame_interface_army, text = army.power).grid(row = 0, column = 2)
+		tkinter.Label(frame_interface_army, text = "Movement").grid(row = 0, column = 3)
 
-			tkinter.Label(frame_interface_army, text = "Movement").grid(row = 0, column = 3)
+		# On affiche la capacité de déplacement max/déplacement du tour
+		label_movement = tkinter.Label(frame_interface_army, text = f"{army.moveturn}/{army.movecapacity}")
+		label_movement.grid(row = 0, column = 4)
 
-			# On affiche la capacité de déplacement max/déplacement du tour
-			label_movement = tkinter.Label(frame_interface_army, text = f"{army.moveturn}/{army.movecapacity}")
-			label_movement.grid(row = 0, column = 4)
+		# On créer le bouton pour se déplacer
+		Button_move_army = tkinter.Button(frame_interface_army, text = "Déplacement", command = lambda: statemovearmy(gamedata, classmap, option, army, window_interface_army, label_movement))
+		Button_move_army.grid(row = 0, column = 6)
 
-			# On créer le bouton pour se déplacer
-			Button_move_army = tkinter.Button(frame_interface_army, text = "Déplacement", command = lambda: statemovearmy(gamedata, classmap, option, army, window_interface_army, label_movement))
-			Button_move_army.grid(row = 0, column = 6)
+		# Si on clique droit sur une armée non allié alors que l'on à selectionner une armée on attaque
 
-			# Si on clique droit sur une armée non allié alors que l'on à selectionner une armée on attaque
-
-			# Si on clique sur autre chose on quitte l'interface
-			classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], [window_interface_army]))
-		else:
-			exitstate(gamedata, classmap, option, [], [], [window_interface_army])
+		# Si on clique sur autre chose on quitte l'interface
+		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], [window_interface_army]))
+		gamedata.exit = [[], [], [window_interface_army]]
+	else:
+		exitstate(gamedata, classmap, option, [], [], [window_interface_army])
 
 
 
@@ -2092,7 +2138,7 @@ def exitstate(gamedata, classmap, option, lsequbind, lfuncid, lidwindow):
 	# On détruit l'idwindow
 	for idw in lidwindow:
 		# Si objet du Canvas
-		#print(type(idw), idw)
+		# print(type(idw), idw)
 		if (type(idw) == int) or (type(idw) == str):
 			classmap.mapcanv.delete(idw)
 		else:
@@ -2104,7 +2150,7 @@ def exitstate(gamedata, classmap, option, lsequbind, lfuncid, lidwindow):
 		classmap.mapcanv.tag_unbind(lsequbind[i][0], lsequbind[i][1], lfuncid[i])
 		i += 1
 
-	# De manière générale on vient remplacer le bin click par le highlight case
+	# De manière générale on vient remplacer le bind click par le highlight case
 	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: highlightCase(event, gamedata, classmap))
 
 	# On quitte l'état

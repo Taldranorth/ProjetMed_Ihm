@@ -146,20 +146,9 @@ from time import time
 # - Mettre en Place Fonctions ListBox qui disparait
 #####
 
-#### Objectif Samedi/Dimanche:
-# -> Fix Build Church
-#	--> Améliorer la sélection des villages
-# -> Fix l'imposibilité de Zoomer quand on est dans l'état Build Church
-#
-# - Implémenter Interface Option
-####
-
-
 #### Fait:
 """
 Implémenter:
- - Pouvoir Changer d'état d'interface sans quitter le précédent
- 	--> Stocker dans une variable global d'interfacegame une l'exitstate en cours
  - Améliorer Zoom/Dezoom
  	--> Limité à 1 zoom par action
  - Améliorer Geule de l'Interface
@@ -170,18 +159,23 @@ Implémenter:
  - Ajouter ToolTipe aux Graphes
  - Refactoriser le Graphes avec Bezier
  - Améliorer Retour Utilisateur Fin de Tour
+ - Ajouter Notification début de tour Croissance des Villages
+ - Implémenter Garde fous lors d'ailord main
+ - Implémenter Interface Save/Load
 
 Refactoriser:
+ - Améliorer Selection de Village Pour la Construction d'église
+ 	--> 1 clique pour zoom, 2 clique pour sélectionner
 
 Fix:
-
+ - Différence Mac/Linux
+ - Tooltipe Canvas qui peuve rester après la destruction de leur objets
 """
 ####
 
 #### Objectif Restant ####
 # - Refactorisation Option/classmap et Gamedata pour être défini dans data et accéder à partir d'un appel du fichier
 # - Implémenter Résolution Dynamique
-# - Améliorer Selection de Village Pour la Construction d'église
 # - Implémenter Réactions Armées et Vassaux
 # - Implémenter Comportement de l'IA
 # - Terminé Graphe Stat
@@ -195,7 +189,7 @@ Fix:
 ######
 
 
-
+######
 # -> Ajouter Bouton Pour annuler Si on déplace une armée mais que l'on veut annuler son déplacement au tour prochain
 # -> Rework Interface avec Grid
 #	--> Interface_Army
@@ -233,7 +227,6 @@ Fix:
 #### Landforme ####
 # --> Utiliser Octaves Pour générer groupe de Terrain
 # --> Repasser un coup de Noise map dans le groupe de Terrain qui vient définir les tuiles
-
 
 # Pour régler le problème de la taille d'écran
 #https://pypi.org/project/screeninfo/

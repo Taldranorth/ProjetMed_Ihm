@@ -8,60 +8,8 @@ import functions.stats as stats
 import functions.common as common
 import functions.affichage as affichage
 
-
 ####################
-#
-# Utiliser un Id pour séparer les instance ?
-#
-#
-# 1 classe Empire:
-#			- Total Ressource
-#			- Total Or
-#			- Total Population
-#			- Noble Assujeti
-#			- 
-#
-#
-#
-# 1 classe générale:
-#			- Nom
-#			- Age
-#			- Ressource
-#			- Or
-#
-# 2 sous-classe noble:
-#	Seigneur:
-# 			- Territoire attaché
-#			- Titre
-#
-#	Chevalier:
-#			- Territoire attaché
-#
-# 1 sous-classe clergé:
-#	Prêtre:
-#			- Église attaché
-#			- Don
-#
-#
-#
-# 1 sous-classe Tier États
-#	Paysans:
-#			- Village attaché
-#			
-# Village:
-#	--> Seigneur
-#	--> Territoire associé
-#		--> Quand un villageois travail sur une plaine un Champ apparaît
-#	--> Quand un village est construit il est automatiquement 
-#
-#	Conditions pour créer un Village:
-#		--> ressource = 10
-#		--> money = 4
-#
-#	Conditions pour créer une Église:
-#		--> ressource = 4 
-#		--> money = 4
-#
+# Fichier qui vient contenir toute les définitions de clases liées à la population/structure de pouvoir
 ####################
 
 class Classlord:

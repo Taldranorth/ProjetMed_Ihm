@@ -300,17 +300,18 @@ def searchvillage(gamedata, classmap, option, village):
 				if ((yvill+y) > 0) and ((yvill+y) < classmap.mapy):
 					lcase += [[xvill + x, yvill + y]]
 
-	# On tire aléatoirement les coord
-	r = random.randrange(len(lcase))
-	idtuile = common.coordmaptoidtuile(classmap,lcase[r])
-	# On vérifie que les coord soit correctes
-	while((genproc.buildvillagepossible(option, classmap, idtuile) == False) and (len(lcase)>0)):
-		lcase = lcase[:r] + lcase[r+1:]
+	if len(lcase) != 0:
+		# On tire aléatoirement les coord
 		r = random.randrange(len(lcase))
-		idtuile = common.coordmaptoidtuile(classmap, lcase[r])
-	# Si Correcte alors ont renvoit
-	if (genproc.buildvillagepossible(option, classmap, idtuile) == True):
-		return idtuile
+		idtuile = common.coordmaptoidtuile(classmap,lcase[r])
+		# On vérifie que les coord soit correctes
+		while((genproc.buildvillagepossible(option, classmap, idtuile) == False) and (len(lcase)>0)):
+			lcase = lcase[:r] + lcase[r+1:]
+			r = random.randrange(len(lcase))
+			idtuile = common.coordmaptoidtuile(classmap, lcase[r])
+		# Si Correcte alors ont renvoit
+		if (genproc.buildvillagepossible(option, classmap, idtuile) == True):
+			return idtuile
 
 	return 0
 

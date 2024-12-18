@@ -259,7 +259,7 @@ def playmenudeletelord(gamedata, frame_listlord):
 		log.log.printinfo(f"On supprime le Dernier Seigneur de la liste {gamedata.list_lord[gamedata.Nb_lord-1].lordname}, avec pour id: {gamedata.list_lord[gamedata.Nb_lord-1].idlord}")
 		gamedata.deletelord(gamedata.Nb_lord-1)
 		log.log.printinfo("On le retire du frame")
-		log.log.printinfo(f"{frame_listlord.winfo_children()}")
+		#log.log.printinfo(f"{frame_listlord.winfo_children()}")
 		# On retire le seigneur de la liste
 		frame_listlord.winfo_children()[-1].destroy()
 	else:
@@ -1306,6 +1306,7 @@ def tooltipcanvas_create(event, canvas, idobject, top_window, text, lvariable):
 	tkinter.Label(frame, text = ch).pack()
 	# On bind la destruction quand la souris quitte le widget
 	canvas.tag_bind(idobject, "<Leave>", lambda event: tooltipcanvas_destroy(event, canvas, idobject, windowtooltip))
+
 
 def tooltipcanvas_destroy(event, canvas, idobject, window_tooltip):
 	####
