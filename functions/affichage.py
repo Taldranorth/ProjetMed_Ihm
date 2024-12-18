@@ -85,7 +85,6 @@ def bordervillage(gamedata, classmap, option):
 	# - En Vert l'allier
 	# - En Bleu Le Territoire du Joueur
 
-
 	classmap.mapcanv.delete("border")
 	player = gamedata.list_lord[gamedata.playerid]
 

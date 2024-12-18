@@ -303,11 +303,6 @@ class ClassGameData:
 		################
 		# Méthode appeler quand ont veut ajouter une action qui se produira dans x tour
 		# Définit les variables stocker dans action
-		# On utilise la fonction eval() qui intérpréte une chaîne de caractère en une expression
-		# Action est donc une chaîne de carac qui reprèsente la fonction et les variables que l'on veut utiliser
-		# Ex:  eval("moveunit(gamedata, classmap, option, army, coord)")
-		# Il faut voir si il garde le contexte des variables
-		# Si non simplement utiliser f"{}"
 		################
 
 		# Si actuellement la liste des action prévu est inférieur on ajoute turn liste vide

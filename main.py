@@ -149,6 +149,7 @@ Implémenter:
  - Ajouter Notification début de tour Croissance des Villages
  - Implémenter Garde fous lors d'ailord main
  - Implémenter Interface Save/Load
+ - Affichage du Pathfinding en cours des armées
 
 
 Refactoriser:
@@ -160,7 +161,7 @@ Refactoriser:
 Fix:
  - Différence Mac/Linux
  - Tooltipe Canvas qui peuvent rester après la destruction de leur objets
- - SnowBole de la vassalisation de l'ennemie
+ - SnowBale de la vassalisation de l'ennemie
 """
 ####
 

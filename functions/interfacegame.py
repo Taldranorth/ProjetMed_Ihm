@@ -242,6 +242,8 @@ def legendginterface(gamedata, classmap, option):
 	# Scale Zoom/Dezoom
 	zoomscall = tkinter.Scale(frame, orient = tkinter.VERTICAL, from_ = 0, to = 6)
 	zoomscall.grid(row = 1, column = 1, rowspan = 4, sticky = tkinter.NS)
+	# On set à la valeur de base (20 = 3)
+	zoomscall.set(3)
 
 	# On configure la commande du Scall
 	zoomscall.configure(command = lambda event: scalezoom(gamedata, classmap, option, int(event)))
@@ -817,8 +819,8 @@ def statewar(gamedata, classmap, option):
 
 	ts = gamedata.tuilesize
 	# Tant que la carte n'est pas dezoom à 10
-	while ts != 10:
-		if ts > 10:
+	while ts != 5:
+		if ts > 5:
 			moveview.moveviewzcenter(gamedata, classmap, option, -2)
 		else:
 			moveview.moveviewzcenter(gamedata, classmap, option, 2)
@@ -1373,8 +1375,8 @@ def taxwindow_village(gamedata, classmap, option, wit, village):
 	button_collect_tax_ressource = tkinter.Button(frame_tax_collect, textvariable = tkvar_list[1], command=lambda: collect_taxes_village(gamedata, classmap, option, village, "ressource", frame_tax_collect, tkvar_list))
 	button_collect_tax_ressource.grid(row = 4, column = 1)
 
-	interfacemenu.tooltip(button_collect_tax_money, f"Tax en Ressource 1/4 les Artisans\n 1/2 les Paysan", [])
-	interfacemenu.tooltip(button_collect_tax_ressource, f"Tax en Écus 1/4 les Artisans\n 1/2 les Paysan", [])
+	interfacemenu.tooltip(button_collect_tax_money, f"Taxe en Ressource 1/4 les Artisans\n 1/2 les Paysan", [])
+	interfacemenu.tooltip(button_collect_tax_ressource, f"Taxe en Écus 1/4 les Artisans\n 1/2 les Paysan", [])
 
 	# Boutton pour quitter
 	tkinter.Button(frame_tax_collect, text = "retour", command = lambda: global_exit_window(frame_tax_collect)).grid(row = 5, column = 1)
@@ -1814,7 +1816,7 @@ def armyinterface(event, gamedata, classmap, option):
 	#if gamedata.inactionfile(army, "army") == True:
 	#	On recup les coord ciblé
 	#	coord = 
-	#	showpathfindingCoord(, gamedata, classmap, option, army)
+	#	showpathfindingCoord(coord, gamedata, classmap, option, army)
 
 	if army != False:
 		# On affiche le nom
@@ -1832,8 +1834,6 @@ def armyinterface(event, gamedata, classmap, option):
 		# On créer le bouton pour se déplacer
 		Button_move_army = tkinter.Button(frame_interface_army, text = "Déplacement", command = lambda: statemovearmy(gamedata, classmap, option, army, window_interface_army, label_movement))
 		Button_move_army.grid(row = 0, column = 6)
-
-		# Si on clique droit sur une armée non allié alors que l'on à selectionner une armée on attaque
 
 		# Si on clique sur autre chose on quitte l'interface
 		classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], [window_interface_army]))
