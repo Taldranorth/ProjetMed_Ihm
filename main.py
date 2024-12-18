@@ -91,12 +91,7 @@ from time import time
 # - LVL 2: On affiche tout dans la Console
 # - Ajouter Couleur au Log
 
-# - Rendre aléatoire le placement des villages par l'Ia
-#	--> Pré-Remplir une liste de coord entre [0-5] ou il va tirer aléatoirement ?
-
 # - Implémenter les Différents type de Comportement pour l'IA
-
-# - Ajouter une Condition qui vérifie qu'une armée ne soit pas déjà présente sur la case
 
 # - Gérer les armées ennemies quand le Seigneur n'est plus là
 #	--> On les Supprimer ou ont les ajoute à la liste des Armées Bandit ?
@@ -108,12 +103,9 @@ from time import time
 # - Définir comment annuler une action ajouter dans la file d'action
 #	--> Si c'est une armée on cherche dans la file toute les actions qui ont pour paramètre l'objet Armée
 
-# - Bloquer la vue Pour le Déplacement avec la Souris
-
 # - AJouter affichage Victoire ou défaite aux combat d'armée
+#	--> Utilisé système de Notification
 # - Remplir le Menu Cheat
-
-# - Améliorer Création de Seigneur en ajoutant une Scrollbar
 
 # - Pousser la Gestion de la Menace
 
@@ -125,16 +117,12 @@ from time import time
 # --> Si le Bonheur d'une armée est trop basse alors elle se révolte
 # --> Ajouter Rebellion Vassaux Contre Seigneur
 
-# - Déplacer les différentes fonctions dans common
-# - Déplacer les différentes fonctions dans warfunctions
 # - Refactoriser Classmap
 # --> Changer le lien entre les objets villages et les tuiles
 # --> Changer lvillage pour un Dico qui contient pour l'id l'objet Village
-# - Refactoriser la Création de Village 
-# - Changer le fonctionnement des noms lors de la création d'armée
+# - Refactoriser la Création de Village
 # - Changer Frame de l'atlas pour le lier à la root ?
 
-# - Interface Sauvegarde de Données
 # - Changer Fonctionnement Event mercenary_army Pour pouvoir afficher le prix de l'armée de mercenaire et sa troupe
 
 # - Voir comment gérer de manière efficace le Text Tooltip pour que ce soit dynamique
@@ -153,23 +141,26 @@ Implémenter:
  	--> Limité à 1 zoom par action
  - Améliorer Geule de l'Interface
  	--> Utiliser Texture
- - Refactoriser le Calcul et l'affichage des Graphes
  - Implémenter Structure Animation
  - Implémenter Structure Notification
  - Ajouter ToolTipe aux Graphes
- - Refactoriser le Graphes avec Bezier
+ - Implémenter Bezier
  - Améliorer Retour Utilisateur Fin de Tour
  - Ajouter Notification début de tour Croissance des Villages
  - Implémenter Garde fous lors d'ailord main
  - Implémenter Interface Save/Load
 
+
 Refactoriser:
  - Améliorer Selection de Village Pour la Construction d'église
  	--> 1 clique pour zoom, 2 clique pour sélectionner
+ - Interface de Création de Seigneur
+ - Refactoriser le Calcul et l'affichage des Graphes en utilisant Bezier
 
 Fix:
  - Différence Mac/Linux
- - Tooltipe Canvas qui peuve rester après la destruction de leur objets
+ - Tooltipe Canvas qui peuvent rester après la destruction de leur objets
+ - SnowBole de la vassalisation de l'ennemie
 """
 ####
 

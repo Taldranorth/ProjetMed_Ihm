@@ -19,7 +19,7 @@ def save_game(gamedata, classmap, option, filename="savegame.json"):
 	data = {}
     
     #Sauvegarde des paramètres globaux
-	data["Nb_tour"] = gamedata.Nb_tour
+	data["Nb_tour"] = gamedata.Nb_turn
     #Taille de la carte et seed
 	data["map_seed"] = gamedata.seed
 	if hasattr(classmap, "mapsize_x") and hasattr(classmap, "mapsize_y"):

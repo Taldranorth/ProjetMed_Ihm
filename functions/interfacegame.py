@@ -78,7 +78,7 @@ def gameinterface(gamedata, classmap, option, win):
 	# On les set
 	# Merde c'est pas dynamique
 	classmap.tkvar_list[0].set(f"Ressource : {player.nb_ressource} ({efficiency[0]})")
-	classmap.tkvar_list[1].set(f"Argent : {player.nb_money} ({efficiency[1]})")
+	classmap.tkvar_list[1].set(f"Écus : {player.nb_money} ({efficiency[1]})")
 	classmap.tkvar_list[2].set(f"Bonheur: {int(player.global_joy)}%")
 	classmap.tkvar_list[3].set(f"Tour N°: {gamedata.nb_turn}")
 
@@ -172,15 +172,20 @@ def gameinterface(gamedata, classmap, option, win):
 # Fonction lier au bouton de fin de tour
 def turnend(gamedata, classmap, option):
 	log.log.printinfo("fin de tour ")
+	# On affiche un Retour
 	coord = [int(option.widthWindow*0.59), int(option.heightWindow*0.15)]
 	interfacemenu.temp_message(classmap.mapcanv, "Fin du Tour", 2000, coord, "green")
+
+	# Si on est dans un état on quitte l'état
+	if len(gamedata.exit)>0:
+		exitstate(gamedata, classmap, option, gamedata.exit[0], gamedata.exit[1], gamedata.exit[2])
 	gamedata.endturn = True
 
 def updateinterface(gamedata, classmap):
 	player = gamedata.list_lord[gamedata.playerid]
 	efficiency = player.total_efficiency()
 	classmap.tkvar_list[0].set(f"Ressource : {player.nb_ressource} ({efficiency[0]})")
-	classmap.tkvar_list[1].set(f"Argent : {player.nb_money} ({efficiency[1]})")
+	classmap.tkvar_list[1].set(f"Écu : {player.nb_money} ({efficiency[1]})")
 	classmap.tkvar_list[2].set(f"Bonheur: {int(player.global_joy)}%")
 	classmap.tkvar_list[3].set(f"Tour N°: {gamedata.nb_turn}")
 
@@ -233,7 +238,7 @@ def legendginterface(gamedata, classmap, option):
 	tkinter.Label(frame, text = "Déplacé Vue XY: SHIFT + Click DROIT").grid(row = 2, column = 0)
 	# Zoom/Dezoom
 	tkinter.Label(frame, text = "Zoom/DeZoom: Molette").grid(row = 3, column = 0)
-	tkinter.Label(frame, text = "Zoom/DeZoom").grid(row = 0, column = 1)
+	tkinter.Label(frame, text = "Zoom(X)").grid(row = 0, column = 1)
 	# Scale Zoom/Dezoom
 	zoomscall = tkinter.Scale(frame, orient = tkinter.VERTICAL, from_ = 0, to = 6)
 	zoomscall.grid(row = 1, column = 1, rowspan = 4, sticky = tkinter.NS)
@@ -567,6 +572,9 @@ def staterecruitarmy(gamedata, classmap, option):
 	button_createarmy = tkinter.Button(frame_interface_army, text= "Nouvelle Armée", command = lambda: buttoncreatearmy(gamedata, classmap, option, lc_interface_army))
 	button_createarmy.grid(row = 1, column = 0)
 
+	# Bind Tooltipe
+	interfacemenu.tooltip(button_createarmy, f"Demande 2 ressource, 2 écus",[])
+
 	# On bind 
 	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], [window_interface_army]))
 	exit = [[],[], [window_interface_army]]
@@ -580,16 +588,18 @@ def buttoncreatearmy(gamedata, classmap, option, lc_interface_army):
 	# On vérifie que le joueur possède les ressource nécessaire pour recruter 1 Soldata
 	if player.verifcost(2,2) == True:
 		log.log.printinfo("Le Joueur Créer une armée")
-
-		createarmy(gamedata, classmap, option, player, 1, 0)
-
-		# On ajoute 1 Soldat
-		player.sub_money(2)
-		player.sub_ressource(2)
-		# On update l'interface de la listbox
-		lc_interface_army.insert(tkinter.END, player.army[lastarmy].name)
-		# On update l'interface entête
-		updateinterface(gamedata, classmap)
+		result = createarmy(gamedata, classmap, option, player, 1, 0)
+		if result == 1:
+			# On ajoute 1 Soldat
+			player.sub_money(2)
+			player.sub_ressource(2)
+			# On update l'interface de la listbox
+			lc_interface_army.insert(tkinter.END, player.army[lastarmy].name)
+			# On update l'interface entête
+			updateinterface(gamedata, classmap)
+	else:
+		coord = [option.widthWindow//2, option.heightWindow//8]
+		interfacemenu.temp_message(classmap.mapcanv, "Pas Assez de Ressource\n Besoin de 2 R,2 Écus", 2000, coord, "red")
 
 def searchposition(gamedata, classmap, option, village):
 	#####
@@ -613,20 +623,20 @@ def searchposition(gamedata, classmap, option, village):
 				if ((yvill+y) > 0) and ((yvill+y) < classmap.mapy):
 					lcase += [[xvill + x, yvill + y]]
 
-
-	# On tire aléatoirement les coord
-	r = random.randrange(len(lcase))
-	idtuile = common.coordmaptoidtuile(classmap,lcase[r])
-	# On vérifie que les coord soit correctes
-	while((classmap.listmap[idtuile].armyintuile != 0) and (len(lcase)>0)):
-		lcase = lcase[:r] + lcase[r+1:]
+	if len(lcase) > 0:
+		# On tire aléatoirement les coord
 		r = random.randrange(len(lcase))
-		idtuile = common.coordmaptoidtuile(classmap, lcase[r])
-	# Si Correcte alors ont renvoit
-	if (classmap.listmap[idtuile].armyintuile == 0):
-		return lcase[r]
-
-
+		coord = lcase[r]
+		idtuile = common.coordmaptoidtuile(classmap,lcase[r])
+		# On vérifie que les coord soit correctes
+		while((classmap.listmap[idtuile].armyintuile != 0) and (len(lcase)>0)):
+			r = random.randrange(len(lcase))
+			coord = lcase[r]
+			idtuile = common.coordmaptoidtuile(classmap, lcase[r])
+			lcase = lcase[:r] + lcase[r+1:]
+		# Si Correcte alors ont renvoit
+		if (classmap.listmap[idtuile].armyintuile == 0):
+			return coord
 	return 0
 
 def interfacerecruit(event, gamedata, classmap, option, frame_interface_army):
@@ -653,17 +663,17 @@ def interfacerecruit(event, gamedata, classmap, option, frame_interface_army):
 
 
 	# On créer les variables pour l'affichage
-	tkvar_power = tkinter.IntVar()
-	tkvar_power.set(army.power)
+	tkvar_power = tkinter.StringVar()
+	tkvar_power.set(f"Puissance: {army.power}")
 
-	tkvar_knight = tkinter.IntVar()
+	tkvar_knight = tkinter.StringVar()
 	if army.knight == 0:
-		tkvar_knight.set(army.knight)
+		tkvar_knight.set(f"Chevalier: 0")
 	else:
-		tkvar_knight.set(army.knight.name)
+		tkvar_knight.set(f"Chevalier: {army.knight.name}")
 
-	tkvar_lenunit = tkinter.IntVar()
-	tkvar_lenunit.set(len(army.unit))
+	tkvar_lenunit = tkinter.StringVar()
+	tkvar_lenunit.set(f"Soldat: {len(army.unit)}")
 
 	tkvar_list = [tkvar_power, tkvar_knight, tkvar_lenunit]
 
@@ -676,12 +686,17 @@ def interfacerecruit(event, gamedata, classmap, option, frame_interface_army):
 	tkinter.Label(frame_interface_army_right, textvariable = tkvar_list[2]).grid(column = 1)
 
 	# On créer un bouttons pour recruter un Chevalier
-	button_recruit_knight = tkinter.Button(frame_interface_army_right, command = lambda unit="knight": button_recruit(gamedata, classmap, tkvar_list, army, unit), text = "Recruter Chevalier")
+	button_recruit_knight = tkinter.Button(frame_interface_army_right, command = lambda unit="knight": button_recruit(gamedata, classmap, option, tkvar_list, army, unit), text = "Recruter Chevalier")
 	button_recruit_knight.grid(column = 1)
 
 	# On créer un bouttons pour recruter un soldat
-	button_recruit_soldier = tkinter.Button(frame_interface_army_right, command = lambda unit="soldier": button_recruit(gamedata, classmap, tkvar_list, army, unit), text = "Recruter soldat")
+	button_recruit_soldier = tkinter.Button(frame_interface_army_right, command = lambda unit="soldier": button_recruit(gamedata, classmap, option, tkvar_list, army, unit), text = "Recruter soldat")
 	button_recruit_soldier.grid(column = 1)
+
+	# On bind les tooltipe
+	interfacemenu.tooltip(button_recruit_knight, f"Demande 10 ressources et 10 écus", [])
+	# On bind les tooltipe
+	interfacemenu.tooltip(button_recruit_soldier, f"Demande 2 ressources et 2 écus", [])
 
 def centerarmy(event, gamedata, classmap, option):
 	############
@@ -705,34 +720,45 @@ def centerarmy(event, gamedata, classmap, option):
 	# On centre la vu sur le village
 	moveview.centerviewcanvas(gamedata, classmap, option, coord)
 
-def button_recruit(gamedata, classmap, tkvar_list, army, unit):
+def button_recruit(gamedata, classmap, option, tkvar_list, army, unit):
 	################
 	# Fonction appeler pour recruter
 	################
 	player = gamedata.list_lord[gamedata.playerid]
 
 	# On recrute l'unité
-	if (unit == "knight") and (type(tkvar_list[1].get()) != str):
-		# On verif que le joueur possède les ressources
-		if player.verifcost(10,10) == True:
-			army.recruitknight(asset.dico_name.randomnametype("Surnom"))
-			tkvar_list[1].set(army.knight.name)
-			player.sub_money(10)
-			player.sub_ressource(10)
-		# On update l'affichage de l'armée
-		if gamedata.searchtexturetypeindico(army.texture) != "knight":
-			affichage.printupdatearmy(gamedata, classmap, army)
+	if (unit == "knight"):
+		if (army.knight == 0):
+			# On verif que le joueur possède les ressources
+			if player.verifcost(10,10) == True:
+				army.recruitknight(asset.dico_name.randomnametype("Surnom"))
+				tkvar_list[1].set(f"Chevalier: {army.knight.name}")
+				player.sub_money(10)
+				player.sub_ressource(10)
+			else:
+				coord = [option.widthWindow//2, option.heightWindow//8]
+				interfacemenu.temp_message(classmap.mapcanv, "Pas Assez de Ressource\n Besoin de 10 R,10 Écus", 2000, coord, "red")
+			# On update l'affichage de l'armée
+			if asset.atlas.searchtexturetypeindico(asset.dico_file, army.texture) != "knight":
+				affichage.printupdatearmy(gamedata, classmap, army)
+		else:
+			coord = [option.widthWindow//2, option.heightWindow//8]
+			interfacemenu.temp_message(classmap.mapcanv, "L'armée possède déjà un Chevalier", 2000, coord, "red")
 
-	elif unit == "soldier":
+	if unit == "soldier":
 		if player.verifcost(2,2) == True:
 			army.recruitsoldier(asset.dico_name.randomnametype("Nom"))
-			tkvar_list[2].set(len(army.unit))
+			tkvar_list[2].set(f"Soldat: {len(army.unit)}")
 			player.sub_money(2)
-			player.sub_ressource(2)			
+			player.sub_ressource(2)		
+		else:
+			coord = [option.widthWindow//2, option.heightWindow//8]
+			interfacemenu.temp_message(classmap.mapcanv, "Pas Assez de Ressource\n Besoin de 2 R,2 Écus", 2000, coord, "red")
+
 
 
 	# On update l'interface de l'armée
-	tkvar_list[0].set(army.power)
+	tkvar_list[0].set(f"Puissance: {army.power}")
 	# On update l'interface de l'entête
 	updateinterface(gamedata, classmap)
 
@@ -761,8 +787,12 @@ def createarmy(gamedata, classmap, option, lord, nbsoldat, knight):
 		# Affiche l'armée
 		affichage.printarmy(gamedata, classmap, option, lord.army[i], lord)
 		log.log.printinfo(f"{lord.lordname} A créer l'armée {lord.army[i].name} à la position {lord.army[i].x}, {lord.army[i].y}")
+		return 1
 	else:
 		log.log.printerror(f"{lord.lordname} N'a pas de place libre autour de {village.name} pour créer une armée")
+		coord = [option.widthWindow//2, option.heightWindow//8]
+		interfacemenu.temp_message(classmap.mapcanv, f"Pas Assez de Place autour de {village.name}", 2000, coord, "red")
+		return 0
 
 ############################################# War #############################################
 
@@ -1328,7 +1358,7 @@ def taxwindow_village(gamedata, classmap, option, wit, village):
 	frame_tax_collect = tkinter.Frame(wit)
 	frame_tax_collect.grid(row = 0, column = 1)
 	# On affiche plus d'info sur la populations
-	tkinter.Label(frame_tax_collect, text = "Tax:").grid(row = 0, column = 1)
+	tkinter.Label(frame_tax_collect, text = "Taxe:").grid(row = 0, column = 1)
 
 	tax = village.calculate_tax_village()
 	tkvar_money = tkinter.StringVar()
@@ -1337,11 +1367,15 @@ def taxwindow_village(gamedata, classmap, option, wit, village):
 	tkvar_ressource.set(f"Collecter {tax[1]} ressource")
 
 	tkvar_list = [tkvar_money, tkvar_ressource]
-	button_collect_tax_money = tkinter.Button(frame_tax_collect, textvariable = tkvar_list[0], command=lambda: collect_taxes_village(gamedata, classmap, village, "money", frame_tax_collect, tkvar_list))
+	button_collect_tax_money = tkinter.Button(frame_tax_collect, textvariable = tkvar_list[0], command=lambda: collect_taxes_village(gamedata, classmap, option, village, "money", frame_tax_collect, tkvar_list))
 	button_collect_tax_money.grid(row = 3, column = 1)
 
-	button_collect_tax_ressource = tkinter.Button(frame_tax_collect, textvariable = tkvar_list[1], command=lambda: collect_taxes_village(gamedata, classmap, village, "ressource", frame_tax_collect, tkvar_list))
+	button_collect_tax_ressource = tkinter.Button(frame_tax_collect, textvariable = tkvar_list[1], command=lambda: collect_taxes_village(gamedata, classmap, option, village, "ressource", frame_tax_collect, tkvar_list))
 	button_collect_tax_ressource.grid(row = 4, column = 1)
+
+	interfacemenu.tooltip(button_collect_tax_money, f"Tax en Ressource 1/4 les Artisans\n 1/2 les Paysan", [])
+	interfacemenu.tooltip(button_collect_tax_ressource, f"Tax en Écus 1/4 les Artisans\n 1/2 les Paysan", [])
+
 	# Boutton pour quitter
 	tkinter.Button(frame_tax_collect, text = "retour", command = lambda: global_exit_window(frame_tax_collect)).grid(row = 5, column = 1)
 
@@ -1368,13 +1402,14 @@ def taxwindow_vassal(gamedata, classmap, option, wit, vassal):
 	button_collect_tax_money = tkinter.Button(frame_tax_collect, textvariable = tkvar_tax, command=lambda: collect_taxes_vassal(gamedata, classmap, vassal, frame_tax_collect, tkvar_tax))
 	button_collect_tax_money.grid(row = 3, column = 1)
 
-def collect_taxes_village(gamedata, classmap, village, type_tax, frame, tkvar_list):
+def collect_taxes_village(gamedata, classmap, option, village, type_tax, frame, tkvar_list):
 	#####
 	# Fonction associer au Bouton pour collecter taxes 
 	#####
 
 	# On recup le joueur
 	player = gamedata.list_lord[gamedata.playerid]
+	taxinit = village.calculate_tax_village()
 
 	# Si argent on tax l'argent
 	if type_tax == "money":
@@ -1385,6 +1420,8 @@ def collect_taxes_village(gamedata, classmap, village, type_tax, frame, tkvar_li
 		tax = village.calculate_tax_village()
 		# On update l'interface
 		tkvar_list[0].set(f"Collecter {tax[0]} écus")
+		addsubinterface(gamedata, classmap, option, taxinit[0], 0)
+
 	# Si ressource on tax les ressources
 	else:
 		# On se balade parmi les roturier du village
@@ -1394,6 +1431,8 @@ def collect_taxes_village(gamedata, classmap, village, type_tax, frame, tkvar_li
 		tax = village.calculate_tax_village()
 		# On update l'interface
 		tkvar_list[1].set(f"Collecter {tax[1]} ressource")
+		addsubinterface(gamedata, classmap, option, 0, taxinit[1])
+
 	# On update les infos du village
 	village.updateinfo()
 	# On update l'entête
@@ -1486,6 +1525,8 @@ def button_add_population(gamedata, classmap, option, village, role, tkvar_list)
 				if village.priest.ability == "Bonus_Immigration":
 					log.log.printinfo(f"la Capacité {village.priest.ability} de {village.priest.name} s'active !")
 					genproc.genpopvillage(gamedata, classmap, option, village, 1, 0)
+
+			addsubinterface(gamedata, classmap, option, -1, -1)
 		else:
 			interfacemenu.temp_message(classmap.mapcanv, "Pas Assez de Ressource\n Besoin de 1 Ressources et 1 écus", 2000, coord, "red")
 
@@ -1499,6 +1540,7 @@ def button_add_population(gamedata, classmap, option, village, role, tkvar_list)
 				if village.priest.ability == "Bonus_Immigration":
 					log.log.printinfo(f"la Capacité {village.priest.ability} de {village.priest.name} s'active !")
 					genproc.genpopvillage(gamedata, classmap, option, village, 1, 0)
+			addsubinterface(gamedata, classmap, option, -4, -4)
 		else:
 			interfacemenu.temp_message(classmap.mapcanv, "Pas Assez de Ressource\n Besoin de 4 Ressources et 4 écus", 2000, coord, "red")
 
@@ -1709,7 +1751,7 @@ def b_village_stat(gamedata, classmap, option, village, frame_info):
 
 	# On affiche les Artisans
 	i = 0
-	for legend in ("Role", "Nom", "Bonheur", "Ressource", "Argent", "Capacité Production", "CP Bonus", "CP Malus"):
+	for legend in ("Role", "Nom", "Bonheur", "Ressource", "Écus", "Capacité Production", "CP Bonus", "CP Malus"):
 		tkinter.Label(frame_village_stat, text = legend).grid(row = 3,column = i)
 		i += 1
 
@@ -2105,6 +2147,31 @@ def sequencemovetakevillage(gamedata, classmap, option, lord, army, village):
 		else:
 			log.log.printinfo(f"{village.name} à déjà était pris le Seigneur: {lord.lordname}")
 
+def addsubinterface(gamedata, classmap, option, money, ressource):
+	################
+	# Fonction pour afficher l'augmentation et la décrémentation des ressources
+	################
+
+	if money < 0:
+		# On affiche la décrémentation
+		coord = [int(option.widthWindow*0.6), int(option.heightWindow*0.09)]
+		interfacemenu.temp_message(classmap.mapcanv, f"-{money}", 2000, coord, "red")
+	elif money > 0:
+		# On affiche l'incrémentation
+		coord = [int(option.widthWindow*0.6), int(option.heightWindow*0.09)]
+		interfacemenu.temp_message(classmap.mapcanv, f"+{money}", 2000, coord, "green")
+
+	if ressource < 0:
+		# On affiche la décrémentation
+		coord = [int(option.widthWindow*0.55), int(option.heightWindow*0.09)]
+		interfacemenu.temp_message(classmap.mapcanv, f"-{ressource}", 2000, coord, "red")
+	elif ressource > 0:
+		# On affiche l'incrémentation
+		coord = [int(option.widthWindow*0.55), int(option.heightWindow*0.09)]
+		interfacemenu.temp_message(classmap.mapcanv, f"+{ressource}", 2000, coord, "green")
+
+
+
 
 def banderole(gamedata, classmap, option):
 	################
@@ -2155,6 +2222,8 @@ def exitstate(gamedata, classmap, option, lsequbind, lfuncid, lidwindow):
 
 	# On quitte l'état
 	gamedata.statenull()
+	# On nettoye la variable
+	gamedata.exit = []
 
 
 
