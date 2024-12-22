@@ -26,7 +26,6 @@ import functions.interfacemenu as interfacemenu
 #
 #	Armée Volontaires:
 #		--> Récupère un Nombre aléatoires de Soldat
-
 # Neutre:
 #	Armé de Mercenaire:
 #		--> Une armée indépendante apparait
@@ -34,8 +33,6 @@ import functions.interfacemenu as interfacemenu
 #	Un Nouveau Village:
 #		--> Un nouveau Village indépendant apparait
 #
-#
-
 #	Négatif:
 #	La Peste Mon Seigneur!: 
 #		--> Une partie de la Population Meurt

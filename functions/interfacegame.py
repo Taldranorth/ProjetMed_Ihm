@@ -84,19 +84,19 @@ def gameinterface(gamedata, classmap, option, win):
 
 	# Info Entête
 	# Nb Total Ressource
-	ressource_label = tkinter.Label(topframe, textvariable = classmap.tkvar_list[0])
+	ressource_label = tkinter.Label(topframe, textvariable = classmap.tkvar_list[0], font = ('Helvetica', '14'))
 	ressource_label.pack(side = 'left')
 
 	# Nb Total Argent
-	money_label = tkinter.Label(topframe, textvariable = classmap.tkvar_list[1])
+	money_label = tkinter.Label(topframe, textvariable = classmap.tkvar_list[1], font = ('Helvetica', '14'))
 	money_label.pack(side = 'left')
 
 	# Humeur Globale de la Population
-	global_joy_label = tkinter.Label(topframe, textvariable = classmap.tkvar_list[2])
+	global_joy_label = tkinter.Label(topframe, textvariable = classmap.tkvar_list[2], font = ('Helvetica', '14'))
 	global_joy_label.pack(side = 'left')
 
 	# N°Tour
-	nb_turn_label = tkinter.Label(topframe, textvariable = classmap.tkvar_list[3])
+	nb_turn_label = tkinter.Label(topframe, textvariable = classmap.tkvar_list[3], font = ('Helvetica', '14'))
 	nb_turn_label.pack(side = 'left')
 
 	# On Bind tooltip
@@ -325,10 +325,10 @@ def globalviewmenu(gamedata, classmap, option):
 		i += 1
 
 	# Séparateur
-	i += 1
+	i += 2
 	for j in range(6):
 		tkinter.Label(frame_global_view, text = "-----------------").grid(row = i, column = j)
-	i += 1
+	i += 2
 	#########
 
 	# affichage des Armées
@@ -352,10 +352,10 @@ def globalviewmenu(gamedata, classmap, option):
 		i += 1
 
 	# Séparateur
-	i += 1
+	i += 2
 	for j in range(6):
 		tkinter.Label(frame_global_view, text = "-----------------").grid(row = i, column = j)
-	i += 1
+	i += 2
 	#########
 
 	# Affichage des Vassaux
@@ -390,7 +390,7 @@ def statesubjugate(gamedata, classmap, option):
 	#######
 
 	# Si on est déjà dans un état
-	if gamedata.changenewstate("interface_sujugate") == False:
+	if len(gamedata.exit)>0:
 		exitstate(gamedata, classmap, option, gamedata.exit[0], gamedata.exit[1], gamedata.exit[2])
 
 	player = gamedata.list_lord[gamedata.playerid]
@@ -468,7 +468,7 @@ def b_vassal_offer(gamedata, classmap, option, lc, lord, lord2, frame, succes):
 	################
 
 	# On appel la fonction qui gérer l'envoit et les répercusion
-	result =  vassal_offer(gamedata, classmap, option, lord, lord2, succes)
+	result = vassal_offer(gamedata, classmap, option, lord, lord2, succes)
 
 	# On update la Listbox
 	lc.delete(lc.curselection()[0])
@@ -549,7 +549,7 @@ def staterecruitarmy(gamedata, classmap, option):
 	# On créer un boutton pour en créer une
 	################
 
-	if gamedata.changenewstate("interface_recruit_army") == False:
+	if len(gamedata.exit)>0:
 		exitstate(gamedata, classmap, option, gamedata.exit[0], gamedata.exit[2], gamedata.exit[2])
 
 	player = gamedata.list_lord[gamedata.playerid]
@@ -814,7 +814,7 @@ def statewar(gamedata, classmap, option):
 	#################
 
 	# Si on est déjà dans un état on quitte l'état
-	if gamedata.changenewstate("interface_war") == False:
+	if len(gamedata.exit)>0:
 		exitstate(gamedata, classmap, option, gamedata.exit[0], gamedata.exit[1], gamedata.exit[2])
 
 	ts = gamedata.tuilesize
@@ -1016,7 +1016,7 @@ def statebuildvillage(gamedata, classmap, option):
 	# On permet de sélectionner la case ou on veut constuire un village
 	#classmap.mapcanv.tag_bind("click", "Button-1", lambda event, option, gamedata: statbuildvillage(event, option, gamedata))
 
-	if gamedata.changenewstate("build_village") == False:
+	if len(gamedata.exit)>0:
 		exitstate(gamedata, classmap, option, gamedata.exit[0], gamedata.exit[1], gamedata.exit[2])
 
 	ts = gamedata.tuilesize
@@ -1109,7 +1109,7 @@ def statebuildchurch(gamedata, classmap, option):
 	# Fonction Appeler par le menu pour construire une église
 	######
 
-	if gamedata.changenewstate("build_church") == False:
+	if len(gamedata.exit)>0:
 		exitstate(gamedata, classmap, option, gamedata.exit[0], gamedata.exit[1], gamedata.exit[2])
 
 	player = gamedata.list_lord[gamedata.playerid]
@@ -1150,7 +1150,7 @@ def statebuildchurch(gamedata, classmap, option):
 	classmap.mapcanv.tag_bind("buildchurch", "<Button-1>",lambda event: triggerbuildchurch_statebchurch(gamedata, classmap, option))
 
 	# On bind la fonction d'exit à tout ce qui n'est pas un village
-	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event, lsequ = [["village","<Button-1>"]], lf = [idbuildchurch], lidw = [window_interface_church, "buildchurch"]: exitstate(gamedata, classmap, option, lsequ, lf, lidw))
+	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event, lsequ = ["village","<Button-1>"], lf = [idbuildchurch], lidw = [window_interface_church, "buildchurch"]: exitstate(gamedata, classmap, option, lsequ, lf, lidw))
 	gamedata.exit = [[["village","<Button-1>"]], [idbuildchurch], [window_interface_church, "buildchurch"]]
 
 
@@ -1239,8 +1239,10 @@ def deltuilecoordcanvas(gamedata, classmap, option, tag, coord):
 ################################################  Tax  #################################################
 
 def statetax(gamedata, classmap, option):
-	if gamedata.changenewstate("tax") == False:
+
+	if len(gamedata.exit)>0:
 		exitstate(gamedata, classmap, option, gamedata.exit[0], gamedata.exit[1], gamedata.exit[2])
+
 	player = gamedata.list_lord[gamedata.playerid]
 	# Crée la (window) frame de l'interface pour afficher les taxes
 	window_interface_tax = tkinter.Frame(classmap.framecanvas)
@@ -1466,7 +1468,7 @@ def stateimmigration(gamedata, classmap, option):
 	#
 	######
 
-	if gamedata.changenewstate("immigration") == False:
+	if len(gamedata.exit)>0:
 		exitstate(gamedata, classmap, option, gamedata.exit[0], gamedata.exit[1], gamedata.exit[2])
 
 	player = gamedata.list_lord[gamedata.playerid]
@@ -1612,6 +1614,7 @@ def villageinterface(event, gamedata, classmap, option):
 	#monkey patch
 	if len(gamedata.exit)>0:
 		exitstate(gamedata, classmap, option, gamedata.exit[0], gamedata.exit[1], gamedata.exit[2])
+		gamedata.changenewstate("build_village")
 
 	# On recup les coord-canvas du village
 	coordcanv = event.widget.coords("current")
@@ -1864,7 +1867,10 @@ def statemovearmy(gamedata, classmap, option, army, fra, label_movement):
 	funcarmy = classmap.mapcanv.tag_bind("army", "<Button-1>", lambda event: startsequencemovefight(event, gamedata, classmap, option, army), add= "+")
 
 	# On bind l'exit de l'état aux clic droit (ET MERDE SUR LINUX C'EST PAS LE MÊME)
-	classmap.mapcanv.bind("<Button-2>", lambda event: cancelmovearmy(event, gamedata, classmap, option, [funcpath, funcvillage, funcarmy], fra))
+	if option.os == "darwin":
+		classmap.mapcanv.bind("<Button-2>", lambda event: cancelmovearmy(event, gamedata, classmap, option, [funcpath, funcvillage, funcarmy], fra))
+	else:
+		classmap.mapcanv.bind("<Button-3>", lambda event: cancelmovearmy(event, gamedata, classmap, option, [funcpath, funcvillage, funcarmy], fra))
 
 def showpathfinding(event, gamedata, classmap, option, army):
 	################
@@ -1973,7 +1979,10 @@ def cancelmovearmy(event, gamedata, classmap, option, lfuncpath, fra):
 	# On rebind la destruction de l'interface de l'armée
 	classmap.mapcanv.tag_bind("click", "<Button-1>", lambda event: exitstate(gamedata, classmap, option, [], [], [fra]))
 	# On debind le click Gauche
-	classmap.mapcanv.unbind("<Button-2>")
+	if option.os == "darwin":
+		classmap.mapcanv.unbind("<Button-2>")
+	else:
+		classmap.mapcanv.unbind("<Button-3>")
 
 def startsequencemovefight(event, gamedata, classmap, option, army):
 	##################
@@ -2202,6 +2211,7 @@ def exitstate(gamedata, classmap, option, lsequbind, lfuncid, lidwindow):
 	# - une liste qui contient les funcid du bind
 	# - une liste qui contient les idwindow ou canvas à détruire
 	################
+
 	# On détruit l'idwindow
 	for idw in lidwindow:
 		# Si objet du Canvas
@@ -2224,6 +2234,8 @@ def exitstate(gamedata, classmap, option, lsequbind, lfuncid, lidwindow):
 	gamedata.statenull()
 	# On nettoye la variable
 	gamedata.exit = []
+	# On replace le focus
+	classmap.mapcanv.focus_set()
 
 
 

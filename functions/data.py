@@ -452,18 +452,23 @@ class ClassOptions:
 	####################
 
 
-	def __init__(self):
+	def __init__(self, height, width):
 
-		#Défintion de la fenêtre
-		self.widthWindow = 1200
-		self.heightWindow = 1200
+		#Définition de la fenêtre
+		if height == 0:
+			self.heightWindow = 1600
+		else:
+			self.heightWindow = height
 
-
-		#self.listResolutionWindow = []
-		#self.listResolutionWindow += 
+		if width == 0:
+			self.widthWindow = 2560
+		else:
+			self.widthWindow = width
 
 		# Octaves utilisés pour la gen de la carte
 		self.octaves = 10
+
+		# Os de la machine
 
 
 	def loadoption(self):

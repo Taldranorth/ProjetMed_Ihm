@@ -847,7 +847,7 @@ def mainscreen(gamedata, classmap, option, root, pic, NeutralVill, upload_save =
 	# Interface de Jeu
 	interfacegame.gameinterface(gamedata, classmap, option, win1)
 
-	fcanvas.pack()
+	fcanvas.pack(expand = True)
 
 	# Carte de Jeu
 	createmap(gamedata, classmap, option, pic, win1, upload_save = upload_save)
@@ -981,10 +981,16 @@ def createmap(gamedata, classmap, option, pic, win1, upload_save = False):
 	mapcanv.bind("<KeyPress-Down>", lambda event, x=0,y=-1: moveview.moveviewxy(event, x, y, gamedata, classmap, option))
 
 	#On lie le déplacement de la vue au maintient du bouton droit de la souris + motion
-	mapcanv.bind('<Shift-ButtonPress-2>', lambda event: moveview.startmoveviewmouse(event))
-	mapcanv.bind('<Shift-ButtonRelease-2>', lambda event: moveview.endmoveviewmouse(event))
-	mapcanv.bind('<Shift-B2-Motion>', lambda event: moveview.moveviewmouse(event, gamedata, classmap, option))
-
+	# Si Mac
+	if option.os == "darwin":
+		mapcanv.bind('<Shift-ButtonPress-2>', lambda event: moveview.startmoveviewmouse(event))
+		mapcanv.bind('<Shift-ButtonRelease-2>', lambda event: moveview.endmoveviewmouse(event))
+		mapcanv.bind('<Shift-B2-Motion>', lambda event: moveview.moveviewmouse(event, gamedata, classmap, option))
+	else:
+		mapcanv.bind('<Shift-ButtonPress-3>', lambda event: moveview.startmoveviewmouse(event))
+		mapcanv.bind('<Shift-ButtonRelease-3>', lambda event: moveview.endmoveviewmouse(event))
+		mapcanv.bind('<Shift-B3-Motion>', lambda event: moveview.moveviewmouse(event, gamedata, classmap, option))		
+	# Si linux
 
 	#ON lie les différentes Cases à l'action click
 	mapcanv.tag_bind("click", "<Button-1>", lambda event: interfacegame.highlightCase(event, gamedata, classmap))
@@ -1344,7 +1350,7 @@ def create_temp_message(widget, top_window, text, time, coord, color):
 
 	frame = tkinter.Frame(window_message)
 	frame.pack()
-	tkinter.Label(frame, text = text, fg = color).pack()
+	tkinter.Label(frame, text = text, fg = color, font = ('Helvetica', '16')).pack()
 
 	# On détruit après X temps
 	widget.after(time, lambda: destroy_temp_message(window_message))

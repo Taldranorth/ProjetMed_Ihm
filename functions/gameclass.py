@@ -334,7 +334,7 @@ class Classlord:
 			temp_joy += village.global_joy
 
 		if (len(self.vassal)+len(self.fief)) != 0:
-			self.global_joy = temp_joy/(len(self.vassal)+len(self.fief))
+			self.global_joy = int(temp_joy/(len(self.vassal)+len(self.fief)))
 		else:
 			self.global_joy = 0
 
@@ -659,7 +659,7 @@ class Classvillage:
 			self.prod_ressource += pop.tax_ressource()
 
 		# Calcul de la joie global du village
-		self.global_joy = temp_joy/len(self.population)
+		self.global_joy = int(temp_joy/len(self.population))
 
 
 	def endofturn(self, gamedata):
