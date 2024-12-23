@@ -133,40 +133,50 @@ def genpopidvillage(gamedata, classmap, option, idvillage, nbpaysan, nbartisan):
     # Fonction pour ajouter de la pop dans un Village à partir de son ID
     ####################
 
-    village = classmap.listmap[idvillage].village
+	village = classmap.listmap[idvillage].village
+
+	#Vérifie de ne pas ajouter de population si elle eciste déjà
+	if village.population:
+		print("Populaiton déjà existante, pas de génération de pop!")
+		return
 
     # On ajoute les paysans
-    for x in range(nbpaysan):
+	for x in range(nbpaysan):
         # On créer le paysan
-        pop = gameclass.ClassRoturier(asset.dico_name.randomnametype("Nom"), "paysan", False)
+		pop = gameclass.ClassRoturier(asset.dico_name.randomnametype("Nom"), "paysan", False)
         # On l'ajoute
-        village.addpopulation(pop)
+		village.addpopulation(pop)
 
     # On ajoute les Artisans
-    for x in range(nbartisan):
+	for x in range(nbartisan):
         # On créer l'artisan
-        pop = gameclass.ClassRoturier(asset.dico_name.randomnametype("Nom"), "artisan", False)
+		pop = gameclass.ClassRoturier(asset.dico_name.randomnametype("Nom"), "artisan", False)
         # On l'ajoute
-        village.addpopulation(pop)
+		village.addpopulation(pop)
         
 def genpopvillage(gamedata, classmap, option, village, nbpaysan, nbartisan):
     ####################
     # Fonction pour ajouter de la pop dans un Village à partir de l'objet
     ####################
 
+	#Vérifie de ne pas ajouter de population si elle eciste déjà
+	if village.population:
+		print("Populaiton déjà existante, pas de génération de pop!")
+		return
+
     # On ajoute les paysans
-    for x in range(nbpaysan):
+	for x in range(nbpaysan):
         # On créer le paysan
-        pop = gameclass.ClassRoturier(asset.dico_name.randomnametype("Nom"), "paysan", False)
+		pop = gameclass.ClassRoturier(asset.dico_name.randomnametype("Nom"), "paysan", False)
         # On l'ajoute
-        village.addpopulation(pop)
+		village.addpopulation(pop)
 
     # On ajoute les Artisans
-    for x in range(nbartisan):
+	for x in range(nbartisan):
         # On créer l'artisan
-        pop = gameclass.ClassRoturier(asset.dico_name.randomnametype("Nom"), "artisan", False)
+		pop = gameclass.ClassRoturier(asset.dico_name.randomnametype("Nom"), "artisan", False)
         # On l'ajoute
-        village.addpopulation(pop)
+		village.addpopulation(pop)
 
 
 
