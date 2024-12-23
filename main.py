@@ -85,7 +85,7 @@ from time import time
 
 # - AJouter affichage Victoire ou défaite aux combat d'armée
 #	--> Utilisé système de Notification
-# - Remplir le Menu Cheat
+# - Remplir le Menu Debug
 
 # - Pousser la Gestion de la Menace
 
@@ -122,15 +122,13 @@ Implémenter:
  - Implémenter Garde fous lors d'ailord main
  - Implémenter Interface Save/Load
  - Affichage du Pathfinding en cours des armées
+ - Implémenter Menu Option
+ 	--> Ajouter option pour activer/désactiver le Menu Débug
+ - Implémenter lors de la création du fichier le choix de la résolution
 
- - Implémenter la gestion des écrans aux résolutions supérieur
-	--> Le problème vient du DPI (dot per inch)
-		--> la librairie du prof ne fonctionne pas, flemme de chercher une solution
-			--> go dev une solution
-				--> Soit je passe la journée à trouver un moyen de calculer la différence 
-				--> Soit je met en place un fichier config et une gestion du 1er lancement de l'appli ou ont config la résolution
-					--> + mettre en place le menu option
 
+ - Implémenter la gestion des écrans aux résolutions supérieur X
+ -----> Abandonné
 
 Résultat Playtest:
  - Retour Utilisateur Boutton changer dans PlayMenu
@@ -153,6 +151,7 @@ Refactoriser:
  - Interface de Création de Seigneur
  - Refactoriser le Calcul et l'affichage des Graphes en utilisant Bezier
  - Changer Fonctionnement Event mercenary_army Pour pouvoir afficher le prix de l'armée de mercenaire et sa troupe
+ - Refactoriser la gestion des noms
 
 Fix:
  - Tooltipe Canvas qui peuvent rester après la destruction de leur objets
@@ -215,8 +214,12 @@ if __name__ == '__main__':
 
 	#Init de la fenêtre
 	root = tkinter.Tk()
-	height = root.winfo_screenheight()
-	width = root.winfo_screenwidth()
+
+	if (len(sys.argv) >= 2 )and (str(sys.argv[1]) == "-SR"):
+		[height, width] = [1600, 2500]
+	else:
+		[height, width] = [root.winfo_screenheight(),root.winfo_screenwidth()]
+
 	log.log.printinfo(f"Hauteur de l'écran:  {height}")
 	log.log.printinfo(f"Largeur de l'écran: {width}")
 	log.log.printinfo(f"Plateforme: {sys.platform}")

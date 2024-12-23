@@ -1,4 +1,6 @@
+import os
 import sys
+import json
 import random
 import tkinter
 
@@ -453,33 +455,44 @@ class ClassOptions:
 
 
 	def __init__(self, height, width):
+		c_d = os.getcwd()
 
-		#Définition de la fenêtre
-		if height == 0:
-			self.heightWindow = 1600
+		if "config.ini" in os.listdir(c_d+"/user/"):
+			log.log.printinfo(f"Fichier Config.ini trouvé")
+			self.loadoption(c_d+"/user/"+"config.ini")
 		else:
-			self.heightWindow = height
+			#Définition de la fenêtre
+			if height == 0:
+				self.heightWindow = 700
+			else:
+				self.heightWindow = height
 
-		if width == 0:
-			self.widthWindow = 2560
-		else:
-			self.widthWindow = width
+			if width == 0:
+				self.widthWindow = 1400
+			else:
+				self.widthWindow = width
+			self.saveoption(c_d+"/user/"+"config.ini")
 
 		# Octaves utilisés pour la gen de la carte
 		self.octaves = 10
 
 		# Os de la machine
+		self.os = sys.platform
 
 
-	def loadoption(self):
-		# f = open("user/Config.ini")
-		# 
-		#
-		#
-		#
-		# F.close()
-		pass
+	def loadoption(self, filepath):
+		with open(filepath, "r") as f:
+			data = json.load(f)
+		self.heightWindow = data["heightWindow"]
+		self.widthWindow = data["widthWindow"]
 
+	def saveoption(self, filepath):
+		data = {}
+		data["heightWindow"] = self.heightWindow
+		data["widthWindow"] = self.widthWindow
+
+		with open(filepath,"w") as f:
+			json.dump(data, f, indent = 4)
 
 class Classmap:
 	####################
@@ -644,6 +657,37 @@ class Classtuiles:
 		self.village = gameclass.Classvillage(self.x, self.y)
 		# On set le nom du village
 		self.village.setnamevillage(asset.dico_name.randomnametype("Village"))
+
+
+
+def get_screenresolution(root):
+	#######
+	# Fonction pour vérifier que la résolution est correcte selon la machine
+	#######
+
+
+	width_px = root.winfo_screenwidth()
+	height_px = root.winfo_screenheight()
+	width_mm = root.winfo_screenmmwidth()
+	height_mm = root.winfo_screenmmheight()
+	# 2.54 cm = inch
+	width_in = width_mm / 25.4
+	height_in = height_mm / 25.4
+	width_dpi = int(width_px/width_in)
+	height_dpi = int(height_px/height_in)+1
+
+	log.log.printinfo(f'Width: {width_px} px, Height: {height_px} px')
+	log.log.printinfo(f'Width: {width_mm} mm, Height: {height_mm} mm')
+	log.log.printinfo(f'Width: {width_in} in, Height: {height_in} in')
+	log.log.printinfo(f'Width: {width_dpi} dpi, Height: {height_dpi} dpi')
+	if (width_dpi == 72) and (height_dpi == 72):
+		return [height_px,width_px]
+	else:
+		multx = width_dpi//95
+		multy = height_dpi//95
+		print(f"multx: {multx}, multy: {multy}")
+		return [height_px*multy,width_px*multx]
+
 
 ###########################################################################
 
