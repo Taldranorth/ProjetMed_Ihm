@@ -159,7 +159,6 @@ def moveviewz(event, gamedata, classmap, option):
 	#Doit prendre en compte linux -_-
 	log.log.printinfo(f"{event.delta}")
 
-
 	if (event.delta <= 0) or (event.num == 5):
 		delta = -2
 	if (event.delta > 0) or (event.num == 4):
@@ -208,15 +207,28 @@ def moveviewzcenter(gamedata, classmap, option, delta):
 	####################\ 1°) \####################
 	# On recup la taille d'une tuile et définit le delta
 	x = gamedata.tuilesize
+	log.log.printinfo(f"tuilesize: {x}")
 	############################################################
 
 	####################\ 2°) \####################
+	#Pour éviter les différence entre windows et Mac ont normalise delta
+	#Doit prendre en compte linux -_-
+	log.log.printinfo(f"delta: {delta}")
+
+	if (delta <= 0):
+		delta = -2
+	if (delta > 0):
+		delta = 2
+	############################################################
+
+
+	####################\ 3°) \####################
 	# DeZoom
 	canvasgooriginewindow(classmap)
-	if delta < 0:
+	if (x > 5) and (delta < 0):
 		classmap.mapcanv.scale("tuile", 0, 0, -1/(delta), -1/(delta))
 		x = int(x*(-1/(delta)))
-	else:
+	elif (x < 320) and (delta > 0):
 		classmap.mapcanv.scale("tuile", 0, 0, (delta), (delta))
 		x = int(x*delta)
 	log.log.printinfo(f"newsizetuile: {x}")
@@ -227,6 +239,7 @@ def moveviewzcenter(gamedata, classmap, option, delta):
 	gamedata.newsizetuile(x)
 	###################################################################
 	zoom(gamedata, classmap, option)
+
 
 def zoom(gamedata, classmap, option):
 
@@ -260,7 +273,7 @@ def zoom(gamedata, classmap, option):
 
 		else:
 			# Sinon On vient recup la texture stocker dans la Classtuile
-			print("idtuile: ", ltag[7])
+			#print("idtuile: ", ltag[7])
 			texture = classmap.listmap[int(ltag[7])].texture_name
 
 		# On change la texture lié

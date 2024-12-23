@@ -7,6 +7,7 @@ import functions.event as event
 import functions.ailord as ailord
 import functions.genproc as genproc
 import functions.affichage as affichage
+import functions.notification as notification
 import functions.interfacegame as interfacegame
 import functions.interfacemenu as interfacemenu
 

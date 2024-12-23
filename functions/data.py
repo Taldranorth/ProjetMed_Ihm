@@ -1,4 +1,6 @@
+import os
 import sys
+import json
 import random
 import tkinter
 
@@ -6,6 +8,7 @@ import functions.log as log
 import functions.asset as asset
 import functions.gameclass as gameclass
 import functions.affichage as affichage
+import functions.notification as notification
 import functions.interfacegame as interfacegame
 
 from time import time
@@ -112,6 +115,9 @@ class ClassGameData:
 		# Dico contenant les effets des capacité des prêtres
 		self.dico_priest_ability = {}
 
+		# Tuple qui vient contenir les données nécessaire à l'exit de l'état actuelles
+		self.exit = []
+
 		# Variable qui vient contenir la file des actions
 		# liste de Piles
 		self.actionlist = []
@@ -133,6 +139,12 @@ class ClassGameData:
 		player = gameclass.Classlord("test", True, self.Nb_lord)
 		self.list_lord += [player]
 		self.Nb_lord += 1
+
+		# Color
+		# Liste des couleurs disponibles
+		self.colorlist = ['Yellow', 'BlueViolet' , 'DeepPink', 'Darkorange4', "Orange","Blue4", "Cyan", "LightSalmon", "Khaki1", "coral", "Yellow4", "Firebrick4", "Orange4", "Hotpink4", "Brown","magenta", "Salmon4", "SeaGreen"]
+		# Liste des couleurs disponibles
+		self.color_available = self.colorlist
 
 		for x in range(3):
 			self.createlord()
@@ -165,31 +177,27 @@ class ClassGameData:
 	def createlord(self):
 		self.list_lord += [gameclass.Classlord(("lord "+ asset.dico_name.randomnametype("Surnom")), False, self.Nb_lord)]
 		
-		#color = f'#{random.randrange(256**3):06x}'
-		#Liste des couleurs disponibles
-		colorlist = ['Yellow', 'BlueViolet' , 'DeepPink', 'Darkorange4', "Orange","Blue4", "Cyan", "LightSalmon", "Khaki1", "coral", "Yellow4", "Firebrick4", "Orange4", "Hotpink4", "Brown","magenta", "Salmon4", "SeaGreen"]
+		color = self.colorlord()
 		
-		#Trouver les couleurs déjà utilisées
-		used_colors = []
-		for lord in self.list_lord:
-			used_colors.append(lord.color)
-    		#Trouver une couleur disponible
-		available_colors = []
-		for color in colorlist:
-			if color not in used_colors:
-    				available_colors.append(color)
-    				
-		#Si plus de couleurs disponibles on affiche dans le terminal une erreur
-		if len(available_colors) == 0:
-        		raise ValueError("Toutes les couleurs disponibles ont été attribuées. Ajoutez plus de couleurs ou retirez des joueurs")
-
-    		#Choisir une couleur au hasard parmi les couleurs disponibles
-		color = random.randint(0, len(available_colors)-1)
-		color = available_colors[color]
-		
-    		#Attribuer la couleur au seigneur et incrémentation du nombre de joueurs
+    	# On set la couleur du Seigneur puis incrémente le nb de Seigneurs
 		self.list_lord[self.Nb_lord].setcolor(color)
 		self.Nb_lord += 1
+
+	def colorlord(self):
+		#color = f'#{random.randrange(256**3):06x}'
+		color = ""
+
+		#Si plus de couleurs disponibles on affiche dans le terminal une erreur
+		if len(self.color_available) == 0:
+        		raise ValueError("Toutes les couleurs disponibles ont été attribuées. Ajoutez plus de couleurs ou retirez des joueurs")
+
+    	#Choisir une couleur au hasard parmi les couleurs disponibles
+		idcolor = random.randint(0, len(self.color_available)-1)
+		color = self.color_available[idcolor]
+
+		# On retire de la liste des couleur disponible
+		self.color_available = self.color_available[:idcolor] + self.color_available[idcolor+1:]
+		return color
 
 	def lordnametoid(self, name):
 		#####
@@ -202,7 +210,6 @@ class ClassGameData:
 				return lord.idlord
 		# Si on ne trouve pas on Renvoit False
 		return False
-
 
 	def deletelord(self, idlord):
 		name = self.list_lord[idlord].lordname[5:]
@@ -221,6 +228,8 @@ class ClassGameData:
 				i += 1
 		else:
 			self.list_lord = [self.list_lord[0]]
+		# on libérer la couleur utilisé
+		self.color_available += [lord.color]
 
 		# On détruit le seigneur
 		del lord
@@ -296,11 +305,6 @@ class ClassGameData:
 		################
 		# Méthode appeler quand ont veut ajouter une action qui se produira dans x tour
 		# Définit les variables stocker dans action
-		# On utilise la fonction eval() qui intérpréte une chaîne de caractère en une expression
-		# Action est donc une chaîne de carac qui reprèsente la fonction et les variables que l'on veut utiliser
-		# Ex:  eval("moveunit(gamedata, classmap, option, army, coord)")
-		# Il faut voir si il garde le contexte des variables
-		# Si non simplement utiliser f"{}"
 		################
 
 		# Si actuellement la liste des action prévu est inférieur on ajoute turn liste vide
@@ -450,29 +454,45 @@ class ClassOptions:
 	####################
 
 
-	def __init__(self):
+	def __init__(self, height, width):
+		c_d = os.getcwd()
 
-		#Défintion de la fenêtre
-		self.widthWindow = 1200
-		self.heightWindow = 1200
+		if "config.ini" in os.listdir(c_d+"/user/"):
+			log.log.printinfo(f"Fichier Config.ini trouvé")
+			self.loadoption(c_d+"/user/"+"config.ini")
+		else:
+			#Définition de la fenêtre
+			if height == 0:
+				self.heightWindow = 700
+			else:
+				self.heightWindow = height
 
-
-		#self.listResolutionWindow = []
-		#self.listResolutionWindow += 
+			if width == 0:
+				self.widthWindow = 1400
+			else:
+				self.widthWindow = width
+			self.saveoption(c_d+"/user/"+"config.ini")
 
 		# Octaves utilisés pour la gen de la carte
 		self.octaves = 10
 
+		# Os de la machine
+		self.os = sys.platform
 
-	def loadoption(self):
-		# f = open("user/Config.ini")
-		# 
-		#
-		#
-		#
-		# F.close()
-		pass
 
+	def loadoption(self, filepath):
+		with open(filepath, "r") as f:
+			data = json.load(f)
+		self.heightWindow = data["heightWindow"]
+		self.widthWindow = data["widthWindow"]
+
+	def saveoption(self, filepath):
+		data = {}
+		data["heightWindow"] = self.heightWindow
+		data["widthWindow"] = self.widthWindow
+
+		with open(filepath,"w") as f:
+			json.dump(data, f, indent = 4)
 
 class Classmap:
 	####################
@@ -637,6 +657,37 @@ class Classtuiles:
 		self.village = gameclass.Classvillage(self.x, self.y)
 		# On set le nom du village
 		self.village.setnamevillage(asset.dico_name.randomnametype("Village"))
+
+
+
+def get_screenresolution(root):
+	#######
+	# Fonction pour vérifier que la résolution est correcte selon la machine
+	#######
+
+
+	width_px = root.winfo_screenwidth()
+	height_px = root.winfo_screenheight()
+	width_mm = root.winfo_screenmmwidth()
+	height_mm = root.winfo_screenmmheight()
+	# 2.54 cm = inch
+	width_in = width_mm / 25.4
+	height_in = height_mm / 25.4
+	width_dpi = int(width_px/width_in)
+	height_dpi = int(height_px/height_in)+1
+
+	log.log.printinfo(f'Width: {width_px} px, Height: {height_px} px')
+	log.log.printinfo(f'Width: {width_mm} mm, Height: {height_mm} mm')
+	log.log.printinfo(f'Width: {width_in} in, Height: {height_in} in')
+	log.log.printinfo(f'Width: {width_dpi} dpi, Height: {height_dpi} dpi')
+	if (width_dpi == 72) and (height_dpi == 72):
+		return [height_px,width_px]
+	else:
+		multx = width_dpi//95
+		multy = height_dpi//95
+		print(f"multx: {multx}, multy: {multy}")
+		return [height_px*multy,width_px*multx]
+
 
 ###########################################################################
 

@@ -15,11 +15,9 @@ import functions.affichage as affichage
 import functions.interfacegame as interfacegame
 import functions.interfacemenu as interfacemenu
 
-
 from time import time
 
 # Objectif:
-#
 #	- Refactoriser le Code
 #		--> Le Nettoyer
 #		--> Retirer les Commentaires Inutiles
@@ -68,52 +66,26 @@ from time import time
 #	--> Si souris sur village Ennemies alors affiche icône Pillage
 #########################################################
 
-# -> Refactoriser le code pour réduire la réutilisation de même code pour a la place utilisr une fonction commune liée a l'objet utiliser
-# -> Refactorisation tout les calculs de Coordonnées pour utiliser les fonctions Commune
-
-# -> Fix la possetion de multiple armé
-#	-->Faire poper aux alentour de la ville la nouvelle armée si la case de la ville est déjà occupé par une armée
-# -> Rework Interface avec Grid
-#	--> Interface_Army
-
-#####
-# - La trajectoire Actuelle d'une armée doit s'afficher quand on clique dessus
-
-# - Fix différence click droit Mac/Linux
-# - Besoin d'un Retour utilisateur Quand Action Impossible
-#####
-
 ####
 
 # - Mettre en place un level Log Erreur
 # - LVL 0: On affiche seulement les critique dans la Console
 # - LVL 1: On affiche les critiques et les important dans la Console
 # - LVL 2: On affiche tout dans la Console
-# - Ajouter Couleur au Log
-
-# - Rendre aléatoire le placement des villages par l'Ia
-#	--> Pré-Remplir une liste de coord entre [0-5] ou il va tirer aléatoirement ?
-
-# - Implémenter les Différents type de Comportement pour l'IA
-
-# - Ajouter une Condition qui vérifie qu'une armée ne soit pas déjà présente sur la case
 
 # - Gérer les armées ennemies quand le Seigneur n'est plus là
 #	--> On les Supprimer ou ont les ajoute à la liste des Armées Bandit ?
 
 # - Changer les Interfaces Pour qu'elle n'utilise plus la texture de "base"
 
-# - Pour l'instant Les Seigneurs IA ne peuvent vassaliser le Joueur
+# - Pour l'instant Les Seigneurs IA ne peuvent tenter de vassaliser le Joueur
 
 # - Définir comment annuler une action ajouter dans la file d'action
 #	--> Si c'est une armée on cherche dans la file toute les actions qui ont pour paramètre l'objet Armée
 
-# - Bloquer la vue Pour le Déplacement avec la Souris
-
 # - AJouter affichage Victoire ou défaite aux combat d'armée
-# - Remplir le Menu Cheat
-
-# - Améliorer Création de Seigneur en ajoutant une Scrollbar
+#	--> Utilisé système de Notification
+# - Remplir le Menu Debug
 
 # - Pousser la Gestion de la Menace
 
@@ -125,18 +97,6 @@ from time import time
 # --> Si le Bonheur d'une armée est trop basse alors elle se révolte
 # --> Ajouter Rebellion Vassaux Contre Seigneur
 
-# - Déplacer les différentes fonctions dans common
-# - Déplacer les différentes fonctions dans warfunctions
-# - Refactoriser Classmap
-# --> Changer le lien entre les objets villages et les tuiles
-# --> Changer lvillage pour un Dico qui contient pour l'id l'objet Village
-# - Refactoriser la Création de Village 
-# - Changer le fonctionnement des noms lors de la création d'armée
-# - Changer Frame de l'atlas pour le lier à la root ?
-
-# - Interface Sauvegarde de Données
-# - Changer Fonctionnement Event mercenary_army Pour pouvoir afficher le prix de l'armée de mercenaire et sa troupe
-
 # - Voir comment gérer de manière efficace le Text Tooltip pour que ce soit dynamique
 #	--> Liste qui contient des chaines de caractère avec des appels de variable ?
 #		--> Non c'est toujours le même problème, actuellement c'est les valeurs qui sont stocké et non l'adresse mémoire qui est accéder
@@ -146,42 +106,62 @@ from time import time
 # - Mettre en Place Fonctions ListBox qui disparait
 #####
 
-#### Objectif Samedi/Dimanche:
-# -> Fix Build Church
-#	--> Améliorer la sélection des villages
-# -> Fix l'imposibilité de Zoomer quand on est dans l'état Build Church
-#
-# - Implémenter Interface Option
-####
-
-
 #### Fait:
 """
 Implémenter:
- - Pouvoir Changer d'état d'interface sans quitter le précédent
- 	--> Stocker dans une variable global d'interfacegame une l'exitstate en cours
  - Améliorer Zoom/Dezoom
  	--> Limité à 1 zoom par action
  - Améliorer Geule de l'Interface
- 	--> Utiliser Texture
- - Refactoriser le Calcul et l'affichage des Graphes
+ 	--> Utiliser Texture/icone
+ 	--> Définir des couleur gris/chaud 
  - Implémenter Structure Animation
  - Implémenter Structure Notification
  - Ajouter ToolTipe aux Graphes
- - Refactoriser le Graphes avec Bezier
- - Améliorer Retour Utilisateur Fin de Tour
+ - Implémenter Bezier
+ - Ajouter Notification début de tour Croissance des Villages
+ - Implémenter Garde fous lors d'ailord main
+ - Implémenter Interface Save/Load
+ - Affichage du Pathfinding en cours des armées
+ - Implémenter Menu Option
+ 	--> Ajouter option pour activer/désactiver le Menu Débug
+ - Implémenter lors de la création du fichier le choix de la résolution
+
+
+ - Implémenter la gestion des écrans aux résolutions supérieur X
+ -----> Abandonné
+
+Résultat Playtest:
+ - Retour Utilisateur Boutton changer dans PlayMenu
+ - Construire Village:
+ 	--> sortir automatiquement quand Construction Impossible
+ 	--> Ajouter retour Utilisateur Impossibilité directe en affichant les cases en rouge
+ - Info générale, ajouter plus d'espace entre les catégories
+ - Ajouter Scrollbar à la Vue détaillée 
+ - Ajouter Tooltip, Event Armée Mercenaire
+
+ - Terminé l'implémentation des saves
+ 	--> Merge dev2,dev1
+ 		--> Merge dev1 Main
+ 	--> Changer pour stocker dans le dossier save
+ 	--> Changer pour utiliser l'interface de save
 
 Refactoriser:
+ - Améliorer Selection de Village Pour la Construction d'église
+ 	--> 1 clique pour zoom, 2 clique pour sélectionner
+ - Interface de Création de Seigneur
+ - Refactoriser le Calcul et l'affichage des Graphes en utilisant Bezier
+ - Changer Fonctionnement Event mercenary_army Pour pouvoir afficher le prix de l'armée de mercenaire et sa troupe
+ - Refactoriser la gestion des noms
 
 Fix:
-
+ - Tooltipe Canvas qui peuvent rester après la destruction de leur objets
 """
 ####
 
+
+
 #### Objectif Restant ####
 # - Refactorisation Option/classmap et Gamedata pour être défini dans data et accéder à partir d'un appel du fichier
-# - Implémenter Résolution Dynamique
-# - Améliorer Selection de Village Pour la Construction d'église
 # - Implémenter Réactions Armées et Vassaux
 # - Implémenter Comportement de l'IA
 # - Terminé Graphe Stat
@@ -195,19 +175,14 @@ Fix:
 ######
 
 
-
+######
 # -> Ajouter Bouton Pour annuler Si on déplace une armée mais que l'on veut annuler son déplacement au tour prochain
-# -> Rework Interface avec Grid
-#	--> Interface_Army
 ######## Fonctionnalité Principale à Implémenter
-# - Implémenter Résolutions Dynamique
-# - Implémenter les Réactions
 # - Implémenter les Différents Comportement de l'IA
 # - Refactoriser le Code
 ########
 
 ######## Fonctionnalité Majeur Secondaire
-# - Implémenter Sauvegarde et Chargement de Données
 # - Implémenter Options
 # - Implémenter marché
 # - Implémenter Landforme
@@ -234,20 +209,23 @@ Fix:
 # --> Utiliser Octaves Pour générer groupe de Terrain
 # --> Repasser un coup de Noise map dans le groupe de Terrain qui vient définir les tuiles
 
-
-# Pour régler le problème de la taille d'écran
-#https://pypi.org/project/screeninfo/
-
 ######################### Main #########################
 if __name__ == '__main__':
 
 	#Init de la fenêtre
 	root = tkinter.Tk()
-	log.log.printinfo(f"Hauteur de l'écran:  {root.winfo_screenheight()}")
-	log.log.printinfo(f"Largeur de l'écran: {root.winfo_screenwidth()}")
+
+	if (len(sys.argv) >= 2 )and (str(sys.argv[1]) == "-SR"):
+		[height, width] = [1600, 2500]
+	else:
+		[height, width] = [root.winfo_screenheight(),root.winfo_screenwidth()]
+
+	log.log.printinfo(f"Hauteur de l'écran:  {height}")
+	log.log.printinfo(f"Largeur de l'écran: {width}")
+	log.log.printinfo(f"Plateforme: {sys.platform}")
 
 	# Chargement des Options:
-	option_instance = data.ClassOptions()
+	option_instance = data.ClassOptions(height, width)
 	# Initialisation de GameData
 	gamedata_instance = data.ClassGameData()
 	log.log.printinfo("Initialisation log terminé")

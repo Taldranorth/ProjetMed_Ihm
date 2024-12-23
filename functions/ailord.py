@@ -164,23 +164,27 @@ def mainai(gamedata, classmap, option):
 	
 	list_lord_menace = []
 
+	can_subjugate = True
 	# 3°) Vassalisation/Menace
 	for otherlord in gamedata.list_lord:
-		# Si le seigneur selectionner n'est pas le Seigneurs qui joue
-		if ((otherlord != lord) and (otherlord != player)) and (otherlord.isdefeated == False):
-			# On calcul la réussite
-			succes = interfacegame.vassal_try(gamedata, lord, otherlord)
-			log.log.printinfo(f"{lord.lordname} à {succes}% de chance de Vassaliser: {otherlord.lordname}")
-			# On calcul la menace
-			# On calcul la distance
-			dist = common.distance(otherlord.fief[0], lord.fief[0])
-			menace = (otherlord.score()-lord.score())//dist
-			# On ajoute la menace du Seigneur dans la liste de menace
-			log.log.printinfo(f"{otherlord.lordname} menace {menace}  le {lord.lordname}")
-			list_lord_menace += [[otherlord.idlord, menace]]
-			if succes >= 75:
-				log.log.printinfo(f"{lord.lordname} tente de Vassaliser: {otherlord.lordname}")
-				interfacegame.vassal_offer(gamedata, classmap, option, lord, otherlord, succes)
+		# On vérifie que le seigneur est le droit de tenter de vassaliser
+		if can_subjugate == True:
+			# Si le seigneur selectionner n'est pas le Seigneurs qui joue
+			if ((otherlord != lord) and (otherlord != player)) and (otherlord.isdefeated == False):
+				# On calcul la réussite
+				succes = interfacegame.vassal_try(gamedata, lord, otherlord)
+				log.log.printinfo(f"{lord.lordname} à {succes}% de chance de Vassaliser: {otherlord.lordname}")
+				# On calcul la menace
+				# On calcul la distance
+				dist = common.distance(otherlord.fief[0], lord.fief[0])
+				menace = (otherlord.score()-lord.score())//dist
+				# On ajoute la menace du Seigneur dans la liste de menace
+				log.log.printinfo(f"{otherlord.lordname} menace {menace} le {lord.lordname}")
+				list_lord_menace += [[otherlord.idlord, menace]]
+				if succes >= 75:
+					log.log.printinfo(f"{lord.lordname} tente de Vassaliser: {otherlord.lordname}")
+					interfacegame.vassal_offer(gamedata, classmap, option, lord, otherlord, succes)
+					can_subjugate = False
 
 	log.log.printinfo(f"{lord.lordname} liste de Menace: {list_lord_menace}")
 	# 4°) Guerre
@@ -300,17 +304,18 @@ def searchvillage(gamedata, classmap, option, village):
 				if ((yvill+y) > 0) and ((yvill+y) < classmap.mapy):
 					lcase += [[xvill + x, yvill + y]]
 
-	# On tire aléatoirement les coord
-	r = random.randrange(len(lcase))
-	idtuile = common.coordmaptoidtuile(classmap,lcase[r])
-	# On vérifie que les coord soit correctes
-	while((genproc.buildvillagepossible(option, classmap, idtuile) == False) and (len(lcase)>0)):
-		lcase = lcase[:r] + lcase[r+1:]
+	if len(lcase) != 0:
+		# On tire aléatoirement les coord
 		r = random.randrange(len(lcase))
-		idtuile = common.coordmaptoidtuile(classmap, lcase[r])
-	# Si Correcte alors ont renvoit
-	if (genproc.buildvillagepossible(option, classmap, idtuile) == True):
-		return idtuile
+		idtuile = common.coordmaptoidtuile(classmap,lcase[r])
+		# On vérifie que les coord soit correctes
+		while((genproc.buildvillagepossible(option, classmap, idtuile) == False) and (len(lcase)>0)):
+			lcase = lcase[:r] + lcase[r+1:]
+			r = random.randrange(len(lcase))
+			idtuile = common.coordmaptoidtuile(classmap, lcase[r])
+		# Si Correcte alors ont renvoit
+		if (genproc.buildvillagepossible(option, classmap, idtuile) == True):
+			return idtuile
 
 	return 0
 
@@ -357,15 +362,5 @@ def actionimmigration(gamedata, classmap, option, lord, village, nbpaysan, nbart
 				log.log.printinfo(f"la Capacité {village.priest.ability} de {village.priest.name} s'active !")
 				pop = gameclass.ClassRoturier(asset.dico_name.randomnametype("Nom"), "paysan", False)
 				village.addpopulation(pop)
-
-
-def actionwar(gamedata, classmap, option, lord):
-	pass
-
-def actionarmymovement(gamedata, classmap, option, lord):
-	pass
-
-def actionsubjugation(gamedata, classmap, option, lord):
-	pass
 
 

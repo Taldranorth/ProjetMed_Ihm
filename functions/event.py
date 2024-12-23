@@ -26,7 +26,6 @@ import functions.interfacemenu as interfacemenu
 #
 #	Armée Volontaires:
 #		--> Récupère un Nombre aléatoires de Soldat
-
 # Neutre:
 #	Armé de Mercenaire:
 #		--> Une armée indépendante apparait
@@ -34,8 +33,6 @@ import functions.interfacemenu as interfacemenu
 #	Un Nouveau Village:
 #		--> Un nouveau Village indépendant apparait
 #
-#
-
 #	Négatif:
 #	La Peste Mon Seigneur!: 
 #		--> Une partie de la Population Meurt
@@ -247,12 +244,12 @@ class ClassEvent:
 			if lord.idlord == gamedata.playerid:
 				if accept == True:
 					interfacegame.createarmy(gamedata, classmap, option, lord, nbsoldat, knight)
-					lord.army[len(lord.army)-1].setname(classmap.mapcanv, "unit mercenary")
+					lord.army[len(lord.army)-1].setname(classmap.mapcanv, "Armée de Mercenaire")
 			else:
 				# Si le prix est inférieur au quart de se que possède le seigneurs IA alors il accepte
 				if (price < int(lord.nb_money*1/4)):
 					interfacegame.createarmy(gamedata, classmap, option, lord, nbsoldat, knight)
-					lord.army[len(lord.army)-1].setname(classmap.mapcanv, "unit mercenary")
+					lord.army[len(lord.army)-1].setname(classmap.mapcanv, "Armée de Mercenaire")
 			
 
 	##### Négatif ######
@@ -535,7 +532,7 @@ def eventscreen(gamedata, classmap, option, event):
 			stat = Eventsystem.free_army(gamedata, classmap, option, player)
 
 			# On mets en place le texte
-			tkinter.Label(frame_interface_event, text = f"Mon Seigneur,\nDans un Élan National une armée de Volontaire c'est formé gratuitement\nElle à rejoint notre Capitale {stat[0]} et compte {stat[1]} loyaux Soldat").grid(row = 1, column = 1)
+			tkinter.Label(frame_interface_event, text = f"Mon Seigneur,\nDans un Élan National une armée de Volontaires c'est formé gratuitement\nElle a rejoint notre Capitale {stat[0]} et compte {stat[1]} loyaux Soldats").grid(row = 1, column = 1)
 			# On mets en place le boutton ok
 			But = tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok")
 			But.grid(row = 2, column = 1)
@@ -625,7 +622,7 @@ def eventscreen(gamedata, classmap, option, event):
 			stat = Eventsystem.newfaith(gamedata, player)
 
 			# On mets en place le texte
-			tkinter.Label(frame_interface_event, text = f"Quelle Trahison Mon Seigneur,\n C'est pouileux de {stat[0]} osent remettre en question Notre foi divine\n pour se tourné vers un culte locale!\n").grid(row = 1, column = 1)
+			tkinter.Label(frame_interface_event, text = f"Quelle Trahison Mon Seigneur,\n Ces pouileux de {stat[0]} osent remettre en question notre foi divine\n pour se tourner vers un culte local!\n").grid(row = 1, column = 1)
 
 			# On applique l'event
 			Eventsystem.newfaith(gamedata, player)
@@ -633,7 +630,7 @@ def eventscreen(gamedata, classmap, option, event):
 			# On mets en place le boutton ok
 			But = tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok")
 			But.grid(row = 2, column = 1)
-			interfacemenu.tooltip(But, "Capacité du Prêtre Annulé pour 1 tour\nLe Bonheur Baisse", [])
+			interfacemenu.tooltip(But, "Capacité du Prêtre annulée pour 1 tour\nLe Bonheur Baisse", [])
 		elif event == "fire":
 			# On mets en place le titre
 			tkinter.Label(frame_interface_event, text = f"Événement: Un Incendie").grid(row = 0, column = 1)

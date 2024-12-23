@@ -85,7 +85,6 @@ def bordervillage(gamedata, classmap, option):
 	# - En Vert l'allier
 	# - En Bleu Le Territoire du Joueur
 
-
 	classmap.mapcanv.delete("border")
 	player = gamedata.list_lord[gamedata.playerid]
 
@@ -246,7 +245,7 @@ def printupdatearmy(gamedata, classmap, army):
 	else:
 		unit = "soldier"
 	# On recup la texture
-	texture_name = data.randomtexturefromdico(gamedata.dico_file, unit)
+	texture_name = asset.randomtexturefromdico(asset.dico_file, unit)
 	# On la stocke dans la class
 	army.texture = texture_name
 	# On la charge dans l'atlas

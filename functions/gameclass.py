@@ -8,60 +8,8 @@ import functions.stats as stats
 import functions.common as common
 import functions.affichage as affichage
 
-
 ####################
-#
-# Utiliser un Id pour séparer les instance ?
-#
-#
-# 1 classe Empire:
-#			- Total Ressource
-#			- Total Or
-#			- Total Population
-#			- Noble Assujeti
-#			- 
-#
-#
-#
-# 1 classe générale:
-#			- Nom
-#			- Age
-#			- Ressource
-#			- Or
-#
-# 2 sous-classe noble:
-#	Seigneur:
-# 			- Territoire attaché
-#			- Titre
-#
-#	Chevalier:
-#			- Territoire attaché
-#
-# 1 sous-classe clergé:
-#	Prêtre:
-#			- Église attaché
-#			- Don
-#
-#
-#
-# 1 sous-classe Tier États
-#	Paysans:
-#			- Village attaché
-#			
-# Village:
-#	--> Seigneur
-#	--> Territoire associé
-#		--> Quand un villageois travail sur une plaine un Champ apparaît
-#	--> Quand un village est construit il est automatiquement 
-#
-#	Conditions pour créer un Village:
-#		--> ressource = 10
-#		--> money = 4
-#
-#	Conditions pour créer une Église:
-#		--> ressource = 4 
-#		--> money = 4
-#
+# Fichier qui vient contenir toute les définitions de clases liées à la population/structure de pouvoir
 ####################
 
 class Classlord:
@@ -386,7 +334,7 @@ class Classlord:
 			temp_joy += village.global_joy
 
 		if (len(self.vassal)+len(self.fief)) != 0:
-			self.global_joy = temp_joy/(len(self.vassal)+len(self.fief))
+			self.global_joy = int(temp_joy/(len(self.vassal)+len(self.fief)))
 		else:
 			self.global_joy = 0
 
@@ -711,7 +659,7 @@ class Classvillage:
 			self.prod_ressource += pop.tax_ressource()
 
 		# Calcul de la joie global du village
-		self.global_joy = temp_joy/len(self.population)
+		self.global_joy = int(temp_joy/len(self.population))
 
 
 	def endofturn(self, gamedata):

@@ -15,7 +15,7 @@ import functions.interfacemenu as intermenu
 """
 Sauvegarde les données importantes de la partie dans un fichier JSON
 """
-def save_game(gamedata, classmap, option,filename="savegame.json"):
+def save_game(gamedata, classmap, option, filename="savegame.json"):
 	data = {}
     
     #Sauvegarde des paramètres globaux
