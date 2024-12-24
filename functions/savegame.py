@@ -15,7 +15,7 @@ import functions.interfacemenu as intermenu
 """
 Sauvegarde les données importantes de la partie dans un fichier JSON
 """
-def save_game(gamedata, classmap, option, filename="savegame.json"):
+def save_game(gamedata, classmap, option, filename):
 	data = {}
     
     #Sauvegarde des paramètres globaux
@@ -114,7 +114,7 @@ def save_game(gamedata, classmap, option, filename="savegame.json"):
 """
 Charge les données d'une partie depuis un fichier JSON
 """
-def load_game(gamedata, classmap, option, filename="savegame.json"):
+def load_game(gamedata, classmap, option, filename):
 	with open(filename, "r") as file:
 		data = json.load(file)
     
@@ -264,7 +264,8 @@ def show_game_screen(gamedata, classmap, option, root):
 
     intermenu.mainmenuwin.destroy()
     game.gameloop(gamedata, classmap, option, root)
-    cheat.cheat_menu(gamedata, classmap, option, root)
+    if cheat.active == True:
+    	cheat.cheat_menu(gamedata, classmap, option, root, classmap.mapcanv.winfo_toplevel())
     root.mainloop()
 
 
@@ -272,7 +273,7 @@ def show_game_screen(gamedata, classmap, option, root):
 """
 Charge les données depuis un fichier JSON et démarre la partie.
 """
-def load_game_and_start(gamedata, classmap, option, root, mainmenuwin, filename="savegame.json"):
+def load_game_and_start(gamedata, classmap, option, root, mainmenuwin, filename):
     #Charge les données sauvegardées
 	load_game(gamedata, classmap, option, filename)
 

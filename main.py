@@ -109,6 +109,7 @@ from time import time
 #### Fait:
 """
 Implémenter:
+
  - Améliorer Zoom/Dezoom
  	--> Limité à 1 zoom par action
  - Améliorer Geule de l'Interface
@@ -120,15 +121,8 @@ Implémenter:
  - Implémenter Bezier
  - Ajouter Notification début de tour Croissance des Villages
  - Implémenter Garde fous lors d'ailord main
- - Implémenter Interface Save/Load
  - Affichage du Pathfinding en cours des armées
- - Implémenter Menu Option
- 	--> Ajouter option pour activer/désactiver le Menu Débug
- - Implémenter lors de la création du fichier le choix de la résolution
-
-
- - Implémenter la gestion des écrans aux résolutions supérieur X
- -----> Abandonné
+ - Implémenter fonction pour retourner au menu depuis la game
 
 Résultat Playtest:
  - Retour Utilisateur Boutton changer dans PlayMenu
@@ -154,6 +148,9 @@ Refactoriser:
  - Refactoriser la gestion des noms
 
 Fix:
+ - Réorganiser l'Affichage des différentes fenêtre √
+ - Retirer limite déplacement fléché √
+ - Fix changement de résolution qui ne prend que la dernière résolution de la liste 
  - Tooltipe Canvas qui peuvent rester après la destruction de leur objets
 """
 ####
@@ -183,7 +180,6 @@ Fix:
 ########
 
 ######## Fonctionnalité Majeur Secondaire
-# - Implémenter Options
 # - Implémenter marché
 # - Implémenter Landforme
 # - Gestion de la population par case
@@ -216,7 +212,7 @@ if __name__ == '__main__':
 	root = tkinter.Tk()
 
 	if (len(sys.argv) >= 2 )and (str(sys.argv[1]) == "-SR"):
-		[height, width] = [1600, 2500]
+		[height, width] = [1400, 1440]
 	else:
 		[height, width] = [root.winfo_screenheight(),root.winfo_screenwidth()]
 

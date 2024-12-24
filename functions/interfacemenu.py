@@ -11,6 +11,7 @@ import functions.game as game
 import functions.data as data
 import functions.stats as stats
 import functions.asset as asset
+import functions.cheat as cheat
 import functions.common as common
 import functions.savegame as save
 import functions.genproc as genproc
@@ -18,6 +19,7 @@ import functions.moveview as moveview
 import functions.gameclass as gameclass
 import functions.affichage as affichage
 import functions.interfacegame as interfacegame
+import functions.interfacemenu as interfacemenu
 
 ######################### Menu Principale #########################
 
@@ -27,9 +29,8 @@ def mainmenu(gamedata, classmap, option, root):
 	mainmenuwin = tkinter.Toplevel(root, height = option.heightWindow, width = option.widthWindow)
 	# On centre la fenêtre
 	# Pourquoi ?
-	log.log.printinfo(f"{option.heightWindow}x{option.widthWindow}+{option.heightWindow//8}+{option.widthWindow//8}")
-	mainmenuwin.geometry(f"+{option.widthWindow//2}+{option.heightWindow//4}")
-
+	log.log.printinfo(f"{option.heightWindow}x{option.widthWindow}+{option.heightWindow//4}+{option.widthWindow//2}")
+	mainmenuwin.geometry(f"+{int(option.widthWindow*0.45)}+{option.heightWindow//4}")
 
 	# Création de la frame
 	fmainm = tkinter.Frame(mainmenuwin, height = option.heightWindow, width = option.widthWindow)
@@ -38,19 +39,17 @@ def mainmenu(gamedata, classmap, option, root):
 	# Mise en Place des Menus
 
 	# Button Play
-	# !!! A CORRIGER !!!
 	Button_mainm_Play = tkinter.Button(fmainm, command = lambda : playmenu(mainmenuwin, gamedata, classmap, option, root), text = "Jouer")
 
 	# Button Quickplay
-	# !!! A CORRIGER !!!
 	Button_mainm_QuickPlay = tkinter.Button(fmainm, command = lambda: game.initgame(mainmenuwin, gamedata, classmap, option, root, 5), text = "Partie Rapide")
 
 	# Button Load
-	Button_mainm_load = tkinter.Button(fmainm, command=lambda: save.load_game_and_start(gamedata, classmap, option, root, mainmenuwin), text="Load")
-	#Button_mainm_load = tkinter.Button(fmainm, command = lambda: loadmenu(mainmenuwin, gamedata, classmap, option, root) , text = "Load")
+	#Button_mainm_load = tkinter.Button(fmainm, command=lambda: save.load_game_and_start(gamedata, classmap, option, root, mainmenuwin), text="Load")
+	Button_mainm_load = tkinter.Button(fmainm, command = lambda: loadmenu(mainmenuwin, gamedata, classmap, option, root) , text = "Load")
 
 	#Button Options
-	Button_mainm_option = tkinter.Button(fmainm, text = "Options")
+	Button_mainm_option = tkinter.Button(fmainm, command = lambda: optionmenu(gamedata, classmap, option, root, mainmenuwin), text = "Options")
 
 	#Button Exit
 	Button_mainm_exit = tkinter.Button(fmainm, command = exit, text = "Quitter")
@@ -85,7 +84,7 @@ def playmenu(mainmenuwin, gamedata, classmap, option, root):
 	# On Créer un nouveau frame
 	fplaymenu = tkinter.Frame(mainmenuwin, height = option.heightWindow, width = option.widthWindow)
 	fplaymenu.grid()
-	mainmenuwin.geometry(f"+{option.widthWindow//3}+{option.heightWindow//5}")
+	mainmenuwin.geometry(f"+{option.widthWindow//4}+{option.heightWindow//8}")
 
 
 	########################\ Minimap \##############################
@@ -289,28 +288,78 @@ def returntomainmenu(gamedata, classmap, option, menu, root):
 #	- Tant que l'on aura pas lancer le chargement de la save rien n'est charger en arrière plan
 ###############
 
-def savemenu():
+def savemenu(win, gamedata, classmap, option, root):
+	######
+	# Fonction. pour gérer l'affichage du Menu de Sauvegarde
+	######
+	# Affiche dans une Listbox toute les Saves trouvés
+	# - Un fichier Save porte l'extension .save
+	######
 
+	c_d = os.getcwd()
+	p_f = c_d + "/user/save"
 
+	# On met en place la fenêtre
+	savemenuwin = tkinter.Toplevel()
+	# On place la fenêtre
+	savemenuwin.geometry(f"+{int(option.widthWindow*0.4)}+{option.heightWindow//4}")
+	# On la rend passagère
+	savemenuwin.transient(win)
 
-	pass
+	# On met en place l'interface
+	fsavemenu = tkinter.Frame(savemenuwin, height = option.heightWindow, width = option.widthWindow)
+	fsavemenu.grid()
 
-def loadmenu(mainmenuwin, gamedata, classmap, option, root):
+	tkinter.Label(fsavemenu, text = "Liste des Sauvegardes").grid(row = 0, column = 0)
+
+	# On setup la Scrollbar de la listbox
+	yscrollbar = tkinter.Scrollbar(fsavemenu, orient = tkinter.VERTICAL)
+	yscrollbar.grid(row = 1, column = 1, sticky= tkinter.W+ tkinter.N + tkinter.S)
+
+	# On setup la Listbox
+	lbsave = tkinter.Listbox(fsavemenu, yscrollcommand = yscrollbar.set)
+	lbsave.grid(row = 1, column = 0)
+
+	yscrollbar["command"] = lbsave.yview
+
+	i = 2
+	for file in os.listdir(p_f):
+		# Si le Fichier est bien une save
+		if file[-5:] == ".save":
+			# On insert la save dans le Label
+			# [NomSave, DateSauvegarde, NomSeigneurJoueur]
+			lbsave.insert(0, f"{file[:-5]}")
+			i += 1
+
+	# On met en place les bouttons
+	Bcreatesave = tkinter.Button(fsavemenu, text = "Créer une Nouvelle Sauvegarde", command = lambda: savemenu_save(gamedata, classmap, option, True, lbsave, p_f))
+	Bcreatesave.grid(row = i, column = 0)
+	Breplacesave = tkinter.Button(fsavemenu, text = "Écraser la Sauvegarde", command = lambda: savemenu_save(gamedata, classmap, option, False, lbsave, p_f))
+	Breplacesave.grid(row = i+1, column = 0)
+	# On met en place le Bouttons de Retour
+	Breturn = tkinter.Button(fsavemenu, text = "Retour", command = lambda: exitmenu(savemenuwin))
+	Breturn.grid(row = i+2, column = 0)
+
+def loadmenu(win, gamedata, classmap, option, root):
 	######
 	# Fonction pour gèrer l'affichage du Menu de Chargement de Données
 	######
 	# Affiche dans une Listbox toute les Saves trouvés
 	# - Un fichier Save porte l'extension .save
-	#
 	######
 
-	# On suprime le frame du menu principale
-	mainmenuwin.winfo_children()[0].destroy()
 	c_d = os.getcwd()
 	p_f = c_d + "/user/save"
 
+	# On met en place la fenêtre
+	loadmenuwin = tkinter.Toplevel()
+	# On place la fenêtre
+	loadmenuwin.geometry(f"+{int(option.widthWindow*0.4)}+{option.heightWindow//4}")
+	# On la rend passagère
+	loadmenuwin.transient(win)
+
 	# On met en place l'interface
-	floadmenu = tkinter.Frame(mainmenuwin, height = option.heightWindow, width = option.widthWindow)
+	floadmenu = tkinter.Frame(loadmenuwin, height = option.heightWindow, width = option.widthWindow)
 	floadmenu.grid()
 
 	tkinter.Label(floadmenu, text = "Charger Une Sauvegarde").grid(row = 0, column = 0)
@@ -331,22 +380,77 @@ def loadmenu(mainmenuwin, gamedata, classmap, option, root):
 		if file[-5:] == ".save":
 			# On insert la save dans le Label
 			# [NomSave, DateSauvegarde, NomSeigneurJoueur]
-			lbsave.insert(tkinter.END, f"{file[:-5]}, , ")
+			lbsave.insert(0, f"{file[:-5]}")
 			i += 1
 
 	# On met en place les bouttons
-	Bload = tkinter.Button(floadmenu, text = "Charger la Sauvegarde")
+	Bload = tkinter.Button(floadmenu, text = "Charger la Sauvegarde", command = lambda: loadmenu_load(gamedata, classmap, option, lbsave, win, loadmenuwin, root, p_f))
 	Bload.grid(row = i, column = 0)
 	# On met en place le Bouttons de Retour
-	Breturn = tkinter.Button(floadmenu, text = "Retour", command = lambda: returntomainmenu(gamedata, classmap, option, mainmenuwin, root))
+	Breturn = tkinter.Button(floadmenu, text = "Retour", command = lambda: exitmenu(loadmenuwin))
 	Breturn.grid(row = i+1, column = 0)
 
+def savemenu_save(gamedata, classmap, option, newsave:bool, lbsave, savefolderpath):
+	####
+	# Fonction Pour gérer la Sauvegarde
+	####
+	# newsave = True si on créer une nouvelle save
+	# newsave = False si on écrase une save
+	####
+	coord = [int(option.widthWindow*0.4), option.heightWindow//8]
+	if newsave == False:
+		if len(lbsave.curselection()) > 0:
+			filename = lbsave.get(lbsave.curselection()[0])
+			filename += ".save"
+			save.save_game(gamedata, classmap, option, savefolderpath+"/"+filename)
+		else:
+			interfacemenu.temp_message(classmap.mapcanv, "Pas de fichier de Sauvegarde sélectionner", 2000, coord, "red")
+			return
+	else:
+		player = gamedata.list_lord[gamedata.playerid]
+		nb = 0
+		# on calcul le nom de la save
+		# NomSeigneurJoueur/N°Save/date/Automatique
+		# On recup le nombre de save que le joueur possède avec se nom de seigneur
+		for file in os.listdir(savefolderpath):
+			if player.lordname in file:
+				nb += 1
+		# On créer la chaîne de charac
+		filename = player.lordname + f"{nb}"+"manuel"+".save"
+		# On lance la save
+		save.save_game(gamedata, classmap, option, savefolderpath+"/"+filename)
+		# On update la listbox
+		lbsave.insert(0, f"{filename[:-5]}")
 
-def loadmenu_load():
-	#####
+	coord = [option.widthWindow//2, option.heightWindow//8]
+	interfacemenu.temp_message(classmap.mapcanv, "Fichier Sauvegarder", 2000, coord, "green")
+
+
+
+def loadmenu_load(gamedata, classmap, option, lbsave, win, winmenu, root, filepath):
+	####
 	# Fonction Pour gérer le Chargement de la Save Selon la listbox
 	####
-	pass
+	coord = [option.widthWindow//2, option.heightWindow//8]
+	if len(lbsave.curselection())>0:
+		# On recup le nom du fichier
+		filename = lbsave.get(lbsave.curselection()[0])
+		filename += ".save"
+		# On lance le chargement de la save
+		save.load_game_and_start(gamedata, classmap, option, root, win, filepath + "/" + filename)
+		# On détruit l'écran de chargement de save
+		exitmenu(winmenu)
+
+	else:
+		interfacemenu.temp_message(classmap.mapcanv, "Pas de fichier de Sauvegarde sélectionner", 2000, coord, "red")
+		return
+
+def exitmenu(win):
+	#####
+	# Fonction générale pour quitter un menu
+	#####
+	win.destroy()
+
 
 
 ###########################################################################
@@ -357,21 +461,97 @@ def loadmenu_load():
 # Fonction appeler pour afficher le menu des Options 
 # On l'affiche par dessus le menu Principale
 #
-# Ce menu va servir à configurer les paramètre globaux de l'application ainsi que les touches, voir à afficher les Combinaisons de touches
 ###############
 
 
-def optionmenu(gamedata, classmap, option):
-	# On suprime le frame du menu principale
-	mainmenuwin.winfo_children()[0].destroy()
-	# On créer le nouveaux frame
+def optionmenu(gamedata, classmap, option, root, win):
+	#####
+	# Fonction appeler pour afficher le menu des Options 
+	#####
+	# Ce menu va servir à configurer les paramètre globaux de l'application ainsi que les touches, voir à afficher les Combinaisons de touches
+	#####
+	c_d = os.getcwd()
+
+	# On met en place la fenêtre
+	optionmenuwin = tkinter.Toplevel()
+	# On place la fenêtre
+	optionmenuwin.geometry(f"+{int(option.widthWindow*0.4)}+{option.heightWindow//4}")
+	# On la rend passagère
+	optionmenuwin.transient(win)
+
+	foptionmenu = tkinter.Frame(optionmenuwin)
+	foptionmenu.grid()
+
+	tkinter.Label(foptionmenu, text = "Résolution").grid(row = 1, column = 0)
+	# Tvariable nécessaires au Menu Boutton
+	Tvar_res = tkinter.StringVar()
+	Tvar_res.set(f"{option.widthWindow}x{option.heightWindow}")
+
+	# On affiche un Menu Boutton pour les résolutions
+	Bmenures = tkinter.Menubutton(foptionmenu, textvariable = Tvar_res)
+	Bmenures.grid(row = 2, column = 0)
+	# On créer un Menu pour les résolutions
+	menures = tkinter.Menu(Bmenures)
+	Bmenures["menu"] = menures
+	# On config le menu
+	for res in ([800,600],[1280,800],[1440,900],[1920,1200],[2560,1440]):
+		menures.add_command(label = f"{res[0]}x{res[1]}", command = lambda: option_change_res(option, res[0], res[1], Tvar_res))
+
+	# On permet à l'utilisateur d'entré par lui même une résolution
+
+
+	# On affiche la résolution conseillé par tkinter
+	tkinter.Label(foptionmenu, text = f"Résolution Conseillé: {win.winfo_screenwidth()}x{win.winfo_screenheight()}").grid(row = 4, column = 0)
+	# On affiche un boutton pour reset
+	Breset_res = tkinter.Button(foptionmenu, text = "Reset Résolution", command = lambda: option_reset_res(option, root, Tvar_res))
+	Breset_res.grid(row = 5, column = 0)
 
 
 
+	tkinter.Label(foptionmenu, text = "DebugMenu On/off").grid(row = 6, column = 0)
+	# Boutton pour Activer/Désactiver le menu Debug
+	tkinter.Radiobutton(foptionmenu, text = "On", command = lambda: cheat.changestate(gamedata, classmap, option, root, True)).grid(row = 7, column = 0)
+	tkinter.Radiobutton(foptionmenu, text = "off", command = lambda: cheat.changestate(gamedata, classmap, option, root, False)).grid(row = 8, column = 0)
 
-	pass
+	# Boutton pour sauvegarder les options
+	Bsave_option = tkinter.Button(foptionmenu, text = "Sauvegarder Option", command = lambda: option.saveoption(c_d+"/user/"+"config.ini"))
+	Bsave_option.grid(row = 9, column = 0)
+
+	# Boutton pour quitter
+	Bexit = tkinter.Button(foptionmenu, text = "retour", command = lambda: exitmenu(optionmenuwin))
+	Bexit.grid(row = 10, column = 0)
+
+def option_change_res(option, newwidth, newheight, Tvar_res):
+	#####
+	# Fonction pour changer la résolution stocker dans option, l'appliqué et changer la variable Tvar
+	#####
+
+	# On change les variables
+	option.widthWindow = newwidth
+	option.heightWindow = newheight
+	log.log.printinfo(f"Nouvelle Résolution: {option.widthWindow}x{option.heightWindow}")
+	# On applique le changement de Résolution
 
 
+	# On update la Tvar
+	Tvar_res.set(f"{option.widthWindow}x{option.heightWindow}")
+
+def option_reset_res(option, root, Tvar_res):
+	#####
+	# Fonction pour reset la résolution stocker
+	#####
+
+	if (len(sys.argv) >= 2 ) and (str(sys.argv[1]) == "-SR"):
+		[height, width] = [1400, 1440]
+	else:
+		[height, width] = [root.winfo_screenheight(),root.winfo_screenwidth()]
+
+	option.widthWindow = width
+	option.heightWindow = height
+
+
+	# On update la Tvar
+	Tvar_res.set(f"{option.widthWindow}x{option.heightWindow}")
 
 ######################### Écran de Fin de Jeu #########################
 
@@ -845,7 +1025,7 @@ def mainscreen(gamedata, classmap, option, root, pic, NeutralVill, upload_save =
 	classmap.setlframecanvas(fcanvas)
 
 	# Interface de Jeu
-	interfacegame.gameinterface(gamedata, classmap, option, win1)
+	interfacegame.gameinterface(gamedata, classmap, option, win1, root)
 
 	fcanvas.pack(expand = True)
 
@@ -1386,7 +1566,6 @@ def destroy_validation_message(window_message):
 	# Fonction Pour détruire le message à Valider
 	####
 	window_message.destroy()
-
 
 ######################################################
 

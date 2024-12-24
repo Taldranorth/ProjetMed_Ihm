@@ -9,14 +9,30 @@ import functions.interfacemenu as interfacemenu
 
 import matplotlib.pyplot as plt
 
+global active
+global cheat_window
 
 ######################### Menu Cheat #########################
 
-def cheat_menu(gamedata, classmap, option, root):
+def changestate(gamedata, classmap, option, root, state):
+	global active
+	global cheat_window
+	active = state
+
+	if classmap.mapcanv != 0:
+		if active == True:
+			cheat_menu(gamedata, classmap, option, root, classmap.mapcanv.winfo_toplevel())
+		else:
+			destroy_cheat_menu(cheat_window)
+
+
+def cheat_menu(gamedata, classmap, option, root, win):
 	###############
 	# Fonction pour créer le menu Cheat
 	###############
+	global cheat_window
 	cheat_window = tkinter.Toplevel(root)
+	cheat_window.transient(win)
 
 	cheat_menu_frame = tkinter.Frame(cheat_window)
 	cheat_menu_frame.grid()
@@ -60,5 +76,20 @@ def plotlib(gamedata, classmap, option):
 	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, classmap.mapx, classmap.mapy)
 	plt.imshow(pic, cmap='gray')
 	plt.show()
+
+
+def destroy_cheat_menu(cheat_window):
+	#####
+	# Fonction pour détruire le menu de cheat
+	#####
+	cheat_window.destroy()
+
+
+
+
+######\ Main \######
+active = True
+
+
 
 

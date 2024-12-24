@@ -130,9 +130,7 @@ def genpopidvillage(gamedata, classmap, option, idvillage, nbpaysan, nbartisan):
     ####################
     # Fonction pour ajouter de la pop dans un Village à partir de son ID
     ####################
-
-	village = classmap.listmap[idvillage].village
-
+    village = classmap.listmap[idvillage].village
     genpopvillage(gamedata, classmap, option, village, nbpaysan, nbartisan)
         
 def genpopvillage(gamedata, classmap, option, village, nbpaysan, nbartisan):

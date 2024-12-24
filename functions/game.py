@@ -60,7 +60,8 @@ def initgame(mainmenuwin, gamedata, classmap, option, root, NeutralVill):
 
 	# On lance la game
 	gameloop(gamedata, classmap, option, root)
-	cheat.cheat_menu(gamedata, classmap, option, root)
+	if cheat.active == True:
+		cheat.cheat_menu(gamedata, classmap, option, root, classmap.mapcanv.winfo_toplevel())
 	root.mainloop()
 
 ###########################################################################

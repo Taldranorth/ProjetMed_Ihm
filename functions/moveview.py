@@ -50,6 +50,7 @@ def moveviewxy(event, deltax, deltay, gamedata, classmap, option):
 	xf = classmap.mapcanv.canvasx(option.widthWindow)
 	yf = classmap.mapcanv.canvasy(option.heightWindow*0.6)
 
+	'''
 	# Pour éviter de Déborder hors de la carte
 	if ((x - movex) < 0) and (xorigine > -10):
 		classmap.mapcanv.scan_dragto(movex, movey, gain = 1)
@@ -59,8 +60,8 @@ def moveviewxy(event, deltax, deltay, gamedata, classmap, option):
 		classmap.mapcanv.scan_dragto(movex, movey, gain = 1)
 	elif ((y - movey)> 0) and (yf < (ts*classmap.mapy)):
 		classmap.mapcanv.scan_dragto(movex, movey, gain = 1)
-
-	#classmap.mapcanv.scan_dragto(movex, movey, gain = 1)
+	'''
+	classmap.mapcanv.scan_dragto(movex, movey, gain = 1)
 
 	log.log.printinfo(f"coords (0,0) : {classmap.mapcanv.coords(classmap.listmap[0].canvastuiles)}")
 	#######################################################

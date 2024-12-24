@@ -17,7 +17,7 @@ import functions.interfacemenu as interfacemenu
 
 ######################### Fonction Interface ############################
 
-def gameinterface(gamedata, classmap, option, win):
+def gameinterface(gamedata, classmap, option, win, root):
 
 	####################
 	# Fonction qui met en place l'interface en Jeu, voir l'entête
@@ -148,8 +148,8 @@ def gameinterface(gamedata, classmap, option, win):
 	Menu_Button_option["menu"] = menu_option
 
 	# On associe les Commandes Militaires
-	menu_option.add_command(label = "Load", command = lambda: save.load_game(gamedata, classmap, option))
-	menu_option.add_command(label = "Save", command = lambda: save.save_game(gamedata, classmap, option))
+	menu_option.add_command(label = "Load", command = lambda: interfacemenu.loadmenu(win, gamedata, classmap, option, root))
+	menu_option.add_command(label = "Save", command = lambda: interfacemenu.savemenu(win, gamedata, classmap, option, root))
 	menu_option.add_command(label = "Quitter", command = lambda: exitwindow(classmap, option))
 	
 	
@@ -173,7 +173,7 @@ def gameinterface(gamedata, classmap, option, win):
 def turnend(gamedata, classmap, option):
 	log.log.printinfo("fin de tour ")
 	# On affiche un Retour
-	coord = [int(option.widthWindow*0.59), int(option.heightWindow*0.15)]
+	coord = [int(option.widthWindow//2), int(option.heightWindow*0.15)]
 	interfacemenu.temp_message(classmap.mapcanv, "Fin du Tour", 2000, coord, "green")
 
 	# Si on est dans un état on quitte l'état
@@ -199,7 +199,7 @@ def exitwindow(classmap, option):
 	# On créer la fenêtre
 	window_exit = tkinter.Toplevel()
 	# On la positionne
-	window_exit.geometry(f"+{option.widthWindow//2}+{option.heightWindow//3}")
+	window_exit.geometry(f"+{int(option.widthWindow*0.45)}+{option.heightWindow//4}")
 	# On la rend Transient
 	window_exit.transient(top_window)
 	# On retire le contour
@@ -224,7 +224,7 @@ def legendginterface(gamedata, classmap, option):
 	# On créer l'interface
 	window_interface_legend_command = tkinter.Frame(classmap.framecanvas)
 	# On la place
-	window_interface_legend_command.place(x = (option.widthWindow*0.01), y = (option.heightWindow*0.5))
+	window_interface_legend_command.place(x = (option.widthWindow*0.01), y = (option.heightWindow*0.45))
 
 	# On créer la frame
 	frame = tkinter.Frame(window_interface_legend_command)
@@ -1646,8 +1646,8 @@ def villageinterface(event, gamedata, classmap, option):
 	window_info = tkinter.Frame(classmap.framecanvas)
 	# On créer la frame qui vient contenir les actions possibles
 	window_button = tkinter.Frame(classmap.framecanvas)
-	window_info.place(x = (option.widthWindow/4), y = (option.heightWindow*0.2))
-	window_button.place(x = (option.widthWindow/1.5), y = (option.heightWindow*0.2))
+	window_info.place(x = (option.widthWindow//4), y = (option.heightWindow*0.2))
+	window_button.place(x = int(option.widthWindow*0.6), y = (option.heightWindow*0.2))
 
 	frame_info = tkinter.Frame(window_info)
 	frame_info.grid()
@@ -1656,7 +1656,7 @@ def villageinterface(event, gamedata, classmap, option):
 	frame_button.grid()
 
 	# On créer les fenêtre
-	# Demade un placement précis
+	# Demande un placement précis
 	canvas_window_list = [window_info, window_button]
 
 	# On recup l'objet village
@@ -2163,20 +2163,20 @@ def addsubinterface(gamedata, classmap, option, money, ressource):
 
 	if money < 0:
 		# On affiche la décrémentation
-		coord = [int(option.widthWindow*0.6), int(option.heightWindow*0.09)]
+		coord = [int(option.widthWindow*0.48), int(option.heightWindow*0.05)]
 		interfacemenu.temp_message(classmap.mapcanv, f"-{money}", 2000, coord, "red")
 	elif money > 0:
 		# On affiche l'incrémentation
-		coord = [int(option.widthWindow*0.6), int(option.heightWindow*0.09)]
+		coord = [int(option.widthWindow*0.48), int(option.heightWindow*0.05)]
 		interfacemenu.temp_message(classmap.mapcanv, f"+{money}", 2000, coord, "green")
 
 	if ressource < 0:
 		# On affiche la décrémentation
-		coord = [int(option.widthWindow*0.55), int(option.heightWindow*0.09)]
+		coord = [int(option.widthWindow*0.42), int(option.heightWindow*0.05)]
 		interfacemenu.temp_message(classmap.mapcanv, f"-{ressource}", 2000, coord, "red")
 	elif ressource > 0:
 		# On affiche l'incrémentation
-		coord = [int(option.widthWindow*0.55), int(option.heightWindow*0.09)]
+		coord = [int(option.widthWindow*0.42), int(option.heightWindow*0.05)]
 		interfacemenu.temp_message(classmap.mapcanv, f"+{ressource}", 2000, coord, "green")
 
 
@@ -2189,7 +2189,7 @@ def banderole(gamedata, classmap, option):
 
 	# On créer la WindowFrame
 	window_banderole = tkinter.Frame(classmap.framecanvas)
-	window_banderole.place(x = option.widthWindow*0.4, y = option.heightWindow//8)
+	window_banderole.place(x = option.widthWindow//2, y = option.heightWindow//8)
 
 	# On créer le frame
 	frame = tkinter.Frame(window_banderole)
