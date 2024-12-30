@@ -125,7 +125,6 @@ Implémenter:
  - Implémenter fonction pour retourner au menu depuis la game
 
 Résultat Playtest:
- - Retour Utilisateur Boutton changer dans PlayMenu
  - Construire Village:
  	--> sortir automatiquement quand Construction Impossible
  	--> Ajouter retour Utilisateur Impossibilité directe en affichant les cases en rouge
@@ -148,8 +147,6 @@ Refactoriser:
  - Refactoriser la gestion des noms
 
 Fix:
- - Réorganiser l'Affichage des différentes fenêtre √
- - Retirer limite déplacement fléché √
  - Fix changement de résolution qui ne prend que la dernière résolution de la liste 
  - Tooltipe Canvas qui peuvent rester après la destruction de leur objets
 """

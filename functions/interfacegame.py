@@ -148,6 +148,7 @@ def gameinterface(gamedata, classmap, option, win, root):
 	Menu_Button_option["menu"] = menu_option
 
 	# On associe les Commandes Militaires
+	menu_option.add_command(label = "Réglage", command = lambda:interfacemenu.optionmenu(gamedata, classmap, option, root, win))
 	menu_option.add_command(label = "Load", command = lambda: interfacemenu.loadmenu(win, gamedata, classmap, option, root))
 	menu_option.add_command(label = "Save", command = lambda: interfacemenu.savemenu(win, gamedata, classmap, option, root))
 	menu_option.add_command(label = "Quitter", command = lambda: exitwindow(classmap, option))

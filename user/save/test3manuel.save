@@ -1,0 +1,915 @@
+{
+    "Nb_tour": 1,
+    "map_seed": 269196839.4133538,
+    "mapsize": {
+        "x": 100,
+        "y": 100
+    },
+    "list_lord": [
+        {
+            "name": "test",
+            "color": "black",
+            "resources": 10,
+            "money": 10,
+            "joy": 50,
+            "player": true,
+            "vassals": [],
+            "villages": [
+                {
+                    "name": "Fywold",
+                    "location": {
+                        "x": 64,
+                        "y": 13
+                    },
+                    "population": [
+                        {
+                            "name": "Nilidh",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 23,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Aithne",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 29,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Sigeweard",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 25,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Wulfsige",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 18,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Eadan",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 22,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Gauwis Sone",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 16,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Wulfsige",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 17,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Gr\u00e0inne",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 21,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Beorne",
+                            "role": "artisan",
+                            "money": 5,
+                            "resources": 1,
+                            "age": 25,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Langley",
+                            "role": "artisan",
+                            "money": 5,
+                            "resources": 1,
+                            "age": 26,
+                            "joy": 50
+                        }
+                    ],
+                    "nb_artisan": 2,
+                    "nb_paysan": 8,
+                    "prod_money": 2,
+                    "prod_ressource": 10,
+                    "global_joy": 50,
+                    "has_church": 0
+                }
+            ],
+            "armies": []
+        },
+        {
+            "name": "lord Rancent Arret",
+            "color": "Firebrick4",
+            "resources": 10,
+            "money": 10,
+            "joy": 50,
+            "player": false,
+            "vassals": [],
+            "villages": [
+                {
+                    "name": "Hoogrove",
+                    "location": {
+                        "x": 20,
+                        "y": 54
+                    },
+                    "population": [
+                        {
+                            "name": "Fricio",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 20,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Athol",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 22,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Langley",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 27,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Scotaidh",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 25,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Caitl\u00edn",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 17,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Nilidh",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 20,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Gr\u00e0inne",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 17,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Tani",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 29,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Tephye",
+                            "role": "artisan",
+                            "money": 5,
+                            "resources": 1,
+                            "age": 26,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Dolag",
+                            "role": "artisan",
+                            "money": 5,
+                            "resources": 1,
+                            "age": 20,
+                            "joy": 50
+                        }
+                    ],
+                    "nb_artisan": 2,
+                    "nb_paysan": 8,
+                    "prod_money": 2,
+                    "prod_ressource": 10,
+                    "global_joy": 50,
+                    "has_church": 0
+                }
+            ],
+            "armies": []
+        },
+        {
+            "name": "lord Wyny",
+            "color": "Hotpink4",
+            "resources": 10,
+            "money": 10,
+            "joy": 50,
+            "player": false,
+            "vassals": [],
+            "villages": [
+                {
+                    "name": "Steelpond",
+                    "location": {
+                        "x": 86,
+                        "y": 54
+                    },
+                    "population": [
+                        {
+                            "name": "Tephye",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 27,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Rodaidh",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 17,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Gr\u00e0inne",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 28,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Wulfsige",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 15,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Eadburg",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 20,
+                            "joy": 50
+                        },
+                        {
+                            "name": "\u00c6lfstan",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 16,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Aithne",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 26,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Aered",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 17,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Dobharcu",
+                            "role": "artisan",
+                            "money": 5,
+                            "resources": 1,
+                            "age": 17,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Langley",
+                            "role": "artisan",
+                            "money": 5,
+                            "resources": 1,
+                            "age": 20,
+                            "joy": 50
+                        }
+                    ],
+                    "nb_artisan": 2,
+                    "nb_paysan": 8,
+                    "prod_money": 2,
+                    "prod_ressource": 10,
+                    "global_joy": 50,
+                    "has_church": 0
+                }
+            ],
+            "armies": []
+        },
+        {
+            "name": "lord Zargothrax",
+            "color": "Khaki1",
+            "resources": 10,
+            "money": 10,
+            "joy": 50,
+            "player": false,
+            "vassals": [],
+            "villages": [
+                {
+                    "name": "Halwatch",
+                    "location": {
+                        "x": 78,
+                        "y": 56
+                    },
+                    "population": [
+                        {
+                            "name": "\u00c6lfstan",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 17,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Naomh",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 20,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Bl\u00e1thnaid",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 24,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Tephye",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 21,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Athol",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 29,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Ealasaid",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 22,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Eadan",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 23,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Gibson",
+                            "role": "paysan",
+                            "money": 0,
+                            "resources": 1,
+                            "age": 23,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Dobharcu",
+                            "role": "artisan",
+                            "money": 5,
+                            "resources": 1,
+                            "age": 26,
+                            "joy": 50
+                        },
+                        {
+                            "name": "Fricio",
+                            "role": "artisan",
+                            "money": 5,
+                            "resources": 1,
+                            "age": 16,
+                            "joy": 50
+                        }
+                    ],
+                    "nb_artisan": 2,
+                    "nb_paysan": 8,
+                    "prod_money": 2,
+                    "prod_ressource": 10,
+                    "global_joy": 50,
+                    "has_church": 0
+                }
+            ],
+            "armies": []
+        }
+    ],
+    "independent_villages": [
+        {
+            "name": "Hoemoor",
+            "location": {
+                "x": 23,
+                "y": 2
+            },
+            "population": [
+                {
+                    "name": "Athol",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 19,
+                    "joy": 50
+                },
+                {
+                    "name": "Gr\u00e0inne",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 15,
+                    "joy": 50
+                },
+                {
+                    "name": "Eadburg",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 26,
+                    "joy": 50
+                },
+                {
+                    "name": "Fricio",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 16,
+                    "joy": 50
+                },
+                {
+                    "name": "Wystan",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 22,
+                    "joy": 50
+                },
+                {
+                    "name": "Tani",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 22,
+                    "joy": 50
+                },
+                {
+                    "name": "Athol",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 28,
+                    "joy": 50
+                },
+                {
+                    "name": "Ames",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 16,
+                    "joy": 50
+                },
+                {
+                    "name": "Dolag",
+                    "role": "artisan",
+                    "money": 5,
+                    "resources": 1,
+                    "age": 16,
+                    "joy": 50
+                },
+                {
+                    "name": "Aithne",
+                    "role": "artisan",
+                    "money": 5,
+                    "resources": 1,
+                    "age": 18,
+                    "joy": 50
+                }
+            ],
+            "nb_artisan": 2,
+            "nb_paysan": 8,
+            "prod_money": 2,
+            "prod_ressource": 10,
+            "global_joy": 50,
+            "has_church": 0
+        },
+        {
+            "name": "Bearholde",
+            "location": {
+                "x": 89,
+                "y": 13
+            },
+            "population": [
+                {
+                    "name": "Langley",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 22,
+                    "joy": 50
+                },
+                {
+                    "name": "Wystan",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 26,
+                    "joy": 50
+                },
+                {
+                    "name": "Beorne",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 19,
+                    "joy": 50
+                },
+                {
+                    "name": "Dobharcu",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 26,
+                    "joy": 50
+                },
+                {
+                    "name": "Aered",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 21,
+                    "joy": 50
+                },
+                {
+                    "name": "Wystan",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 18,
+                    "joy": 50
+                },
+                {
+                    "name": "Dobharcu",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 17,
+                    "joy": 50
+                },
+                {
+                    "name": "Dolag",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 21,
+                    "joy": 50
+                },
+                {
+                    "name": "Beorne",
+                    "role": "artisan",
+                    "money": 5,
+                    "resources": 1,
+                    "age": 25,
+                    "joy": 50
+                },
+                {
+                    "name": "Bl\u00e1thnaid",
+                    "role": "artisan",
+                    "money": 5,
+                    "resources": 1,
+                    "age": 18,
+                    "joy": 50
+                }
+            ],
+            "nb_artisan": 2,
+            "nb_paysan": 8,
+            "prod_money": 2,
+            "prod_ressource": 10,
+            "global_joy": 50,
+            "has_church": 0
+        },
+        {
+            "name": "Whitewharf",
+            "location": {
+                "x": 56,
+                "y": 35
+            },
+            "population": [
+                {
+                    "name": "Naomh",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 23,
+                    "joy": 50
+                },
+                {
+                    "name": "Dobharcu",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 25,
+                    "joy": 50
+                },
+                {
+                    "name": "Cyne",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 18,
+                    "joy": 50
+                },
+                {
+                    "name": "Cyne",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 25,
+                    "joy": 50
+                },
+                {
+                    "name": "Bl\u00e1thnaid",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 18,
+                    "joy": 50
+                },
+                {
+                    "name": "Fricio",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 17,
+                    "joy": 50
+                },
+                {
+                    "name": "Aered",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 16,
+                    "joy": 50
+                },
+                {
+                    "name": "Dolag",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 21,
+                    "joy": 50
+                },
+                {
+                    "name": "Langley",
+                    "role": "artisan",
+                    "money": 5,
+                    "resources": 1,
+                    "age": 18,
+                    "joy": 50
+                },
+                {
+                    "name": "Rodaidh",
+                    "role": "artisan",
+                    "money": 5,
+                    "resources": 1,
+                    "age": 22,
+                    "joy": 50
+                }
+            ],
+            "nb_artisan": 2,
+            "nb_paysan": 8,
+            "prod_money": 2,
+            "prod_ressource": 10,
+            "global_joy": 50,
+            "has_church": 0
+        },
+        {
+            "name": "Domhan an Teas",
+            "location": {
+                "x": 97,
+                "y": 49
+            },
+            "population": [
+                {
+                    "name": "Scotaidh",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 27,
+                    "joy": 50
+                },
+                {
+                    "name": "Athol",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 23,
+                    "joy": 50
+                },
+                {
+                    "name": "Nilidh",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 19,
+                    "joy": 50
+                },
+                {
+                    "name": "Aithne",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 21,
+                    "joy": 50
+                },
+                {
+                    "name": "Tephye",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 25,
+                    "joy": 50
+                },
+                {
+                    "name": "Gauwis Sone",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 17,
+                    "joy": 50
+                },
+                {
+                    "name": "Ames",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 20,
+                    "joy": 50
+                },
+                {
+                    "name": "Tephye",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 24,
+                    "joy": 50
+                },
+                {
+                    "name": "Naomh",
+                    "role": "artisan",
+                    "money": 5,
+                    "resources": 1,
+                    "age": 17,
+                    "joy": 50
+                },
+                {
+                    "name": "Eadburg",
+                    "role": "artisan",
+                    "money": 5,
+                    "resources": 1,
+                    "age": 28,
+                    "joy": 50
+                }
+            ],
+            "nb_artisan": 2,
+            "nb_paysan": 8,
+            "prod_money": 2,
+            "prod_ressource": 10,
+            "global_joy": 50,
+            "has_church": 0
+        },
+        {
+            "name": "Newcall",
+            "location": {
+                "x": 87,
+                "y": 74
+            },
+            "population": [
+                {
+                    "name": "Aering",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 20,
+                    "joy": 50
+                },
+                {
+                    "name": "Wystan",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 15,
+                    "joy": 50
+                },
+                {
+                    "name": "Ealasaid",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 26,
+                    "joy": 50
+                },
+                {
+                    "name": "Aering",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 21,
+                    "joy": 50
+                },
+                {
+                    "name": "Nilidh",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 20,
+                    "joy": 50
+                },
+                {
+                    "name": "Bl\u00e1thnaid",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 21,
+                    "joy": 50
+                },
+                {
+                    "name": "Ames",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 28,
+                    "joy": 50
+                },
+                {
+                    "name": "Sigeweard",
+                    "role": "paysan",
+                    "money": 0,
+                    "resources": 1,
+                    "age": 18,
+                    "joy": 50
+                },
+                {
+                    "name": "Gibson",
+                    "role": "artisan",
+                    "money": 5,
+                    "resources": 1,
+                    "age": 21,
+                    "joy": 50
+                },
+                {
+                    "name": "Nilidh",
+                    "role": "artisan",
+                    "money": 5,
+                    "resources": 1,
+                    "age": 19,
+                    "joy": 50
+                }
+            ],
+            "nb_artisan": 2,
+            "nb_paysan": 8,
+            "prod_money": 2,
+            "prod_ressource": 10,
+            "global_joy": 50,
+            "has_church": 0
+        }
+    ]
+}

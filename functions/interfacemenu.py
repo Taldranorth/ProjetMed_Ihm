@@ -164,7 +164,7 @@ def playmenu(mainmenuwin, gamedata, classmap, option, root):
 			tkinter.Label(fplaymenu, text = "Seigneur Joueur:").grid(row = 6, column = 1)
 			entryplayername = tkinter.Entry(fplaymenu, textvariable = tkvar_playername)
 			entryplayername.grid(row = 6, column = 2)
-			tkinter.Button(fplaymenu, text = "changer", command = lambda: validate_entry_lordname(gamedata, tkvar_playername)).grid(row = 6, column = 3)
+			tkinter.Button(fplaymenu, text = "changer", command = lambda: validate_entry_lordname(gamedata, tkvar_playername, mapcanv)).grid(row = 6, column = 3)
 		else:
 			tkinter.Label(fplaymenu_frame_listlord, text = lord.lordname, fg = lord.color).grid(columnspan = 5)
 	##################################################################
@@ -194,6 +194,8 @@ def validate_entry_map(entrymapx, entrymapy, gamedata, classmap, option, tkvar_m
 
 	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, classmap.mapx, classmap.mapy)
 	previewmap(mapcanv, pic, classmap.mapx, classmap.mapy)
+	coordmouse = mapcanv.winfo_pointerxy()
+	temp_message(mapcanv, "Changer", 1000, coordmouse, "green")
 
 def validate_entry_seed(entryseed, gamedata, classmap, option, tkvar_seed, mapcanv):
 	####################
@@ -203,12 +205,16 @@ def validate_entry_seed(entryseed, gamedata, classmap, option, tkvar_seed, mapca
 	tkvar_seed.set(gamedata.seed)
 	pic = genproc.genNoiseMap(option.octaves, gamedata.seed, classmap.mapx, classmap.mapy)
 	previewmap(mapcanv, pic, classmap.mapx, classmap.mapy)
+	coordmouse = mapcanv.winfo_pointerxy()
+	temp_message(mapcanv, "Changer", 1000, coordmouse, "green")
 
-def validate_entry_lordname(gamedata, tkvar_playername):
+def validate_entry_lordname(gamedata, tkvar_playername, mapcanv):
 	####################
 	# Fonction pour changer le nom du seigneur player
 	####################
 	gamedata.list_lord[gamedata.playerid].lordname = tkvar_playername.get()
+	coordmouse = mapcanv.winfo_pointerxy()
+	temp_message(mapcanv, "Changer", 1000, coordmouse, "green")
 
 def regenseed(gamedata, classmap, option, tkvar_seed, mapcanv):
 	####################
