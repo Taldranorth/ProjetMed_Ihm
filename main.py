@@ -88,17 +88,6 @@ Fix:
 """
 ####
 
-
-'''
-Résultat Playtest:
- - Construire Village:
- 	--> sortir automatiquement quand Construction Impossible
- 	--> Ajouter retour Utilisateur Impossibilité directe en affichant les cases en rouge
- - Info générale, ajouter plus d'espace entre les catégories
- - Ajouter Scrollbar à la Vue détaillée 
- - Ajouter Tooltip, Event Armée Mercenaire
-'''
-
 #### Objectif Restant ####
 # - Refactorisation Option/classmap et Gamedata pour être défini dans data et accéder à partir d'un appel du fichier
 # - Implémenter Réactions Armées et Vassaux
@@ -145,13 +134,6 @@ Résultat Playtest:
 #### Landforme ####
 # --> Utiliser Octaves Pour générer groupe de Terrain
 # --> Repasser un coup de Noise map dans le groupe de Terrain qui vient définir les tuiles
-
-
-
-###### Terminé:
-# - Readme
-# - Changement Résolution
-######
 
 ######################### Main #########################
 if __name__ == '__main__':

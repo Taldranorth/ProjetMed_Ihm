@@ -1378,8 +1378,8 @@ def taxwindow_village(gamedata, classmap, option, wit, village):
 	button_collect_tax_ressource = tkinter.Button(frame_tax_collect, textvariable = tkvar_list[1], command=lambda: collect_taxes_village(gamedata, classmap, option, village, "ressource", frame_tax_collect, tkvar_list))
 	button_collect_tax_ressource.grid(row = 4, column = 1)
 
-	interfacemenu.tooltip(button_collect_tax_money, f"Taxe en Ressource 1/4 les Artisans\n 1/2 les Paysan", [])
-	interfacemenu.tooltip(button_collect_tax_ressource, f"Taxe en Écus 1/4 les Artisans\n 1/2 les Paysan", [])
+	interfacemenu.tooltip(button_collect_tax_money, f"Taxe en Ressource:\n 1/4 les Artisans\n 1/2 les Paysan", [])
+	interfacemenu.tooltip(button_collect_tax_ressource, f"Taxe en Écus:\n 1/4 les Artisans\n 1/2 les Paysan", [])
 
 	# Boutton pour quitter
 	tkinter.Button(frame_tax_collect, text = "retour", command = lambda: global_exit_window(frame_tax_collect)).grid(row = 5, column = 1)

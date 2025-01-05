@@ -432,7 +432,7 @@ def savemenu_save(gamedata, classmap, option, newsave:bool, lbsave, savefolderpa
 		lbsave.insert(0, f"{filename[:-5]}")
 
 	coord = [option.widthWindow//2, option.heightWindow//8]
-	interfacemenu.temp_message(classmap.mapcanv, "Fichier Sauvegarder", 2000, coord, "green")
+	interfacemenu.temp_message(classmap.mapcanv, "Fichier Sauvegardé", 2000, coord, "green")
 
 
 
@@ -533,7 +533,7 @@ def optionmenu(gamedata, classmap, option, root, win):
 	rb_off.configure(command = lambda: debugRbutton_changestate(gamedata, classmap, option, root, Tkvar_bool_rb, rb_off, rb_on))
 
 	# Boutton pour sauvegarder les options
-	Bsave_option = tkinter.Button(foptionmenu, text = "Sauvegarder Option", command = lambda: option.saveoption(c_d+"/user/"+"config.ini"))
+	Bsave_option = tkinter.Button(foptionmenu, text = "Sauvegarder Option", command = lambda filepath = (c_d + "/user/"+"config.ini"): option_saveoption(optionmenuwin, option, filepath))
 	Bsave_option.grid(row = 9, column = 0)
 
 	# Boutton pour quitter
@@ -569,6 +569,16 @@ def option_reset_res(option, root, Tvar_res):
 	option.heightWindow = height
 	# On update la Tvar
 	Tvar_res.set(f"{option.widthWindow}x{option.heightWindow}")
+
+def option_saveoption(win, option, filepath):
+	#####
+	# Fonction pour sauvegarder option
+	#####
+	# On sauvegarder
+	option.saveoption(filepath)
+	# On envoit un retour utilisateur
+	coordmouse = win.winfo_pointerxy()
+	temp_message(win, "Sauvegardé", 1000, coordmouse, "green")
 
 def debugRbutton_changestate(gamedata, classmap, option, root, Tkvar, rb_on, rb_off):
 	#####

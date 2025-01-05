@@ -657,7 +657,7 @@ def eventscreen(gamedata, classmap, option, event):
 			stat = Eventsystem.bandit(player)
 
 			# On mets en place le texte
-			tkinter.Label(frame_interface_event, text = f"Ho Maleur Mon Seigneur,\nDes Bandit on attaqué notre village de {stat[0]}\n Ils ont pillé pour {stat[1]}% de Ressource et {stat[2]}% d'écu").grid(row = 1, column = 1)
+			tkinter.Label(frame_interface_event, text = f"Ho Malheur Mon Seigneur,\nDes Bandits on attaqué notre village de {stat[0]}\n Ils ont pillé pour {stat[1]}% de Ressource et {stat[2]}% d'écu").grid(row = 1, column = 1)
 
 			# On mets en place le boutton ok
 			But = tkinter.Button(frame_interface_event, command = lambda: b_exit(window_interface_event), text = "ok")

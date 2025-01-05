@@ -74,6 +74,3 @@
 # - Si une pop atteint le plafond de Ressource son excédant est vendu contre de l'argent
 # - Si une pop n'a plus de ressource il achète une ressource avec de l'argent
 # 
-# 
-#
-#
