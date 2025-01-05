@@ -165,35 +165,39 @@ def victoryordefeat(gamedata, classmap, option):
 	#######
 	# Return un Bool et modifie une variable dans gamedata
 
-	player = gamedata.list_lord[gamedata.playerid]
-	# Si le joueur possède le Status defeated Alots Défaite
-	if player.isdefeated == True:
-		gamedata.victory = "Défaite"
-		return True
+	try:
+		player = gamedata.list_lord[gamedata.playerid]
+		# Si le joueur possède le Status defeated Alots Défaite
+		if player.isdefeated == True:
+			gamedata.victory = "Défaite"
+			return True
 
-	# Si le joueur ne Possède plus de village Alors Défaite
-	if len(player.fief) == 0:
-		gamedata.victory = "Défaite"
-		return True
-	# Si le joueur est un vassal d'un autre Seigneurs Alors Défaite
-	for lord in gamedata.list_lord:
-		if lord != player:
-			if player in lord.vassal:
-				gamedata.victory = "Défaite"
-				return True
+		# Si le joueur ne Possède plus de village Alors Défaite
+		if len(player.fief) == 0:
+			gamedata.victory = "Défaite"
+			return True
+		# Si le joueur est un vassal d'un autre Seigneurs Alors Défaite
+		for lord in gamedata.list_lord:
+			if lord != player:
+				if player in lord.vassal:
+					gamedata.victory = "Défaite"
+					return True
 
-	# Sinon si le joueur possède un Nombre de Vassaux = Nombre de Seigneur-1
-	# Alors Victoire
-	if len(player.vassal) == (gamedata.Nb_lord - 1):
-		gamedata.victory = "Victoire"
-		return True
+		# Sinon si le joueur possède un Nombre de Vassaux = Nombre de Seigneur-1
+		# Alors Victoire
+		if len(player.vassal) == (gamedata.Nb_lord - 1):
+			gamedata.victory = "Victoire"
+			return True
 
-	# Sinon si le Joueur est le Dernier Seigneur en Vie
-	if gamedata.notdefeatedlord() == 1:
-		gamedata.victory = "Victoire"
-		return True
+		# Sinon si le Joueur est le Dernier Seigneur en Vie
+		if gamedata.notdefeatedlord() == 1:
+			gamedata.victory = "Victoire"
+			return True
 
-	return False
+		return False
+	except BaseException as error:
+		log.log.printerror(f"{error}")
+		
 
 def endofgame(gamedata, classmap, option, root):
 	#####

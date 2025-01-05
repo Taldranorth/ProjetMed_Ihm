@@ -60,6 +60,7 @@ Problème:
  - dans le menu de sauvegarde/chargement le temps de jeu n'est pas indiqué pour chaque sauvegarde, cela pourrait permettre d'aider l'utilisateur à mieux les différencier
  - Début d'un système de notification affin d'afficher des infos bulles clicable à gauche de l'écran
  - Diconame doit être refactoriser pour utiliser l'architecture .json
+ - La gestion des erreurs est assez limité, plus try except doit être intégré 
  - Arrrrghhh faut refactoriser 
 
 Résultat Playtest Extérieur:
