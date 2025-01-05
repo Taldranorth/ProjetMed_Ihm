@@ -2,8 +2,9 @@
 BOURDON Kilian | CHAUDET Fearghal
 
 Capacité du Programme:
- - Pop-up Souris
+ - Pop-up
  - Message Temporaire
+ - Retour utilisateur Gain/Perte de Ressource/Écus
  - délimitation information importante dans l'entête haut et action entête bas
 
  - système d'event un peu poussé
