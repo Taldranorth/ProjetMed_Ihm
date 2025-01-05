@@ -1,10 +1,6 @@
 # ProjetMed_Ihm
 BOURDON Kilian | CHAUDET Fearghal
 
-- accompagnez vos sources d'un fichier de nom README (à l'exclusion de tout autre) précisant ce qui a été fait et non fait, la description du graphe de vos classes, ainsi que les points de votre prototype qui mettent en avant les qualités d'une bonne IHM (listés ci-dessous),
-
-- barème indicatif : programmation (4), paradigmes objet (2), qualités ergonomiques (cohérence, concision, structuration des activités, flexibilité, retour d’informations, gestion des erreurs : 10), fonctionnement général et qualités propres (4),
-
 Capacité du Programme:
  - Pop-up Souris
  - Message Temporaire
@@ -22,6 +18,33 @@ Capacité du Programme:
 
 Graphe des classes:
 
+ assets.py
+ - ClassAtlas
+ - ClassDicoName
+
+ data.py
+ - ClassGameData
+ - ClassOptions
+ - Classmap
+
+ event.py
+ - ClassEvent
+
+ gameclass.py
+ - Classlord
+  --> Classarmy
+ 		--> ClassKnight
+ 		--> ClassSoldier
+ - Classvillage
+ 	--> Classpriest
+ 	--> ClassRoturier
+
+
+ log.py
+ - classlog
+
+ stats.py
+ - ClassDicoStat
 
 
 Problème:
@@ -34,6 +57,7 @@ Problème:
  - Quitter la partie = quitter l'application
  - dans le menu de sauvegarde/chargement le temps de jeu n'est pas indiqué pour chaque sauvegarde, cela pourrait permettre d'aider l'utilisateur à mieux les différencier
  - Début d'un système de notification affin d'afficher des infos bulles clicable à gauche de l'écran
+ - Diconame doit être refactoriser pour utiliser l'architecture .json
  - Arrrrghhh faut refactoriser 
 
 Résultat Playtest Extérieur:
@@ -45,6 +69,23 @@ Résultat Playtest Extérieur:
  - Ajouter Tooltip, Event Armée Mercenaire
  - Ajouter information sur le système de tax plus poussé
  - Incompréhension Pathfinding
+
+Architecture du Projet:
+ - asset
+ 	--> texture
+ 	--> name.txt
+ - docs
+ 	--> aipop.md
+ 	--> Regle.md
+ - functions
+ - perlin_noise
+ - user
+ 	--> save
+ 	--> config.ini
+ 	--> log.log
+ - .gitignore
+ - main.py
+ - README.md
 
 
 Crédit:
