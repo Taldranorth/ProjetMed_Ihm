@@ -20,7 +20,8 @@ Capacité du Programme:
 
 
 Problème:
- - 
+ - winfo_screenheight() ne renvoit pas la résolution correcte -> obligé de multiplier par 1.4
+ - Même Si on permet à l'utilisateur de sélectionner une résolution
 
 
 Possibilité de Résolution du Problème:

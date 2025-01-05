@@ -310,6 +310,8 @@ def savemenu(win, gamedata, classmap, option, root):
 	savemenuwin.geometry(f"+{int(option.widthWindow*0.4)}+{option.heightWindow//4}")
 	# On la rend passagère
 	savemenuwin.transient(win)
+	# On focus
+	savemenuwin.focus_set()
 
 	# On met en place l'interface
 	fsavemenu = tkinter.Frame(savemenuwin, height = option.heightWindow, width = option.widthWindow)
@@ -362,6 +364,8 @@ def loadmenu(win, gamedata, classmap, option, root):
 	loadmenuwin.geometry(f"+{int(option.widthWindow*0.4)}+{option.heightWindow//4}")
 	# On la rend passagère
 	loadmenuwin.transient(win)
+	# On focus
+	loadmenuwin.focus_set()
 
 	# On met en place l'interface
 	floadmenu = tkinter.Frame(loadmenuwin, height = option.heightWindow, width = option.widthWindow)
@@ -484,6 +488,9 @@ def optionmenu(gamedata, classmap, option, root, win):
 	# On la rend passagère
 	optionmenuwin.transient(win)
 
+	# On focus sur la fenêtre
+	optionmenuwin.focus_set()
+
 	foptionmenu = tkinter.Frame(optionmenuwin)
 	foptionmenu.grid()
 
@@ -500,7 +507,8 @@ def optionmenu(gamedata, classmap, option, root, win):
 	Bmenures["menu"] = menures
 	# On config le menu
 	for res in ([800,600],[1280,800],[1440,900],[1920,1200],[2560,1440]):
-		menures.add_command(label = f"{res[0]}x{res[1]}", command = lambda: option_change_res(option, res[0], res[1], Tvar_res))
+		print(f"{res[0]}x{res[1]}")
+		menures.add_command(label = f"{res[0]}x{res[1]}", command = lambda x = res[0], y = res[1]: option_change_res(option, x, y, Tvar_res))
 
 	# On permet à l'utilisateur d'entré par lui même une résolution
 
@@ -511,12 +519,18 @@ def optionmenu(gamedata, classmap, option, root, win):
 	Breset_res = tkinter.Button(foptionmenu, text = "Reset Résolution", command = lambda: option_reset_res(option, root, Tvar_res))
 	Breset_res.grid(row = 5, column = 0)
 
-
-
-	tkinter.Label(foptionmenu, text = "DebugMenu On/off").grid(row = 6, column = 0)
 	# Boutton pour Activer/Désactiver le menu Debug
-	tkinter.Radiobutton(foptionmenu, text = "On", command = lambda: cheat.changestate(gamedata, classmap, option, root, True)).grid(row = 7, column = 0)
-	tkinter.Radiobutton(foptionmenu, text = "off", command = lambda: cheat.changestate(gamedata, classmap, option, root, False)).grid(row = 8, column = 0)
+	Tkvar_bool_rb = tkinter.StringVar()
+	Tkvar_bool_rb.set("True")
+	tkinter.Label(foptionmenu, text = "DebugMenu On/off").grid(row = 6, column = 0)
+	rb_on = tkinter.Radiobutton(foptionmenu, text = "On", variable = Tkvar_bool_rb, value = "True")
+	rb_off = tkinter.Radiobutton(foptionmenu, text = "off", variable = Tkvar_bool_rb, value = "False")
+	# On grid
+	rb_on.grid(row = 7, column = 0)
+	rb_off.grid(row = 8, column = 0)
+	# On configure
+	rb_on.configure(command = lambda: debugRbutton_changestate(gamedata, classmap, option, root, Tkvar_bool_rb, rb_on, rb_off))
+	rb_off.configure(command = lambda: debugRbutton_changestate(gamedata, classmap, option, root, Tkvar_bool_rb, rb_off, rb_on))
 
 	# Boutton pour sauvegarder les options
 	Bsave_option = tkinter.Button(foptionmenu, text = "Sauvegarder Option", command = lambda: option.saveoption(c_d+"/user/"+"config.ini"))
@@ -549,18 +563,31 @@ def option_reset_res(option, root, Tvar_res):
 	if (len(sys.argv) >= 2 ) and (str(sys.argv[1]) == "-SR"):
 		[height, width] = [1400, 1440]
 	else:
-		[height, width] = [root.winfo_screenheight(),root.winfo_screenwidth()]
+		[height, width] = [int(1.4*root.winfo_screenheight()),root.winfo_screenwidth()]
 
 	option.widthWindow = width
 	option.heightWindow = height
-
-
 	# On update la Tvar
 	Tvar_res.set(f"{option.widthWindow}x{option.heightWindow}")
 
+def debugRbutton_changestate(gamedata, classmap, option, root, Tkvar, rb_on, rb_off):
+	#####
+	# Fonction pour gérer le changement d'état du débug + désactiver/activer le RadioButton
+	#####
+	# On change l'état du debug menu
+	if Tkvar.get() == "True":
+		cheat.changestate(gamedata, classmap, option, root, True)
+		Tkvar.set("False")
+	else:
+		cheat.changestate(gamedata, classmap, option, root, False)
+		Tkvar.set("True")
+	# On active/désactive l'état
+	rb_on.select()
+	rb_off.deselect()
+
 ######################### Écran de Fin de Jeu #########################
 
-def eofgamescreen(gamedata, classmap, option):
+def eofgamescreen(gamedata, classmap, option, root):
 	###############
 	# Fonction appelé pour afficher l'écran de fin de Jeu
 	###############
@@ -603,7 +630,8 @@ def eofgamescreen(gamedata, classmap, option):
 	button_return_mainmenu = tkinter.Button(frame_eof_screen ,text = "Menu Principale", command = lambda: exit_mainmenu(gamedata, classmap, option)).grid(row = 5, column = 1, columnspan = 2)
 
 	# Boutton pour charger une Save précédente
-	button_loadsave = tkinter.Button(frame_eof_screen ,text = "Charger une Sauvegarde").grid(row = 5, column = 3, columnspan = 2)
+	win = window_eof_screen.winfo_toplevel()
+	button_loadsave = tkinter.Button(frame_eof_screen ,text = "Charger une Sauvegarde", command = lambda: loadmenu(win, gamedata, classmap, option, root)).grid(row = 5, column = 3, columnspan = 2)
 
 
 def eofgamescreen_main(gamedata, classmap, option, frame_eof_screen_up):

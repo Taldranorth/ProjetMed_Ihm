@@ -33,13 +33,15 @@ def cheat_menu(gamedata, classmap, option, root, win):
 	global cheat_window
 	cheat_window = tkinter.Toplevel(root)
 	cheat_window.transient(win)
+	cheat_window.lift(win)
+	cheat_window.attributes("-topmost", True)
 
 	cheat_menu_frame = tkinter.Frame(cheat_window)
 	cheat_menu_frame.grid()
 
 	tkinter.Label(cheat_menu_frame, text= "Menu Debug").grid(row = 0, column = 0)
 
-	button_victory = tkinter.Button(cheat_menu_frame, text = "Victoire", command = lambda: cheat_victory(gamedata, classmap, option))
+	button_victory = tkinter.Button(cheat_menu_frame, text = "Victoire", command = lambda: cheat_victory(gamedata, classmap, option, root))
 	button_victory.grid(row = 1, column = 0)
 
 	button_destroy = tkinter.Button(cheat_menu_frame, text = "Détruire Capitale", command = lambda: cheat_destroy(gamedata, classmap, option, gamedata.list_lord[gamedata.playerid]))
@@ -48,13 +50,13 @@ def cheat_menu(gamedata, classmap, option, root, win):
 	button_plotlibpic = tkinter.Button(cheat_menu_frame, text = "afficher NoiseMap Plotlib", command = lambda: plotlib(gamedata, classmap, option))
 	button_plotlibpic.grid(row = 3, column = 0)
 
-def cheat_victory(gamedata, classmap, option):
+def cheat_victory(gamedata, classmap, option, root):
 	#####
 	# Fonction pour cheat et terminé la partie comme Gagnant
 	#####
 
 	gamedata.victory = "Victoire"
-	game.endofgame(gamedata, classmap, option)
+	game.endofgame(gamedata, classmap, option, root)
 
 def cheat_destroy(gamedata, classmap, option, lord):
 	#####

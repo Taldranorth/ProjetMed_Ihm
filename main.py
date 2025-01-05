@@ -150,8 +150,7 @@ Résultat Playtest:
 
 ###### Terminé:
 # - Readme
-# - Réglage Résolution
-# - Radio Button Debug Menu
+# - Changement Résolution
 ######
 
 ######################### Main #########################

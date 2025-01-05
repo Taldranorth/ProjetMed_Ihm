@@ -126,7 +126,7 @@ def endofturn(gamedata, classmap, option, root):
 		gamedata.endturn = False
 		gamedata.semaphore = False
 	else:
-		endofgame(gamedata, classmap, option)
+		endofgame(gamedata, classmap, option, root)
 
 
 def playerturn(gamedata, classmap, option):
@@ -195,11 +195,11 @@ def victoryordefeat(gamedata, classmap, option):
 
 	return False
 
-def endofgame(gamedata, classmap, option):
+def endofgame(gamedata, classmap, option, root):
 	#####
 	# Fonction qui gère la fin de partie
 	#####
-	interfacemenu.eofgamescreen(gamedata, classmap, option)
+	interfacemenu.eofgamescreen(gamedata, classmap, option, root)
 
 
 
