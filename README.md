@@ -34,6 +34,7 @@ Problème:
  - Quitter la partie = quitter l'application
  - dans le menu de sauvegarde/chargement le temps de jeu n'est pas indiqué pour chaque sauvegarde, cela pourrait permettre d'aider l'utilisateur à mieux les différencier
  - Début d'un système de notification affin d'afficher des infos bulles clicable à gauche de l'écran
+ - Arrrrghhh faut refactoriser 
 
 Résultat Playtest Extérieur:
  - Construire Village:
@@ -48,7 +49,6 @@ Résultat Playtest Extérieur:
 
 Crédit:
 Perlin Noise library:
-
 [https://github.com/salaxieb/perlin_noise](https://github.com/salaxieb/perlin_noise)
 
 World Map Tiles Set:
