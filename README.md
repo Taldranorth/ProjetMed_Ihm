@@ -5,6 +5,7 @@ Capacité du Programme:
  - Pop-up
  - Message Temporaire
  - Retour utilisateur Gain/Perte de Ressource/Écus
+ - Retour utilisateur Configuration
  - délimitation information importante dans l'entête haut et action entête bas
 
  - système d'event un peu poussé
