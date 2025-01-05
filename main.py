@@ -17,55 +17,6 @@ import functions.interfacemenu as interfacemenu
 
 from time import time
 
-# Objectif:
-#	- Refactoriser le Code
-#		--> Le Nettoyer
-#		--> Retirer les Commentaires Inutiles
-#
-#	Additif:
-#	- Ajouter du Son
-#		--> https://stackoverflow.com/questions/28795859/how-can-i-play-a-sound-when-a-tkinter-button-is-pushed
-#
-#	- Ajouter de l'animation
-#		--> https://stackoverflow.com/questions/53418926/button-motion-animation-in-tkinter
-#			--> Semble très gourmand
-#				--> Trouver une solution plus performante
-#
-#	- Changer tout les EXIT pour ajouter une fenêtre de confirmation
-#		--> Rappel de la dernière sauvegarde si >1 minute
-#
-#	Partie Graphique:
-#	- Changer la police d'écriture
-#		--> font = "Police"
-# !!!!!!
-# Faire des fonctions de recherche optimiser
-#		--> Cela devrait permettre de réduire l'utilisation de la mémoire
-# !!!!!!
-####################################################################
-
-##################\ Doit Faire: \#######################
-# Main:
-# - Déplacement en mettant la souris sur la bordure extérieur de la carte
-# - Améliorer le Zoom/Dezoom
-#
-# Interface:
-# - Améliorer l'interface
-# - Suprimer le carrer du village ou l'église a était construite
-# - Léger décalage sur la droite lorsqu'on centre la vue
-#
-# Moveview: 
-#	- Implémenter une limite sur le déplacement de la vue pour ne pas aller plus loin que nécessaires
-#		--> Implémenter pour Déplacement avec Souris
-#
-# Interface:
-# - Recalculer toute les positions d'interfaces
-#		--> Rentre dans la partie résolution dynamique
-# - améliorer interface
-# - Ajouter la prise de village et le combat d'armée à l'interface de déplacement d'armée
-#	--> Si souris sur armée ennemie alors affiche icône Combat
-#	--> Si souris sur village Ennemies alors affiche icône Pillage
-#########################################################
-
 ####
 
 # - Mettre en place un level Log Erreur
@@ -106,10 +57,9 @@ from time import time
 # - Mettre en Place Fonctions ListBox qui disparait
 #####
 
-#### Fait:
+#### à Faire:
 """
 Implémenter:
-
  - Améliorer Zoom/Dezoom
  	--> Limité à 1 zoom par action
  - Améliorer Geule de l'Interface
@@ -123,20 +73,6 @@ Implémenter:
  - Implémenter Garde fous lors d'ailord main
  - Affichage du Pathfinding en cours des armées
  - Implémenter fonction pour retourner au menu depuis la game
-
-Résultat Playtest:
- - Construire Village:
- 	--> sortir automatiquement quand Construction Impossible
- 	--> Ajouter retour Utilisateur Impossibilité directe en affichant les cases en rouge
- - Info générale, ajouter plus d'espace entre les catégories
- - Ajouter Scrollbar à la Vue détaillée 
- - Ajouter Tooltip, Event Armée Mercenaire
-
- - Terminé l'implémentation des saves
- 	--> Merge dev2,dev1
- 		--> Merge dev1 Main
- 	--> Changer pour stocker dans le dossier save
- 	--> Changer pour utiliser l'interface de save
 
 Refactoriser:
  - Améliorer Selection de Village Pour la Construction d'église
@@ -153,6 +89,15 @@ Fix:
 ####
 
 
+'''
+Résultat Playtest:
+ - Construire Village:
+ 	--> sortir automatiquement quand Construction Impossible
+ 	--> Ajouter retour Utilisateur Impossibilité directe en affichant les cases en rouge
+ - Info générale, ajouter plus d'espace entre les catégories
+ - Ajouter Scrollbar à la Vue détaillée 
+ - Ajouter Tooltip, Event Armée Mercenaire
+'''
 
 #### Objectif Restant ####
 # - Refactorisation Option/classmap et Gamedata pour être défini dans data et accéder à partir d'un appel du fichier
@@ -167,7 +112,6 @@ Fix:
 # - Optimiser et Refactoriser
 # - Graphe Stats par Bezier
 ######
-
 
 ######
 # -> Ajouter Bouton Pour annuler Si on déplace une armée mais que l'on veut annuler son déplacement au tour prochain
@@ -202,6 +146,14 @@ Fix:
 # --> Utiliser Octaves Pour générer groupe de Terrain
 # --> Repasser un coup de Noise map dans le groupe de Terrain qui vient définir les tuiles
 
+
+
+###### Terminé:
+# - Readme
+# - Réglage Résolution
+# - Radio Button Debug Menu
+######
+
 ######################### Main #########################
 if __name__ == '__main__':
 
@@ -211,7 +163,7 @@ if __name__ == '__main__':
 	if (len(sys.argv) >= 2 )and (str(sys.argv[1]) == "-SR"):
 		[height, width] = [1400, 1440]
 	else:
-		[height, width] = [root.winfo_screenheight(),root.winfo_screenwidth()]
+		[height, width] = [int(1.4*root.winfo_screenheight()),root.winfo_screenwidth()]
 
 	log.log.printinfo(f"Hauteur de l'écran:  {height}")
 	log.log.printinfo(f"Largeur de l'écran: {width}")

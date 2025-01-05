@@ -1,4 +1,3 @@
-
 import os
 import sys
 import random
@@ -1582,8 +1581,6 @@ def convertposgraph(coord, heightgraph, widthgraph):
 	####
 	posx = coord[0] + 10
 	posy = heightgraph - coord[1]
-
-
 	return [posx,posy]
 
 
@@ -1600,4 +1597,12 @@ def infovillage(village):
 		log.log.printinfo(f"village priest: 0")
 	log.log.printinfo(f"village global joy: {village.global_joy}")
 	log.log.printinfo(f"village ressource, money:  {village.prod_ressource}, {village.prod_money}")
+
+
+####### MAIN #######
+# variables globale couleur Interface
+interface_color = 'dark slate gray'
+
+
+
 

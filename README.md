@@ -1,114 +1,42 @@
 # ProjetMed_Ihm
- 
-Architecture:
+BOURDON Kilian | CHAUDET Fearghal
 
-Project Folder 
+- accompagnez vos sources d'un fichier de nom README (à l'exclusion de tout autre) précisant ce qui a été fait et non fait, la description du graphe de vos classes, ainsi que les points de votre prototype qui mettent en avant les qualités d'une bonne IHM (listés ci-dessous),
 
-	—> Main.py
-
-	—> GenProc.py
-
-	—> MathOpti.py
-
-	—> Affichage.py
-
-	Création de la carte
-
-	Affichage de la carte
-
-	Zoom/dézoom de la carte
-
-	déplacement de la carte
-
-	—> Event.py
-
-	—> Class.py
-
-	Fichier contenant toute les définitions de Classe
-
-	—> Data.py
-
-	Fonctions dédier a l’ouverture et la sauvegarde de fichier
-
-	—> Config.txt
-
-	—> Save Folder
-
-	—> Asset Folder
-
-	—> Tuiles Folder
-
-	—> Images_Event Folder
-
-	—> Interface Folder
-
-Cahier des Charges:  
-  
-Tour de Jeu:
-
-Conditions de Victoires
+- barème indicatif : programmation (4), paradigmes objet (2), qualités ergonomiques (cohérence, concision, structuration des activités, flexibilité, retour d’informations, gestion des erreurs : 10), fonctionnement général et qualités propres (4),
 
 
-- À conquis tout les Seigneur Ennemies
+Capacité du Programme:
+ - Pop-up Souris
+ - Message Temporaire
 
-#Quand placer la condition ? à la fin d’un tour ? ou après la conquête d’un seigneur ?
-
-
-Conditions de Défaites:
-
-
-- Perte de tout c’est villages
-
-#Quand la condition ? à la fin d’un tour ou après la perte d’un village ?
-
-
-Actions Possibles du Joueurs:
-
-- Militaire:
-		- Recruter des Soldats
-		- Déclarer la Guerre
-		- Tenter de Rallier un Noble
-- Civil:
-		- Créer Village
-		- Construire Église
-		- Immigrer Villageois
-		- Impôts
-
-Effets/retour au Joueur:
-
-	- Les boutons doivent s’enfoncer quand on clique dessus
-	- Un retour sonore doit être envoyés
-		- retour léger afin de ne pas énervé l’utilisateur  
-  
+ - Pathfinding Basique
+ - Automate Limité à une répétition
+ - Sauvegarde/Chargement de la Partie
+ - Menu de Debug
+ - Gestion des Paramètre D'application
+ - Système d'écriture des logs
+ - Résumé de fin de partie limité
 
 
-Fichier Config:
-
-Si non Présent doit être créer
-
-	—> Résolution Configurer par l’utilisateur
-
-	—> Valeur de Base = résolution de l’écran
-
-Menu:
-
-Menu Principale:
-	—>Nouvelles Partie
-	—>Charger
-
-	—> Options
-
-	—> Quitter
-
-Nouvelle Partie:
+Problème:
+ - 
 
 
-	- Taille Carte
-	- Nom du Joueur
-	- Nb de Seigneur Ennemies
-	- Nb de village de départ
-		- doit bloquer si la carte n’est pas suffisante
-	- Seed
-		- Landform
-		- Visuel de la carte
-		- Quand une nouvelle Seed est gen le visuel est changer
+Possibilité de Résolution du Problème:
+
+
+
+Résultat Playtest:
+
+
+
+
+
+Crédit:
+Perlin Noise library:
+
+[https://github.com/salaxieb/perlin_noise](https://github.com/salaxieb/perlin_noise)
+
+World Map Tiles Set:
+[https://opengameart.org/content/world-map-tiles]
